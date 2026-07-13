@@ -49,7 +49,7 @@ function SermonPage() {
         <p className="font-serif text-2xl leading-relaxed text-foreground first-letter:float-left first-letter:mr-3 first-letter:font-serif first-letter:text-7xl first-letter:leading-[0.85] first-letter:text-terracotta">
           {sermon.body[0]}
         </p>
-        {sermon.body.slice(1).map((p, i) => (
+        {sermon.body.slice(1).map((p: string, i: number) => (
           <p key={i} className="text-base leading-loose text-muted-foreground">{p}</p>
         ))}
       </div>
