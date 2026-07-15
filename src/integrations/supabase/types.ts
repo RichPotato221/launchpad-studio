@@ -420,6 +420,7 @@ export type Database = {
           amount: number
           approved_by_chair: string | null
           approved_by_senior: string | null
+          claim_type: string | null
           claimant_id: string
           created_at: string
           department_slug: string
@@ -433,6 +434,7 @@ export type Database = {
           amount: number
           approved_by_chair?: string | null
           approved_by_senior?: string | null
+          claim_type?: string | null
           claimant_id: string
           created_at?: string
           department_slug: string
@@ -446,6 +448,7 @@ export type Database = {
           amount?: number
           approved_by_chair?: string | null
           approved_by_senior?: string | null
+          claim_type?: string | null
           claimant_id?: string
           created_at?: string
           department_slug?: string
@@ -456,6 +459,62 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      finance_entries: {
+        Row: {
+          amount: number | null
+          created_at: string
+          created_by: string
+          department_slug: string
+          entry_date: string
+          file_name: string | null
+          file_url: string | null
+          id: string
+          kind: string
+          member_id: string | null
+          notes: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string
+          created_by: string
+          department_slug?: string
+          entry_date?: string
+          file_name?: string | null
+          file_url?: string | null
+          id?: string
+          kind: string
+          member_id?: string | null
+          notes?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string
+          created_by?: string
+          department_slug?: string
+          entry_date?: string
+          file_name?: string | null
+          file_url?: string | null
+          id?: string
+          kind?: string
+          member_id?: string | null
+          notes?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "finance_entries_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       kingdom_projects: {
         Row: {
