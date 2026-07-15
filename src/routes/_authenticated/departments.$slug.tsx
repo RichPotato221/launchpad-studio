@@ -131,6 +131,14 @@ function DepartmentPortal() {
             </ul>
           </Card>
         </TabsContent>
+
+        {workspace && WorkspaceComponent && membership.data?.userId && (
+          <TabsContent value="workspace" className="mt-6">
+            <Suspense fallback={<div className="p-8 text-sm text-muted-foreground">Loading workspace…</div>}>
+              <WorkspaceComponent departmentSlug={slug} currentUserId={membership.data.userId} />
+            </Suspense>
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );
