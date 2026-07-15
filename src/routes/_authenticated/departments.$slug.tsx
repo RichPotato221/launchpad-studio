@@ -17,6 +17,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
+import { DEPARTMENT_HERO, DEPARTMENT_GALLERY } from "@/lib/portalImages";
+
 
 export const Route = createFileRoute("/_authenticated/departments/$slug")({
   head: ({ params }) => ({ meta: [{ title: `${params.slug} — TRoGKC Portal` }] }),
@@ -31,10 +33,18 @@ function DepartmentPortal() {
   if (dept.isLoading) return <div className="p-8 text-muted-foreground">Loading…</div>;
   if (!dept.data) throw notFound();
   const d = dept.data;
+  const hero = DEPARTMENT_HERO[slug];
+  const gallery = DEPARTMENT_GALLERY[slug] ?? [];
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
       <Link to="/departments" className="text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground">← All departments</Link>
+      {hero && (
+        <div className="mt-4 overflow-hidden rounded-lg border border-border">
+          <img src={hero.src} alt={hero.alt} className="h-56 w-full object-cover md:h-72" />
+        </div>
+      )}
+
       <div className="mt-3 flex flex-wrap items-baseline justify-between gap-4">
         <div>
           <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">{d.kind.replace("_", " ")} · {d.scripture}</p>
@@ -78,7 +88,15 @@ function DepartmentPortal() {
               </ul>
             </Card>
           )}
+          {gallery.length > 0 && (
+            <div className="grid gap-4 sm:grid-cols-2">
+              {gallery.map((g) => (
+                <img key={g.src} src={g.src} alt={g.alt} className="h-56 w-full rounded-lg border border-border object-cover" />
+              ))}
+            </div>
+          )}
         </TabsContent>
+
 
         <TabsContent value="kpis" className="mt-6">
           <KpiDashboard slug={slug} kpis={kpis.data ?? []} onChange={() => kpis.refetch()} />

@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { fetchDepartments, fetchSetting } from "@/lib/portal";
 import { Card } from "@/components/ui/card";
+import { PORTAL_IMAGES, DEPARTMENT_HERO } from "@/lib/portalImages";
+
 
 export const Route = createFileRoute("/_authenticated/home")({
   head: () => ({ meta: [{ title: "Home — TRoGKC Portal" }] }),
@@ -24,11 +26,21 @@ function HomePage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
+      {/* 2026 Marching Orders banner */}
+      <section className="mb-8 overflow-hidden rounded-lg border border-border">
+        <img
+          src={PORTAL_IMAGES.marchingOrdersBanner}
+          alt="2026 Marching Orders — Intimacy, Identity, Purpose"
+          className="h-56 w-full object-cover md:h-80"
+        />
+      </section>
+
       {/* Vision */}
       <section className="rounded-lg border border-border bg-card p-6 md:p-10">
         <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Our Vision</p>
         <p className="mt-4 font-serif text-xl leading-relaxed md:text-2xl">{info.vision}</p>
       </section>
+
 
       {/* Mission */}
       <section className="mt-6 rounded-lg border border-border bg-card p-6 md:p-10">
@@ -50,24 +62,32 @@ function HomePage() {
           <h2 className="mt-3 font-serif text-4xl leading-tight md:text-5xl">{themeV.title}</h2>
           <p className="mt-4 text-sm opacity-80">{themeV.description}</p>
         </section>
-        <section className="rounded-lg border border-border bg-card p-6 md:p-10">
-          <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Senior Apostle / Senior Pastor</p>
-          {apostleV.name ? (
-            <>
-              <h3 className="mt-3 font-serif text-2xl">{apostleV.name}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{apostleV.bio}</p>
-            </>
-          ) : (
-            <p className="mt-3 text-sm text-muted-foreground">
-              Not yet set. Ask the Church Secretary to complete this from the <Link to="/admin" className="underline">Admin</Link> area.
-            </p>
-          )}
-          {info.founding_date && (
-            <p className="mt-6 text-xs uppercase tracking-widest text-muted-foreground">
-              Founded {info.founding_date}
-            </p>
-          )}
+        <section className="overflow-hidden rounded-lg border border-border bg-card md:p-0">
+          <img
+            src={PORTAL_IMAGES.seniorPastor}
+            alt="Senior Pastor ministering during Sunday service"
+            className="h-64 w-full object-cover"
+          />
+          <div className="p-6 md:p-8">
+            <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Senior Apostle / Senior Pastor</p>
+            {apostleV.name ? (
+              <>
+                <h3 className="mt-3 font-serif text-2xl">{apostleV.name}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{apostleV.bio}</p>
+              </>
+            ) : (
+              <p className="mt-3 text-sm text-muted-foreground">
+                Not yet set. Ask the Church Secretary to complete this from the <Link to="/admin" className="underline">Admin</Link> area.
+              </p>
+            )}
+            {info.founding_date && (
+              <p className="mt-6 text-xs uppercase tracking-widest text-muted-foreground">
+                Founded {info.founding_date}
+              </p>
+            )}
+          </div>
         </section>
+
       </div>
 
       {/* Org structure */}
@@ -134,15 +154,26 @@ function DeptGroup({ title, items, basePath = "/departments" }: {
         <Link to="/departments" className="text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground">All departments →</Link>
       </div>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {items.map((d) => (
-          <Link key={d.slug} to={`${basePath}/$slug`} params={{ slug: d.slug }}>
-            <Card className="p-4 transition hover:border-foreground">
-              <p className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">{d.scripture}</p>
-              <p className="mt-2 font-serif text-lg">{d.name}</p>
-            </Card>
-          </Link>
-        ))}
+        {items.map((d) => {
+          const hero = DEPARTMENT_HERO[d.slug];
+          return (
+            <Link key={d.slug} to={`${basePath}/$slug`} params={{ slug: d.slug }}>
+              <Card className="overflow-hidden p-0 transition hover:border-foreground">
+                {hero ? (
+                  <img src={hero.src} alt={hero.alt} className="h-32 w-full object-cover" />
+                ) : (
+                  <div className="h-32 w-full bg-muted" />
+                )}
+                <div className="p-4">
+                  <p className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">{d.scripture}</p>
+                  <p className="mt-2 font-serif text-lg">{d.name}</p>
+                </div>
+              </Card>
+            </Link>
+          );
+        })}
       </div>
     </section>
   );
 }
+
