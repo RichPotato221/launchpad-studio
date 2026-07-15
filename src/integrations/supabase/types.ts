@@ -44,6 +44,84 @@ export type Database = {
         }
         Relationships: []
       }
+      child_checkins: {
+        Row: {
+          allergies: string | null
+          checked_in_at: string
+          checked_in_by: string | null
+          checked_out_at: string | null
+          checked_out_by: string | null
+          child_name: string
+          classroom: string | null
+          department_slug: string
+          guardian_contact: string
+          guardian_name: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          allergies?: string | null
+          checked_in_at?: string
+          checked_in_by?: string | null
+          checked_out_at?: string | null
+          checked_out_by?: string | null
+          child_name: string
+          classroom?: string | null
+          department_slug: string
+          guardian_contact: string
+          guardian_name: string
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          allergies?: string | null
+          checked_in_at?: string
+          checked_in_by?: string | null
+          checked_out_at?: string | null
+          checked_out_by?: string | null
+          child_name?: string
+          classroom?: string | null
+          department_slug?: string
+          guardian_contact?: string
+          guardian_name?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      courses: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          department_slug: string
+          description: string | null
+          id: string
+          title: string
+          total_lessons: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          department_slug: string
+          description?: string | null
+          id?: string
+          title: string
+          total_lessons?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string
+          description?: string | null
+          id?: string
+          title?: string
+          total_lessons?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       departments: {
         Row: {
           chair_name: string | null
@@ -103,6 +181,167 @@ export type Database = {
           },
         ]
       }
+      editorial_posts: {
+        Row: {
+          approved_by: string | null
+          asset_url: string | null
+          created_at: string
+          created_by: string | null
+          department_slug: string
+          id: string
+          platform: string
+          scheduled_date: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          approved_by?: string | null
+          asset_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          department_slug: string
+          id?: string
+          platform: string
+          scheduled_date?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          approved_by?: string | null
+          asset_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string
+          id?: string
+          platform?: string
+          scheduled_date?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      enrollments: {
+        Row: {
+          certificate_url: string | null
+          course_id: string
+          enrolled_at: string
+          id: string
+          lessons_completed: number
+          status: string
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          certificate_url?: string | null
+          course_id: string
+          enrolled_at?: string
+          id?: string
+          lessons_completed?: number
+          status?: string
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          certificate_url?: string | null
+          course_id?: string
+          enrolled_at?: string
+          id?: string
+          lessons_completed?: number
+          status?: string
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enrollments_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      expense_claims: {
+        Row: {
+          amount: number
+          approved_by_chair: string | null
+          approved_by_senior: string | null
+          claimant_id: string
+          created_at: string
+          department_slug: string
+          description: string
+          id: string
+          receipt_url: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          approved_by_chair?: string | null
+          approved_by_senior?: string | null
+          claimant_id: string
+          created_at?: string
+          department_slug: string
+          description: string
+          id?: string
+          receipt_url?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          approved_by_chair?: string | null
+          approved_by_senior?: string | null
+          claimant_id?: string
+          created_at?: string
+          department_slug?: string
+          description?: string
+          id?: string
+          receipt_url?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      kingdom_projects: {
+        Row: {
+          created_at: string
+          department_slug: string
+          description: string | null
+          id: string
+          owner_id: string | null
+          stage: string
+          target_date: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          department_slug: string
+          description?: string | null
+          id?: string
+          owner_id?: string | null
+          stage?: string
+          target_date?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          department_slug?: string
+          description?: string | null
+          id?: string
+          owner_id?: string | null
+          stage?: string
+          target_date?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       kpis: {
         Row: {
           actual: number | null
@@ -156,6 +395,41 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "departments"
             referencedColumns: ["slug"]
+          },
+        ]
+      }
+      membership_lifecycle: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          profile_id: string
+          stage: string
+          updated_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          profile_id: string
+          stage: string
+          updated_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          profile_id?: string
+          stage?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "membership_lifecycle_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -257,6 +531,69 @@ export type Database = {
           },
         ]
       }
+      setlist_songs: {
+        Row: {
+          order_index: number
+          setlist_id: string
+          song_id: string
+        }
+        Insert: {
+          order_index: number
+          setlist_id: string
+          song_id: string
+        }
+        Update: {
+          order_index?: number
+          setlist_id?: string
+          song_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "setlist_songs_setlist_id_fkey"
+            columns: ["setlist_id"]
+            isOneToOne: false
+            referencedRelation: "setlists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "setlist_songs_song_id_fkey"
+            columns: ["song_id"]
+            isOneToOne: false
+            referencedRelation: "songs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      setlists: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          department_slug: string
+          id: string
+          notes: string | null
+          service_date: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          department_slug: string
+          id?: string
+          notes?: string | null
+          service_date: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string
+          id?: string
+          notes?: string | null
+          service_date?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       settings: {
         Row: {
           key: string
@@ -275,6 +612,90 @@ export type Database = {
           updated_at?: string
           updated_by?: string | null
           value?: Json
+        }
+        Relationships: []
+      }
+      songs: {
+        Row: {
+          ccli_number: string | null
+          chord_chart_url: string | null
+          created_at: string
+          created_by: string | null
+          department_slug: string
+          id: string
+          song_key: string | null
+          tempo: number | null
+          title: string
+          updated_at: string
+          youtube_url: string | null
+        }
+        Insert: {
+          ccli_number?: string | null
+          chord_chart_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          department_slug: string
+          id?: string
+          song_key?: string | null
+          tempo?: number | null
+          title: string
+          updated_at?: string
+          youtube_url?: string | null
+        }
+        Update: {
+          ccli_number?: string | null
+          chord_chart_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string
+          id?: string
+          song_key?: string | null
+          tempo?: number | null
+          title?: string
+          updated_at?: string
+          youtube_url?: string | null
+        }
+        Relationships: []
+      }
+      souls_won: {
+        Row: {
+          assigned_to: string | null
+          contact: string | null
+          created_at: string
+          date_won: string
+          department_slug: string
+          follow_up_status: string
+          id: string
+          name: string
+          notes: string | null
+          updated_at: string
+          won_by: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          contact?: string | null
+          created_at?: string
+          date_won?: string
+          department_slug: string
+          follow_up_status?: string
+          id?: string
+          name: string
+          notes?: string | null
+          updated_at?: string
+          won_by?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          contact?: string | null
+          created_at?: string
+          date_won?: string
+          department_slug?: string
+          follow_up_status?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          updated_at?: string
+          won_by?: string | null
         }
         Relationships: []
       }
@@ -319,6 +740,7 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      is_dept_member_or_admin: { Args: { _slug: string }; Returns: boolean }
       user_dept_slugs: { Args: { _user_id: string }; Returns: string[] }
     }
     Enums: {
