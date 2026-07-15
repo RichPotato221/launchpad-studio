@@ -88,7 +88,15 @@ function DepartmentPortal() {
               </ul>
             </Card>
           )}
+          {gallery.length > 0 && (
+            <div className="grid gap-4 sm:grid-cols-2">
+              {gallery.map((g) => (
+                <img key={g.src} src={g.src} alt={g.alt} className="h-56 w-full rounded-lg border border-border object-cover" />
+              ))}
+            </div>
+          )}
         </TabsContent>
+
 
         <TabsContent value="kpis" className="mt-6">
           <KpiDashboard slug={slug} kpis={kpis.data ?? []} onChange={() => kpis.refetch()} />

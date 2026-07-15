@@ -53,9 +53,17 @@ function AuthPage() {
 
   return (
     <div className="grid min-h-screen bg-background md:grid-cols-2">
-      <div className="hidden flex-col justify-between bg-foreground p-12 text-background md:flex">
+      <div
+        className="hidden flex-col justify-between p-12 text-background md:flex"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(0,0,0,0.72), rgba(0,0,0,0.72)), url(/images/landing/marching-orders-2026-banner.jpg)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
         <div className="flex items-center gap-3">
-          <img src={logo} alt="" className="h-10 w-auto invert" />
+          <img src="/images/landing/logo-flame-emblem.jpg" alt="" className="h-10 w-10 rounded object-cover" />
           <div className="font-serif text-lg leading-tight">
             Throne Room of God
             <span className="block text-[0.65rem] uppercase tracking-[0.22em] opacity-70">Kingdom Center</span>
@@ -70,6 +78,7 @@ function AuthPage() {
         </div>
         <p className="text-xs opacity-60">© {new Date().getFullYear()} TRoGKC · Under the headship of Jesus Christ</p>
       </div>
+
 
       <div className="flex items-center justify-center p-6 md:p-12">
         <div className="w-full max-w-md">
