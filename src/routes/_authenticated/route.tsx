@@ -49,8 +49,8 @@ function Gate() {
           </h1>
           <p className="mt-4 text-sm text-muted-foreground">
             {state === "pending"
-              ? "Your account is still awaiting approval by the Senior Apostle (richardmashaba.19@gmail.com). You will be able to sign in once approved and attached to your department."
-              : "Your request was not approved. Please contact the Senior Apostle if you believe this is a mistake."}
+              ? "Your account is still awaiting approval by the Admin team. You will be able to sign in once approved and attached to your department."
+              : "Your request was not approved. Please contact the Admin team if you believe this is a mistake."}
           </p>
           <Button
             className="mt-6"

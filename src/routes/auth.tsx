@@ -83,9 +83,9 @@ function AuthPage() {
           <img src={logo} alt="" className="mx-auto h-14 w-auto" />
           <h1 className="mt-6 font-serif text-3xl">Awaiting approval</h1>
           <p className="mt-4 text-sm text-muted-foreground">
-            Thank you for signing up. Your account request has been sent to the Senior Apostle
-            (<strong>richardmashaba.19@gmail.com</strong>) for approval. You will be able to sign
-            in once you have been approved and added to your department.
+            Thank you for signing up. Your account request has been sent to the Admin team for
+            approval. You will be able to sign in once you have been approved and added to your
+            department.
           </p>
           <Button className="mt-6" onClick={() => setPendingMsg(false)}>Back to sign in</Button>
         </div>
