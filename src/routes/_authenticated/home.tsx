@@ -63,31 +63,48 @@ function HomePage() {
           <p className="mt-4 text-sm opacity-80">{themeV.description}</p>
         </section>
         <section className="overflow-hidden rounded-lg border border-border bg-card md:p-0">
-          <div className="bg-muted">
-            <img
-              src={PORTAL_IMAGES.seniorPastor}
-              alt="Senior Pastor ministering during Sunday service"
-              className="mx-auto h-96 w-full object-cover object-top"
-            />
+          <div className="grid grid-cols-2">
+            <div>
+              <div className="bg-muted">
+                <img
+                  src={PORTAL_IMAGES.seniorPastor}
+                  alt="Senior Pastor ministering during Sunday service"
+                  className="mx-auto h-96 w-full object-cover object-top"
+                />
+              </div>
+              <div className="p-6 md:p-8">
+                <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Senior Pastor</p>
+                {apostleV.name ? (
+                  <>
+                    <h3 className="mt-3 font-serif text-2xl">{apostleV.name}</h3>
+                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{apostleV.bio}</p>
+                  </>
+                ) : (
+                  <p className="mt-3 text-sm text-muted-foreground">
+                    Not yet set. Ask the Church Secretary to complete this from the <Link to="/admin" className="underline">Admin</Link> area.
+                  </p>
+                )}
+              </div>
+            </div>
+            <div>
+              <div className="bg-muted">
+                <img
+                  src={PORTAL_IMAGES.sevenMountainsFemale}
+                  alt="Senior Pastor ministering during Sunday service"
+                  className="mx-auto h-96 w-full object-cover object-top"
+                />
+              </div>
+              <div className="p-6 md:p-8">
+                <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Senior Pastor</p>
+                <h3 className="mt-3 font-serif text-2xl">[Prophetess Ntombikayise Mnyandu]</h3>
+              </div>
+            </div>
           </div>
-          <div className="p-6 md:p-8">
-            <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Senior Pastor</p>
-            {apostleV.name ? (
-              <>
-                <h3 className="mt-3 font-serif text-2xl">{apostleV.name}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{apostleV.bio}</p>
-              </>
-            ) : (
-              <p className="mt-3 text-sm text-muted-foreground">
-                Not yet set. Ask the Church Secretary to complete this from the <Link to="/admin" className="underline">Admin</Link> area.
-              </p>
-            )}
-            {info.founding_date && (
-              <p className="mt-6 text-xs uppercase tracking-widest text-muted-foreground">
-                Founded {info.founding_date}
-              </p>
-            )}
-          </div>
+          {info.founding_date && (
+            <p className="p-6 pt-0 text-xs uppercase tracking-widest text-muted-foreground md:px-8">
+              Founded {info.founding_date}
+            </p>
+          )}
         </section>
 
       </div>
@@ -97,7 +114,7 @@ function HomePage() {
         <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Organisational Structure</p>
         <h2 className="mt-2 font-serif text-3xl">Governance flow</h2>
         <pre className="mt-6 overflow-x-auto rounded bg-muted p-4 text-[11px] leading-relaxed md:text-xs">
-{`                    ┌────────────────────────┐
+{`                   ────────────────────────
                     │     JESUS CHRIST       │
                     │  (Chief Cornerstone)   │
                     └───────────┬────────────┘
@@ -109,7 +126,7 @@ function HomePage() {
                                 │
              ┌──────────────────┼──────────────────┐
              │                  │                  │
-      ┌──────▼──────┐   ┌───────▼───────┐  ┌──────▼──────┐
+      ┌──────▼──────┐   ┌───────▼───────┐   ┌──────▼──────┐
       │Chairpersons │   │Church Secretary│  │Lead Pastors │
       └──────┬──────┘   └────────────────┘  └──────┬──────┘
              │                                     │
