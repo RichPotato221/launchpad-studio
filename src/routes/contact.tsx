@@ -4,9 +4,9 @@ import { useState } from "react";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact & Visit — Grace Chapel" },
-      { name: "description", content: "Visit Grace Chapel in Cedar Hollow, or reach out with a question, prayer request, or hello." },
-      { property: "og:title", content: "Contact Grace Chapel" },
+      { title: "Contact & Visit — Throne Room of God Kingdom Center" },
+      { name: "description", content: "Visit Throne Room of God Kingdom Center in Cedar Hollow, or reach out with a question, prayer request, or hello." },
+      { property: "og:title", content: "Contact Throne Room of God Kingdom Center" },
       { property: "og:description", content: "Say hello, ask a question, or plan your visit." },
     ],
   }),
@@ -30,16 +30,16 @@ function Contact() {
           <div>
             <p className="eyebrow">Visit</p>
             <address className="mt-4 not-italic text-base leading-relaxed text-foreground">
-              Grace Chapel<br />
-              142 Willow Street<br />
-              Cedar Hollow, OR 97401
+              Throne Room of God Kingdom Center<br />
+              Throne Room of God Kingdom Center<br />
+              Contact us for our physical address
             </address>
           </div>
           <div>
             <p className="eyebrow">Reach us</p>
             <p className="mt-4 text-base leading-relaxed text-foreground">
-              hello@gracechapel.example<br />
-              (541) 555-0142
+              hello@trogkc.org<br />
+              +1 (000) 000-0000
             </p>
           </div>
           <div>
@@ -70,7 +70,7 @@ function Contact() {
               <p className="eyebrow">Message received</p>
               <h2 className="mt-4 font-serif text-3xl">Thank you.</h2>
               <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
-                Someone from Grace Chapel will be in touch soon. In the meantime,
+                Someone from Throne Room of God Kingdom Center will be in touch soon. In the meantime,
                 you're warmly invited to Sunday's service.
               </p>
             </div>
