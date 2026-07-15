@@ -9,242 +9,27 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as SevenMountainsRouteImport } from './routes/seven-mountains'
-import { Route as SermonsRouteImport } from './routes/sermons'
-import { Route as DepartmentsRouteImport } from './routes/departments'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as AboutRouteImport } from './routes/about'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as SermonsSlugRouteImport } from './routes/sermons.$slug'
-import { Route as DepartmentsSlugRouteImport } from './routes/departments.$slug'
 
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SevenMountainsRoute = SevenMountainsRouteImport.update({
-  id: '/seven-mountains',
-  path: '/seven-mountains',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SermonsRoute = SermonsRouteImport.update({
-  id: '/sermons',
-  path: '/sermons',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DepartmentsRoute = DepartmentsRouteImport.update({
-  id: '/departments',
-  path: '/departments',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SermonsSlugRoute = SermonsSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => SermonsRoute,
-} as any)
-const DepartmentsSlugRoute = DepartmentsSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => DepartmentsRoute,
-} as any)
-
-export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/contact': typeof ContactRoute
-  '/departments': typeof DepartmentsRouteWithChildren
-  '/sermons': typeof SermonsRouteWithChildren
-  '/seven-mountains': typeof SevenMountainsRoute
-  '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/departments/$slug': typeof DepartmentsSlugRoute
-  '/sermons/$slug': typeof SermonsSlugRoute
-}
-export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/contact': typeof ContactRoute
-  '/departments': typeof DepartmentsRouteWithChildren
-  '/sermons': typeof SermonsRouteWithChildren
-  '/seven-mountains': typeof SevenMountainsRoute
-  '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/departments/$slug': typeof DepartmentsSlugRoute
-  '/sermons/$slug': typeof SermonsSlugRoute
-}
+export interface FileRoutesByFullPath {}
+export interface FileRoutesByTo {}
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/contact': typeof ContactRoute
-  '/departments': typeof DepartmentsRouteWithChildren
-  '/sermons': typeof SermonsRouteWithChildren
-  '/seven-mountains': typeof SevenMountainsRoute
-  '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/departments/$slug': typeof DepartmentsSlugRoute
-  '/sermons/$slug': typeof SermonsSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/about'
-    | '/contact'
-    | '/departments'
-    | '/sermons'
-    | '/seven-mountains'
-    | '/sitemap.xml'
-    | '/departments/$slug'
-    | '/sermons/$slug'
+  fullPaths: never
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/about'
-    | '/contact'
-    | '/departments'
-    | '/sermons'
-    | '/seven-mountains'
-    | '/sitemap.xml'
-    | '/departments/$slug'
-    | '/sermons/$slug'
-  id:
-    | '__root__'
-    | '/'
-    | '/about'
-    | '/contact'
-    | '/departments'
-    | '/sermons'
-    | '/seven-mountains'
-    | '/sitemap.xml'
-    | '/departments/$slug'
-    | '/sermons/$slug'
+  to: never
+  id: '__root__'
   fileRoutesById: FileRoutesById
 }
-export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
-  ContactRoute: typeof ContactRoute
-  DepartmentsRoute: typeof DepartmentsRouteWithChildren
-  SermonsRoute: typeof SermonsRouteWithChildren
-  SevenMountainsRoute: typeof SevenMountainsRoute
-  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-}
+export interface RootRouteChildren {}
 
 declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/seven-mountains': {
-      id: '/seven-mountains'
-      path: '/seven-mountains'
-      fullPath: '/seven-mountains'
-      preLoaderRoute: typeof SevenMountainsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sermons': {
-      id: '/sermons'
-      path: '/sermons'
-      fullPath: '/sermons'
-      preLoaderRoute: typeof SermonsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/departments': {
-      id: '/departments'
-      path: '/departments'
-      fullPath: '/departments'
-      preLoaderRoute: typeof DepartmentsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sermons/$slug': {
-      id: '/sermons/$slug'
-      path: '/$slug'
-      fullPath: '/sermons/$slug'
-      preLoaderRoute: typeof SermonsSlugRouteImport
-      parentRoute: typeof SermonsRoute
-    }
-    '/departments/$slug': {
-      id: '/departments/$slug'
-      path: '/$slug'
-      fullPath: '/departments/$slug'
-      preLoaderRoute: typeof DepartmentsSlugRouteImport
-      parentRoute: typeof DepartmentsRoute
-    }
-  }
+  interface FileRoutesByPath {}
 }
 
-interface DepartmentsRouteChildren {
-  DepartmentsSlugRoute: typeof DepartmentsSlugRoute
-}
-
-const DepartmentsRouteChildren: DepartmentsRouteChildren = {
-  DepartmentsSlugRoute: DepartmentsSlugRoute,
-}
-
-const DepartmentsRouteWithChildren = DepartmentsRoute._addFileChildren(
-  DepartmentsRouteChildren,
-)
-
-interface SermonsRouteChildren {
-  SermonsSlugRoute: typeof SermonsSlugRoute
-}
-
-const SermonsRouteChildren: SermonsRouteChildren = {
-  SermonsSlugRoute: SermonsSlugRoute,
-}
-
-const SermonsRouteWithChildren =
-  SermonsRoute._addFileChildren(SermonsRouteChildren)
-
-const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
-  ContactRoute: ContactRoute,
-  DepartmentsRoute: DepartmentsRouteWithChildren,
-  SermonsRoute: SermonsRouteWithChildren,
-  SevenMountainsRoute: SevenMountainsRoute,
-  SitemapDotxmlRoute: SitemapDotxmlRoute,
-}
+const rootRouteChildren: RootRouteChildren = {}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
