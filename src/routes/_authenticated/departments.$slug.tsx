@@ -175,7 +175,7 @@ function KpiDashboard({ slug, kpis, onChange }: { slug: string; kpis: any[]; onC
   return (
     <div className="space-y-6">
       <Card className="p-6">
-        <p className="text-xs uppercase tracking-widest text-muted-foreground">Log a KPI entry</p>
+        <p className="text-xs uppercase tracking-widest text-muted-foreground">Log a new KPI entry</p>
         <form onSubmit={submit} className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
             <Label>KPI name</Label>
@@ -216,28 +216,77 @@ function KpiDashboard({ slug, kpis, onChange }: { slug: string; kpis: any[]; onC
         <Card className="p-8 text-center text-sm text-muted-foreground">No KPIs logged yet.</Card>
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
-          {kpis.map((k) => {
-            const pct = k.target && k.actual != null ? Math.min(100, Math.round((k.actual / k.target) * 100)) : 0;
-            return (
-              <Card key={k.id} className="p-5">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">{k.category.replace("_", " ")} · {k.period_type}</p>
-                    <p className="mt-1 font-serif text-lg">{k.kpi_name}</p>
-                  </div>
-                  <span className={`h-3 w-3 rounded-full ${statusColor(k.actual, k.target)}`} />
-                </div>
-                <div className="mt-4 flex items-baseline justify-between text-sm">
-                  <span><strong className="text-xl">{k.actual ?? "—"}</strong> <span className="text-muted-foreground">/ {k.target ?? "—"}</span></span>
-                  <span className="text-xs text-muted-foreground">{k.period_date}</span>
-                </div>
-                <Progress value={pct} className="mt-3" />
-              </Card>
-            );
-          })}
+          {kpis.map((k) => (
+            <KpiCard key={k.id} kpi={k} onChange={onChange} />
+          ))}
         </div>
       )}
     </div>
+  );
+}
+
+function KpiCard({ kpi, onChange }: { kpi: any; onChange: () => void }) {
+  const [actual, setActual] = useState(kpi.actual != null ? String(kpi.actual) : "");
+  const [date, setDate] = useState(kpi.period_date ?? new Date().toISOString().slice(0, 10));
+  const [saving, setSaving] = useState(false);
+
+  const save = async () => {
+    setSaving(true);
+    const { error } = await supabase
+      .from("kpis")
+      .update({
+        actual: actual === "" ? null : Number(actual),
+        period_date: date,
+      })
+      .eq("id", kpi.id);
+    setSaving(false);
+    if (error) return toast.error(error.message);
+    toast.success("KPI updated");
+    onChange();
+  };
+
+  const pct = kpi.target && kpi.actual != null ? Math.min(100, Math.round((kpi.actual / kpi.target) * 100)) : 0;
+
+  return (
+    <Card className="p-5">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">{kpi.category.replace("_", " ").toUpperCase()} · {kpi.period_type.toUpperCase()}</p>
+          <p className="mt-1 font-serif text-lg">{kpi.kpi_name}</p>
+        </div>
+        <span className={`h-3 w-3 rounded-full ${statusColor(kpi.actual, kpi.target)}`} />
+      </div>
+      <div className="mt-4 flex items-end justify-between gap-4">
+        <div className="flex-1">
+          <Label className="text-[0.65rem] uppercase tracking-wider text-muted-foreground">Actual / Target</Label>
+          <div className="mt-1 flex items-center gap-2">
+            <Input
+              type="number"
+              step="any"
+              value={actual}
+              onChange={(e) => setActual(e.target.value)}
+              placeholder="—"
+              className="h-9 w-24 text-right"
+            />
+            <span className="text-sm text-muted-foreground">/ {kpi.target ?? "—"}</span>
+          </div>
+        </div>
+        <div className="text-right">
+          <Label className="text-[0.65rem] uppercase tracking-wider text-muted-foreground">Period</Label>
+          <Input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className="mt-1 h-9 w-36 text-right text-xs"
+          />
+        </div>
+      </div>
+      <Progress value={pct} className="mt-4" />
+      <div className="mt-3 flex items-center justify-between">
+        <span className="text-xs text-muted-foreground">{pct}% of target</span>
+        <Button size="sm" onClick={save} disabled={saving}>{saving ? "Saving…" : "Save live value"}</Button>
+      </div>
+    </Card>
   );
 }
 
