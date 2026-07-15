@@ -70,6 +70,7 @@ function DepartmentPortal() {
         </TabsList>
 
         <TabsContent value="overview" className="mt-6 space-y-6">
+          {slug === "religion" && <FiveFoldHub />}
           <Card className="p-6">
             <p className="text-xs uppercase tracking-widest text-muted-foreground">Vision</p>
             <p className="mt-2 text-sm leading-relaxed">{d.vision ?? "Not yet set."}</p>
@@ -139,6 +140,35 @@ function DepartmentPortal() {
         )}
       </Tabs>
     </div>
+  );
+}
+
+const FIVE_FOLD = [
+  { slug: "apostolic", name: "Apostolic Office", verse: "Ephesians 2:20", blurb: "Foundations, church planting, ordinations." },
+  { slug: "prophetic", name: "Prophetic Office", verse: "1 Corinthians 14:3", blurb: "Integrity of prophecy, intercession, strategy." },
+  { slug: "evangelistic", name: "Evangelistic Office", verse: "Romans 10:14-15", blurb: "Souls won, outreach, follow-up." },
+  { slug: "pastoral", name: "Pastoral Office", verse: "1 Peter 5:2-4", blurb: "Shepherding, care, small groups." },
+  { slug: "teaching", name: "Teaching Office", verse: "2 Timothy 3:16-17", blurb: "Doctrine, School of Ministry, curriculum." },
+] as const;
+
+function FiveFoldHub() {
+  return (
+    <Card className="p-6">
+      <p className="text-xs uppercase tracking-widest text-muted-foreground">Five-Fold Offices under the Religion Mountain</p>
+      <p className="mt-2 text-sm text-muted-foreground">Each office below is its own portal — with its own KPIs, projects, storage, team and reports.</p>
+      <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {FIVE_FOLD.map((o) => (
+          <Link key={o.slug} to="/departments/$slug" params={{ slug: o.slug }}>
+            <Card className="h-full p-4 transition hover:border-foreground">
+              <p className="text-[0.6rem] uppercase tracking-widest text-muted-foreground">{o.verse}</p>
+              <p className="mt-1 font-serif text-lg">{o.name}</p>
+              <p className="mt-2 text-xs text-muted-foreground">{o.blurb}</p>
+              <p className="mt-3 text-xs">Open office portal →</p>
+            </Card>
+          </Link>
+        ))}
+      </div>
+    </Card>
   );
 }
 

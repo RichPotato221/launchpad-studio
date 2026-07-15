@@ -67,6 +67,12 @@ export const workspaceRegistry: Record<string, Entry> = {
   "media-communication": { label: "Kingdom Projects", component: lazy(() => import("@/components/workspaces/SevenMountainsWorkspace")) },
   "arts-entertainment-sports": { label: "Kingdom Projects", component: lazy(() => import("@/components/workspaces/SevenMountainsWorkspace")) },
   religion: { label: "Kingdom Projects", component: lazy(() => import("@/components/workspaces/SevenMountainsWorkspace")) },
+  // Five-Fold offices (under Religion) — each gets its own project pipeline
+  apostolic: { label: "Apostolic Projects", component: lazy(() => import("@/components/workspaces/SevenMountainsWorkspace")) },
+  prophetic: { label: "Prophetic Projects", component: lazy(() => import("@/components/workspaces/SevenMountainsWorkspace")) },
+  evangelistic: { label: "Evangelistic Projects", component: lazy(() => import("@/components/workspaces/SevenMountainsWorkspace")) },
+  pastoral: { label: "Pastoral Projects", component: lazy(() => import("@/components/workspaces/SevenMountainsWorkspace")) },
+  teaching: { label: "Teaching Projects", component: lazy(() => import("@/components/workspaces/SevenMountainsWorkspace")) },
 };
 
 export function getWorkspaceFor(slug: string) {
