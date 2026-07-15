@@ -70,6 +70,7 @@ function DepartmentPortal() {
         </TabsList>
 
         <TabsContent value="overview" className="mt-6 space-y-6">
+          {slug === "religion" && <FiveFoldHub />}
           <Card className="p-6">
             <p className="text-xs uppercase tracking-widest text-muted-foreground">Vision</p>
             <p className="mt-2 text-sm leading-relaxed">{d.vision ?? "Not yet set."}</p>
