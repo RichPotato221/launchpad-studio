@@ -103,9 +103,7 @@ function DepartmentPortal() {
         </TabsContent>
 
         <TabsContent value="team" className="mt-6">
-          <Card className="p-6 text-sm text-muted-foreground">
-            Team rosters are managed from the Admin area. Users are attached to this department by role.
-          </Card>
+          <DepartmentTeam slug={slug} />
         </TabsContent>
 
         <TabsContent value="kpis" className="mt-6">
@@ -141,6 +139,67 @@ function DepartmentPortal() {
         )}
       </Tabs>
     </div>
+  );
+}
+
+function DepartmentTeam({ slug }: { slug: string }) {
+  const members = useQuery({
+    queryKey: ["dept-team", slug],
+    queryFn: async () => {
+      const { data: profs, error } = await supabase
+        .from("profiles")
+        .select("id, full_name, email, branch, requested_role, primary_department, approval_status")
+        .eq("approval_status", "approved")
+        .eq("primary_department", slug)
+        .order("full_name");
+      if (error) throw error;
+      return profs ?? [];
+    },
+  });
+
+  const tithes = useQuery({
+    enabled: slug === "finance",
+    queryKey: ["dept-team-tithes", slug],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("finance_entries")
+        .select("member_id, amount")
+        .eq("kind", "tithe");
+      if (error) throw error;
+      const map = new Map<string, number>();
+      for (const r of data ?? []) {
+        if (!r.member_id) continue;
+        map.set(r.member_id, (map.get(r.member_id) ?? 0) + (Number(r.amount) || 0));
+      }
+      return map;
+    },
+  });
+
+  if (members.isLoading) return <Card className="p-6 text-sm text-muted-foreground">Loading team…</Card>;
+  const rows = members.data ?? [];
+  if (rows.length === 0) return <Card className="p-6 text-sm text-muted-foreground">No approved members yet in this department.</Card>;
+
+  return (
+    <Card className="p-0 overflow-hidden">
+      <div className="grid grid-cols-12 gap-2 border-b border-border bg-muted/40 px-4 py-3 text-[0.65rem] uppercase tracking-widest text-muted-foreground">
+        <div className="col-span-4">Member</div>
+        <div className="col-span-3">Email</div>
+        <div className="col-span-2">Branch</div>
+        <div className="col-span-2">Role</div>
+        <div className="col-span-1 text-right">{slug === "finance" ? "Tithe (R)" : ""}</div>
+      </div>
+      {rows.map((m: any) => (
+        <div key={m.id} className="grid grid-cols-12 gap-2 border-b border-border px-4 py-3 text-sm last:border-0">
+          <div className="col-span-4 font-medium">{m.full_name ?? "—"}</div>
+          <div className="col-span-3 truncate text-muted-foreground">{m.email}</div>
+          <div className="col-span-2 text-muted-foreground">{m.branch ?? "—"}</div>
+          <div className="col-span-2 text-muted-foreground">{m.requested_role ?? "—"}</div>
+          <div className="col-span-1 text-right font-mono">
+            {slug === "finance" ? (tithes.data?.get(m.id) ?? 0).toFixed(2) : ""}
+          </div>
+        </div>
+      ))}
+    </Card>
   );
 }
 
