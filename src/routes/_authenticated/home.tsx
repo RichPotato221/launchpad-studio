@@ -96,7 +96,7 @@ function HomePage() {
               </div>
               <div className="p-6 md:p-8">
                 <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Senior Pastor</p>
-                <h3 className="mt-3 font-serif text-2xl">[Prophetess Ntombikayise Mnyandu]</h3>
+                <h3 className="mt-3 font-serif text-2xl">Prophetess Ntombikayise Mnyandu</h3>
               </div>
             </div>
           </div>
