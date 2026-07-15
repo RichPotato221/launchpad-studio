@@ -288,7 +288,12 @@ export type Database = {
         | "team_member"
       approval_status: "pending" | "approved" | "rejected"
       branch: "twatwa" | "joburg_north" | "joburg_south"
-      dept_kind: "functional" | "developmental" | "seven_mountain" | "five_fold"
+      dept_kind:
+        | "functional"
+        | "developmental"
+        | "seven_mountain"
+        | "five_fold"
+        | "leadership"
       kpi_category:
         | "spiritual_impact"
         | "people_development"
@@ -434,7 +439,13 @@ export const Constants = {
       ],
       approval_status: ["pending", "approved", "rejected"],
       branch: ["twatwa", "joburg_north", "joburg_south"],
-      dept_kind: ["functional", "developmental", "seven_mountain", "five_fold"],
+      dept_kind: [
+        "functional",
+        "developmental",
+        "seven_mountain",
+        "five_fold",
+        "leadership",
+      ],
       kpi_category: [
         "spiritual_impact",
         "people_development",

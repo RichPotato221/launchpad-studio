@@ -1,0 +1,1 @@
+ALTER TYPE dept_kind ADD VALUE IF NOT EXISTS 'leadership';
