@@ -14,16 +14,261 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      audit_log: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          details: Json | null
+          entity: string | null
+          entity_id: string | null
+          id: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          details?: Json | null
+          entity?: string | null
+          entity_id?: string | null
+          id?: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          details?: Json | null
+          entity?: string | null
+          entity_id?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      departments: {
+        Row: {
+          chair_name: string | null
+          created_at: string
+          functions: string[] | null
+          kind: Database["public"]["Enums"]["dept_kind"]
+          mission: string | null
+          name: string
+          overseer_name: string | null
+          parent_slug: string | null
+          purpose: string | null
+          scripture: string | null
+          slug: string
+          sort_order: number
+          updated_at: string
+          vision: string | null
+        }
+        Insert: {
+          chair_name?: string | null
+          created_at?: string
+          functions?: string[] | null
+          kind: Database["public"]["Enums"]["dept_kind"]
+          mission?: string | null
+          name: string
+          overseer_name?: string | null
+          parent_slug?: string | null
+          purpose?: string | null
+          scripture?: string | null
+          slug: string
+          sort_order?: number
+          updated_at?: string
+          vision?: string | null
+        }
+        Update: {
+          chair_name?: string | null
+          created_at?: string
+          functions?: string[] | null
+          kind?: Database["public"]["Enums"]["dept_kind"]
+          mission?: string | null
+          name?: string
+          overseer_name?: string | null
+          parent_slug?: string | null
+          purpose?: string | null
+          scripture?: string | null
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+          vision?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "departments_parent_slug_fkey"
+            columns: ["parent_slug"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
+      kpis: {
+        Row: {
+          actual: number | null
+          baseline: number | null
+          category: Database["public"]["Enums"]["kpi_category"]
+          department_slug: string
+          entered_at: string
+          entered_by: string | null
+          id: string
+          kpi_name: string
+          notes: string | null
+          period_date: string
+          period_type: Database["public"]["Enums"]["kpi_period"]
+          target: number | null
+          updated_at: string
+        }
+        Insert: {
+          actual?: number | null
+          baseline?: number | null
+          category: Database["public"]["Enums"]["kpi_category"]
+          department_slug: string
+          entered_at?: string
+          entered_by?: string | null
+          id?: string
+          kpi_name: string
+          notes?: string | null
+          period_date: string
+          period_type: Database["public"]["Enums"]["kpi_period"]
+          target?: number | null
+          updated_at?: string
+        }
+        Update: {
+          actual?: number | null
+          baseline?: number | null
+          category?: Database["public"]["Enums"]["kpi_category"]
+          department_slug?: string
+          entered_at?: string
+          entered_by?: string | null
+          id?: string
+          kpi_name?: string
+          notes?: string | null
+          period_date?: string
+          period_type?: Database["public"]["Enums"]["kpi_period"]
+          target?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kpis_department_slug_fkey"
+            columns: ["department_slug"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          phone: string | null
+          primary_department: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          phone?: string | null
+          primary_department?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          primary_department?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      settings: {
+        Row: {
+          key: string
+          updated_at: string
+          updated_by: string | null
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          updated_by?: string | null
+          value: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          updated_by?: string | null
+          value?: Json
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          department_slug: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          department_slug?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          department_slug?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_admin: { Args: { _user_id: string }; Returns: boolean }
+      user_dept_slugs: { Args: { _user_id: string }; Returns: string[] }
     }
     Enums: {
-      [_ in never]: never
+      app_role:
+        | "senior_apostle"
+        | "chairperson"
+        | "secretary"
+        | "lead_pastor"
+        | "associate_pastor"
+        | "department_chair"
+        | "team_member"
+      dept_kind: "functional" | "developmental" | "seven_mountain" | "five_fold"
+      kpi_category:
+        | "spiritual_impact"
+        | "people_development"
+        | "operational_excellence"
+        | "stewardship"
+        | "kingdom_influence"
+      kpi_period: "weekly" | "monthly" | "quarterly" | "annual"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +395,25 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: [
+        "senior_apostle",
+        "chairperson",
+        "secretary",
+        "lead_pastor",
+        "associate_pastor",
+        "department_chair",
+        "team_member",
+      ],
+      dept_kind: ["functional", "developmental", "seven_mountain", "five_fold"],
+      kpi_category: [
+        "spiritual_impact",
+        "people_development",
+        "operational_excellence",
+        "stewardship",
+        "kingdom_influence",
+      ],
+      kpi_period: ["weekly", "monthly", "quarterly", "annual"],
+    },
   },
 } as const
