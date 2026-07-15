@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import { DEPARTMENT_HERO, DEPARTMENT_GALLERY } from "@/lib/portalImages";
@@ -106,9 +107,7 @@ function DepartmentPortal() {
         </TabsContent>
 
         <TabsContent value="reports" className="mt-6">
-          <Card className="p-6 text-sm text-muted-foreground">
-            Post departmental comments and upload documents from the <Link to="/reports" className="underline">Reports</Link> page — every approved member can contribute for their department.
-          </Card>
+          <DepartmentReports slug={slug} deptName={d.name} />
         </TabsContent>
 
         <TabsContent value="resources" className="mt-6">
@@ -238,6 +237,120 @@ function KpiDashboard({ slug, kpis, onChange }: { slug: string; kpis: any[]; onC
           })}
         </div>
       )}
+    </div>
+  );
+}
+
+function DepartmentReports({ slug, deptName }: { slug: string; deptName: string }) {
+  const entries = useQuery({
+    queryKey: ["report-entries", slug],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("report_entries")
+        .select("*")
+        .eq("department_slug", slug)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title.trim()) return toast.error("Title is required.");
+    setSaving(true);
+    try {
+      const { data: userRes } = await supabase.auth.getUser();
+      if (!userRes.user) throw new Error("Not signed in");
+
+      let file_url: string | null = null;
+      let file_name: string | null = null;
+      if (file) {
+        const path = `${slug}/${Date.now()}-${file.name.replace(/[^\w.\-]+/g, "_")}`;
+        const up = await supabase.storage.from("department-reports").upload(path, file);
+        if (up.error) throw up.error;
+        const signed = await supabase.storage
+          .from("department-reports")
+          .createSignedUrl(path, 60 * 60 * 24 * 365);
+        if (signed.error) throw signed.error;
+        file_url = signed.data.signedUrl;
+        file_name = file.name;
+      }
+
+      const { error } = await supabase.from("report_entries").insert({
+        department_slug: slug,
+        title: title.trim(),
+        body: body.trim() || null,
+        file_url,
+        file_name,
+        created_by: userRes.user.id,
+      });
+      if (error) throw error;
+      toast.success("Saved to department storage");
+      setTitle(""); setBody(""); setFile(null);
+      entries.refetch();
+    } catch (err: any) {
+      toast.error(err?.message ?? "Failed to save");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <Card className="p-6">
+        <p className="text-xs uppercase tracking-widest text-muted-foreground">{deptName} · Document storage</p>
+        <h3 className="mt-1 font-serif text-2xl">Add a document or comment</h3>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Saved to this department's storage. Admin, Chairperson, and Senior Pastor can review all submissions.
+        </p>
+        <form onSubmit={submit} className="mt-4 grid gap-4 md:grid-cols-2">
+          <div className="md:col-span-2">
+            <Label>Title</Label>
+            <Input required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. October finance report" />
+          </div>
+          <div className="md:col-span-2">
+            <Label>Comment / notes (optional)</Label>
+            <Textarea rows={3} value={body} onChange={(e) => setBody(e.target.value)} />
+          </div>
+          <div className="md:col-span-2">
+            <Label>Attach a document (optional)</Label>
+            <Input type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+            <p className="mt-1 text-xs text-muted-foreground">PDF, Word, Excel, images — any file.</p>
+          </div>
+          <div className="md:col-span-2">
+            <Button type="submit" disabled={saving}>{saving ? "Saving…" : "Save to storage"}</Button>
+          </div>
+        </form>
+      </Card>
+
+      <div>
+        <p className="text-xs uppercase tracking-widest text-muted-foreground">Stored items</p>
+        <div className="mt-3 space-y-3">
+          {(entries.data ?? []).map((e: any) => (
+            <Card key={e.id} className="p-5">
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <p className="font-serif text-lg">{e.title}</p>
+                <span className="text-xs text-muted-foreground">{new Date(e.created_at).toLocaleString()}</span>
+              </div>
+              {e.body && <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed">{e.body}</p>}
+              {e.file_url && (
+                <a href={e.file_url} target="_blank" rel="noreferrer" className="mt-3 inline-block text-sm underline">
+                  📎 {e.file_name ?? "Attached document"}
+                </a>
+              )}
+            </Card>
+          ))}
+          {(entries.data ?? []).length === 0 && (
+            <Card className="p-8 text-center text-sm text-muted-foreground">Nothing saved yet.</Card>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
