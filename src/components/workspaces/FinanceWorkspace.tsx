@@ -145,9 +145,9 @@ function ExpenseClaims({ departmentSlug, currentUserId }: WorkspaceProps) {
             <Input type="number" step="any" required value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} />
           </div>
           <div>
-            <Label>Claim type</Label>
+            <Label>Transaction type</Label>
             <Select value={form.claim_type} onValueChange={(v) => setForm({ ...form, claim_type: v })}>
-              <SelectTrigger><SelectValue placeholder="Select claim type" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder="Select transaction type" /></SelectTrigger>
               <SelectContent>
                 {CLAIM_TYPES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
               </SelectContent>
