@@ -161,33 +161,54 @@ export type Database = {
       }
       profiles: {
         Row: {
+          approval_status: Database["public"]["Enums"]["approval_status"]
+          approved_at: string | null
+          approved_by: string | null
           avatar_url: string | null
           bio: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
           created_at: string
+          email: string | null
           full_name: string | null
           id: string
           phone: string | null
           primary_department: string | null
+          requested_department_slug: string | null
+          requested_role: string | null
           updated_at: string
         }
         Insert: {
+          approval_status?: Database["public"]["Enums"]["approval_status"]
+          approved_at?: string | null
+          approved_by?: string | null
           avatar_url?: string | null
           bio?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
           created_at?: string
+          email?: string | null
           full_name?: string | null
           id: string
           phone?: string | null
           primary_department?: string | null
+          requested_department_slug?: string | null
+          requested_role?: string | null
           updated_at?: string
         }
         Update: {
+          approval_status?: Database["public"]["Enums"]["approval_status"]
+          approved_at?: string | null
+          approved_by?: string | null
           avatar_url?: string | null
           bio?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
           created_at?: string
+          email?: string | null
           full_name?: string | null
           id?: string
           phone?: string | null
           primary_department?: string | null
+          requested_department_slug?: string | null
+          requested_role?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -242,6 +263,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      approve_member: {
+        Args: { _approve: boolean; _user_id: string }
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -261,6 +286,8 @@ export type Database = {
         | "associate_pastor"
         | "department_chair"
         | "team_member"
+      approval_status: "pending" | "approved" | "rejected"
+      branch: "twatwa" | "joburg_north" | "joburg_south"
       dept_kind: "functional" | "developmental" | "seven_mountain" | "five_fold"
       kpi_category:
         | "spiritual_impact"
@@ -405,6 +432,8 @@ export const Constants = {
         "department_chair",
         "team_member",
       ],
+      approval_status: ["pending", "approved", "rejected"],
+      branch: ["twatwa", "joburg_north", "joburg_south"],
       dept_kind: ["functional", "developmental", "seven_mountain", "five_fold"],
       kpi_category: [
         "spiritual_impact",
