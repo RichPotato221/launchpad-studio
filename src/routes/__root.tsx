@@ -46,9 +46,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
       <div className="max-w-md text-center">
         <p className="eyebrow">Something went wrong</p>
         <h1 className="mt-4 font-serif text-3xl text-foreground">This page didn't load</h1>
-        <p className="mt-3 text-sm text-muted-foreground">
-          Please try again, or return home.
-        </p>
+        <p className="mt-3 text-sm text-muted-foreground">Please try again, or return home.</p>
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <button
             onClick={() => { router.invalidate(); reset(); }}
@@ -73,12 +71,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Grace Chapel — A place of quiet welcome" },
-      { name: "description", content: "Grace Chapel is a warm, welcoming church in Cedar Hollow. Sunday services, sermons, community, and a home for anyone seeking." },
-      { name: "author", content: "Grace Chapel" },
+      { title: "Throne Room of God Kingdom Center — Intimacy · Identity · Purpose" },
+      {
+        name: "description",
+        content:
+          "Throne Room of God Kingdom Center (TRoGKC) — doctrinally equipping the saints, establishing apostolic foundations, and commissioning ambassadors for Kingdom assignments.",
+      },
+      { name: "author", content: "Throne Room of God Kingdom Center" },
       { name: "theme-color", content: "#fcfbf8" },
-      { property: "og:title", content: "Grace Chapel — A place of quiet welcome" },
-      { property: "og:description", content: "A warm, welcoming church in Cedar Hollow. Join us Sunday." },
+      { property: "og:title", content: "Throne Room of God Kingdom Center" },
+      {
+        property: "og:description",
+        content: "Intimacy · Identity · Purpose — the 2026 theme of Throne Room of God Kingdom Center.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

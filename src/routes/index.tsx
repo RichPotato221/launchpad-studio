@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import heroImage from "@/assets/hero-sanctuary.jpg";
-import communityImage from "@/assets/community.jpg";
-import bibleImage from "@/assets/bible-candle.jpg";
+import logo from "@/assets/trog-logo.png";
+import theme2026 from "@/assets/theme-2026.jpg";
+import preaching from "@/assets/preaching.jpg";
+import podiumWoman from "@/assets/podium-woman.jpg";
+import { DEPARTMENTS } from "@/lib/departments";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -11,173 +13,209 @@ function Home() {
   return (
     <>
       {/* Hero */}
-      <section className="relative isolate overflow-hidden">
+      <section className="relative isolate overflow-hidden bg-ink text-cream">
         <div className="absolute inset-0 -z-10">
           <img
-            src={heroImage}
-            alt="Sunlight through stained glass in the Grace Chapel sanctuary"
-            width={1920}
-            height={1280}
-            className="h-full w-full object-cover"
+            src={preaching}
+            alt=""
+            aria-hidden
+            className="h-full w-full object-cover opacity-30"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-ink/70 via-ink/55 to-ink/85" />
+          <div className="absolute inset-0 bg-gradient-to-b from-ink via-ink/85 to-ink" />
         </div>
 
-        <div className="container-editorial flex min-h-[92vh] flex-col justify-end pb-20 pt-32 text-cream">
-          <p className="eyebrow text-brass">Est. 1904 · Cedar Hollow</p>
-          <h1 className="mt-6 max-w-4xl font-serif text-5xl leading-[1.05] tracking-tight md:text-7xl lg:text-8xl">
-            A quiet welcome, an open door, a shared table.
-          </h1>
-          <p className="mt-8 max-w-xl text-base leading-relaxed text-cream/85">
-            Grace Chapel is a small, warm-hearted church gathering weekly in
-            song, scripture, and service. Whoever you are, wherever you've
-            been — there is a seat here for you.
-          </p>
-          <div className="mt-10 flex flex-wrap gap-4">
-            <Link
-              to="/services"
-              className="border border-cream bg-cream px-7 py-3.5 text-xs font-medium uppercase tracking-widest text-ink transition-colors hover:bg-transparent hover:text-cream"
-            >
-              Plan a visit
-            </Link>
-            <Link
-              to="/sermons"
-              className="border border-cream/60 px-7 py-3.5 text-xs font-medium uppercase tracking-widest text-cream transition-colors hover:bg-cream/10"
-            >
-              Listen to sermons
-            </Link>
+        <div className="container-editorial flex min-h-[92vh] flex-col justify-center gap-10 py-24 md:flex-row md:items-center">
+          <div className="md:w-1/2">
+            <div className="mb-8 flex items-center gap-4">
+              <img
+                src={logo}
+                alt="Throne Room of God Kingdom Center logo"
+                width={868}
+                height={540}
+                className="h-16 w-auto brightness-0 invert-[0.95] contrast-125 md:h-20"
+                style={{ filter: "drop-shadow(0 0 12px rgba(0,0,0,0.4))" }}
+              />
+              <div className="font-serif text-2xl leading-tight">
+                Throne Room of God
+                <span className="block text-xs uppercase tracking-[0.28em] text-gold">
+                  Kingdom Center
+                </span>
+              </div>
+            </div>
+            <p className="eyebrow text-gold">2026 · The year of</p>
+            <h1 className="mt-4 font-serif text-5xl leading-[1.05] tracking-tight md:text-7xl">
+              Intimacy. Identity. <em className="text-gold">Purpose.</em>
+            </h1>
+            <p className="mt-8 max-w-xl text-base leading-relaxed text-cream/85">
+              Doctrinally equipping the saints in alignment with the biblical
+              standards of God's Kingdom — forming a Christ-centred nature and
+              culture that reflects the character of our Lord Jesus Christ.
+            </p>
+            <div className="mt-10 flex flex-wrap gap-4">
+              <Link
+                to="/about"
+                className="border border-gold bg-gold px-7 py-3.5 text-xs font-medium uppercase tracking-widest text-ink transition-colors hover:bg-transparent hover:text-gold"
+              >
+                Vision &amp; Mission
+              </Link>
+              <Link
+                to="/departments"
+                className="border border-cream/60 px-7 py-3.5 text-xs font-medium uppercase tracking-widest text-cream transition-colors hover:bg-cream/10"
+              >
+                Explore Departments
+              </Link>
+            </div>
+          </div>
+
+          <div className="md:w-1/2">
+            <img
+              src={theme2026}
+              alt="Throne Room of God Kingdom Center — 2026 theme: Intimacy, Identity, Purpose"
+              width={1086}
+              height={705}
+              className="w-full rounded shadow-editorial ring-1 ring-gold/30"
+            />
           </div>
         </div>
       </section>
 
-      {/* Welcome */}
-      <section className="container-editorial grid gap-16 py-28 md:grid-cols-12">
+      {/* Vision */}
+      <section className="container-editorial grid gap-16 py-24 md:grid-cols-12">
         <div className="md:col-span-5">
-          <p className="eyebrow">A word of welcome</p>
+          <p className="eyebrow">Our vision</p>
           <h2 className="mt-4 font-serif text-4xl leading-tight md:text-5xl">
-            <em className="text-terracotta">Come as you are.</em>{" "}
-            Stay as long as you'd like.
+            An apostolic house for the <em className="text-teal">nations</em>.
           </h2>
         </div>
-        <div className="space-y-6 text-base leading-loose text-muted-foreground md:col-span-6 md:col-start-7">
+        <div className="space-y-6 text-base leading-relaxed text-muted-foreground md:col-span-6 md:col-start-7">
           <p>
-            For over a century, our little chapel on Willow Street has been a
-            gathering place for pilgrims, seekers, doubters, and old friends
-            alike. We believe faith is a slow, honest conversation — one worth
-            having together.
+            We are committed to establishing strong apostolic foundations that
+            effectively resource and steward Kingdom assignments for global
+            impact, while restoring integrity and purity within the prophetic
+            ministry.
           </p>
           <p>
-            Whether this is your first Sunday in years or your first Sunday
-            ever, we're glad you're considering us. There is coffee. There
-            are hymns. There is time to think, and time to be still.
+            Under the headship of Jesus Christ and the leadership of the Senior
+            Apostle, every department, ministry and ambassador of TRoGKC is
+            aligned to one Vision, one Mission and one set of Core Values.
           </p>
           <Link
             to="/about"
             className="inline-flex items-center gap-3 text-sm font-medium text-foreground"
           >
             <span className="rule-brass" />
-            <span className="tracking-wide">Read our story</span>
+            <span className="tracking-wide">Read the full vision</span>
           </Link>
         </div>
       </section>
 
-      {/* Rhythms — three pillars */}
+      {/* Mission pillars */}
       <section className="border-y border-border/60 bg-secondary/50">
         <div className="container-editorial py-24">
           <div className="mb-16 max-w-2xl">
-            <p className="eyebrow">Our rhythms</p>
+            <p className="eyebrow">Our mission</p>
             <h2 className="mt-4 font-serif text-4xl md:text-5xl">
-              Gather. Grow. Give.
+              Five commitments of the house.
             </h2>
           </div>
-          <div className="grid gap-12 md:grid-cols-3">
+          <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-5">
             {[
-              { n: "01", t: "Worship together", d: "Sunday mornings we gather with candles, scripture, hymns old and new, and a table set for anyone who's hungry.", link: "/services" },
-              { n: "02", t: "Grow in community", d: "Midweek circles, kids' Sunday school, prayer suppers, and unhurried conversations over shared meals.", link: "/about" },
-              { n: "03", t: "Serve our neighbors", d: "A community pantry, a hospital chaplaincy, and a garden that grows for the food bank down the road.", link: "/contact" },
-            ].map((c) => (
-              <div key={c.n} className="border-t border-foreground pt-6">
-                <p className="font-serif text-2xl text-brass">{c.n}</p>
-                <h3 className="mt-6 font-serif text-2xl">{c.t}</h3>
-                <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{c.d}</p>
-                <Link to={c.link} className="mt-6 inline-block text-xs font-medium uppercase tracking-widest text-foreground">
-                  Learn more →
-                </Link>
+              "Consistently teach and mature believers in the biblical doctrines of the Christian faith.",
+              "Intentionally model and cultivate a life that reflects Christ-centeredness.",
+              "Provide training and development for leaders and ministers called for Kingdom purposes.",
+              "Commission fully equipped ambassadors and establish Kingdom Centres for global assignments.",
+              "Bring clarity, order and distinction to prophetic expressions within the Body of Christ.",
+            ].map((m, i) => (
+              <div key={i} className="border-t border-foreground pt-5">
+                <p className="font-serif text-2xl text-gold">
+                  0{i + 1}
+                </p>
+                <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{m}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Image + verse */}
-      <section className="container-editorial grid gap-12 py-28 md:grid-cols-12 md:items-center">
+      {/* Departments preview */}
+      <section className="container-editorial py-24">
+        <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
+          <div className="max-w-xl">
+            <p className="eyebrow">Departments</p>
+            <h2 className="mt-4 font-serif text-4xl md:text-5xl">
+              How the house is structured.
+            </h2>
+          </div>
+          <Link
+            to="/departments"
+            className="border border-foreground px-6 py-3 text-xs font-medium uppercase tracking-widest text-foreground hover:bg-foreground hover:text-background"
+          >
+            All departments
+          </Link>
+        </div>
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {DEPARTMENTS.slice(0, 6).map((d) => (
+            <Link
+              key={d.slug}
+              to="/departments/$slug"
+              params={{ slug: d.slug }}
+              className="group block border border-border bg-card"
+            >
+              <div className="aspect-[4/3] overflow-hidden">
+                <img
+                  src={d.image}
+                  alt={d.name}
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                />
+              </div>
+              <div className="p-6">
+                <p className="text-[0.65rem] uppercase tracking-[0.22em] text-teal">
+                  {d.pillar}
+                </p>
+                <h3 className="mt-2 font-serif text-2xl">{d.name}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground line-clamp-3">
+                  {d.vision}
+                </p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Verse + image */}
+      <section className="container-editorial grid gap-12 py-16 md:grid-cols-12 md:items-center">
         <div className="md:col-span-7">
           <img
-            src={communityImage}
-            alt="Church community gathered outdoors after Sunday service"
-            width={1600}
-            height={1100}
-            loading="lazy"
+            src={podiumWoman}
+            alt="Minister at the pulpit of Throne Room of God Kingdom Center"
             className="w-full object-cover shadow-editorial"
           />
         </div>
         <blockquote className="md:col-span-5">
           <p className="font-serif text-3xl leading-snug text-foreground md:text-4xl">
-            <span className="text-brass">“</span>
-            For where two or three are gathered in my name, there am I among them.
-            <span className="text-brass">”</span>
+            <span className="text-gold">“</span>
+            Go therefore and make disciples of all nations, baptising them in
+            the name of the Father, and of the Son, and of the Holy Spirit.
+            <span className="text-gold">”</span>
           </p>
           <footer className="mt-6 text-sm uppercase tracking-widest text-muted-foreground">
-            — Matthew 18:20
+            — Matthew 28:19
           </footer>
         </blockquote>
       </section>
 
-      {/* This week */}
-      <section className="border-y border-border/60">
-        <div className="container-editorial grid gap-12 py-24 md:grid-cols-12">
-          <div className="md:col-span-4">
-            <p className="eyebrow">This week</p>
-            <h2 className="mt-4 font-serif text-4xl">Come sit with us</h2>
-          </div>
-          <ul className="divide-y divide-border md:col-span-8">
-            {[
-              { day: "Sunday", time: "8:30 am", title: "Contemplative Service", place: "Sanctuary" },
-              { day: "Sunday", time: "10:00 am", title: "Family Worship + Kids' Church", place: "Sanctuary & Hall" },
-              { day: "Wednesday", time: "6:30 pm", title: "Prayer & Compline", place: "Chapel" },
-              { day: "Saturday", time: "9:00 am", title: "Community Garden", place: "Willow St. lot" },
-            ].map((e) => (
-              <li key={e.day + e.time + e.title} className="grid grid-cols-12 gap-4 py-6">
-                <div className="col-span-4 md:col-span-3">
-                  <p className="text-xs uppercase tracking-widest text-brass">{e.day}</p>
-                  <p className="mt-1 font-serif text-xl">{e.time}</p>
-                </div>
-                <div className="col-span-8 md:col-span-9">
-                  <p className="font-serif text-xl">{e.title}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">{e.place}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
       {/* CTA */}
-      <section className="relative isolate overflow-hidden">
-        <div className="absolute inset-0 -z-10">
-          <img src={bibleImage} alt="" width={1400} height={1000} loading="lazy" className="h-full w-full object-cover" />
-          <div className="absolute inset-0 bg-ink/80" />
-        </div>
-        <div className="container-editorial py-28 text-center text-cream">
-          <p className="eyebrow text-brass">Visiting on Sunday?</p>
+      <section className="relative isolate overflow-hidden bg-ink text-cream">
+        <div className="container-editorial py-28 text-center">
+          <p className="eyebrow text-gold">Come home to the house</p>
           <h2 className="mx-auto mt-4 max-w-2xl font-serif text-4xl leading-tight md:text-5xl">
-            We'll save you a seat, a bulletin, and the good coffee.
+            There is a seat, a covering and an assignment for you.
           </h2>
           <Link
             to="/contact"
-            className="mt-10 inline-block border border-cream bg-cream px-8 py-4 text-xs font-medium uppercase tracking-widest text-ink transition-colors hover:bg-transparent hover:text-cream"
+            className="mt-10 inline-block border border-gold bg-gold px-8 py-4 text-xs font-medium uppercase tracking-widest text-ink transition-colors hover:bg-transparent hover:text-gold"
           >
-            Say hello →
+            Plan your visit →
           </Link>
         </div>
       </section>

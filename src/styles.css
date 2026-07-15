@@ -5,8 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Grace Chapel — warm editorial design system.
- * Cream paper, deep walnut ink, brass gold, terracotta accent.
+ * Throne Room of God Kingdom Center — editorial design system.
+ * Cream paper, ink black, brand gold, deep teal accent.
  */
 
 @theme inline {
@@ -39,22 +39,25 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-brass: var(--brass);
+  --color-gold: var(--gold);
+  --color-teal: var(--teal);
   --color-terracotta: var(--terracotta);
   --color-cream: var(--cream);
   --color-ink: var(--ink);
 
-  --shadow-editorial: 0 30px 60px -30px color-mix(in oklab, var(--ink) 40%, transparent);
+  --shadow-editorial: 0 30px 60px -30px color-mix(in oklab, var(--ink) 45%, transparent);
   --shadow-soft: 0 12px 32px -16px color-mix(in oklab, var(--ink) 25%, transparent);
 }
 
 :root {
   --radius: 0.25rem;
 
-  /* Warm editorial palette */
   --cream: oklch(0.985 0.008 85);        /* #fcfbf8 */
-  --ink: oklch(0.24 0.03 55);            /* #2d2418 walnut */
-  --brass: oklch(0.72 0.11 80);          /* #c9a961 */
-  --terracotta: oklch(0.5 0.14 35);      /* #8b3a2f */
+  --ink: oklch(0.18 0.01 60);            /* near-black brand ink */
+  --gold: oklch(0.78 0.14 80);           /* brand gold flame */
+  --brass: oklch(0.78 0.14 80);
+  --teal: oklch(0.55 0.09 210);          /* brand teal backdrop */
+  --terracotta: oklch(0.5 0.14 35);
 
   --background: var(--cream);
   --foreground: var(--ink);
@@ -67,14 +70,14 @@
   --secondary: oklch(0.94 0.015 80);
   --secondary-foreground: var(--ink);
   --muted: oklch(0.94 0.012 80);
-  --muted-foreground: oklch(0.45 0.025 55);
-  --accent: var(--terracotta);
+  --muted-foreground: oklch(0.42 0.02 60);
+  --accent: var(--teal);
   --accent-foreground: var(--cream);
   --destructive: oklch(0.55 0.2 27);
   --destructive-foreground: var(--cream);
   --border: oklch(0.88 0.02 75);
   --input: oklch(0.88 0.02 75);
-  --ring: var(--brass);
+  --ring: var(--gold);
 }
 
 @layer base {
@@ -98,7 +101,7 @@
     letter-spacing: -0.01em;
   }
   ::selection {
-    background: color-mix(in oklab, var(--brass) 40%, transparent);
+    background: color-mix(in oklab, var(--gold) 40%, transparent);
     color: var(--ink);
   }
 }
@@ -114,7 +117,7 @@
   display: inline-block;
   width: 2.5rem;
   height: 1px;
-  background-color: var(--brass);
+  background-color: var(--gold);
   vertical-align: middle;
 }
 
@@ -124,5 +127,5 @@
   font-weight: 500;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--brass);
+  color: var(--teal);
 }
