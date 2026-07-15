@@ -56,8 +56,8 @@ function DepartmentPortal() {
       <Tabs defaultValue="overview" className="mt-8">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="kpis">KPI Dashboard</TabsTrigger>
           <TabsTrigger value="team">Team</TabsTrigger>
+          <TabsTrigger value="kpis">KPI Dashboard</TabsTrigger>
           <TabsTrigger value="reports">Reports</TabsTrigger>
           <TabsTrigger value="resources">Resources</TabsTrigger>
         </TabsList>
@@ -70,10 +70,6 @@ function DepartmentPortal() {
           <Card className="p-6">
             <p className="text-xs uppercase tracking-widest text-muted-foreground">Mission</p>
             <p className="mt-2 text-sm leading-relaxed">{d.mission ?? "Not yet set."}</p>
-          </Card>
-          <Card className="p-6">
-            <p className="text-xs uppercase tracking-widest text-muted-foreground">Purpose</p>
-            <p className="mt-2 text-sm leading-relaxed">{d.purpose ?? "Not yet set."}</p>
           </Card>
           {d.functions && d.functions.length > 0 && (
             <Card className="p-6">
@@ -99,20 +95,19 @@ function DepartmentPortal() {
           )}
         </TabsContent>
 
-
-        <TabsContent value="kpis" className="mt-6">
-          <KpiDashboard slug={slug} kpis={kpis.data ?? []} onChange={() => kpis.refetch()} />
-        </TabsContent>
-
         <TabsContent value="team" className="mt-6">
           <Card className="p-6 text-sm text-muted-foreground">
             Team rosters are managed from the Admin area. Users are attached to this department by role.
           </Card>
         </TabsContent>
 
+        <TabsContent value="kpis" className="mt-6">
+          <KpiDashboard slug={slug} kpis={kpis.data ?? []} onChange={() => kpis.refetch()} />
+        </TabsContent>
+
         <TabsContent value="reports" className="mt-6">
           <Card className="p-6 text-sm text-muted-foreground">
-            Monthly narrative reports will appear here. For roll-up KPI reporting, see the <Link to="/reports" className="underline">Reports</Link> page (admin only).
+            Post departmental comments and upload documents from the <Link to="/reports" className="underline">Reports</Link> page — every approved member can contribute for their department.
           </Card>
         </TabsContent>
 
