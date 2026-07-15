@@ -34,7 +34,7 @@ export const Route = createFileRoute("/departments/$slug")({
 });
 
 function DepartmentDetail() {
-  const { dept } = Route.useLoaderData();
+  const { dept } = Route.useLoaderData() as { dept: Department };
 
   return (
     <>
