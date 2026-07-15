@@ -9,44 +9,23 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as SevenMountainsRouteImport } from './routes/seven-mountains'
-import { Route as SermonsRouteImport } from './routes/sermons'
-import { Route as DepartmentsRouteImport } from './routes/departments'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as AboutRouteImport } from './routes/about'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as SermonsSlugRouteImport } from './routes/sermons.$slug'
-import { Route as DepartmentsSlugRouteImport } from './routes/departments.$slug'
+import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
+import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
+import { Route as AuthenticatedGovernanceRouteImport } from './routes/_authenticated/governance'
+import { Route as AuthenticatedDepartmentsRouteImport } from './routes/_authenticated/departments'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedDepartmentsSlugRouteImport } from './routes/_authenticated/departments.$slug'
 
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SevenMountainsRoute = SevenMountainsRouteImport.update({
-  id: '/seven-mountains',
-  path: '/seven-mountains',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SermonsRoute = SermonsRouteImport.update({
-  id: '/sermons',
-  path: '/sermons',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DepartmentsRoute = DepartmentsRouteImport.update({
-  id: '/departments',
-  path: '/departments',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -54,139 +33,125 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SermonsSlugRoute = SermonsSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => SermonsRoute,
+const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const DepartmentsSlugRoute = DepartmentsSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => DepartmentsRoute,
+const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedGovernanceRoute = AuthenticatedGovernanceRouteImport.update({
+  id: '/governance',
+  path: '/governance',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDepartmentsRoute =
+  AuthenticatedDepartmentsRouteImport.update({
+    id: '/departments',
+    path: '/departments',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDepartmentsSlugRoute =
+  AuthenticatedDepartmentsSlugRouteImport.update({
+    id: '/$slug',
+    path: '/$slug',
+    getParentRoute: () => AuthenticatedDepartmentsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/contact': typeof ContactRoute
-  '/departments': typeof DepartmentsRouteWithChildren
-  '/sermons': typeof SermonsRouteWithChildren
-  '/seven-mountains': typeof SevenMountainsRoute
-  '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/departments/$slug': typeof DepartmentsSlugRoute
-  '/sermons/$slug': typeof SermonsSlugRoute
+  '/auth': typeof AuthRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/departments': typeof AuthenticatedDepartmentsRouteWithChildren
+  '/governance': typeof AuthenticatedGovernanceRoute
+  '/home': typeof AuthenticatedHomeRoute
+  '/reports': typeof AuthenticatedReportsRoute
+  '/departments/$slug': typeof AuthenticatedDepartmentsSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/contact': typeof ContactRoute
-  '/departments': typeof DepartmentsRouteWithChildren
-  '/sermons': typeof SermonsRouteWithChildren
-  '/seven-mountains': typeof SevenMountainsRoute
-  '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/departments/$slug': typeof DepartmentsSlugRoute
-  '/sermons/$slug': typeof SermonsSlugRoute
+  '/auth': typeof AuthRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/departments': typeof AuthenticatedDepartmentsRouteWithChildren
+  '/governance': typeof AuthenticatedGovernanceRoute
+  '/home': typeof AuthenticatedHomeRoute
+  '/reports': typeof AuthenticatedReportsRoute
+  '/departments/$slug': typeof AuthenticatedDepartmentsSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/contact': typeof ContactRoute
-  '/departments': typeof DepartmentsRouteWithChildren
-  '/sermons': typeof SermonsRouteWithChildren
-  '/seven-mountains': typeof SevenMountainsRoute
-  '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/departments/$slug': typeof DepartmentsSlugRoute
-  '/sermons/$slug': typeof SermonsSlugRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/departments': typeof AuthenticatedDepartmentsRouteWithChildren
+  '/_authenticated/governance': typeof AuthenticatedGovernanceRoute
+  '/_authenticated/home': typeof AuthenticatedHomeRoute
+  '/_authenticated/reports': typeof AuthenticatedReportsRoute
+  '/_authenticated/departments/$slug': typeof AuthenticatedDepartmentsSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/about'
-    | '/contact'
+    | '/auth'
+    | '/admin'
     | '/departments'
-    | '/sermons'
-    | '/seven-mountains'
-    | '/sitemap.xml'
+    | '/governance'
+    | '/home'
+    | '/reports'
     | '/departments/$slug'
-    | '/sermons/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/about'
-    | '/contact'
+    | '/auth'
+    | '/admin'
     | '/departments'
-    | '/sermons'
-    | '/seven-mountains'
-    | '/sitemap.xml'
+    | '/governance'
+    | '/home'
+    | '/reports'
     | '/departments/$slug'
-    | '/sermons/$slug'
   id:
     | '__root__'
     | '/'
-    | '/about'
-    | '/contact'
-    | '/departments'
-    | '/sermons'
-    | '/seven-mountains'
-    | '/sitemap.xml'
-    | '/departments/$slug'
-    | '/sermons/$slug'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/admin'
+    | '/_authenticated/departments'
+    | '/_authenticated/governance'
+    | '/_authenticated/home'
+    | '/_authenticated/reports'
+    | '/_authenticated/departments/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
-  ContactRoute: typeof ContactRoute
-  DepartmentsRoute: typeof DepartmentsRouteWithChildren
-  SermonsRoute: typeof SermonsRouteWithChildren
-  SevenMountainsRoute: typeof SevenMountainsRoute
-  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/seven-mountains': {
-      id: '/seven-mountains'
-      path: '/seven-mountains'
-      fullPath: '/seven-mountains'
-      preLoaderRoute: typeof SevenMountainsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sermons': {
-      id: '/sermons'
-      path: '/sermons'
-      fullPath: '/sermons'
-      preLoaderRoute: typeof SermonsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/departments': {
-      id: '/departments'
-      path: '/departments'
-      fullPath: '/departments'
-      preLoaderRoute: typeof DepartmentsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -196,65 +161,89 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/sermons/$slug': {
-      id: '/sermons/$slug'
-      path: '/$slug'
-      fullPath: '/sermons/$slug'
-      preLoaderRoute: typeof SermonsSlugRouteImport
-      parentRoute: typeof SermonsRoute
+    '/_authenticated/reports': {
+      id: '/_authenticated/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof AuthenticatedReportsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/departments/$slug': {
-      id: '/departments/$slug'
+    '/_authenticated/home': {
+      id: '/_authenticated/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof AuthenticatedHomeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/governance': {
+      id: '/_authenticated/governance'
+      path: '/governance'
+      fullPath: '/governance'
+      preLoaderRoute: typeof AuthenticatedGovernanceRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/departments': {
+      id: '/_authenticated/departments'
+      path: '/departments'
+      fullPath: '/departments'
+      preLoaderRoute: typeof AuthenticatedDepartmentsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/departments/$slug': {
+      id: '/_authenticated/departments/$slug'
       path: '/$slug'
       fullPath: '/departments/$slug'
-      preLoaderRoute: typeof DepartmentsSlugRouteImport
-      parentRoute: typeof DepartmentsRoute
+      preLoaderRoute: typeof AuthenticatedDepartmentsSlugRouteImport
+      parentRoute: typeof AuthenticatedDepartmentsRoute
     }
   }
 }
 
-interface DepartmentsRouteChildren {
-  DepartmentsSlugRoute: typeof DepartmentsSlugRoute
+interface AuthenticatedDepartmentsRouteChildren {
+  AuthenticatedDepartmentsSlugRoute: typeof AuthenticatedDepartmentsSlugRoute
 }
 
-const DepartmentsRouteChildren: DepartmentsRouteChildren = {
-  DepartmentsSlugRoute: DepartmentsSlugRoute,
+const AuthenticatedDepartmentsRouteChildren: AuthenticatedDepartmentsRouteChildren =
+  {
+    AuthenticatedDepartmentsSlugRoute: AuthenticatedDepartmentsSlugRoute,
+  }
+
+const AuthenticatedDepartmentsRouteWithChildren =
+  AuthenticatedDepartmentsRoute._addFileChildren(
+    AuthenticatedDepartmentsRouteChildren,
+  )
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedDepartmentsRoute: typeof AuthenticatedDepartmentsRouteWithChildren
+  AuthenticatedGovernanceRoute: typeof AuthenticatedGovernanceRoute
+  AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
+  AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
 }
 
-const DepartmentsRouteWithChildren = DepartmentsRoute._addFileChildren(
-  DepartmentsRouteChildren,
-)
-
-interface SermonsRouteChildren {
-  SermonsSlugRoute: typeof SermonsSlugRoute
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedDepartmentsRoute: AuthenticatedDepartmentsRouteWithChildren,
+  AuthenticatedGovernanceRoute: AuthenticatedGovernanceRoute,
+  AuthenticatedHomeRoute: AuthenticatedHomeRoute,
+  AuthenticatedReportsRoute: AuthenticatedReportsRoute,
 }
 
-const SermonsRouteChildren: SermonsRouteChildren = {
-  SermonsSlugRoute: SermonsSlugRoute,
-}
-
-const SermonsRouteWithChildren =
-  SermonsRoute._addFileChildren(SermonsRouteChildren)
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
-  ContactRoute: ContactRoute,
-  DepartmentsRoute: DepartmentsRouteWithChildren,
-  SermonsRoute: SermonsRouteWithChildren,
-  SevenMountainsRoute: SevenMountainsRoute,
-  SitemapDotxmlRoute: SitemapDotxmlRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

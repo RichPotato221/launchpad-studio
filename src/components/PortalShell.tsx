@@ -1,0 +1,110 @@
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { useEffect, useState, type ReactNode } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { Menu, X, LogOut } from "lucide-react";
+import logo from "@/assets/trog-logo.png";
+
+const nav = [
+  { to: "/home", label: "Home" },
+  { to: "/departments", label: "Departments" },
+  { to: "/governance", label: "Governance" },
+  { to: "/reports", label: "Reports" },
+  { to: "/admin", label: "Admin" },
+] as const;
+
+export function PortalShell({ children }: { children: ReactNode }) {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [open, setOpen] = useState(false);
+  const [email, setEmail] = useState<string>("");
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setEmail(data.user?.email ?? ""));
+  }, []);
+
+  useEffect(() => setOpen(false), [pathname]);
+
+  const signOut = async () => {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  };
+
+  return (
+    <div className="flex min-h-screen flex-col bg-background">
+      <header className="sticky top-0 z-40 border-b border-border/60 bg-background/95 backdrop-blur">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 md:px-8">
+          <Link to="/home" className="flex items-center gap-3">
+            <img src={logo} alt="TRoGKC" className="h-9 w-auto" />
+            <div className="hidden font-serif text-base leading-tight sm:block">
+              TRoGKC
+              <span className="block text-[0.6rem] uppercase tracking-[0.22em] text-muted-foreground">Leadership Portal</span>
+            </div>
+          </Link>
+
+          <nav className="hidden items-center gap-6 lg:flex">
+            {nav.map((item) => (
+              <Link
+                key={item.to}
+                to={item.to}
+                className="text-sm text-muted-foreground transition hover:text-foreground"
+                activeProps={{ className: "text-foreground font-medium" }}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-3">
+            <span className="hidden text-xs text-muted-foreground md:inline">{email}</span>
+            <Button variant="ghost" size="sm" onClick={signOut} className="hidden md:inline-flex">
+              <LogOut className="mr-1 h-4 w-4" /> Sign out
+            </Button>
+            <button
+              className="rounded p-2 lg:hidden"
+              onClick={() => setOpen((o) => !o)}
+              aria-label="Toggle menu"
+            >
+              {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
+        </div>
+
+        {open && (
+          <div className="border-t border-border/60 lg:hidden">
+            <nav className="flex flex-col p-4">
+              {nav.map((item) => (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className="rounded px-3 py-3 text-sm text-muted-foreground hover:bg-muted"
+                  activeProps={{ className: "text-foreground font-medium bg-muted" }}
+                >
+                  {item.label}
+                </Link>
+              ))}
+              <button
+                onClick={signOut}
+                className="mt-2 flex items-center gap-2 rounded px-3 py-3 text-left text-sm text-muted-foreground hover:bg-muted"
+              >
+                <LogOut className="h-4 w-4" /> Sign out
+              </button>
+            </nav>
+          </div>
+        )}
+      </header>
+
+      <main className="flex-1">{children}</main>
+
+      <footer className="border-t border-border/60 py-6">
+        <div className="mx-auto max-w-7xl px-4 text-xs text-muted-foreground md:px-8">
+          © {new Date().getFullYear()} Throne Room of God Kingdom Center · Under the headship of Jesus Christ
+        </div>
+      </footer>
+    </div>
+  );
+}
