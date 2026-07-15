@@ -71,7 +71,7 @@ function HomePage() {
             />
           </div>
           <div className="p-6 md:p-8">
-            <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Senior Apostles / Senior Pastors</p>
+            <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Senior Pastor</p>
             {apostleV.name ? (
               <>
                 <h3 className="mt-3 font-serif text-2xl">{apostleV.name}</h3>
@@ -103,8 +103,8 @@ function HomePage() {
                     └───────────┬────────────┘
                                 │
                     ┌───────────▼────────────┐
-                    │  Senior Apostles /     │
-                    │  Senior Pastors        │
+                    │      Senior Pastor     │
+                    │                        │
                     └───────────┬────────────┘
                                 │
              ┌──────────────────┼──────────────────┐
