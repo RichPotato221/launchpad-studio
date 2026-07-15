@@ -10,22 +10,23 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as ServicesRouteImport } from './routes/services'
+import { Route as SevenMountainsRouteImport } from './routes/seven-mountains'
 import { Route as SermonsRouteImport } from './routes/sermons'
-import { Route as GalleryRouteImport } from './routes/gallery'
+import { Route as DepartmentsRouteImport } from './routes/departments'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SermonsSlugRouteImport } from './routes/sermons.$slug'
+import { Route as DepartmentsSlugRouteImport } from './routes/departments.$slug'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ServicesRoute = ServicesRouteImport.update({
-  id: '/services',
-  path: '/services',
+const SevenMountainsRoute = SevenMountainsRouteImport.update({
+  id: '/seven-mountains',
+  path: '/seven-mountains',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SermonsRoute = SermonsRouteImport.update({
@@ -33,9 +34,9 @@ const SermonsRoute = SermonsRouteImport.update({
   path: '/sermons',
   getParentRoute: () => rootRouteImport,
 } as any)
-const GalleryRoute = GalleryRouteImport.update({
-  id: '/gallery',
-  path: '/gallery',
+const DepartmentsRoute = DepartmentsRouteImport.update({
+  id: '/departments',
+  path: '/departments',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -58,25 +59,32 @@ const SermonsSlugRoute = SermonsSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => SermonsRoute,
 } as any)
+const DepartmentsSlugRoute = DepartmentsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => DepartmentsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
-  '/gallery': typeof GalleryRoute
+  '/departments': typeof DepartmentsRouteWithChildren
   '/sermons': typeof SermonsRouteWithChildren
-  '/services': typeof ServicesRoute
+  '/seven-mountains': typeof SevenMountainsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/departments/$slug': typeof DepartmentsSlugRoute
   '/sermons/$slug': typeof SermonsSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
-  '/gallery': typeof GalleryRoute
+  '/departments': typeof DepartmentsRouteWithChildren
   '/sermons': typeof SermonsRouteWithChildren
-  '/services': typeof ServicesRoute
+  '/seven-mountains': typeof SevenMountainsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/departments/$slug': typeof DepartmentsSlugRoute
   '/sermons/$slug': typeof SermonsSlugRoute
 }
 export interface FileRoutesById {
@@ -84,10 +92,11 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
-  '/gallery': typeof GalleryRoute
+  '/departments': typeof DepartmentsRouteWithChildren
   '/sermons': typeof SermonsRouteWithChildren
-  '/services': typeof ServicesRoute
+  '/seven-mountains': typeof SevenMountainsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/departments/$slug': typeof DepartmentsSlugRoute
   '/sermons/$slug': typeof SermonsSlugRoute
 }
 export interface FileRouteTypes {
@@ -96,30 +105,33 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
-    | '/gallery'
+    | '/departments'
     | '/sermons'
-    | '/services'
+    | '/seven-mountains'
     | '/sitemap.xml'
+    | '/departments/$slug'
     | '/sermons/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/contact'
-    | '/gallery'
+    | '/departments'
     | '/sermons'
-    | '/services'
+    | '/seven-mountains'
     | '/sitemap.xml'
+    | '/departments/$slug'
     | '/sermons/$slug'
   id:
     | '__root__'
     | '/'
     | '/about'
     | '/contact'
-    | '/gallery'
+    | '/departments'
     | '/sermons'
-    | '/services'
+    | '/seven-mountains'
     | '/sitemap.xml'
+    | '/departments/$slug'
     | '/sermons/$slug'
   fileRoutesById: FileRoutesById
 }
@@ -127,9 +139,9 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   ContactRoute: typeof ContactRoute
-  GalleryRoute: typeof GalleryRoute
+  DepartmentsRoute: typeof DepartmentsRouteWithChildren
   SermonsRoute: typeof SermonsRouteWithChildren
-  ServicesRoute: typeof ServicesRoute
+  SevenMountainsRoute: typeof SevenMountainsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
 
@@ -142,11 +154,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/services': {
-      id: '/services'
-      path: '/services'
-      fullPath: '/services'
-      preLoaderRoute: typeof ServicesRouteImport
+    '/seven-mountains': {
+      id: '/seven-mountains'
+      path: '/seven-mountains'
+      fullPath: '/seven-mountains'
+      preLoaderRoute: typeof SevenMountainsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sermons': {
@@ -156,11 +168,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SermonsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/gallery': {
-      id: '/gallery'
-      path: '/gallery'
-      fullPath: '/gallery'
-      preLoaderRoute: typeof GalleryRouteImport
+    '/departments': {
+      id: '/departments'
+      path: '/departments'
+      fullPath: '/departments'
+      preLoaderRoute: typeof DepartmentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -191,8 +203,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SermonsSlugRouteImport
       parentRoute: typeof SermonsRoute
     }
+    '/departments/$slug': {
+      id: '/departments/$slug'
+      path: '/$slug'
+      fullPath: '/departments/$slug'
+      preLoaderRoute: typeof DepartmentsSlugRouteImport
+      parentRoute: typeof DepartmentsRoute
+    }
   }
 }
+
+interface DepartmentsRouteChildren {
+  DepartmentsSlugRoute: typeof DepartmentsSlugRoute
+}
+
+const DepartmentsRouteChildren: DepartmentsRouteChildren = {
+  DepartmentsSlugRoute: DepartmentsSlugRoute,
+}
+
+const DepartmentsRouteWithChildren = DepartmentsRoute._addFileChildren(
+  DepartmentsRouteChildren,
+)
 
 interface SermonsRouteChildren {
   SermonsSlugRoute: typeof SermonsSlugRoute
@@ -209,9 +240,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   ContactRoute: ContactRoute,
-  GalleryRoute: GalleryRoute,
+  DepartmentsRoute: DepartmentsRouteWithChildren,
   SermonsRoute: SermonsRouteWithChildren,
-  ServicesRoute: ServicesRoute,
+  SevenMountainsRoute: SevenMountainsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
 export const routeTree = rootRouteImport
