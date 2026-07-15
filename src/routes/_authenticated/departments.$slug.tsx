@@ -1,6 +1,8 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { getWorkspaceFor } from "@/lib/workspaceRegistry";
+import { useIsDepartmentMember } from "@/lib/useIsDepartmentMember";
 import { supabase } from "@/integrations/supabase/client";
 import {
   fetchDepartment,
@@ -30,12 +32,15 @@ function DepartmentPortal() {
   const { slug } = Route.useParams();
   const dept = useQuery({ queryKey: ["department", slug], queryFn: () => fetchDepartment(slug) });
   const kpis = useQuery({ queryKey: ["kpis", slug], queryFn: () => fetchDepartmentKpis(slug) });
+  const membership = useIsDepartmentMember(slug);
 
   if (dept.isLoading) return <div className="p-8 text-muted-foreground">Loading…</div>;
   if (!dept.data) throw notFound();
   const d = dept.data;
   const hero = DEPARTMENT_HERO[slug];
   const gallery = DEPARTMENT_GALLERY[slug] ?? [];
+  const workspace = membership.data?.isMember ? getWorkspaceFor(slug) : null;
+  const WorkspaceComponent = workspace?.component;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
@@ -61,6 +66,7 @@ function DepartmentPortal() {
           <TabsTrigger value="kpis">KPI Dashboard</TabsTrigger>
           <TabsTrigger value="reports">Reports</TabsTrigger>
           <TabsTrigger value="resources">Resources</TabsTrigger>
+          {workspace && <TabsTrigger value="workspace" className="font-semibold">{workspace.label}</TabsTrigger>}
         </TabsList>
 
         <TabsContent value="overview" className="mt-6 space-y-6">
