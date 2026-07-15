@@ -58,9 +58,9 @@ export const sermons = [
 export const Route = createFileRoute("/sermons")({
   head: () => ({
     meta: [
-      { title: "Sermons & Reflections — Grace Chapel" },
-      { name: "description", content: "Recent sermons, reflections, and readings from Grace Chapel in Cedar Hollow." },
-      { property: "og:title", content: "Sermons & Reflections — Grace Chapel" },
+      { title: "Sermons & Reflections — Throne Room of God Kingdom Center" },
+      { name: "description", content: "Recent sermons, reflections, and readings from Throne Room of God Kingdom Center." },
+      { property: "og:title", content: "Sermons & Reflections — Throne Room of God Kingdom Center" },
       { property: "og:description", content: "Recent sermons and reflections from our pulpit." },
     ],
   }),
