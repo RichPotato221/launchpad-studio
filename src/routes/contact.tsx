@@ -5,7 +5,7 @@ export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
       { title: "Contact & Visit — Throne Room of God Kingdom Center" },
-      { name: "description", content: "Visit Throne Room of God Kingdom Center in Cedar Hollow, or reach out with a question, prayer request, or hello." },
+      { name: "description", content: "Visit Throne Room of God Kingdom Center, or reach out with a question, prayer request, or hello." },
       { property: "og:title", content: "Contact Throne Room of God Kingdom Center" },
       { property: "og:description", content: "Say hello, ask a question, or plan your visit." },
     ],

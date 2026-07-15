@@ -59,7 +59,7 @@ export const Route = createFileRoute("/sermons")({
   head: () => ({
     meta: [
       { title: "Sermons & Reflections — Throne Room of God Kingdom Center" },
-      { name: "description", content: "Recent sermons, reflections, and readings from Throne Room of God Kingdom Center in Cedar Hollow." },
+      { name: "description", content: "Recent sermons, reflections, and readings from Throne Room of God Kingdom Center." },
       { property: "og:title", content: "Sermons & Reflections — Throne Room of God Kingdom Center" },
       { property: "og:description", content: "Recent sermons and reflections from our pulpit." },
     ],

@@ -56,7 +56,7 @@ function SermonPage() {
 
       <footer className="mt-16 border-t border-border pt-8">
         <p className="text-xs uppercase tracking-widest text-muted-foreground">
-          Preached at Throne Room of God Kingdom Center · Cedar Hollow, Oregon
+          Preached at Throne Room of God Kingdom Center
         </p>
       </footer>
     </article>
