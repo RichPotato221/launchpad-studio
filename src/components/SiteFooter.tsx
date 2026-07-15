@@ -37,7 +37,7 @@ export function SiteFooter() {
             <li><Link to="/about" className="hover:text-foreground">About &amp; Vision</Link></li>
             <li><Link to="/departments" className="hover:text-foreground">Departments</Link></li>
             <li><Link to="/seven-mountains" className="hover:text-foreground">Seven Mountains</Link></li>
-            <li><Link to="/sermons" className="hover:text-foreground">Sermons</Link></li>
+            
             <li><Link to="/contact" className="hover:text-foreground">Contact</Link></li>
           </ul>
         </div>

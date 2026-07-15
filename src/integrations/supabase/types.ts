@@ -14,6 +14,62 @@ export type Database = {
   }
   public: {
     Tables: {
+      attendance: {
+        Row: {
+          branch: string | null
+          created_at: string
+          department_slug: string | null
+          event_id: string | null
+          full_name: string | null
+          id: string
+          notes: string | null
+          present: boolean
+          recorded_by: string
+          service_date: string
+          updated_at: string
+          user_id: string | null
+          visitor: boolean
+        }
+        Insert: {
+          branch?: string | null
+          created_at?: string
+          department_slug?: string | null
+          event_id?: string | null
+          full_name?: string | null
+          id?: string
+          notes?: string | null
+          present?: boolean
+          recorded_by: string
+          service_date: string
+          updated_at?: string
+          user_id?: string | null
+          visitor?: boolean
+        }
+        Update: {
+          branch?: string | null
+          created_at?: string
+          department_slug?: string | null
+          event_id?: string | null
+          full_name?: string | null
+          id?: string
+          notes?: string | null
+          present?: boolean
+          recorded_by?: string
+          service_date?: string
+          updated_at?: string
+          user_id?: string | null
+          visitor?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_log: {
         Row: {
           action: string
@@ -263,6 +319,101 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      event_rosters: {
+        Row: {
+          created_at: string
+          created_by: string
+          event_id: string
+          full_name: string | null
+          id: string
+          notes: string | null
+          role: string
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          event_id: string
+          full_name?: string | null
+          id?: string
+          notes?: string | null
+          role: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          event_id?: string
+          full_name?: string | null
+          id?: string
+          notes?: string | null
+          role?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_rosters_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          branch: string | null
+          created_at: string
+          created_by: string
+          department_slug: string | null
+          description: string | null
+          end_time: string | null
+          event_date: string
+          event_type: string
+          id: string
+          location: string | null
+          start_time: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          branch?: string | null
+          created_at?: string
+          created_by: string
+          department_slug?: string | null
+          description?: string | null
+          end_time?: string | null
+          event_date: string
+          event_type?: string
+          id?: string
+          location?: string | null
+          start_time?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          branch?: string | null
+          created_at?: string
+          created_by?: string
+          department_slug?: string | null
+          description?: string | null
+          end_time?: string | null
+          event_date?: string
+          event_type?: string
+          id?: string
+          location?: string | null
+          start_time?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       expense_claims: {
         Row: {
@@ -696,6 +847,63 @@ export type Database = {
           notes?: string | null
           updated_at?: string
           won_by?: string | null
+        }
+        Relationships: []
+      }
+      tasks: {
+        Row: {
+          approval_status: string | null
+          approved_at: string | null
+          approved_by_chair: string | null
+          approved_by_senior: string | null
+          assigned_to: string | null
+          created_at: string
+          created_by: string
+          department_slug: string | null
+          description: string | null
+          due_date: string | null
+          id: string
+          priority: string
+          requires_approval: boolean
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          approval_status?: string | null
+          approved_at?: string | null
+          approved_by_chair?: string | null
+          approved_by_senior?: string | null
+          assigned_to?: string | null
+          created_at?: string
+          created_by: string
+          department_slug?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          priority?: string
+          requires_approval?: boolean
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          approval_status?: string | null
+          approved_at?: string | null
+          approved_by_chair?: string | null
+          approved_by_senior?: string | null
+          assigned_to?: string | null
+          created_at?: string
+          created_by?: string
+          department_slug?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          priority?: string
+          requires_approval?: boolean
+          status?: string
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }
