@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { DEPARTMENTS, MANUALS } from "@/lib/departments";
+import { DEPARTMENTS, MANUALS, type Department } from "@/lib/departments";
 
 export const Route = createFileRoute("/departments/$slug")({
   loader: ({ params }) => {
@@ -82,7 +82,7 @@ function DepartmentDetail() {
             </h2>
           </div>
           <ul className="md:col-span-8 space-y-5">
-            {dept.functions.map((f, i) => (
+            {dept.functions.map((f: string, i: number) => (
               <li key={i} className="flex gap-6 border-t border-border pt-5">
                 <span className="font-serif text-2xl text-gold">
                   {String(i + 1).padStart(2, "0")}
