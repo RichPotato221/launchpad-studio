@@ -141,7 +141,7 @@ ${dept.name} — Department Chair
             </Link>
           </div>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {dept.manuals.map((key) => {
+            {dept.manuals.map((key: string) => {
               const m = MANUALS[key];
               return (
                 <a
