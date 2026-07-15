@@ -9,12 +9,12 @@ export const Route = createFileRoute("/sermons/$slug")({
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
-      return { meta: [{ title: "Sermon not found — Grace Chapel" }, { name: "robots", content: "noindex" }] };
+      return { meta: [{ title: "Sermon not found — Throne Room of God Kingdom Center" }, { name: "robots", content: "noindex" }] };
     }
     const { sermon } = loaderData;
     return {
       meta: [
-        { title: `${sermon.title} — Grace Chapel` },
+        { title: `${sermon.title} — Throne Room of God Kingdom Center` },
         { name: "description", content: sermon.excerpt },
         { property: "og:title", content: sermon.title },
         { property: "og:description", content: sermon.excerpt },
@@ -56,7 +56,7 @@ function SermonPage() {
 
       <footer className="mt-16 border-t border-border pt-8">
         <p className="text-xs uppercase tracking-widest text-muted-foreground">
-          Preached at Grace Chapel · Cedar Hollow, Oregon
+          Preached at Throne Room of God Kingdom Center · Cedar Hollow, Oregon
         </p>
       </footer>
     </article>
