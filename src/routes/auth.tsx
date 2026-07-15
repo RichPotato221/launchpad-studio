@@ -179,9 +179,11 @@ function AuthPage() {
                   <Select value={deptSlug} onValueChange={setDeptSlug} required>
                     <SelectTrigger><SelectValue placeholder="Select a department" /></SelectTrigger>
                     <SelectContent className="max-h-72">
-                      {(depts.data ?? []).map((d) => (
-                        <SelectItem key={d.slug} value={d.slug}>{d.name}</SelectItem>
-                      ))}
+                      {[...(depts.data ?? [])]
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                        .map((d) => (
+                          <SelectItem key={d.slug} value={d.slug}>{d.name}</SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                 </div>
