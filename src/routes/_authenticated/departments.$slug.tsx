@@ -107,9 +107,7 @@ function DepartmentPortal() {
         </TabsContent>
 
         <TabsContent value="reports" className="mt-6">
-          <Card className="p-6 text-sm text-muted-foreground">
-            Post departmental comments and upload documents from the <Link to="/reports" className="underline">Reports</Link> page — every approved member can contribute for their department.
-          </Card>
+          <DepartmentReports slug={slug} deptName={d.name} />
         </TabsContent>
 
         <TabsContent value="resources" className="mt-6">
