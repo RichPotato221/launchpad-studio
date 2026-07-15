@@ -16,7 +16,7 @@ export const KPI_CATEGORIES: { key: KpiCategory; label: string }[] = [
 ];
 
 export const ROLE_LABELS: Record<AppRole, string> = {
-  senior_apostle: "Senior Apostle / Senior Pastor",
+  senior_apostle: "Senior Pastor",
   chairperson: "Chairperson",
   secretary: "Church Secretary",
   lead_pastor: "Lead Pastor",
