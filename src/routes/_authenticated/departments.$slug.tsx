@@ -103,9 +103,7 @@ function DepartmentPortal() {
         </TabsContent>
 
         <TabsContent value="team" className="mt-6">
-          <Card className="p-6 text-sm text-muted-foreground">
-            Team rosters are managed from the Admin area. Users are attached to this department by role.
-          </Card>
+          <DepartmentTeam slug={slug} />
         </TabsContent>
 
         <TabsContent value="kpis" className="mt-6">
