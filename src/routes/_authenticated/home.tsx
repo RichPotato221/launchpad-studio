@@ -1,0 +1,148 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { fetchDepartments, fetchSetting } from "@/lib/portal";
+import { Card } from "@/components/ui/card";
+
+export const Route = createFileRoute("/_authenticated/home")({
+  head: () => ({ meta: [{ title: "Home — TRoGKC Portal" }] }),
+  component: HomePage,
+});
+
+function HomePage() {
+  const depts = useQuery({ queryKey: ["departments"], queryFn: fetchDepartments });
+  const theme = useQuery({ queryKey: ["setting", "theme_of_year"], queryFn: () => fetchSetting("theme_of_year") });
+  const church = useQuery({ queryKey: ["setting", "church_info"], queryFn: () => fetchSetting("church_info") });
+  const apostle = useQuery({ queryKey: ["setting", "senior_apostle"], queryFn: () => fetchSetting("senior_apostle") });
+
+  const info = (church.data?.value ?? {}) as { vision?: string; mission?: string[]; founding_date?: string };
+  const themeV = (theme.data?.value ?? {}) as { year?: number; title?: string; description?: string };
+  const apostleV = (apostle.data?.value ?? {}) as { name?: string; bio?: string; photo_url?: string };
+
+  const functional = depts.data?.filter((d) => d.kind === "functional") ?? [];
+  const developmental = depts.data?.filter((d) => d.kind === "developmental") ?? [];
+  const mountains = depts.data?.filter((d) => d.kind === "seven_mountain") ?? [];
+
+  return (
+    <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
+      {/* Vision */}
+      <section className="rounded-lg border border-border bg-card p-6 md:p-10">
+        <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Our Vision</p>
+        <p className="mt-4 font-serif text-xl leading-relaxed md:text-2xl">{info.vision}</p>
+      </section>
+
+      {/* Mission */}
+      <section className="mt-6 rounded-lg border border-border bg-card p-6 md:p-10">
+        <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Our Mission</p>
+        <ol className="mt-4 space-y-3">
+          {(info.mission ?? []).map((m, i) => (
+            <li key={i} className="flex gap-4">
+              <span className="font-serif text-2xl text-teal-600">{String(i + 1).padStart(2, "0")}</span>
+              <p className="text-sm leading-relaxed md:text-base">{m}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* Theme + Apostle */}
+      <div className="mt-6 grid gap-6 md:grid-cols-2">
+        <section className="rounded-lg border border-border bg-foreground p-6 text-background md:p-10">
+          <p className="text-xs uppercase tracking-[0.22em] opacity-70">Theme for {themeV.year ?? new Date().getFullYear()}</p>
+          <h2 className="mt-3 font-serif text-4xl leading-tight md:text-5xl">{themeV.title}</h2>
+          <p className="mt-4 text-sm opacity-80">{themeV.description}</p>
+        </section>
+        <section className="rounded-lg border border-border bg-card p-6 md:p-10">
+          <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Senior Apostle / Senior Pastor</p>
+          {apostleV.name ? (
+            <>
+              <h3 className="mt-3 font-serif text-2xl">{apostleV.name}</h3>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{apostleV.bio}</p>
+            </>
+          ) : (
+            <p className="mt-3 text-sm text-muted-foreground">
+              Not yet set. Ask the Church Secretary to complete this from the <Link to="/admin" className="underline">Admin</Link> area.
+            </p>
+          )}
+          {info.founding_date && (
+            <p className="mt-6 text-xs uppercase tracking-widest text-muted-foreground">
+              Founded {info.founding_date}
+            </p>
+          )}
+        </section>
+      </div>
+
+      {/* Org structure */}
+      <section className="mt-6 rounded-lg border border-border bg-card p-6 md:p-10">
+        <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Organisational Structure</p>
+        <h2 className="mt-2 font-serif text-3xl">Governance flow</h2>
+        <pre className="mt-6 overflow-x-auto rounded bg-muted p-4 text-[11px] leading-relaxed md:text-xs">
+{`                    ┌────────────────────────┐
+                    │     JESUS CHRIST       │
+                    │  (Chief Cornerstone)   │
+                    └───────────┬────────────┘
+                                │
+                    ┌───────────▼────────────┐
+                    │  Senior Apostle /      │
+                    │  Senior Pastor         │
+                    └───────────┬────────────┘
+                                │
+             ┌──────────────────┼──────────────────┐
+             │                  │                  │
+      ┌──────▼──────┐   ┌───────▼───────┐  ┌──────▼──────┐
+      │Chairpersons │   │Church Secretary│  │Lead Pastors │
+      └──────┬──────┘   └────────────────┘  └──────┬──────┘
+             │                                     │
+             └──────────────┬──────────────────────┘
+                            │
+                 ┌──────────▼──────────┐
+                 │ Associate Pastors   │
+                 └──────────┬──────────┘
+                            │
+        ┌───────────────────┼───────────────────┐
+        │                                       │
+┌───────▼────────┐                    ┌─────────▼─────────┐
+│  Functional    │                    │  Developmental    │
+│  Departments   │                    │  Structures       │
+└───────┬────────┘                    └─────────┬─────────┘
+        │                                       │
+        └───────────────────┬───────────────────┘
+                            │
+                 ┌──────────▼──────────┐
+                 │  Seven Mountains    │
+                 │  Five-Fold Ministry │
+                 └─────────────────────┘`}
+        </pre>
+      </section>
+
+      {/* Department tiles */}
+      <DeptGroup title="Functional Ministry Departments" items={functional} />
+      <DeptGroup title="Developmental Structures" items={developmental} />
+      <DeptGroup title="Seven Mountains" items={mountains} basePath="/departments" />
+    </div>
+  );
+}
+
+function DeptGroup({ title, items, basePath = "/departments" }: {
+  title: string;
+  items: { slug: string; name: string; scripture: string | null }[];
+  basePath?: string;
+}) {
+  if (items.length === 0) return null;
+  return (
+    <section className="mt-8">
+      <div className="mb-4 flex items-baseline justify-between">
+        <h2 className="font-serif text-2xl">{title}</h2>
+        <Link to="/departments" className="text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground">All departments →</Link>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {items.map((d) => (
+          <Link key={d.slug} to={`${basePath}/$slug`} params={{ slug: d.slug }}>
+            <Card className="p-4 transition hover:border-foreground">
+              <p className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">{d.scripture}</p>
+              <p className="mt-2 font-serif text-lg">{d.name}</p>
+            </Card>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
