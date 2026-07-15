@@ -16,11 +16,13 @@ export const Route = createFileRoute("/_authenticated/governance")({
           Cross-department dashboards, department audits, and joint-governance actions will be built here in Phase 4.
         </Card>
         <Card className="overflow-hidden p-0">
-          <img
-            src={PORTAL_IMAGES.governanceSecretary}
-            alt="Church Secretary reading an official announcement"
-            className="h-64 w-full object-cover"
-          />
+          <div className="flex h-96 w-full items-center justify-center bg-muted">
+            <img
+              src={PORTAL_IMAGES.governanceSecretary}
+              alt="Church Secretary reading an official announcement"
+              className="max-h-full max-w-full object-contain"
+            />
+          </div>
           <div className="p-4">
             <p className="text-xs uppercase tracking-widest text-muted-foreground">Church Secretary</p>
             <p className="mt-1 font-serif text-lg">Official announcements &amp; records</p>

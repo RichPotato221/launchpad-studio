@@ -40,8 +40,8 @@ function DepartmentPortal() {
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
       <Link to="/departments" className="text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground">← All departments</Link>
       {hero && (
-        <div className="mt-4 overflow-hidden rounded-lg border border-border">
-          <img src={hero.src} alt={hero.alt} className="h-56 w-full object-cover md:h-72" />
+        <div className="mt-4 overflow-hidden rounded-lg border border-border bg-muted">
+          <img src={hero.src} alt={hero.alt} className="mx-auto max-h-[40rem] w-full object-contain" />
         </div>
       )}
 
@@ -91,7 +91,9 @@ function DepartmentPortal() {
           {gallery.length > 0 && (
             <div className="grid gap-4 sm:grid-cols-2">
               {gallery.map((g) => (
-                <img key={g.src} src={g.src} alt={g.alt} className="h-56 w-full rounded-lg border border-border object-cover" />
+                <div key={g.src} className="flex h-72 w-full items-center justify-center rounded-lg border border-border bg-muted">
+                  <img src={g.src} alt={g.alt} className="max-h-full max-w-full object-contain" />
+                </div>
               ))}
             </div>
           )}

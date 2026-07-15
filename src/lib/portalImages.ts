@@ -29,7 +29,4 @@ export const DEPARTMENT_GALLERY: Record<string, { src: string; alt: string }[]> 
   "childrens-ministry": [
     { src: "/images/departments/childrens-ministry/face-painting-session.jpg", alt: "Children's Ministry volunteer face-painting a child" },
   ],
-  family: [
-    { src: "/images/seven-mountains/family/hands-covenant-closeup.jpg", alt: "Family Mountain — hands joined, covenant close-up" },
-  ],
 };

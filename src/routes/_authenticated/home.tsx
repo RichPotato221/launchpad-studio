@@ -27,11 +27,11 @@ function HomePage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
       {/* 2026 Marching Orders banner */}
-      <section className="mb-8 overflow-hidden rounded-lg border border-border">
+      <section className="mb-8 overflow-hidden rounded-lg border border-border bg-muted">
         <img
           src={PORTAL_IMAGES.marchingOrdersBanner}
           alt="2026 Marching Orders — Intimacy, Identity, Purpose"
-          className="h-56 w-full object-cover md:h-80"
+          className="mx-auto max-h-[36rem] w-full object-contain"
         />
       </section>
 
@@ -63,13 +63,15 @@ function HomePage() {
           <p className="mt-4 text-sm opacity-80">{themeV.description}</p>
         </section>
         <section className="overflow-hidden rounded-lg border border-border bg-card md:p-0">
-          <img
-            src={PORTAL_IMAGES.seniorPastor}
-            alt="Senior Pastor ministering during Sunday service"
-            className="h-64 w-full object-cover"
-          />
+          <div className="bg-muted">
+            <img
+              src={PORTAL_IMAGES.seniorPastor}
+              alt="Senior Pastor ministering during Sunday service"
+              className="mx-auto max-h-[32rem] w-full object-contain"
+            />
+          </div>
           <div className="p-6 md:p-8">
-            <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Senior Apostle / Senior Pastor</p>
+            <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Senior Apostles / Senior Pastors</p>
             {apostleV.name ? (
               <>
                 <h3 className="mt-3 font-serif text-2xl">{apostleV.name}</h3>
@@ -101,8 +103,8 @@ function HomePage() {
                     └───────────┬────────────┘
                                 │
                     ┌───────────▼────────────┐
-                    │  Senior Apostle /      │
-                    │  Senior Pastor         │
+                    │  Senior Apostles /     │
+                    │  Senior Pastors        │
                     └───────────┬────────────┘
                                 │
              ┌──────────────────┼──────────────────┐
@@ -160,9 +162,11 @@ function DeptGroup({ title, items, basePath = "/departments" }: {
             <Link key={d.slug} to={`${basePath}/$slug`} params={{ slug: d.slug }}>
               <Card className="overflow-hidden p-0 transition hover:border-foreground">
                 {hero ? (
-                  <img src={hero.src} alt={hero.alt} className="h-32 w-full object-cover" />
+                  <div className="flex h-56 w-full items-center justify-center bg-muted">
+                    <img src={hero.src} alt={hero.alt} className="max-h-full max-w-full object-contain" />
+                  </div>
                 ) : (
-                  <div className="h-32 w-full bg-muted" />
+                  <div className="h-56 w-full bg-muted" />
                 )}
                 <div className="p-4">
                   <p className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">{d.scripture}</p>
