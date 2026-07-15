@@ -83,15 +83,53 @@ function AdminPage() {
     qc.invalidateQueries({ queryKey: ["all-profiles"] });
   };
 
+  const approve = async (userId: string, ok: boolean) => {
+    const { error } = await supabase.rpc("approve_member", { _user_id: userId, _approve: ok });
+    if (error) return toast.error(error.message);
+    toast.success(ok ? "Member approved and added to department" : "Request rejected");
+    qc.invalidateQueries({ queryKey: ["all-profiles"] });
+  };
+
+  const pending = (profiles.data ?? []).filter((p: any) => p.approval_status === "pending");
+  const others = (profiles.data ?? []).filter((p: any) => p.approval_status !== "pending");
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
       <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Admin</p>
       <h1 className="mt-2 font-serif text-4xl md:text-5xl">User &amp; portal settings</h1>
       <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
         Only Senior Apostle, Church Secretary and Chairpersons can write here (enforced server-side by RLS).
+        Approval notifications are directed to <strong>richardmashaba.19@gmail.com</strong>.
       </p>
 
-      <div className="mt-8 grid gap-6 md:grid-cols-2">
+      {/* Pending approvals */}
+      <h2 className="mt-10 font-serif text-2xl">
+        Pending approvals {pending.length > 0 && <span className="text-sm text-amber-600">({pending.length})</span>}
+      </h2>
+      <div className="mt-4 space-y-3">
+        {pending.length === 0 && (
+          <Card className="p-5 text-sm text-muted-foreground">No pending requests.</Card>
+        )}
+        {pending.map((p: any) => (
+          <Card key={p.id} className="p-5">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <p className="font-serif text-lg">{p.full_name ?? "(no name)"}</p>
+                <p className="text-xs text-muted-foreground">{p.email}</p>
+                <p className="mt-2 text-sm">
+                  Branch: <strong>{p.branch ?? "—"}</strong> · Department: <strong>{p.requested_department_slug ?? "—"}</strong> · Role: <strong>{p.requested_role ?? "—"}</strong>
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <Button size="sm" onClick={() => approve(p.id, true)}>Approve</Button>
+                <Button size="sm" variant="outline" onClick={() => approve(p.id, false)}>Reject</Button>
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      <div className="mt-10 grid gap-6 md:grid-cols-2">
         <Card className="p-6">
           <p className="text-xs uppercase tracking-widest text-muted-foreground">Theme of the year</p>
           <div className="mt-4 space-y-3">
@@ -113,9 +151,9 @@ function AdminPage() {
         </Card>
       </div>
 
-      <h2 className="mt-12 font-serif text-2xl">Users &amp; roles</h2>
+      <h2 className="mt-12 font-serif text-2xl">Approved users &amp; roles</h2>
       <div className="mt-4 space-y-4">
-        {(profiles.data ?? []).map((p) => (
+        {others.map((p: any) => (
           <UserRow
             key={p.id}
             profile={p}
@@ -124,13 +162,14 @@ function AdminPage() {
             onRemove={removeRole}
           />
         ))}
-        {profiles.data && profiles.data.length === 0 && (
-          <Card className="p-6 text-sm text-muted-foreground">No users yet.</Card>
+        {others.length === 0 && (
+          <Card className="p-6 text-sm text-muted-foreground">No approved users yet.</Card>
         )}
       </div>
     </div>
   );
 }
+
 
 function UserRow({ profile, departments, onAssign, onRemove }: {
   profile: any;

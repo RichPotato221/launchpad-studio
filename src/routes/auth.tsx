@@ -4,8 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
+import { fetchDepartments } from "@/lib/portal";
 import logo from "@/assets/trog-logo.png";
 
 export const Route = createFileRoute("/auth")({
@@ -13,12 +16,23 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
+const BRANCHES = [
+  { value: "twatwa", label: "Twatwa" },
+  { value: "joburg_north", label: "Joburg North" },
+  { value: "joburg_south", label: "Joburg South" },
+] as const;
+
 function AuthPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [branch, setBranch] = useState<string>("");
+  const [deptSlug, setDeptSlug] = useState<string>("");
+  const [requestedRole, setRequestedRole] = useState("");
+  const [pendingMsg, setPendingMsg] = useState(false);
+  const depts = useQuery({ queryKey: ["departments"], queryFn: fetchDepartments });
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -37,19 +51,47 @@ function AuthPage() {
 
   const signUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!branch || !deptSlug || !requestedRole.trim() || !fullName.trim()) {
+      return toast.error("All fields are required.");
+    }
     setLoading(true);
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: `${window.location.origin}/home`,
-        data: { full_name: fullName },
+        data: {
+          full_name: fullName,
+          branch,
+          department_slug: deptSlug,
+          requested_role: requestedRole,
+        },
       },
     });
     setLoading(false);
     if (error) return toast.error(error.message);
-    toast.success("Account created — you can sign in now.");
+    // Immediately sign out so they wait for approval.
+    await supabase.auth.signOut();
+    setPendingMsg(true);
+    toast.success("Account submitted for approval.");
   };
+
+  if (pendingMsg) {
+    return (
+      <div className="grid min-h-screen place-items-center bg-background p-6">
+        <div className="max-w-md text-center">
+          <img src={logo} alt="" className="mx-auto h-14 w-auto" />
+          <h1 className="mt-6 font-serif text-3xl">Awaiting approval</h1>
+          <p className="mt-4 text-sm text-muted-foreground">
+            Thank you for signing up. Your account request has been sent to the Senior Apostle
+            (<strong>richardmashaba.19@gmail.com</strong>) for approval. You will be able to sign
+            in once you have been approved and added to your department.
+          </p>
+          <Button className="mt-6" onClick={() => setPendingMsg(false)}>Back to sign in</Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="grid min-h-screen bg-background md:grid-cols-2">
@@ -73,12 +115,11 @@ function AuthPage() {
           <p className="text-xs uppercase tracking-[0.22em] opacity-70">Leadership &amp; Serving-Members Portal</p>
           <h1 className="mt-4 font-serif text-5xl leading-tight">Intimacy · Identity · Purpose</h1>
           <p className="mt-6 max-w-md text-sm leading-relaxed opacity-80">
-            Restricted access. Governance, department KPIs, and reports for leadership and active serving members of TRoGKC.
+            Restricted access. New accounts require approval by the Senior Apostle before sign-in is unlocked.
           </p>
         </div>
         <p className="text-xs opacity-60">© {new Date().getFullYear()} TRoGKC · Under the headship of Jesus Christ</p>
       </div>
-
 
       <div className="flex items-center justify-center p-6 md:p-12">
         <div className="w-full max-w-md">
@@ -86,7 +127,7 @@ function AuthPage() {
             <img src={logo} alt="" className="h-10 w-auto" />
           </div>
           <h2 className="font-serif text-3xl">Sign in to the portal</h2>
-          <p className="mt-2 text-sm text-muted-foreground">Use the credentials issued by the Church Secretary.</p>
+          <p className="mt-2 text-sm text-muted-foreground">Use the credentials issued after your approval.</p>
 
           <Tabs defaultValue="signin" className="mt-8">
             <TabsList className="grid w-full grid-cols-2">
@@ -113,22 +154,47 @@ function AuthPage() {
             <TabsContent value="signup">
               <form onSubmit={signUp} className="space-y-4">
                 <div>
-                  <Label htmlFor="name">Full name</Label>
+                  <Label htmlFor="name">Full name *</Label>
                   <Input id="name" required value={fullName} onChange={(e) => setFullName(e.target.value)} />
                 </div>
                 <div>
-                  <Label htmlFor="signup-email">Email</Label>
+                  <Label htmlFor="signup-email">Email *</Label>
                   <Input id="signup-email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
                 </div>
                 <div>
-                  <Label htmlFor="signup-password">Password</Label>
+                  <Label htmlFor="signup-password">Password *</Label>
                   <Input id="signup-password" type="password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} />
                 </div>
+                <div>
+                  <Label>Branch *</Label>
+                  <Select value={branch} onValueChange={setBranch} required>
+                    <SelectTrigger><SelectValue placeholder="Select your branch" /></SelectTrigger>
+                    <SelectContent>
+                      {BRANCHES.map((b) => <SelectItem key={b.value} value={b.value}>{b.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Department you serve in *</Label>
+                  <Select value={deptSlug} onValueChange={setDeptSlug} required>
+                    <SelectTrigger><SelectValue placeholder="Select a department" /></SelectTrigger>
+                    <SelectContent className="max-h-72">
+                      {(depts.data ?? []).map((d) => (
+                        <SelectItem key={d.slug} value={d.slug}>{d.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="role">Your role in that department *</Label>
+                  <Input id="role" required placeholder="e.g. Media Lead, Usher, Sound Technician"
+                    value={requestedRole} onChange={(e) => setRequestedRole(e.target.value)} />
+                </div>
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Creating…" : "Create account"}
+                  {loading ? "Submitting…" : "Submit for approval"}
                 </Button>
                 <p className="text-xs text-muted-foreground">
-                  New accounts start as <strong>Team Member</strong>. The Senior Apostle or Secretary will assign your department role.
+                  Your details are sent to the Senior Apostle for approval. You cannot sign in until approved.
                 </p>
               </form>
             </TabsContent>

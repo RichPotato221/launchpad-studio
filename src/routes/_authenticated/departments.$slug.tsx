@@ -41,7 +41,7 @@ function DepartmentPortal() {
       <Link to="/departments" className="text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground">← All departments</Link>
       {hero && (
         <div className="mt-4 overflow-hidden rounded-lg border border-border bg-muted">
-          <img src={hero.src} alt={hero.alt} className="mx-auto max-h-[40rem] w-full object-contain" />
+          <img src={hero.src} alt={hero.alt} className="mx-auto h-96 w-full object-cover object-top md:h-[32rem]" />
         </div>
       )}
 
@@ -92,7 +92,7 @@ function DepartmentPortal() {
             <div className="grid gap-4 sm:grid-cols-2">
               {gallery.map((g) => (
                 <div key={g.src} className="flex h-72 w-full items-center justify-center rounded-lg border border-border bg-muted">
-                  <img src={g.src} alt={g.alt} className="max-h-full max-w-full object-contain" />
+                  <img src={g.src} alt={g.alt} className="h-full w-full object-cover object-top" />
                 </div>
               ))}
             </div>
