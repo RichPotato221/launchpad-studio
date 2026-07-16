@@ -60,12 +60,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "robots", content: "noindex, nofollow" },
-      { title: "TRoGKC Leadership Portal" },
+      { title: "TROG Dashboard" },
       {
         name: "description",
         content:
           "Private leadership and serving-members portal for Throne Room of God Kingdom Center — governance, departments, KPIs and reports.",
       },
+      { property: "og:title", content: "TROG Dashboard" },
+      { name: "twitter:title", content: "TROG Dashboard" },
+      { property: "og:description", content: "Private leadership and serving-members portal for Throne Room of God Kingdom Center — governance, departments, KPIs and reports." },
+      { name: "twitter:description", content: "Private leadership and serving-members portal for Throne Room of God Kingdom Center — governance, departments, KPIs and reports." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/5bc998b1-aa98-455c-a17a-8e3082fd32e5/id-preview-893086c5--213bacb4-31aa-41b9-bfb4-454076ea22af.lovable.app-1784200958861.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/5bc998b1-aa98-455c-a17a-8e3082fd32e5/id-preview-893086c5--213bacb4-31aa-41b9-bfb4-454076ea22af.lovable.app-1784200958861.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:type", content: "website" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
