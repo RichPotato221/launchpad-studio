@@ -21,6 +21,7 @@ export const DEPARTMENT_HERO: Record<string, { src: string; alt: string }> = {
   teaching: { src: "/images/seven-mountains/religion-five-fold/teaching/teaching-ministry-session.jpg", alt: "Teaching Ministry — seated address during a teaching session" },
   "arts-entertainment-sports": { src: "/images/departments/arts-entertainment-sports/cover-hero.jpg", alt: "Arts, Entertainment & Sports Department cover photo" },
   media: { src: "/images/departments/media/cover-hero.jpg", alt: "Media Department cover photo" },
+  "media-communication": { src: "/images/departments/media/cover-hero.jpg", alt: "Media & Communication Department cover photo" },
   hospitality: { src: "/images/departments/hospitality/cover-hero.jpg", alt: "Hospitality Department cover photo" },
   finance: { src: "/images/departments/finance/cover-hero.jpg", alt: "Finance Department cover photo" },
   "mens-ministry": { src: "/images/departments/mens-ministry/cover-hero.jpg", alt: "Men's Ministry cover photo" },
