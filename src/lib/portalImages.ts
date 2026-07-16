@@ -19,6 +19,18 @@ export const DEPARTMENT_HERO: Record<string, { src: string; alt: string }> = {
   family: { src: "/images/seven-mountains/family/family-portrait.jpg", alt: "Family Mountain — family portrait" },
   religion: { src: "/images/seven-mountains/religion-five-fold/teaching/teaching-ministry-session.jpg", alt: "Religion Mountain — teaching ministry session" },
   teaching: { src: "/images/seven-mountains/religion-five-fold/teaching/teaching-ministry-session.jpg", alt: "Teaching Ministry — seated address during a teaching session" },
+  "arts-entertainment-sports": { src: "/images/departments/arts-entertainment-sports/cover-hero.jpg", alt: "Arts, Entertainment & Sports Department cover photo" },
+  media: { src: "/images/departments/media/cover-hero.jpg", alt: "Media Department cover photo" },
+  hospitality: { src: "/images/departments/hospitality/cover-hero.jpg", alt: "Hospitality Department cover photo" },
+  finance: { src: "/images/departments/finance/cover-hero.jpg", alt: "Finance Department cover photo" },
+  "mens-ministry": { src: "/images/departments/mens-ministry/cover-hero.jpg", alt: "Men's Ministry cover photo" },
+  "prayer-intercession": { src: "/images/departments/prayer-intercession/cover-hero.jpg", alt: "Prayer & Intercession Department cover photo" },
+  "outreach-evangelism": { src: "/images/departments/outreach-evangelism/cover-hero.jpg", alt: "Evangelism & Outreach Department cover photo" },
+  "business-economics": { src: "/images/departments/business-economics/cover-hero.jpg", alt: "Business & Economics Department cover photo" },
+  education: { src: "/images/departments/education/cover-hero.jpg", alt: "Education Department cover photo" },
+  government: { src: "/images/departments/government/cover-hero.jpg", alt: "Government Department cover photo" },
+  "youth-ministry": { src: "/images/departments/youth-ministry/cover-hero.jpg", alt: "Youth Ministry cover photo" },
+  ushers: { src: "/images/departments/ushers/cover-hero.jpg", alt: "Ushers Department cover photo" },
 };
 
 // Extra imagery per department
