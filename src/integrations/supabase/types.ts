@@ -999,6 +999,10 @@ export type Database = {
         Args: { _approve: boolean; _user_id: string }
         Returns: undefined
       }
+      can_view_profile: {
+        Args: { _target: string; _viewer: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
