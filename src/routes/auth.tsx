@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { fetchDepartments } from "@/lib/portal";
 import logo from "@/assets/trog-logo.png";
+import { notifyPendingApproval } from "@/lib/notifyApproval.functions";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Sign in — TRoGKC Leadership Portal" }] }),
@@ -70,6 +71,22 @@ function AuthPage() {
     });
     setLoading(false);
     if (error) return toast.error(error.message);
+    // Notify admin (best effort — do not block user on failure)
+    try {
+      const deptLabel = depts.data?.find((d) => d.slug === deptSlug)?.name ?? deptSlug;
+      const branchLabel = BRANCHES.find((b) => b.value === branch)?.label ?? branch;
+      await notifyPendingApproval({
+        data: {
+          fullName,
+          email,
+          branch: branchLabel,
+          department: deptLabel,
+          role: requestedRole,
+        },
+      });
+    } catch (err) {
+      console.error("Approval notification failed", err);
+    }
     // Immediately sign out so they wait for approval.
     await supabase.auth.signOut();
     setPendingMsg(true);
