@@ -73,7 +73,7 @@ function AuthPage() {
     if (error) return toast.error(error.message);
     // Notify admin (best effort — do not block user on failure)
     try {
-      const deptLabel = departments?.find((d) => d.slug === deptSlug)?.name ?? deptSlug;
+      const deptLabel = depts.data?.find((d) => d.slug === deptSlug)?.name ?? deptSlug;
       const branchLabel = BRANCHES.find((b) => b.value === branch)?.label ?? branch;
       await notifyPendingApproval({
         data: {
