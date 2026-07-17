@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { fetchDepartments } from "@/lib/portal";
 import logo from "@/assets/trog-logo.png";
+import { notifyPendingApproval } from "@/lib/notifyApproval.functions";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Sign in — TRoGKC Leadership Portal" }] }),
