@@ -71,6 +71,22 @@ function AuthPage() {
     });
     setLoading(false);
     if (error) return toast.error(error.message);
+    // Notify admin (best effort — do not block user on failure)
+    try {
+      const deptLabel = departments?.find((d) => d.slug === deptSlug)?.name ?? deptSlug;
+      const branchLabel = BRANCHES.find((b) => b.value === branch)?.label ?? branch;
+      await notifyPendingApproval({
+        data: {
+          fullName,
+          email,
+          branch: branchLabel,
+          department: deptLabel,
+          role: requestedRole,
+        },
+      });
+    } catch (err) {
+      console.error("Approval notification failed", err);
+    }
     // Immediately sign out so they wait for approval.
     await supabase.auth.signOut();
     setPendingMsg(true);
