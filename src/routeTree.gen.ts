@@ -13,6 +13,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedTasksRouteImport } from './routes/_authenticated/tasks'
+import { Route as AuthenticatedSeniorPastorCockpitRouteImport } from './routes/_authenticated/senior-pastor-cockpit'
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
 import { Route as AuthenticatedGovernanceRouteImport } from './routes/_authenticated/governance'
@@ -41,6 +42,12 @@ const AuthenticatedTasksRoute = AuthenticatedTasksRouteImport.update({
   path: '/tasks',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSeniorPastorCockpitRoute =
+  AuthenticatedSeniorPastorCockpitRouteImport.update({
+    id: '/senior-pastor-cockpit',
+    path: '/senior-pastor-cockpit',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
@@ -94,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/governance': typeof AuthenticatedGovernanceRoute
   '/home': typeof AuthenticatedHomeRoute
   '/reports': typeof AuthenticatedReportsRoute
+  '/senior-pastor-cockpit': typeof AuthenticatedSeniorPastorCockpitRoute
   '/tasks': typeof AuthenticatedTasksRoute
   '/departments/$slug': typeof AuthenticatedDepartmentsSlugRoute
 }
@@ -107,6 +115,7 @@ export interface FileRoutesByTo {
   '/governance': typeof AuthenticatedGovernanceRoute
   '/home': typeof AuthenticatedHomeRoute
   '/reports': typeof AuthenticatedReportsRoute
+  '/senior-pastor-cockpit': typeof AuthenticatedSeniorPastorCockpitRoute
   '/tasks': typeof AuthenticatedTasksRoute
   '/departments/$slug': typeof AuthenticatedDepartmentsSlugRoute
 }
@@ -122,6 +131,7 @@ export interface FileRoutesById {
   '/_authenticated/governance': typeof AuthenticatedGovernanceRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
   '/_authenticated/reports': typeof AuthenticatedReportsRoute
+  '/_authenticated/senior-pastor-cockpit': typeof AuthenticatedSeniorPastorCockpitRoute
   '/_authenticated/tasks': typeof AuthenticatedTasksRoute
   '/_authenticated/departments/$slug': typeof AuthenticatedDepartmentsSlugRoute
 }
@@ -137,6 +147,7 @@ export interface FileRouteTypes {
     | '/governance'
     | '/home'
     | '/reports'
+    | '/senior-pastor-cockpit'
     | '/tasks'
     | '/departments/$slug'
   fileRoutesByTo: FileRoutesByTo
@@ -150,6 +161,7 @@ export interface FileRouteTypes {
     | '/governance'
     | '/home'
     | '/reports'
+    | '/senior-pastor-cockpit'
     | '/tasks'
     | '/departments/$slug'
   id:
@@ -164,6 +176,7 @@ export interface FileRouteTypes {
     | '/_authenticated/governance'
     | '/_authenticated/home'
     | '/_authenticated/reports'
+    | '/_authenticated/senior-pastor-cockpit'
     | '/_authenticated/tasks'
     | '/_authenticated/departments/$slug'
   fileRoutesById: FileRoutesById
@@ -202,6 +215,13 @@ declare module '@tanstack/react-router' {
       path: '/tasks'
       fullPath: '/tasks'
       preLoaderRoute: typeof AuthenticatedTasksRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/senior-pastor-cockpit': {
+      id: '/_authenticated/senior-pastor-cockpit'
+      path: '/senior-pastor-cockpit'
+      fullPath: '/senior-pastor-cockpit'
+      preLoaderRoute: typeof AuthenticatedSeniorPastorCockpitRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/reports': {
@@ -285,6 +305,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedGovernanceRoute: typeof AuthenticatedGovernanceRoute
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
+  AuthenticatedSeniorPastorCockpitRoute: typeof AuthenticatedSeniorPastorCockpitRoute
   AuthenticatedTasksRoute: typeof AuthenticatedTasksRoute
 }
 
@@ -296,6 +317,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedGovernanceRoute: AuthenticatedGovernanceRoute,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
   AuthenticatedReportsRoute: AuthenticatedReportsRoute,
+  AuthenticatedSeniorPastorCockpitRoute: AuthenticatedSeniorPastorCockpitRoute,
   AuthenticatedTasksRoute: AuthenticatedTasksRoute,
 }
 
@@ -310,3 +332,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
