@@ -20,7 +20,12 @@ export function useLeadershipAccess() {
       const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", uid);
       const roleNames = (roles ?? []).map((r: any) => r.role);
       const isSeniorApostle = roleNames.includes("senior_apostle");
-      const hasAccess = isSeniorApostle || roleNames.includes("chairperson") || roleNames.includes("secretary");
+      const hasAccess =
+        isSeniorApostle ||
+        roleNames.includes("chairperson") ||
+        roleNames.includes("secretary") ||
+        roleNames.includes("lead_pastor") ||
+        roleNames.includes("associate_pastor");
 
       return { hasAccess, isSeniorApostle, userId: uid };
     },
