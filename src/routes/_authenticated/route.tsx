@@ -27,7 +27,7 @@ function Gate() {
         supabase.from("user_roles").select("role").eq("user_id", u.user.id),
       ]);
       const isAdmin = (roles ?? []).some((r) =>
-        ["senior_apostle", "secretary", "chairperson"].includes(r.role),
+        ["senior_apostle", "secretary", "chairperson", "lead_pastor", "associate_pastor"].includes(r.role),
       );
       if (isAdmin) return setState("ok");
       if (!profile || profile.approval_status === "pending") return setState("pending");
