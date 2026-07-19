@@ -28,10 +28,7 @@ type ReportEntry = {
 };
 
 async function fetchReportEntries() {
-  const { data, error } = await supabase
-    .from("report_entries")
-    .select("*")
-    .order("created_at", { ascending: false });
+  const { data, error } = await supabase.from("report_entries").select("*").order("created_at", { ascending: false });
   if (error) throw error;
   return data as ReportEntry[];
 }
@@ -59,7 +56,8 @@ function ReportsPage() {
       <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Roll-up reporting</p>
       <h1 className="mt-2 font-serif text-4xl md:text-5xl">Church-wide reporting</h1>
       <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
-        Aggregate KPI view across every department, plus a shared feed where each department can post comments and upload documents.
+        Aggregate KPI view across every department, plus a shared feed where each department can post comments and
+        upload documents.
       </p>
 
       <div className="mt-8 grid gap-4 md:grid-cols-5">
@@ -75,20 +73,32 @@ function ReportsPage() {
         <div>
           <p className="mb-1 text-xs uppercase tracking-widest text-muted-foreground">Category</p>
           <Select value={category} onValueChange={(v) => setCategory(v as any)}>
-            <SelectTrigger className="w-56"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-56">
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All categories</SelectItem>
-              {KPI_CATEGORIES.map((c) => <SelectItem key={c.key} value={c.key}>{c.label}</SelectItem>)}
+              {KPI_CATEGORIES.map((c) => (
+                <SelectItem key={c.key} value={c.key}>
+                  {c.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
         <div>
           <p className="mb-1 text-xs uppercase tracking-widest text-muted-foreground">Department</p>
           <Select value={dept} onValueChange={setDept}>
-            <SelectTrigger className="w-56"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-56">
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All departments</SelectItem>
-              {(depts.data ?? []).map((d) => <SelectItem key={d.slug} value={d.slug}>{d.name}</SelectItem>)}
+              {(depts.data ?? []).map((d) => (
+                <SelectItem key={d.slug} value={d.slug}>
+                  {d.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -113,14 +123,24 @@ function ReportsPage() {
                 <td className="p-3">{k.department_slug}</td>
                 <td className="p-3 font-medium">{k.kpi_name}</td>
                 <td className="p-3 text-muted-foreground">{k.category.replace("_", " ")}</td>
-                <td className="p-3 text-muted-foreground">{k.period_type} · {k.period_date}</td>
+                <td className="p-3 text-muted-foreground">
+                  {k.period_type} · {k.period_date}
+                </td>
                 <td className="p-3">{k.baseline ?? "—"}</td>
                 <td className="p-3">{k.target ?? "—"}</td>
-                <td className="p-3 font-medium">{k.actual ?? "—"}</td>
+                <td
+                  className={`p-3 font-medium ${k.actual == null || k.target == null ? "" : k.actual >= k.target ? "text-green-600" : "text-red-600"}`}
+                >
+                  {k.actual ?? "-"}
+                </td>
               </tr>
             ))}
             {filtered.length === 0 && (
-              <tr><td colSpan={7} className="p-8 text-center text-muted-foreground">No KPI entries for this filter.</td></tr>
+              <tr>
+                <td colSpan={7} className="p-8 text-center text-muted-foreground">
+                  No KPI entries for this filter.
+                </td>
+              </tr>
             )}
           </tbody>
         </table>
@@ -130,13 +150,11 @@ function ReportsPage() {
         <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Department feed</p>
         <h2 className="mt-2 font-serif text-3xl">Add a comment or document</h2>
         <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-          Any approved member can post here on behalf of their department — narrative updates, minutes, sermon notes, budget PDFs, event reports.
+          Any approved member can post here on behalf of their department — narrative updates, minutes, sermon notes,
+          budget PDFs, event reports.
         </p>
 
-        <AddReportEntry
-          departments={depts.data ?? []}
-          onCreated={() => entries.refetch()}
-        />
+        <AddReportEntry departments={depts.data ?? []} onCreated={() => entries.refetch()} />
 
         <div className="mt-8 space-y-4">
           {(entries.data ?? []).map((e) => {
@@ -195,9 +213,7 @@ function AddReportEntry({
         const path = `${slug}/${Date.now()}-${file.name.replace(/[^\w.\-]+/g, "_")}`;
         const up = await supabase.storage.from("department-reports").upload(path, file);
         if (up.error) throw up.error;
-        const signed = await supabase.storage
-          .from("department-reports")
-          .createSignedUrl(path, 60 * 60 * 24 * 365);
+        const signed = await supabase.storage.from("department-reports").createSignedUrl(path, 60 * 60 * 24 * 365);
         if (signed.error) throw signed.error;
         file_url = signed.data.signedUrl;
         file_name = file.name;
@@ -230,27 +246,47 @@ function AddReportEntry({
         <div>
           <Label>Department</Label>
           <Select value={slug} onValueChange={setSlug}>
-            <SelectTrigger><SelectValue placeholder="Select department" /></SelectTrigger>
+            <SelectTrigger>
+              <SelectValue placeholder="Select department" />
+            </SelectTrigger>
             <SelectContent>
-              {departments.map((d) => <SelectItem key={d.slug} value={d.slug}>{d.name}</SelectItem>)}
+              {departments.map((d) => (
+                <SelectItem key={d.slug} value={d.slug}>
+                  {d.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
         <div>
           <Label>Title</Label>
-          <Input required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. October 2026 finance report" />
+          <Input
+            required
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="e.g. October 2026 finance report"
+          />
         </div>
         <div className="md:col-span-2">
           <Label>Comment / narrative</Label>
-          <Textarea rows={4} value={body} onChange={(e) => setBody(e.target.value)} placeholder="Summary, decisions, follow-ups…" />
+          <Textarea
+            rows={4}
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            placeholder="Summary, decisions, follow-ups…"
+          />
         </div>
         <div className="md:col-span-2">
           <Label>Attach a document (optional)</Label>
           <Input type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
-          <p className="mt-1 text-xs text-muted-foreground">PDF, Word, Excel, images — all approved members can view attachments.</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            PDF, Word, Excel, images — all approved members can view attachments.
+          </p>
         </div>
         <div className="md:col-span-2">
-          <Button type="submit" disabled={saving}>{saving ? "Posting…" : "Post entry"}</Button>
+          <Button type="submit" disabled={saving}>
+            {saving ? "Posting…" : "Post entry"}
+          </Button>
         </div>
       </form>
     </Card>
