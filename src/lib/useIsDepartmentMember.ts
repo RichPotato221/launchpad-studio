@@ -21,7 +21,7 @@ export function useIsDepartmentMember(slug: string) {
       ]);
 
       const isAdmin = (roles ?? []).some((r: any) =>
-        ["senior_apostle", "secretary", "chairperson"].includes(r.role)
+        ["senior_apostle", "secretary", "chairperson", "lead_pastor", "associate_pastor"].includes(r.role)
       );
       const roleInDept = (roles ?? []).some((r: any) => r.department_slug === slug);
       const primary =
