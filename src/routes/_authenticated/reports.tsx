@@ -129,7 +129,7 @@ function ReportsPage() {
                 <td className="p-3">{k.baseline ?? "—"}</td>
                 <td className="p-3">{k.target ?? "—"}</td>
                 <td
-                  className={`p-3 font-medium ${k.actual == null || k.target == null ? "" : k.actual >= k.target ? "text-green-600" : "text-red-600"}`}
+                  className={`p-3 font-medium ${k.actual == null || k.target == null || k.target === 0 ? "" : k.actual / k.target >= 0.9 ? "text-green-600" : k.actual / k.target >= 0.6 ? "text-orange-500" : "text-red-600"}`}
                 >
                   {k.actual ?? "-"}
                 </td>
