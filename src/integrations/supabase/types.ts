@@ -16,7 +16,7 @@ export type Database = {
     Tables: {
       attendance: {
         Row: {
-          branch: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
           created_at: string
           department_slug: string | null
           event_id: string | null
@@ -31,7 +31,7 @@ export type Database = {
           visitor: boolean
         }
         Insert: {
-          branch?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
           created_at?: string
           department_slug?: string | null
           event_id?: string | null
@@ -46,7 +46,7 @@ export type Database = {
           visitor?: boolean
         }
         Update: {
-          branch?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
           created_at?: string
           department_slug?: string | null
           event_id?: string | null
@@ -103,6 +103,7 @@ export type Database = {
       child_checkins: {
         Row: {
           allergies: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
           checked_in_at: string
           checked_in_by: string | null
           checked_out_at: string | null
@@ -117,6 +118,7 @@ export type Database = {
         }
         Insert: {
           allergies?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
           checked_in_at?: string
           checked_in_by?: string | null
           checked_out_at?: string | null
@@ -131,6 +133,7 @@ export type Database = {
         }
         Update: {
           allergies?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
           checked_in_at?: string
           checked_in_by?: string | null
           checked_out_at?: string | null
@@ -147,6 +150,7 @@ export type Database = {
       }
       courses: {
         Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
           created_at: string
           created_by: string | null
           department_slug: string
@@ -157,6 +161,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          branch?: Database["public"]["Enums"]["branch"] | null
           created_at?: string
           created_by?: string | null
           department_slug: string
@@ -167,6 +172,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          branch?: Database["public"]["Enums"]["branch"] | null
           created_at?: string
           created_by?: string | null
           department_slug?: string
@@ -241,6 +247,7 @@ export type Database = {
         Row: {
           approved_by: string | null
           asset_url: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
           created_at: string
           created_by: string | null
           department_slug: string
@@ -254,6 +261,7 @@ export type Database = {
         Insert: {
           approved_by?: string | null
           asset_url?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
           created_at?: string
           created_by?: string | null
           department_slug: string
@@ -267,6 +275,7 @@ export type Database = {
         Update: {
           approved_by?: string | null
           asset_url?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
           created_at?: string
           created_by?: string | null
           department_slug?: string
@@ -369,7 +378,7 @@ export type Database = {
       }
       events: {
         Row: {
-          branch: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
           created_at: string
           created_by: string
           department_slug: string | null
@@ -384,7 +393,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          branch?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
           created_at?: string
           created_by: string
           department_slug?: string | null
@@ -399,7 +408,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          branch?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
           created_at?: string
           created_by?: string
           department_slug?: string | null
@@ -420,6 +429,7 @@ export type Database = {
           amount: number
           approved_by_chair: string | null
           approved_by_senior: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
           claim_type: string | null
           claimant_id: string
           created_at: string
@@ -434,6 +444,7 @@ export type Database = {
           amount: number
           approved_by_chair?: string | null
           approved_by_senior?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
           claim_type?: string | null
           claimant_id: string
           created_at?: string
@@ -448,6 +459,7 @@ export type Database = {
           amount?: number
           approved_by_chair?: string | null
           approved_by_senior?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
           claim_type?: string | null
           claimant_id?: string
           created_at?: string
@@ -463,6 +475,7 @@ export type Database = {
       finance_entries: {
         Row: {
           amount: number | null
+          branch: Database["public"]["Enums"]["branch"] | null
           created_at: string
           created_by: string
           department_slug: string
@@ -478,6 +491,7 @@ export type Database = {
         }
         Insert: {
           amount?: number | null
+          branch?: Database["public"]["Enums"]["branch"] | null
           created_at?: string
           created_by: string
           department_slug?: string
@@ -493,6 +507,7 @@ export type Database = {
         }
         Update: {
           amount?: number | null
+          branch?: Database["public"]["Enums"]["branch"] | null
           created_at?: string
           created_by?: string
           department_slug?: string
@@ -518,6 +533,7 @@ export type Database = {
       }
       kingdom_projects: {
         Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
           created_at: string
           department_slug: string
           description: string | null
@@ -529,6 +545,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          branch?: Database["public"]["Enums"]["branch"] | null
           created_at?: string
           department_slug: string
           description?: string | null
@@ -540,6 +557,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          branch?: Database["public"]["Enums"]["branch"] | null
           created_at?: string
           department_slug?: string
           description?: string | null
@@ -556,6 +574,7 @@ export type Database = {
         Row: {
           actual: number | null
           baseline: number | null
+          branch: Database["public"]["Enums"]["branch"] | null
           category: Database["public"]["Enums"]["kpi_category"]
           department_slug: string
           entered_at: string
@@ -571,6 +590,7 @@ export type Database = {
         Insert: {
           actual?: number | null
           baseline?: number | null
+          branch?: Database["public"]["Enums"]["branch"] | null
           category: Database["public"]["Enums"]["kpi_category"]
           department_slug: string
           entered_at?: string
@@ -586,6 +606,7 @@ export type Database = {
         Update: {
           actual?: number | null
           baseline?: number | null
+          branch?: Database["public"]["Enums"]["branch"] | null
           category?: Database["public"]["Enums"]["kpi_category"]
           department_slug?: string
           entered_at?: string
@@ -700,6 +721,7 @@ export type Database = {
       report_entries: {
         Row: {
           body: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
           created_at: string
           created_by: string
           department_slug: string
@@ -711,6 +733,7 @@ export type Database = {
         }
         Insert: {
           body?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
           created_at?: string
           created_by: string
           department_slug: string
@@ -722,6 +745,7 @@ export type Database = {
         }
         Update: {
           body?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
           created_at?: string
           created_by?: string
           department_slug?: string
@@ -776,6 +800,7 @@ export type Database = {
       }
       setlists: {
         Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
           created_at: string
           created_by: string | null
           department_slug: string
@@ -785,6 +810,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          branch?: Database["public"]["Enums"]["branch"] | null
           created_at?: string
           created_by?: string | null
           department_slug: string
@@ -794,6 +820,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          branch?: Database["public"]["Enums"]["branch"] | null
           created_at?: string
           created_by?: string | null
           department_slug?: string
@@ -827,6 +854,7 @@ export type Database = {
       }
       songs: {
         Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
           ccli_number: string | null
           chord_chart_url: string | null
           created_at: string
@@ -840,6 +868,7 @@ export type Database = {
           youtube_url: string | null
         }
         Insert: {
+          branch?: Database["public"]["Enums"]["branch"] | null
           ccli_number?: string | null
           chord_chart_url?: string | null
           created_at?: string
@@ -853,6 +882,7 @@ export type Database = {
           youtube_url?: string | null
         }
         Update: {
+          branch?: Database["public"]["Enums"]["branch"] | null
           ccli_number?: string | null
           chord_chart_url?: string | null
           created_at?: string
@@ -870,6 +900,7 @@ export type Database = {
       souls_won: {
         Row: {
           assigned_to: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
           contact: string | null
           created_at: string
           date_won: string
@@ -883,6 +914,7 @@ export type Database = {
         }
         Insert: {
           assigned_to?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
           contact?: string | null
           created_at?: string
           date_won?: string
@@ -896,6 +928,7 @@ export type Database = {
         }
         Update: {
           assigned_to?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
           contact?: string | null
           created_at?: string
           date_won?: string
@@ -916,6 +949,7 @@ export type Database = {
           approved_by_chair: string | null
           approved_by_senior: string | null
           assigned_to: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
           created_at: string
           created_by: string
           department_slug: string | null
@@ -934,6 +968,7 @@ export type Database = {
           approved_by_chair?: string | null
           approved_by_senior?: string | null
           assigned_to?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
           created_at?: string
           created_by: string
           department_slug?: string | null
@@ -952,6 +987,7 @@ export type Database = {
           approved_by_chair?: string | null
           approved_by_senior?: string | null
           assigned_to?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
           created_at?: string
           created_by?: string
           department_slug?: string | null
@@ -992,7 +1028,68 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      kpi_status: {
+        Row: {
+          actual: number | null
+          baseline: number | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          category: Database["public"]["Enums"]["kpi_category"] | null
+          department_slug: string | null
+          entered_at: string | null
+          entered_by: string | null
+          id: string | null
+          kpi_name: string | null
+          notes: string | null
+          period_date: string | null
+          period_type: Database["public"]["Enums"]["kpi_period"] | null
+          status: string | null
+          target: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          actual?: number | null
+          baseline?: number | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          category?: Database["public"]["Enums"]["kpi_category"] | null
+          department_slug?: string | null
+          entered_at?: string | null
+          entered_by?: string | null
+          id?: string | null
+          kpi_name?: string | null
+          notes?: string | null
+          period_date?: string | null
+          period_type?: Database["public"]["Enums"]["kpi_period"] | null
+          status?: never
+          target?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          actual?: number | null
+          baseline?: number | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          category?: Database["public"]["Enums"]["kpi_category"] | null
+          department_slug?: string | null
+          entered_at?: string | null
+          entered_by?: string | null
+          id?: string | null
+          kpi_name?: string | null
+          notes?: string | null
+          period_date?: string | null
+          period_type?: Database["public"]["Enums"]["kpi_period"] | null
+          status?: never
+          target?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kpis_department_slug_fkey"
+            columns: ["department_slug"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
     }
     Functions: {
       approve_member: {
@@ -1011,7 +1108,16 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      is_dept_branch_member_or_admin: {
+        Args: { _branch: Database["public"]["Enums"]["branch"]; _slug: string }
+        Returns: boolean
+      }
       is_dept_member_or_admin: { Args: { _slug: string }; Returns: boolean }
+      is_head_office: { Args: { _user_id: string }; Returns: boolean }
+      same_branch_or_admin: {
+        Args: { _branch: Database["public"]["Enums"]["branch"] }
+        Returns: boolean
+      }
       user_dept_slugs: { Args: { _user_id: string }; Returns: string[] }
     }
     Enums: {
