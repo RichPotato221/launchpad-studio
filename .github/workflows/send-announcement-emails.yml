@@ -11,6 +11,6 @@ jobs:
     steps:
       - name: Call send-announcement-emails
         run: |
-          curl -X POST "https://abcxyz.supabase.co/functions/v1/send-announcement-emails" \
+          curl -X POST "https://quzeraevecsxayrvymxd.supabase.co/functions/v1/send-announcement-emails" \
             -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
             -H "Content-Type: application/json"
