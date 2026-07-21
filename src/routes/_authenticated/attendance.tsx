@@ -15,7 +15,11 @@ export const Route = createFileRoute("/_authenticated/attendance")({
   component: AttendancePage,
 });
 
-const BRANCHES = ["Twatwa", "Joburg North", "Joburg South"] as const;
+const BRANCHES = [
+  { value: "twatwa", label: "Twatwa" },
+  { value: "joburg_north", label: "Joburg North" },
+  { value: "joburg_south", label: "Joburg South" },
+] as const;
 
 function AttendancePage() {
   const [rows, setRows] = useState<any[]>([]);
@@ -119,7 +123,7 @@ function AttendancePage() {
                   <Label>Branch</Label>
                   <Select value={form.branch} onValueChange={(v) => setForm({ ...form, branch: v })}>
                     <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
-                    <SelectContent>{BRANCHES.map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}</SelectContent>
+                    <SelectContent>{BRANCHES.map((b) => <SelectItem key={b.value} value={b.value}>{b.label}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
                 <div>
