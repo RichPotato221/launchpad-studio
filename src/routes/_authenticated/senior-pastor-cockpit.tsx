@@ -24,8 +24,8 @@ function CockpitPage() {
         <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Restricted</p>
         <h1 className="mt-2 font-serif text-3xl">Senior Pastor Cockpit</h1>
         <p className="mt-3 text-sm text-muted-foreground">
-          This dashboard is reserved for the Senior Apostle, the Chairperson of the Apostolic Council,
-          and the Church Secretary, per the Governance Manual.
+          This dashboard is reserved for the Senior Apostle, the Chairperson of the Apostolic Council, and the Church
+          Secretary, per the Governance Manual.
         </p>
       </div>
     );
@@ -36,14 +36,15 @@ function CockpitPage() {
       <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Governance-Level Oversight</p>
       <h1 className="mt-2 font-serif text-4xl md:text-5xl">Senior Pastor Cockpit</h1>
       <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
-        A single view of what needs your attention this month — underperforming KPIs, claims awaiting
-        your sign-off, departments that haven't reported, and a membership pulse.
+        A single view of what needs your attention this month — underperforming KPIs, claims awaiting your sign-off,
+        departments that haven't reported, and a membership pulse.
       </p>
 
       {access.data.isSeniorApostle && <CockpitComposer />}
       <CockpitPosts />
 
       <div className="mt-10 grid gap-8 lg:grid-cols-2">
+        <BranchScorecards />
         <RedFlagKpis />
         <PendingApprovals />
         <ReportingCompliance />
@@ -71,7 +72,10 @@ function CockpitComposer() {
     if (file && userRes.user) {
       const path = `${userRes.user.id}/${Date.now()}-${file.name}`;
       const up = await supabase.storage.from("cockpit-attachments").upload(path, file);
-      if (up.error) { setPosting(false); return toast.error(up.error.message); }
+      if (up.error) {
+        setPosting(false);
+        return toast.error(up.error.message);
+      }
       attachment_url = path;
       attachment_name = file.name;
     }
@@ -84,7 +88,8 @@ function CockpitComposer() {
     });
     setPosting(false);
     if (error) return toast.error(error.message);
-    setBody(""); setFile(null);
+    setBody("");
+    setFile(null);
     toast.success("Posted to leadership");
     qc.invalidateQueries({ queryKey: ["cockpit-posts"] });
   };
@@ -105,15 +110,20 @@ function CockpitComposer() {
           <input type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)} className="text-xs" />
           <div className="ml-auto flex items-center gap-2">
             <span className="text-xs text-muted-foreground">Target</span>
-            <select value={targetBranch} onChange={(e) => setTargetBranch(e.target.value)}
-              className="h-9 rounded-md border border-input bg-background px-2 text-sm">
+            <select
+              value={targetBranch}
+              onChange={(e) => setTargetBranch(e.target.value)}
+              className="h-9 rounded-md border border-input bg-background px-2 text-sm"
+            >
               <option value="all">All Branches</option>
               <option value="twatwa">Twatwa</option>
               <option value="joburg_north">Joburg North</option>
               <option value="joburg_south">Joburg South</option>
             </select>
           </div>
-          <Button type="submit" disabled={posting}>{posting ? "Posting…" : "Post"}</Button>
+          <Button type="submit" disabled={posting}>
+            {posting ? "Posting…" : "Post"}
+          </Button>
         </div>
       </form>
     </Card>
@@ -125,8 +135,11 @@ function CockpitPosts() {
   const posts = useQuery({
     queryKey: ["cockpit-posts"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("cockpit_posts").select("*")
-        .order("created_at", { ascending: false }).limit(20);
+      const { data, error } = await supabase
+        .from("cockpit_posts")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(20);
       if (error) throw error;
       const ids = Array.from(new Set((data ?? []).map((p: any) => p.author_id)));
       const { data: profs } = ids.length
@@ -139,7 +152,9 @@ function CockpitPosts() {
 
   return (
     <div className="mt-6 space-y-4">
-      {posts.data?.map((p) => <CockpitPostItem key={p.id} post={p} onChange={() => qc.invalidateQueries({ queryKey: ["cockpit-posts"] })} />)}
+      {posts.data?.map((p) => (
+        <CockpitPostItem key={p.id} post={p} onChange={() => qc.invalidateQueries({ queryKey: ["cockpit-posts"] })} />
+      ))}
       {!posts.isLoading && (posts.data?.length ?? 0) === 0 && (
         <Card className="p-6 text-center text-sm text-muted-foreground">No cockpit broadcasts yet.</Card>
       )}
@@ -155,14 +170,19 @@ function CockpitPostItem({ post, onChange }: { post: any; onChange: () => void }
 
   useEffect(() => {
     if (post.attachment_url) {
-      supabase.storage.from("cockpit-attachments").createSignedUrl(post.attachment_url, 3600)
+      supabase.storage
+        .from("cockpit-attachments")
+        .createSignedUrl(post.attachment_url, 3600)
         .then(({ data }) => setAttachUrl(data?.signedUrl ?? null));
     }
   }, [post.attachment_url]);
 
   const loadComments = async () => {
-    const { data } = await supabase.from("cockpit_post_comments").select("id, author_id, body, created_at")
-      .eq("post_id", post.id).order("created_at");
+    const { data } = await supabase
+      .from("cockpit_post_comments")
+      .select("id, author_id, body, created_at")
+      .eq("post_id", post.id)
+      .order("created_at");
     const ids = Array.from(new Set((data ?? []).map((c: any) => c.author_id)));
     const { data: profs } = ids.length
       ? await supabase.from("profiles").select("id, full_name").in("id", ids)
@@ -175,7 +195,9 @@ function CockpitPostItem({ post, onChange }: { post: any; onChange: () => void }
     if (!comment.trim()) return;
     const { data: userRes } = await supabase.auth.getUser();
     const { error } = await supabase.from("cockpit_post_comments").insert({
-      post_id: post.id, author_id: userRes.user!.id, body: comment.trim(),
+      post_id: post.id,
+      author_id: userRes.user!.id,
+      body: comment.trim(),
     });
     if (error) return toast.error(error.message);
     setComment("");
@@ -189,18 +211,31 @@ function CockpitPostItem({ post, onChange }: { post: any; onChange: () => void }
         <div>
           <p className="text-sm font-medium">{post.author_name}</p>
           <p className="text-xs text-muted-foreground">
-            {new Date(post.created_at).toLocaleString()} · {post.target_branch === "all" ? "All Branches" : post.target_branch}
+            {new Date(post.created_at).toLocaleString()} ·{" "}
+            {post.target_branch === "all" ? "All Branches" : post.target_branch}
           </p>
         </div>
       </div>
       <p className="mt-3 whitespace-pre-wrap text-sm">{post.body}</p>
       {attachUrl && (
-        <a href={attachUrl} target="_blank" rel="noreferrer" className="mt-2 inline-block text-xs text-primary underline">
+        <a
+          href={attachUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="mt-2 inline-block text-xs text-primary underline"
+        >
           📎 {post.attachment_name ?? "attachment"}
         </a>
       )}
-      <button onClick={() => { setShowComments((s) => { if (!s) loadComments(); return !s; }); }}
-        className="mt-3 text-xs text-muted-foreground hover:text-foreground">
+      <button
+        onClick={() => {
+          setShowComments((s) => {
+            if (!s) loadComments();
+            return !s;
+          });
+        }}
+        className="mt-3 text-xs text-muted-foreground hover:text-foreground"
+      >
         {showComments ? "Hide comments" : "Show comments"}
       </button>
       {showComments && (
@@ -213,10 +248,15 @@ function CockpitPostItem({ post, onChange }: { post: any; onChange: () => void }
             </div>
           ))}
           <div className="flex gap-2">
-            <input value={comment} onChange={(e) => setComment(e.target.value)}
+            <input
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
               placeholder="Write a comment…"
-              className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm" />
-            <Button size="sm" onClick={addComment}>Send</Button>
+              className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm"
+            />
+            <Button size="sm" onClick={addComment}>
+              Send
+            </Button>
           </div>
         </div>
       )}
@@ -236,7 +276,7 @@ function RedFlagKpis() {
     if (!kpis.data) return [];
     const latest = new Map<string, (typeof kpis.data)[number]>();
     for (const row of kpis.data) {
-      const key = `${row.department_slug}::${row.kpi_name}`;
+      const key = `${row.branch}::${row.department_slug}::${row.kpi_name}`;
       const existing = latest.get(key);
       if (!existing || row.period_date > existing.period_date) latest.set(key, row);
     }
@@ -252,20 +292,30 @@ function RedFlagKpis() {
   return (
     <Card className="p-6">
       <p className="text-xs uppercase tracking-widest text-muted-foreground">Red-Flag KPIs</p>
-      <p className="mt-1 text-xs text-muted-foreground">Most recent period per KPI, below target or not yet reported.</p>
+      <p className="mt-1 text-xs text-muted-foreground">
+        Most recent period per KPI, below target or not yet reported.
+      </p>
       <div className="mt-4 space-y-3">
         {flags.map((r) => {
           const notReported = r.actual == null;
           const pct = notReported ? 0 : Math.round((Number(r.actual) / Number(r.target)) * 100);
+          const badgeClass = notReported
+            ? "bg-muted text-muted-foreground"
+            : pct < 60
+              ? "bg-red-100 text-red-700"
+              : "bg-orange-100 text-orange-700";
           return (
-            <div key={r.id} className="flex items-center justify-between gap-3 border-b border-border/60 pb-3 last:border-0 last:pb-0">
+            <div
+              key={r.id}
+              className="flex items-center justify-between gap-3 border-b border-border/60 pb-3 last:border-0 last:pb-0"
+            >
               <div>
                 <p className="text-sm font-medium">{r.kpi_name}</p>
                 <p className="text-xs text-muted-foreground">
-                  {deptName(r.department_slug)} · {categoryLabel(r.category)} · {r.period_date}
+                  {r.branch} · {deptName(r.department_slug)} · {categoryLabel(r.category)} · {r.period_date}
                 </p>
               </div>
-              <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${notReported ? "bg-muted text-muted-foreground" : "bg-red-100 text-red-700"}`}>
+              <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${badgeClass}`}>
                 {notReported ? "Not reported" : `${pct}% of target`}
               </span>
             </div>
@@ -276,6 +326,62 @@ function RedFlagKpis() {
           <p className="text-sm text-muted-foreground">No red flags — every reported KPI is on target. 🎉</p>
         )}
       </div>
+    </Card>
+  );
+}
+
+/* ---------------- Branch Health Scorecards ---------------- */
+function BranchScorecards() {
+  const kpis = useQuery({ queryKey: ["all-kpis"], queryFn: fetchAllKpis });
+
+  const scores = useMemo(() => {
+    if (!kpis.data) return [];
+    const latest = new Map<string, (typeof kpis.data)[number]>();
+    for (const row of kpis.data) {
+      const key = `${row.branch}::${row.department_slug}::${row.kpi_name}`;
+      const existing = latest.get(key);
+      if (!existing || row.period_date > existing.period_date) latest.set(key, row);
+    }
+    const byBranch: Record<string, { total: number; count: number; redFlags: number }> = {};
+    for (const row of latest.values()) {
+      if (!row.branch || row.target == null || row.actual == null) continue;
+      const b = row.branch;
+      byBranch[b] ??= { total: 0, count: 0, redFlags: 0 };
+      const pct = (Number(row.actual) / Number(row.target)) * 100;
+      byBranch[b].total += Math.min(pct, 100);
+      byBranch[b].count += 1;
+      if (pct < 60) byBranch[b].redFlags += 1;
+    }
+    return Object.entries(byBranch).map(([branch, v]) => ({
+      branch,
+      score: v.count ? Math.round(v.total / v.count) : 0,
+      redFlags: v.redFlags,
+    }));
+  }, [kpis.data]);
+
+  const scoreColor = (score: number) =>
+    score >= 90 ? "text-green-600" : score >= 60 ? "text-orange-500" : "text-red-600";
+
+  return (
+    <Card className="p-6 lg:col-span-2">
+      <p className="text-xs uppercase tracking-widest text-muted-foreground">Church Health Score — By Branch</p>
+      <p className="mt-1 text-xs text-muted-foreground">
+        Average KPI achievement across reported KPIs per branch, out of 100.
+      </p>
+      <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+        {scores.map((s) => (
+          <div key={s.branch} className="rounded-md border border-border/60 p-4 text-center">
+            <p className={`font-serif text-3xl ${scoreColor(s.score)}`}>{s.score}</p>
+            <p className="mt-1 text-xs uppercase tracking-widest text-muted-foreground">{s.branch}</p>
+            {s.redFlags > 0 && (
+              <p className="mt-1 text-xs text-red-600">
+                {s.redFlags} red flag{s.redFlags === 1 ? "" : "s"}
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
+      {kpis.isLoading && <p className="mt-3 text-sm text-muted-foreground">Loading…</p>}
     </Card>
   );
 }
@@ -303,11 +409,7 @@ function PendingApprovals() {
     const { data: userRes } = await supabase.auth.getUser();
     const { error } = await supabase
       .from("expense_claims")
-      .update(
-        status === "senior_pastor_approved"
-          ? { status, approved_by_senior: userRes.user?.id }
-          : { status },
-      )
+      .update(status === "senior_pastor_approved" ? { status, approved_by_senior: userRes.user?.id } : { status })
       .eq("id", id);
     if (error) return toast.error(error.message);
     toast.success(status === "senior_pastor_approved" ? "Approved" : "Rejected");
@@ -317,17 +419,30 @@ function PendingApprovals() {
   return (
     <Card className="p-6">
       <p className="text-xs uppercase tracking-widest text-muted-foreground">Pending Your Approval</p>
-      <p className="mt-1 text-xs text-muted-foreground">Expense claims already chair-approved, awaiting final sign-off.</p>
+      <p className="mt-1 text-xs text-muted-foreground">
+        Expense claims already chair-approved, awaiting final sign-off.
+      </p>
       <div className="mt-4 space-y-3">
         {claims.data?.map((r) => (
-          <div key={r.id} className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-3 last:border-0 last:pb-0">
+          <div
+            key={r.id}
+            className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-3 last:border-0 last:pb-0"
+          >
             <div>
-              <p className="text-sm font-medium">R {Number(r.amount).toFixed(2)} · {r.claim_type ?? "—"}</p>
-              <p className="text-xs text-muted-foreground">{deptName(r.department_slug)} · {r.description}</p>
+              <p className="text-sm font-medium">
+                R {Number(r.amount).toFixed(2)} · {r.claim_type ?? "—"}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {deptName(r.department_slug)} · {r.description}
+              </p>
             </div>
             <div className="flex gap-2">
-              <Button size="sm" onClick={() => advance(r.id, "senior_pastor_approved")}>Approve</Button>
-              <Button size="sm" variant="outline" onClick={() => advance(r.id, "rejected")}>Reject</Button>
+              <Button size="sm" onClick={() => advance(r.id, "senior_pastor_approved")}>
+                Approve
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => advance(r.id, "rejected")}>
+                Reject
+              </Button>
             </div>
           </div>
         ))}
@@ -363,14 +478,21 @@ function ReportingCompliance() {
   return (
     <Card className="p-6">
       <p className="text-xs uppercase tracking-widest text-muted-foreground">Reporting Compliance — This Month</p>
-      <p className="mt-1 text-xs text-muted-foreground">Every department is expected to submit a monthly activity report.</p>
+      <p className="mt-1 text-xs text-muted-foreground">
+        Every department is expected to submit a monthly activity report.
+      </p>
       <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
         {depts.data?.map((d) => {
           const reported = reportedSlugs.has(d.slug);
           return (
-            <div key={d.slug} className={`rounded-md px-3 py-2 text-xs ${reported ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-700"}`}>
+            <div
+              key={d.slug}
+              className={`rounded-md px-3 py-2 text-xs ${reported ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-700"}`}
+            >
               {d.name}
-              <span className="block text-[0.65rem] uppercase tracking-widest opacity-80">{reported ? "Submitted" : "Missing"}</span>
+              <span className="block text-[0.65rem] uppercase tracking-widest opacity-80">
+                {reported ? "Submitted" : "Missing"}
+              </span>
             </div>
           );
         })}
