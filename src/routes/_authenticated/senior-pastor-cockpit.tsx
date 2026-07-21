@@ -76,7 +76,7 @@ function CockpitComposer() {
       attachment_name = file.name;
     }
     const { error } = await supabase.from("cockpit_posts").insert({
-      author_id: userRes.user?.id,
+      author_id: userRes.user!.id,
       body: body.trim(),
       target_branch: targetBranch as any,
       attachment_url,
