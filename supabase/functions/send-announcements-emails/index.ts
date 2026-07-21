@@ -70,26 +70,37 @@ Deno.serve(async () => {
       const bodyPreview = (payload.body ?? "").slice(0, 140);
       const subjectPrefix = payload.priority ? "🔴 PRIORITY — " : "";
 
-      await Promise.all(
-        recipientEmails.map((email) =>
-          fetch("https://api.resend.com/emails", {
+      const results = await Promise.all(
+        recipientEmails.map(async (email) => {
+          const resp = await fetch("https://api.resend.com/emails", {
             method: "POST",
             headers: {
               Authorization: `Bearer ${RESEND_API_KEY}`,
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              from: "TRoGKC Portal <notifications@yourdomain.org>",
+              from: "TRoGKC Portal <onboarding@resend.dev>", // swap once your domain is verified
               to: email,
               subject: `${subjectPrefix}New announcement on the Feed`,
               html: `<p>${bodyPreview}</p><p><a href="${APP_URL}/feed">Open the Feed</a></p>`,
             }),
-          }).catch((err) => console.error("Failed to send to", email, err))
-        )
+          });
+          if (!resp.ok) {
+            const text = await resp.text();
+            console.error("Resend rejected", email, resp.status, text);
+            return false;
+          }
+          return true;
+        })
       );
 
-      await supabase.from("notify_queue").update({ processed: true }).eq("id", row.id);
-      processedCount += 1;
+      const allSucceeded = results.every(Boolean);
+      await supabase
+        .from("notify_queue")
+        .update({ processed: allSucceeded })
+        .eq("id", row.id);
+      if (allSucceeded) processedCount += 1;
+
     }
 
     return new Response(JSON.stringify({ processed: processedCount }), { status: 200 });
