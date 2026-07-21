@@ -162,6 +162,22 @@ function AuthPage() {
                   <Label htmlFor="password">Password</Label>
                   <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
                 </div>
+                <div className="text-right">
+                  <button
+                    type="button"
+                    className="text-xs text-primary underline"
+                    onClick={async () => {
+                      if (!email) return toast.error("Enter your email first.");
+                      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                        redirectTo: `${window.location.origin}/reset-password`,
+                      });
+                      if (error) return toast.error(error.message);
+                      toast.success("Password reset link sent — check your email.");
+                    }}
+                  >
+                    Forgot password?
+                  </button>
+                </div>
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? "Signing in…" : "Sign in"}
                 </Button>

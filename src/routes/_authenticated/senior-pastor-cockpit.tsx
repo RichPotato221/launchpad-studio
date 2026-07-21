@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchAllKpis, fetchDepartments, KPI_CATEGORIES, type KpiCategory } from "@/lib/portal";
 import { useLeadershipAccess } from "@/lib/useLeadershipAccess";
@@ -40,6 +40,9 @@ function CockpitPage() {
         your sign-off, departments that haven't reported, and a membership pulse.
       </p>
 
+      {access.data.isSeniorApostle && <CockpitComposer />}
+      <CockpitPosts />
+
       <div className="mt-10 grid gap-8 lg:grid-cols-2">
         <RedFlagKpis />
         <PendingApprovals />
@@ -47,6 +50,177 @@ function CockpitPage() {
         <MembershipPulse />
       </div>
     </div>
+  );
+}
+
+/* -------------------- Cockpit posts (Senior Pastor Cockpit feed) -------------------- */
+function CockpitComposer() {
+  const qc = useQueryClient();
+  const [body, setBody] = useState("");
+  const [targetBranch, setTargetBranch] = useState("all");
+  const [file, setFile] = useState<File | null>(null);
+  const [posting, setPosting] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!body.trim()) return;
+    setPosting(true);
+    const { data: userRes } = await supabase.auth.getUser();
+    let attachment_url: string | null = null;
+    let attachment_name: string | null = null;
+    if (file && userRes.user) {
+      const path = `${userRes.user.id}/${Date.now()}-${file.name}`;
+      const up = await supabase.storage.from("cockpit-attachments").upload(path, file);
+      if (up.error) { setPosting(false); return toast.error(up.error.message); }
+      attachment_url = path;
+      attachment_name = file.name;
+    }
+    const { error } = await supabase.from("cockpit_posts").insert({
+      author_id: userRes.user!.id,
+      body: body.trim(),
+      target_branch: targetBranch as any,
+      attachment_url,
+      attachment_name,
+    });
+    setPosting(false);
+    if (error) return toast.error(error.message);
+    setBody(""); setFile(null);
+    toast.success("Posted to leadership");
+    qc.invalidateQueries({ queryKey: ["cockpit-posts"] });
+  };
+
+  return (
+    <Card className="mt-8 p-5">
+      <p className="text-xs uppercase tracking-widest text-muted-foreground">Broadcast from the Senior Pastor</p>
+      <form onSubmit={submit} className="mt-3 space-y-3">
+        <textarea
+          rows={3}
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+          placeholder="Share a directive, encouragement, or update…"
+          className="w-full rounded-md border border-input bg-background p-3 text-sm"
+          required
+        />
+        <div className="flex flex-wrap items-center gap-3">
+          <input type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)} className="text-xs" />
+          <div className="ml-auto flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">Target</span>
+            <select value={targetBranch} onChange={(e) => setTargetBranch(e.target.value)}
+              className="h-9 rounded-md border border-input bg-background px-2 text-sm">
+              <option value="all">All Branches</option>
+              <option value="twatwa">Twatwa</option>
+              <option value="joburg_north">Joburg North</option>
+              <option value="joburg_south">Joburg South</option>
+            </select>
+          </div>
+          <Button type="submit" disabled={posting}>{posting ? "Posting…" : "Post"}</Button>
+        </div>
+      </form>
+    </Card>
+  );
+}
+
+function CockpitPosts() {
+  const qc = useQueryClient();
+  const posts = useQuery({
+    queryKey: ["cockpit-posts"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("cockpit_posts").select("*")
+        .order("created_at", { ascending: false }).limit(20);
+      if (error) throw error;
+      const ids = Array.from(new Set((data ?? []).map((p: any) => p.author_id)));
+      const { data: profs } = ids.length
+        ? await supabase.from("profiles").select("id, full_name").in("id", ids)
+        : { data: [] as any[] };
+      const nameMap = new Map((profs ?? []).map((p: any) => [p.id, p.full_name]));
+      return (data ?? []).map((p: any) => ({ ...p, author_name: nameMap.get(p.author_id) ?? "Senior Pastor" }));
+    },
+  });
+
+  return (
+    <div className="mt-6 space-y-4">
+      {posts.data?.map((p) => <CockpitPostItem key={p.id} post={p} onChange={() => qc.invalidateQueries({ queryKey: ["cockpit-posts"] })} />)}
+      {!posts.isLoading && (posts.data?.length ?? 0) === 0 && (
+        <Card className="p-6 text-center text-sm text-muted-foreground">No cockpit broadcasts yet.</Card>
+      )}
+    </div>
+  );
+}
+
+function CockpitPostItem({ post, onChange }: { post: any; onChange: () => void }) {
+  const [attachUrl, setAttachUrl] = useState<string | null>(null);
+  const [comments, setComments] = useState<any[]>([]);
+  const [showComments, setShowComments] = useState(false);
+  const [comment, setComment] = useState("");
+
+  useEffect(() => {
+    if (post.attachment_url) {
+      supabase.storage.from("cockpit-attachments").createSignedUrl(post.attachment_url, 3600)
+        .then(({ data }) => setAttachUrl(data?.signedUrl ?? null));
+    }
+  }, [post.attachment_url]);
+
+  const loadComments = async () => {
+    const { data } = await supabase.from("cockpit_post_comments").select("id, author_id, body, created_at")
+      .eq("post_id", post.id).order("created_at");
+    const ids = Array.from(new Set((data ?? []).map((c: any) => c.author_id)));
+    const { data: profs } = ids.length
+      ? await supabase.from("profiles").select("id, full_name").in("id", ids)
+      : { data: [] as any[] };
+    const nameMap = new Map((profs ?? []).map((p: any) => [p.id, p.full_name]));
+    setComments((data ?? []).map((c: any) => ({ ...c, author_name: nameMap.get(c.author_id) ?? "Member" })));
+  };
+
+  const addComment = async () => {
+    if (!comment.trim()) return;
+    const { data: userRes } = await supabase.auth.getUser();
+    const { error } = await supabase.from("cockpit_post_comments").insert({
+      post_id: post.id, author_id: userRes.user!.id, body: comment.trim(),
+    });
+    if (error) return toast.error(error.message);
+    setComment("");
+    loadComments();
+    onChange();
+  };
+
+  return (
+    <Card className="p-5">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm font-medium">{post.author_name}</p>
+          <p className="text-xs text-muted-foreground">
+            {new Date(post.created_at).toLocaleString()} · {post.target_branch === "all" ? "All Branches" : post.target_branch}
+          </p>
+        </div>
+      </div>
+      <p className="mt-3 whitespace-pre-wrap text-sm">{post.body}</p>
+      {attachUrl && (
+        <a href={attachUrl} target="_blank" rel="noreferrer" className="mt-2 inline-block text-xs text-primary underline">
+          📎 {post.attachment_name ?? "attachment"}
+        </a>
+      )}
+      <button onClick={() => { setShowComments((s) => { if (!s) loadComments(); return !s; }); }}
+        className="mt-3 text-xs text-muted-foreground hover:text-foreground">
+        {showComments ? "Hide comments" : "Show comments"}
+      </button>
+      {showComments && (
+        <div className="mt-3 space-y-2 border-t border-border/60 pt-3">
+          {comments.map((c) => (
+            <div key={c.id} className="text-sm">
+              <span className="font-medium">{c.author_name}</span>{" "}
+              <span className="text-xs text-muted-foreground">· {new Date(c.created_at).toLocaleString()}</span>
+              <p className="mt-1 whitespace-pre-wrap">{c.body}</p>
+            </div>
+          ))}
+          <div className="flex gap-2">
+            <input value={comment} onChange={(e) => setComment(e.target.value)}
+              placeholder="Write a comment…"
+              className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm" />
+            <Button size="sm" onClick={addComment}>Send</Button>
+          </div>
+        </div>
+      )}
+    </Card>
   );
 }
 

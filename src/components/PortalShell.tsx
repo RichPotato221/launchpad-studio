@@ -8,6 +8,7 @@ import logo from "@/assets/trog-logo.png";
 
 const nav = [
   { to: "/home", label: "Home" },
+  { to: "/feed", label: "Feed" },
   { to: "/departments", label: "Departments" },
   { to: "/tasks", label: "Tasks" },
   { to: "/events", label: "Events" },
