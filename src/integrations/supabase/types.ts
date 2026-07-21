@@ -14,6 +14,198 @@ export type Database = {
   }
   public: {
     Tables: {
+      announcement_comments: {
+        Row: {
+          announcement_id: string
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          announcement_id: string
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          announcement_id?: string
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcement_comments_announcement_id_fkey"
+            columns: ["announcement_id"]
+            isOneToOne: false
+            referencedRelation: "announcements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      announcement_likes: {
+        Row: {
+          announcement_id: string
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          announcement_id: string
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          announcement_id?: string
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcement_likes_announcement_id_fkey"
+            columns: ["announcement_id"]
+            isOneToOne: false
+            referencedRelation: "announcements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      announcements: {
+        Row: {
+          attachment_name: string | null
+          attachment_url: string | null
+          author_department_slug: string | null
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          priority: boolean
+          target_branch: Database["public"]["Enums"]["post_branch_target"]
+          updated_at: string
+        }
+        Insert: {
+          attachment_name?: string | null
+          attachment_url?: string | null
+          author_department_slug?: string | null
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+          priority?: boolean
+          target_branch?: Database["public"]["Enums"]["post_branch_target"]
+          updated_at?: string
+        }
+        Update: {
+          attachment_name?: string | null
+          attachment_url?: string | null
+          author_department_slug?: string | null
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          priority?: boolean
+          target_branch?: Database["public"]["Enums"]["post_branch_target"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      asset_maintenance_logs: {
+        Row: {
+          asset_id: string
+          cost: number | null
+          created_at: string
+          description: string | null
+          id: string
+          performed_at: string
+          performed_by: string | null
+        }
+        Insert: {
+          asset_id: string
+          cost?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          performed_at?: string
+          performed_by?: string | null
+        }
+        Update: {
+          asset_id?: string
+          cost?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          performed_at?: string
+          performed_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_maintenance_logs_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      assets: {
+        Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
+          category: string | null
+          created_at: string
+          created_by: string | null
+          custodian: string | null
+          department_slug: string | null
+          id: string
+          last_maintenance_alert_sent_at: string | null
+          location: string | null
+          name: string
+          next_maintenance_date: string | null
+          notes: string | null
+          purchase_date: string | null
+          purchase_value: number | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          custodian?: string | null
+          department_slug?: string | null
+          id?: string
+          last_maintenance_alert_sent_at?: string | null
+          location?: string | null
+          name: string
+          next_maintenance_date?: string | null
+          notes?: string | null
+          purchase_date?: string | null
+          purchase_value?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          custodian?: string | null
+          department_slug?: string | null
+          id?: string
+          last_maintenance_alert_sent_at?: string | null
+          location?: string | null
+          name?: string
+          next_maintenance_date?: string | null
+          notes?: string | null
+          purchase_date?: string | null
+          purchase_value?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       attendance: {
         Row: {
           branch: Database["public"]["Enums"]["branch"] | null
@@ -22,6 +214,7 @@ export type Database = {
           event_id: string | null
           full_name: string | null
           id: string
+          is_new_member: boolean
           notes: string | null
           present: boolean
           recorded_by: string
@@ -37,6 +230,7 @@ export type Database = {
           event_id?: string | null
           full_name?: string | null
           id?: string
+          is_new_member?: boolean
           notes?: string | null
           present?: boolean
           recorded_by: string
@@ -52,6 +246,7 @@ export type Database = {
           event_id?: string | null
           full_name?: string | null
           id?: string
+          is_new_member?: boolean
           notes?: string | null
           present?: boolean
           recorded_by?: string
@@ -144,6 +339,71 @@ export type Database = {
           guardian_contact?: string
           guardian_name?: string
           id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      cockpit_post_comments: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          post_id: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+          post_id: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cockpit_post_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "cockpit_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cockpit_posts: {
+        Row: {
+          attachment_name: string | null
+          attachment_url: string | null
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          target_branch: Database["public"]["Enums"]["post_branch_target"]
+          updated_at: string
+        }
+        Insert: {
+          attachment_name?: string | null
+          attachment_url?: string | null
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+          target_branch?: Database["public"]["Enums"]["post_branch_target"]
+          updated_at?: string
+        }
+        Update: {
+          attachment_name?: string | null
+          attachment_url?: string | null
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          target_branch?: Database["public"]["Enums"]["post_branch_target"]
           updated_at?: string
         }
         Relationships: []
@@ -387,7 +647,12 @@ export type Database = {
           event_date: string
           event_type: string
           id: string
+          is_recurring: boolean
           location: string | null
+          parent_event_id: string | null
+          recurrence_end_date: string | null
+          recurrence_interval: number
+          recurrence_pattern: string | null
           start_time: string | null
           title: string
           updated_at: string
@@ -402,7 +667,12 @@ export type Database = {
           event_date: string
           event_type?: string
           id?: string
+          is_recurring?: boolean
           location?: string | null
+          parent_event_id?: string | null
+          recurrence_end_date?: string | null
+          recurrence_interval?: number
+          recurrence_pattern?: string | null
           start_time?: string | null
           title: string
           updated_at?: string
@@ -417,12 +687,25 @@ export type Database = {
           event_date?: string
           event_type?: string
           id?: string
+          is_recurring?: boolean
           location?: string | null
+          parent_event_id?: string | null
+          recurrence_end_date?: string | null
+          recurrence_interval?: number
+          recurrence_pattern?: string | null
           start_time?: string | null
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "events_parent_event_id_fkey"
+            columns: ["parent_event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       expense_claims: {
         Row: {
@@ -526,7 +809,91 @@ export type Database = {
             foreignKeyName: "finance_entries_member_id_fkey"
             columns: ["member_id"]
             isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "finance_entries_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      governance_documents: {
+        Row: {
+          created_at: string
+          file_url: string
+          id: string
+          sort_order: number
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          file_url: string
+          id?: string
+          sort_order?: number
+          title: string
+        }
+        Update: {
+          created_at?: string
+          file_url?: string
+          id?: string
+          sort_order?: number
+          title?: string
+        }
+        Relationships: []
+      }
+      hospitality_checkups: {
+        Row: {
+          attendance_id: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          checked: boolean
+          checked_at: string | null
+          checked_by: string | null
+          contact: string | null
+          created_at: string
+          feedback: string | null
+          id: string
+          member_name: string
+          window_end: string
+          window_start: string
+        }
+        Insert: {
+          attendance_id?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          checked?: boolean
+          checked_at?: string | null
+          checked_by?: string | null
+          contact?: string | null
+          created_at?: string
+          feedback?: string | null
+          id?: string
+          member_name: string
+          window_end: string
+          window_start: string
+        }
+        Update: {
+          attendance_id?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          checked?: boolean
+          checked_at?: string | null
+          checked_by?: string | null
+          contact?: string | null
+          created_at?: string
+          feedback?: string | null
+          id?: string
+          member_name?: string
+          window_end?: string
+          window_start?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hospitality_checkups_attendance_id_fkey"
+            columns: ["attendance_id"]
+            isOneToOne: false
+            referencedRelation: "attendance"
             referencedColumns: ["id"]
           },
         ]
@@ -581,6 +948,7 @@ export type Database = {
           entered_by: string | null
           id: string
           kpi_name: string
+          last_alert_sent_at: string | null
           notes: string | null
           period_date: string
           period_type: Database["public"]["Enums"]["kpi_period"]
@@ -597,6 +965,7 @@ export type Database = {
           entered_by?: string | null
           id?: string
           kpi_name: string
+          last_alert_sent_at?: string | null
           notes?: string | null
           period_date: string
           period_type: Database["public"]["Enums"]["kpi_period"]
@@ -613,6 +982,7 @@ export type Database = {
           entered_by?: string | null
           id?: string
           kpi_name?: string
+          last_alert_sent_at?: string | null
           notes?: string | null
           period_date?: string
           period_type?: Database["public"]["Enums"]["kpi_period"]
@@ -659,10 +1029,80 @@ export type Database = {
             foreignKeyName: "membership_lifecycle_profile_id_fkey"
             columns: ["profile_id"]
             isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "membership_lifecycle_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
+      }
+      notifications: {
+        Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
+          created_at: string
+          id: string
+          link: string | null
+          message: string
+          read: boolean
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          id?: string
+          link?: string | null
+          message: string
+          read?: boolean
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          id?: string
+          link?: string | null
+          message?: string
+          read?: boolean
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notify_queue: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          payload: Json
+          processed: boolean
+          recipient_scope: string
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          payload: Json
+          processed?: boolean
+          recipient_scope?: string
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          payload?: Json
+          processed?: boolean
+          recipient_scope?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -942,6 +1382,39 @@ export type Database = {
         }
         Relationships: []
       }
+      sunday_rsvps: {
+        Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
+          created_at: string
+          decline_reason: string | null
+          id: string
+          response: string
+          service_date: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          decline_reason?: string | null
+          id?: string
+          response: string
+          service_date: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          decline_reason?: string | null
+          id?: string
+          response?: string
+          service_date?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       tasks: {
         Row: {
           approval_status: string | null
@@ -956,7 +1429,13 @@ export type Database = {
           description: string | null
           due_date: string | null
           id: string
+          is_recurring: boolean
+          last_alert_sent_at: string | null
+          parent_task_id: string | null
           priority: string
+          recurrence_end_date: string | null
+          recurrence_interval: number
+          recurrence_pattern: string | null
           requires_approval: boolean
           status: string
           title: string
@@ -975,7 +1454,13 @@ export type Database = {
           description?: string | null
           due_date?: string | null
           id?: string
+          is_recurring?: boolean
+          last_alert_sent_at?: string | null
+          parent_task_id?: string | null
           priority?: string
+          recurrence_end_date?: string | null
+          recurrence_interval?: number
+          recurrence_pattern?: string | null
           requires_approval?: boolean
           status?: string
           title: string
@@ -994,13 +1479,27 @@ export type Database = {
           description?: string | null
           due_date?: string | null
           id?: string
+          is_recurring?: boolean
+          last_alert_sent_at?: string | null
+          parent_task_id?: string | null
           priority?: string
+          recurrence_end_date?: string | null
+          recurrence_interval?: number
+          recurrence_pattern?: string | null
           requires_approval?: boolean
           status?: string
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tasks_parent_task_id_fkey"
+            columns: ["parent_task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -1028,6 +1527,15 @@ export type Database = {
       }
     }
     Views: {
+      department_directory: {
+        Row: {
+          department_name: string | null
+          full_name: string | null
+          id: string | null
+          primary_department: string | null
+        }
+        Relationships: []
+      }
       kpi_status: {
         Row: {
           actual: number | null
@@ -1090,16 +1598,62 @@ export type Database = {
           },
         ]
       }
+      leadership_attendance: {
+        Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
+          full_name: string | null
+          present: boolean | null
+          role: Database["public"]["Enums"]["app_role"] | null
+          service_date: string | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
+      new_members_by_sunday: {
+        Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
+          full_name: string | null
+          service_date: string | null
+          user_id: string | null
+        }
+        Insert: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          full_name?: string | null
+          service_date?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          full_name?: string | null
+          service_date?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      sunday_rsvp_counts: {
+        Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
+          response: string | null
+          service_date: string | null
+          total: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       approve_member: {
         Args: { _approve: boolean; _user_id: string }
         Returns: undefined
       }
+      can_access_admin_panel: { Args: { _user_id: string }; Returns: boolean }
+      can_post_cross_branch: { Args: { _user_id: string }; Returns: boolean }
+      can_view_all_kpis: { Args: { _user_id: string }; Returns: boolean }
+      can_view_checkup_watch: { Args: { _user_id: string }; Returns: boolean }
       can_view_profile: {
         Args: { _target: string; _viewer: string }
         Returns: boolean
       }
+      generate_upcoming_recurring_events: { Args: never; Returns: undefined }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1112,8 +1666,21 @@ export type Database = {
         Args: { _branch: Database["public"]["Enums"]["branch"]; _slug: string }
         Returns: boolean
       }
+      is_dept_member: { Args: { _slug: string }; Returns: boolean }
       is_dept_member_or_admin: { Args: { _slug: string }; Returns: boolean }
       is_head_office: { Args: { _user_id: string }; Returns: boolean }
+      log_audit: {
+        Args: {
+          _action: string
+          _details?: Json
+          _entity: string
+          _entity_id: string
+        }
+        Returns: undefined
+      }
+      run_asset_maintenance_check: { Args: never; Returns: undefined }
+      run_kpi_alert_check: { Args: never; Returns: undefined }
+      run_task_overdue_check: { Args: never; Returns: undefined }
       same_branch_or_admin: {
         Args: { _branch: Database["public"]["Enums"]["branch"] }
         Returns: boolean
@@ -1129,6 +1696,7 @@ export type Database = {
         | "associate_pastor"
         | "department_chair"
         | "team_member"
+        | "strategic_adviser"
       approval_status: "pending" | "approved" | "rejected"
       branch: "twatwa" | "joburg_north" | "joburg_south"
       dept_kind:
@@ -1144,6 +1712,7 @@ export type Database = {
         | "stewardship"
         | "kingdom_influence"
       kpi_period: "weekly" | "monthly" | "quarterly" | "annual"
+      post_branch_target: "twatwa" | "joburg_north" | "joburg_south" | "all"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1279,6 +1848,7 @@ export const Constants = {
         "associate_pastor",
         "department_chair",
         "team_member",
+        "strategic_adviser",
       ],
       approval_status: ["pending", "approved", "rejected"],
       branch: ["twatwa", "joburg_north", "joburg_south"],
@@ -1297,6 +1867,7 @@ export const Constants = {
         "kingdom_influence",
       ],
       kpi_period: ["weekly", "monthly", "quarterly", "annual"],
+      post_branch_target: ["twatwa", "joburg_north", "joburg_south", "all"],
     },
   },
 } as const
