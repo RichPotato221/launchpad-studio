@@ -175,7 +175,7 @@ function CockpitPostItem({ post, onChange }: { post: any; onChange: () => void }
     if (!comment.trim()) return;
     const { data: userRes } = await supabase.auth.getUser();
     const { error } = await supabase.from("cockpit_post_comments").insert({
-      post_id: post.id, author_id: userRes.user?.id, body: comment.trim(),
+      post_id: post.id, author_id: userRes.user!.id, body: comment.trim(),
     });
     if (error) return toast.error(error.message);
     setComment("");
