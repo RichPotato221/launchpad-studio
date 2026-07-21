@@ -58,7 +58,7 @@ function EventsPage() {
       start_time: form.start_time || null,
       end_time: form.end_time || null,
       location: form.location || null,
-      branch: form.branch || null,
+      branch: (form.branch || null) as any,
       department_slug: form.department_slug || null,
       created_by: userId,
     });

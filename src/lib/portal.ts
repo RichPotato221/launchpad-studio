@@ -21,6 +21,7 @@ export const ROLE_LABELS: Record<AppRole, string> = {
   secretary: "Church Secretary",
   lead_pastor: "Lead Pastor",
   associate_pastor: "Associate Pastor",
+  strategic_adviser: "Strategic Adviser",
   department_chair: "Department Chair",
   team_member: "Team Member",
 };

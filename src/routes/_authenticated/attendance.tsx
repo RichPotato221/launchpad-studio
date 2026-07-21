@@ -51,7 +51,7 @@ function AttendancePage() {
     if (!userId) return;
     const { error } = await supabase.from("attendance").insert({
       service_date: form.service_date,
-      branch: form.branch || null,
+      branch: (form.branch || null) as any,
       department_slug: form.department_slug || null,
       event_id: form.event_id || null,
       full_name: form.full_name,
@@ -72,7 +72,7 @@ function AttendancePage() {
     if (names.length === 0) return;
     const payload = names.map((n) => ({
       service_date: form.service_date,
-      branch: form.branch || null,
+      branch: (form.branch || null) as any,
       department_slug: form.department_slug || null,
       event_id: form.event_id || null,
       full_name: n,
