@@ -115,6 +115,11 @@ function AttendancePage() {
           </p>
         </div>
 
+        <div className="mb-8 grid gap-6 lg:grid-cols-2">
+          <SundayRsvpWidget />
+          <HospitalityWatch />
+        </div>
+
         <div className="grid gap-6 md:grid-cols-2">
           <Card className="p-6">
             <p className="text-xs uppercase tracking-widest text-muted-foreground">Single capture</p>
