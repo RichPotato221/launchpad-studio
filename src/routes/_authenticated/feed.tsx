@@ -186,7 +186,27 @@ function PostCard({ post, likes, currentUserId, onChange }: {
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState<any[]>([]);
   const [comment, setComment] = useState("");
+  const [isTopLeader, setIsTopLeader] = useState(false);
   const liked = !!currentUserId && likes.some((l) => l.user_id === currentUserId);
+
+  useEffect(() => {
+    if (!currentUserId) return;
+    supabase.from("user_roles").select("role").eq("user_id", currentUserId).then(({ data }) => {
+      const topRoles = new Set(["chairperson", "senior_apostle"]);
+      setIsTopLeader((data ?? []).some((r: any) => topRoles.has(r.role)));
+    });
+  }, [currentUserId]);
+
+  const canDelete = currentUserId === post.author_id || isTopLeader;
+
+  const deletePost = async () => {
+    if (!canDelete) return;
+    if (!window.confirm("Delete this post?")) return;
+    const { error } = await supabase.from("announcements").delete().eq("id", post.id);
+    if (error) return toast.error(error.message);
+    toast.success("Post deleted");
+    onChange();
+  };
 
   const loadComments = async () => {
     const { data } = await supabase
@@ -241,9 +261,20 @@ function PostCard({ post, likes, currentUserId, onChange }: {
             {post.target_branch !== "all" && ` · ${post.target_branch}`}
           </p>
         </div>
-        {post.priority && (
-          <span className="rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700">Priority</span>
-        )}
+        <div className="flex items-center gap-2">
+          {post.priority && (
+            <span className="rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700">Priority</span>
+          )}
+          {canDelete && (
+            <button
+              type="button"
+              onClick={deletePost}
+              className="text-xs text-muted-foreground underline hover:text-red-600"
+            >
+              Delete
+            </button>
+          )}
+        </div>
       </div>
       <p className="mt-3 whitespace-pre-wrap text-sm">{post.body}</p>
       {post.attachment_url && <AttachmentLink path={post.attachment_url} name={post.attachment_name} />}
