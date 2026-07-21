@@ -217,3 +217,141 @@ function AttendancePage() {
     </PortalShell>
   );
 }
+
+function nextSunday(): string {
+  const d = new Date();
+  const day = d.getDay();
+  const add = day === 0 ? 7 : 7 - day;
+  d.setDate(d.getDate() + add);
+  return d.toISOString().slice(0, 10);
+}
+
+function SundayRsvpWidget() {
+  const [uid, setUid] = useState<string>("");
+  const [branch, setBranch] = useState<string>("");
+  const [my, setMy] = useState<any>(null);
+  const [reason, setReason] = useState("");
+  const [counts, setCounts] = useState<{ yes: number; no: number; maybe: number }>({ yes: 0, no: 0, maybe: 0 });
+  const date = nextSunday();
+
+  const load = async () => {
+    const { data: userRes } = await supabase.auth.getUser();
+    const u = userRes.user?.id ?? "";
+    setUid(u);
+    if (!u) return;
+    const { data: prof } = await supabase.from("profiles").select("branch").eq("id", u).maybeSingle();
+    setBranch((prof as any)?.branch ?? "");
+    const { data: mine } = await supabase.from("sunday_rsvps").select("*")
+      .eq("user_id", u).eq("service_date", date).maybeSingle();
+    setMy(mine);
+    if (mine?.decline_reason) setReason(mine.decline_reason);
+    const { data: all } = await supabase.from("sunday_rsvps").select("response").eq("service_date", date);
+    const c = { yes: 0, no: 0, maybe: 0 };
+    (all ?? []).forEach((r: any) => { c[r.response as "yes" | "no" | "maybe"] = (c[r.response as "yes" | "no" | "maybe"] ?? 0) + 1; });
+    setCounts(c);
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const respond = async (response: "yes" | "no" | "maybe") => {
+    if (!uid) return;
+    const payload: any = {
+      user_id: uid, service_date: date, response,
+      branch: (branch || null) as any,
+      decline_reason: response === "no" ? (reason || null) : null,
+    };
+    const { error } = await supabase.from("sunday_rsvps").upsert(payload, { onConflict: "user_id,service_date" });
+    if (error) return toast.error(error.message);
+    toast.success("RSVP saved");
+    load();
+  };
+
+  return (
+    <Card className="p-6">
+      <p className="text-xs uppercase tracking-widest text-muted-foreground">This Sunday · {date}</p>
+      <p className="mt-1 text-sm text-muted-foreground">Let your leaders know whether to expect you.</p>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <Button size="sm" variant={my?.response === "yes" ? "default" : "outline"} onClick={() => respond("yes")}>I'll be there</Button>
+        <Button size="sm" variant={my?.response === "maybe" ? "default" : "outline"} onClick={() => respond("maybe")}>Maybe</Button>
+        <Button size="sm" variant={my?.response === "no" ? "default" : "outline"} onClick={() => respond("no")}>Can't make it</Button>
+      </div>
+      {my?.response === "no" && (
+        <div className="mt-3">
+          <Input placeholder="Reason (visible to leadership)" value={reason} onChange={(e) => setReason(e.target.value)}
+            onBlur={() => respond("no")} />
+        </div>
+      )}
+      <div className="mt-4 grid grid-cols-3 gap-2 text-center text-xs">
+        <div className="rounded bg-emerald-50 p-2 text-emerald-700"><p className="font-serif text-lg">{counts.yes}</p>Yes</div>
+        <div className="rounded bg-amber-50 p-2 text-amber-700"><p className="font-serif text-lg">{counts.maybe}</p>Maybe</div>
+        <div className="rounded bg-red-50 p-2 text-red-700"><p className="font-serif text-lg">{counts.no}</p>No</div>
+      </div>
+    </Card>
+  );
+}
+
+function HospitalityWatch() {
+  const [items, setItems] = useState<any[]>([]);
+
+  const load = async () => {
+    const { data } = await supabase.from("hospitality_checkups").select("*")
+      .eq("checked", false)
+      .order("window_start", { ascending: true }).limit(20);
+    setItems(data ?? []);
+  };
+  useEffect(() => { load(); }, []);
+
+  const mark = async (id: string, feedback: string) => {
+    const { data: userRes } = await supabase.auth.getUser();
+    const { error } = await supabase.from("hospitality_checkups").update({
+      checked: true, checked_by: userRes.user?.id, checked_at: new Date().toISOString(),
+      feedback: feedback || null,
+    }).eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success("Check-up logged");
+    load();
+  };
+
+  if (items.length === 0) {
+    return (
+      <Card className="p-6">
+        <p className="text-xs uppercase tracking-widest text-muted-foreground">Hospitality Check-up Watch</p>
+        <p className="mt-3 text-sm text-muted-foreground">No new members awaiting a follow-up right now.</p>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="p-6">
+      <p className="text-xs uppercase tracking-widest text-muted-foreground">Hospitality Check-up Watch</p>
+      <p className="mt-1 text-xs text-muted-foreground">New members to reach out to within 24h of first visit.</p>
+      <div className="mt-3 space-y-3">
+        {items.map((h) => (
+          <HospitalityItem key={h.id} item={h} onMark={mark} />
+        ))}
+      </div>
+    </Card>
+  );
+}
+
+function HospitalityItem({ item, onMark }: { item: any; onMark: (id: string, feedback: string) => void }) {
+  const [feedback, setFeedback] = useState("");
+  const overdue = new Date(item.window_end) < new Date();
+  return (
+    <div className="rounded border border-border/60 p-3">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-medium">{item.member_name}</p>
+          <p className="text-xs text-muted-foreground">
+            {item.branch} · window {new Date(item.window_start).toLocaleString()} — {new Date(item.window_end).toLocaleString()}
+          </p>
+        </div>
+        {overdue && <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs text-red-700">Overdue</span>}
+      </div>
+      <div className="mt-2 flex gap-2">
+        <Input placeholder="Feedback from the call" value={feedback} onChange={(e) => setFeedback(e.target.value)} />
+        <Button size="sm" onClick={() => onMark(item.id, feedback)}>Mark done</Button>
+      </div>
+    </div>
+  );
+}
