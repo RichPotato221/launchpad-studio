@@ -33,6 +33,7 @@ function AttendancePage() {
     event_id: "",
     full_name: "",
     visitor: false,
+    is_new_member: false,
     present: true,
     notes: "",
   });
@@ -60,6 +61,7 @@ function AttendancePage() {
       event_id: form.event_id || null,
       full_name: form.full_name,
       visitor: form.visitor,
+      is_new_member: form.is_new_member,
       present: form.present,
       notes: form.notes || null,
       recorded_by: userId,
@@ -142,8 +144,9 @@ function AttendancePage() {
                 </div>
               </div>
               <div><Label>Full name</Label><Input required value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} /></div>
-              <div className="flex items-center gap-4">
+              <div className="flex flex-wrap items-center gap-4">
                 <label className="flex items-center gap-2 text-sm"><Checkbox checked={form.visitor} onCheckedChange={(v) => setForm({ ...form, visitor: !!v })} /> Visitor</label>
+                <label className="flex items-center gap-2 text-sm"><Checkbox checked={form.is_new_member} onCheckedChange={(v) => setForm({ ...form, is_new_member: !!v })} /> New member (opens 24h hospitality check-up)</label>
                 <label className="flex items-center gap-2 text-sm"><Checkbox checked={form.present} onCheckedChange={(v) => setForm({ ...form, present: !!v })} /> Present</label>
               </div>
               <Input placeholder="Notes (optional)" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
