@@ -120,6 +120,11 @@ function AttendancePage() {
           <HospitalityWatch />
         </div>
 
+        <div className="mb-8">
+          <RsvpRoster />
+        </div>
+
+
         <div className="grid gap-6 md:grid-cols-2">
           <Card className="p-6">
             <p className="text-xs uppercase tracking-widest text-muted-foreground">Single capture</p>
@@ -353,5 +358,73 @@ function HospitalityItem({ item, onMark }: { item: any; onMark: (id: string, fee
         <Button size="sm" onClick={() => onMark(item.id, feedback)}>Mark done</Button>
       </div>
     </div>
+  );
+}
+
+function RsvpRoster() {
+  const [rows, setRows] = useState<any[]>([]);
+  const [canSeeReasons, setCanSeeReasons] = useState(false);
+  const [openFor, setOpenFor] = useState<string | null>(null);
+  const [reasonText, setReasonText] = useState<Record<string, string>>({});
+  const date = nextSunday();
+
+  const load = async () => {
+    const { data, error } = await supabase.rpc("get_sunday_rsvp_status", { _service_date: date });
+    if (error) return toast.error(error.message);
+    setRows(data ?? []);
+
+    const { data: userRes } = await supabase.auth.getUser();
+    const uid = userRes.user?.id;
+    if (uid) {
+      const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", uid);
+      const pastoral = new Set(["senior_apostle", "lead_pastor", "associate_pastor", "chairperson"]);
+      setCanSeeReasons((roles ?? []).some((r: any) => pastoral.has(r.role)));
+    }
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const reveal = async (row: any) => {
+    if (openFor === row.user_id) { setOpenFor(null); return; }
+    const { data, error } = await supabase.from("sunday_rsvps").select("decline_reason")
+      .eq("service_date", date).eq("user_id", row.user_id).maybeSingle();
+    if (error) return toast.error(error.message);
+    setReasonText((prev) => ({ ...prev, [row.user_id]: data?.decline_reason?.trim() || "No reason given." }));
+    setOpenFor(row.user_id);
+  };
+
+  return (
+    <Card className="p-6">
+      <p className="text-xs uppercase tracking-widest text-muted-foreground">Who's coming · {date}</p>
+      <div className="mt-3 divide-y divide-border/50">
+        {rows.map((row) => (
+          <div key={row.user_id} className="py-2">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium">{row.full_name}</p>
+                <p className="text-xs capitalize text-muted-foreground">{row.branch}</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className={
+                  row.response === "yes" ? "text-emerald-700" :
+                  row.response === "maybe" ? "text-amber-700" : "text-red-700"
+                }>
+                  {row.response === "yes" ? "Yes" : row.response === "maybe" ? "Maybe" : "No"}
+                </span>
+                {row.response === "no" && canSeeReasons && (
+                  <button type="button" className="text-xs text-muted-foreground underline" onClick={() => reveal(row)}>
+                    {openFor === row.user_id ? "Hide" : "Reason"}
+                  </button>
+                )}
+              </div>
+            </div>
+            {openFor === row.user_id && reasonText[row.user_id] && (
+              <p className="mt-1 text-sm italic text-muted-foreground">"{reasonText[row.user_id]}"</p>
+            )}
+          </div>
+        ))}
+        {rows.length === 0 && <p className="py-2 text-sm text-muted-foreground">No responses yet.</p>}
+      </div>
+    </Card>
   );
 }
