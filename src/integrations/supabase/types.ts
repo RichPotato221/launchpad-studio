@@ -1766,6 +1766,8 @@ export type Database = {
         | "seven_mountain"
         | "five_fold"
         | "leadership"
+        | "governmental"
+        | "support_services"
       kpi_category:
         | "spiritual_impact"
         | "people_development"
@@ -1919,6 +1921,8 @@ export const Constants = {
         "seven_mountain",
         "five_fold",
         "leadership",
+        "governmental",
+        "support_services",
       ],
       kpi_category: [
         "spiritual_impact",
