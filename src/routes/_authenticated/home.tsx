@@ -113,32 +113,26 @@ function HomePage() {
       <section className="mt-6 rounded-lg border border-border bg-card p-6 md:p-10">
         <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Organisational Structure</p>
         <h2 className="mt-2 font-serif text-3xl">Governance flow</h2>
-        <pre className="mt-6 overflow-x-auto rounded bg-muted p-4 text-[11px] leading-relaxed md:text-xs">
-{`                              ┌────────────────────────┐
-                              │     JESUS CHRIST       │
-                              │  (Chief Cornerstone)   │
-                              └───────────┬────────────┘
-                                          │
-                              ┌───────────▼────────────┐
-                              │  Senior Apostles /     │
-                              │     Senior Pastors     │
-                              └───────────┬────────────┘
-                                          │
-        ┌─────────────────┬───────────────┼───────────────┬─────────────────┐
-        │                 │               │               │                 │
- ┌──────▼──────┐   ┌──────▼──────┐  ┌─────▼─────┐  ┌──────▼──────┐   ┌─────▼─────┐
- │Governmental │   │  Functional │  │ Develop.  │  │  Support    │   │   TSOM    │
- │  Structure  │   │  Structure  │  │ Structure │  │  Services   │   │ (7 Mtns)  │
- └──────┬──────┘   └─────────────┘  └───────────┘  └─────────────┘   └─────┬─────┘
-        │                                                                  │
-   Chairperson,                                                  Religion mountain →
-   Fin. Admin,                                                    Five-Fold Ministry
-   Strat. Advisor,                                                (Apostolic, Prophetic,
-   Resource Admin,                                                 Evangelistic,
-   Church Secretary,                                               Pastoral, Teaching)
-   Lead / Assoc.
-   Pastors, Elders`}
-        </pre>
+        <div className="mt-8 space-y-3">
+          <FlowBox title="Jesus Christ" subtitle="Chief Cornerstone" emphasis />
+          <FlowConnector />
+          <FlowBox title="Senior Pastors" />
+          <FlowConnector />
+          <div className="grid gap-3 sm:grid-cols-3">
+            <FlowBox title="Chairpersons" compact />
+            <FlowBox title="Church Secretary" compact />
+            <FlowBox title="Lead Pastors" compact />
+          </div>
+          <FlowConnector />
+          <FlowBox title="Associate Pastors" />
+          <FlowConnector />
+          <div className="grid gap-3 sm:grid-cols-2">
+            <FlowBox title="Functional Departments" compact />
+            <FlowBox title="Developmental Structures" compact />
+          </div>
+          <FlowConnector />
+          <FlowBox title="Seven Mountains & Five-Fold Ministry" />
+        </div>
       </section>
 
       {/* Department tiles */}
@@ -147,6 +141,35 @@ function HomePage() {
       <DeptGroup title="Seven Mountains" items={mountains} basePath="/departments" />
     </div>
   );
+}
+
+function FlowBox({
+  title,
+  subtitle,
+  compact,
+  emphasis,
+}: {
+  title: string;
+  subtitle?: string;
+  compact?: boolean;
+  emphasis?: boolean;
+}) {
+  return (
+    <div
+      className={`mx-auto rounded-lg border text-center shadow-sm ${
+        emphasis ? "border-teal-600 bg-teal-50" : "border-border bg-card"
+      } ${compact ? "max-w-xs px-4 py-3" : "max-w-sm px-6 py-4"}`}
+    >
+      <p className={`font-serif ${compact ? "text-base" : "text-lg"}`}>{title}</p>
+      {subtitle && (
+        <p className="mt-1 text-xs uppercase tracking-widest text-muted-foreground">{subtitle}</p>
+      )}
+    </div>
+  );
+}
+
+function FlowConnector() {
+  return <div className="mx-auto h-6 w-px bg-border" />;
 }
 
 function DeptGroup({ title, items, basePath = "/departments" }: {
