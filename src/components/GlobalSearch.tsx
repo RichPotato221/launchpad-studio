@@ -41,7 +41,7 @@ export function GlobalSearch() {
   const hasResults = groups.length > 0;
 
   return (
-    <div className="relative w-full max-w-md">
+   <div className="relative w-full max-w-2xl">
       <div className="relative">
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
