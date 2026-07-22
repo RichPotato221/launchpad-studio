@@ -107,6 +107,67 @@ export type Database = {
           },
         ]
       }
+      announcement_shares: {
+        Row: {
+          announcement_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          announcement_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          announcement_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcement_shares_announcement_id_fkey"
+            columns: ["announcement_id"]
+            isOneToOne: false
+            referencedRelation: "announcements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      announcement_views: {
+        Row: {
+          announcement_id: string
+          first_viewed_at: string
+          id: string
+          user_id: string
+          view_date: string
+        }
+        Insert: {
+          announcement_id: string
+          first_viewed_at?: string
+          id?: string
+          user_id: string
+          view_date?: string
+        }
+        Update: {
+          announcement_id?: string
+          first_viewed_at?: string
+          id?: string
+          user_id?: string
+          view_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcement_views_announcement_id_fkey"
+            columns: ["announcement_id"]
+            isOneToOne: false
+            referencedRelation: "announcements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       announcements: {
         Row: {
           attachment_name: string | null
@@ -484,6 +545,7 @@ export type Database = {
       }
       departments: {
         Row: {
+          archived: boolean
           chair_name: string | null
           created_at: string
           functions: string[] | null
@@ -500,6 +562,7 @@ export type Database = {
           vision: string | null
         }
         Insert: {
+          archived?: boolean
           chair_name?: string | null
           created_at?: string
           functions?: string[] | null
@@ -516,6 +579,7 @@ export type Database = {
           vision?: string | null
         }
         Update: {
+          archived?: boolean
           chair_name?: string | null
           created_at?: string
           functions?: string[] | null
