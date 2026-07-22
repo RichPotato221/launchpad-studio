@@ -5,9 +5,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 
-type ResultGroup = {
-  label: string;
-  items: { id: string; title: string; subtitle: string; path: string }[];
+type SearchRow = {
+  result_type: string;
+  id: string;
+  title: string;
+  subtitle: string | null;
+  path: string;
+  rank: number;
 };
 
 export function GlobalSearch() {
@@ -18,93 +22,28 @@ export function GlobalSearch() {
   const results = useQuery({
     queryKey: ["global-search", term],
     enabled: term.trim().length >= 2,
-    queryFn: async (): Promise<ResultGroup[]> => {
-      const q = `%${term.trim()}%`;
-
-      const [members, tasks, departments, kpis, events] = await Promise.all([
-        supabase.from("profiles").select("id, full_name, branch, primary_department")
-          .ilike("full_name", q).limit(5),
-        supabase.from("tasks").select("id, title, status, department_slug, branch")
-          .ilike("title", q).limit(5),
-        supabase.from("departments").select("slug, name, kind")
-          .ilike("name", q).limit(5),
-        supabase.from("kpis").select("id, kpi_name, department_slug, branch")
-          .ilike("kpi_name", q).limit(5),
-        supabase.from("events").select("id, title, event_date, department_slug, branch")
-          .ilike("title", q).limit(5),
-      ]);
-
-      const groups: ResultGroup[] = [];
-
-      if (members.data?.length) {
-        groups.push({
-          label: "Members",
-          items: members.data.map((m) => ({
-            id: m.id,
-            title: m.full_name ?? "Unnamed",
-            subtitle: [m.branch, m.primary_department].filter(Boolean).join(" · "),
-            path: `/admin?user=${m.id}`,
-          })),
-        });
-      }
-      if (tasks.data?.length) {
-        groups.push({
-          label: "Tasks",
-          items: tasks.data.map((t) => ({
-            id: t.id,
-            title: t.title,
-            subtitle: [t.branch, t.department_slug, t.status].filter(Boolean).join(" · "),
-            path: `/tasks?id=${t.id}`,
-          })),
-        });
-      }
-      if (departments.data?.length) {
-        groups.push({
-          label: "Departments",
-          items: departments.data.map((d) => ({
-            id: d.slug,
-            title: d.name,
-            subtitle: d.kind,
-            path: `/departments/${d.slug}`,
-          })),
-        });
-      }
-      if (kpis.data?.length) {
-        groups.push({
-          label: "KPIs",
-          items: kpis.data.map((k) => ({
-            id: k.id,
-            title: k.kpi_name,
-            subtitle: [k.branch, k.department_slug].filter(Boolean).join(" · "),
-            path: `/departments/${k.department_slug}?tab=kpis`,
-          })),
-        });
-      }
-      if (events.data?.length) {
-        groups.push({
-          label: "Events",
-          items: events.data.map((e) => ({
-            id: e.id,
-            title: e.title,
-            subtitle: [e.branch, e.department_slug, e.event_date].filter(Boolean).join(" · "),
-            path: `/events?id=${e.id}`,
-          })),
-        });
-      }
-
-      return groups;
+    queryFn: async (): Promise<SearchRow[]> => {
+      const { data, error } = await supabase.rpc("global_search", { _term: term.trim() });
+      if (error) throw error;
+      return (data ?? []) as SearchRow[];
     },
   });
 
-  const hasResults = useMemo(
-    () => (results.data ?? []).some((g) => g.items.length > 0),
-    [results.data]
-  );
+  const groups = useMemo(() => {
+    const map = new Map<string, SearchRow[]>();
+    for (const row of results.data ?? []) {
+      if (!map.has(row.result_type)) map.set(row.result_type, []);
+      map.get(row.result_type)!.push(row);
+    }
+    return Array.from(map.entries());
+  }, [results.data]);
+
+  const hasResults = groups.length > 0;
 
   return (
-    <div className="relative w-full max-w-sm">
+    <div className="relative w-full max-w-md">
       <div className="relative">
-        <Search className="pointer-events-none absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           value={term}
           onChange={(e) => {
@@ -114,44 +53,46 @@ export function GlobalSearch() {
           onFocus={() => setOpen(true)}
           onBlur={() => setTimeout(() => setOpen(false), 150)}
           placeholder="Search members, tasks, departments..."
-          className="pl-8"
+          className="h-11 pl-10 pr-4 text-sm"
         />
       </div>
 
       {open && term.trim().length >= 2 && (
-        <div className="absolute z-50 mt-1 w-full rounded-md border border-border bg-popover shadow-md max-h-96 overflow-y-auto">
+        <div className="absolute z-50 mt-2 w-full max-h-[28rem] overflow-y-auto rounded-lg border border-border bg-popover p-1 shadow-lg">
           {results.isLoading && (
-            <p className="p-3 text-sm text-muted-foreground">Searching…</p>
+            <p className="px-4 py-3 text-sm text-muted-foreground">Searching…</p>
           )}
           {!results.isLoading && !hasResults && (
-            <p className="p-3 text-sm text-muted-foreground">No results for "{term}".</p>
+            <p className="px-4 py-3 text-sm text-muted-foreground">No results for "{term}".</p>
           )}
-          {results.data?.map((group) => (
-            <div key={group.label} className="border-b border-border/60 last:border-0">
-              <p className="px-3 pt-2 text-xs uppercase tracking-widest text-muted-foreground">
-                {group.label}
+          {groups.map(([label, items]) => (
+            <div key={label} className="py-2 first:pt-1 last:pb-1">
+              <p className="px-4 pb-1.5 text-xs font-medium uppercase tracking-widest text-muted-foreground">
+                {label}
               </p>
-              {group.items.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onMouseDown={() => {
-  window.location.href = item.path;
-  setOpen(false);
-  setTerm("");
-}}
-                  className="flex w-full flex-col items-start gap-0.5 px-3 py-2 text-left hover:bg-accent"
-                >
-                  <span className="text-sm font-medium">{item.title}</span>
-                  {item.subtitle && (
-                    <span className="text-xs text-muted-foreground">{item.subtitle}</span>
-                  )}
-                </button>
-              ))}
+              <div className="space-y-0.5">
+                {items.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onMouseDown={() => {
+                      window.location.href = item.path;
+                      setOpen(false);
+                      setTerm("");
+                    }}
+                    className="flex w-full flex-col items-start gap-1 rounded-md px-4 py-2.5 text-left hover:bg-accent"
+                  >
+                    <span className="text-sm font-medium leading-tight">{item.title}</span>
+                    {item.subtitle && (
+                      <span className="text-xs leading-tight text-muted-foreground">{item.subtitle}</span>
+                    )}
+                  </button>
+                ))}
+              </div>
             </div>
           ))}
         </div>
       )}
     </div>
   );
-    }
+}
