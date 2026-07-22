@@ -59,7 +59,7 @@ export function AnnouncementComposer({ onPosted }: Props) {
       .insert({
         body: body.trim(),
         priority,
-        target_branch: canPickBranch ? targetBranch : "all",
+        target_branch: (canPickBranch ? targetBranch : "all") as "all" | "joburg_north" | "joburg_south" | "twatwa",
       })
       .select("id")
       .single();
