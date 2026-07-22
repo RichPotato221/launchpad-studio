@@ -65,10 +65,6 @@ export function PortalShell({ children }: { children: ReactNode }) {
             ))}
           </nav>
 
-          <div className="hidden max-w-sm flex-1 md:mx-6 md:block">
-            <GlobalSearch />
-          </div>
-
           <div className="flex items-center gap-3">
             <span className="hidden text-xs text-muted-foreground md:inline">{email}</span>
             <Button variant="ghost" size="sm" onClick={signOut} className="hidden md:inline-flex">
@@ -83,7 +79,9 @@ export function PortalShell({ children }: { children: ReactNode }) {
             </button>
           </div>
         </div>
-
+<div className="mx-auto max-w-7xl px-4 pb-3 md:px-8">
+    <GlobalSearch />
+  </div>
         {open && (
           <div className="border-t border-border/60 lg:hidden">
             <nav className="flex flex-col p-4">
