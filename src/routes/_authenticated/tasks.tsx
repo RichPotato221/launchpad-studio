@@ -88,7 +88,6 @@ function TasksPage() {
   });
 
   return (
-    <PortalShell>
       <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
         <div className="mb-6">
           <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Foundation module</p>
