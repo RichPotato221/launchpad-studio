@@ -228,7 +228,7 @@ function PostCard({ post, likes, currentUserId, onChange }: {
       .select("user_id, first_viewed_at")
       .eq("announcement_id", post.id)
       .order("first_viewed_at", { ascending: false });
-    const ids = Array.from(new Set((data ?? []).map((v: any) => v.user_id)));
+    const ids = Array.from(new Set((data ?? []).map((v: any) => v.user_id as string)));
     const { data: profs } = ids.length
       ? await supabase.from("profiles").select("id, full_name").in("id", ids)
       : { data: [] as any[] };
