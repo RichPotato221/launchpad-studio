@@ -43,8 +43,9 @@ export function PortalShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/95 backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 md:px-8">
-          <Link to="/home" className="flex items-center gap-3">
+        {/* Top row: logo, nav (desktop only), email/sign-out/hamburger */}
+        <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 md:px-8">
+          <Link to="/home" className="flex shrink-0 items-center gap-3">
             <img src={logo} alt="TRoGKC" className="h-9 w-auto" />
             <div className="hidden font-serif text-base leading-tight sm:block">
               TRoGKC
@@ -52,12 +53,12 @@ export function PortalShell({ children }: { children: ReactNode }) {
             </div>
           </Link>
 
-          <nav className="hidden items-center gap-6 lg:flex">
+          <nav className="hidden flex-1 items-center justify-center gap-5 overflow-x-auto whitespace-nowrap xl:flex">
             {nav.map((item) => (
               <Link
                 key={item.to}
                 to={item.to}
-                className="text-sm text-muted-foreground transition hover:text-foreground"
+                className="shrink-0 text-sm text-muted-foreground transition hover:text-foreground"
                 activeProps={{ className: "text-foreground font-medium" }}
               >
                 {item.label}
@@ -65,13 +66,13 @@ export function PortalShell({ children }: { children: ReactNode }) {
             ))}
           </nav>
 
-          <div className="flex items-center gap-3">
-            <span className="hidden text-xs text-muted-foreground md:inline">{email}</span>
+          <div className="ml-auto flex shrink-0 items-center gap-3">
+            <span className="hidden text-xs text-muted-foreground lg:inline">{email}</span>
             <Button variant="ghost" size="sm" onClick={signOut} className="hidden md:inline-flex">
               <LogOut className="mr-1 h-4 w-4" /> Sign out
             </Button>
             <button
-              className="rounded p-2 lg:hidden"
+              className="rounded p-2 xl:hidden"
               onClick={() => setOpen((o) => !o)}
               aria-label="Toggle menu"
             >
@@ -79,11 +80,15 @@ export function PortalShell({ children }: { children: ReactNode }) {
             </button>
           </div>
         </div>
-<div className="mx-auto max-w-7xl px-4 pb-3 md:px-8">
-    <GlobalSearch />
-  </div>
+
+        {/* Search row: full width, own line, all screen sizes */}
+        <div className="mx-auto max-w-7xl px-4 pb-3 md:px-8">
+          <GlobalSearch />
+        </div>
+
+        {/* Mobile / tablet dropdown nav (below xl) */}
         {open && (
-          <div className="border-t border-border/60 lg:hidden">
+          <div className="border-t border-border/60 xl:hidden">
             <nav className="flex flex-col p-4">
               {nav.map((item) => (
                 <Link
@@ -95,6 +100,9 @@ export function PortalShell({ children }: { children: ReactNode }) {
                   {item.label}
                 </Link>
               ))}
+              {email && (
+                <p className="px-3 pt-2 text-xs text-muted-foreground">{email}</p>
+              )}
               <button
                 onClick={signOut}
                 className="mt-2 flex items-center gap-2 rounded px-3 py-3 text-left text-sm text-muted-foreground hover:bg-muted"
