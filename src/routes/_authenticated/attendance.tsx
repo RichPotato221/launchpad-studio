@@ -217,7 +217,6 @@ function AttendancePage() {
           </Card>
         </div>
       </div>
-    </PortalShell>
   );
 }
 
