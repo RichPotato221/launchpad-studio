@@ -30,6 +30,7 @@ export async function fetchDepartments() {
   const { data, error } = await supabase
     .from("departments")
     .select("*")
+    .eq("archived", false)
     .order("sort_order");
   if (error) throw error;
   return data;
