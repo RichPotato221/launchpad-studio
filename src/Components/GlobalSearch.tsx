@@ -140,8 +140,6 @@ export function GlobalSearch() {
   setOpen(false);
   setTerm("");
 }}
-
-                  }}
                   className="flex w-full flex-col items-start gap-0.5 px-3 py-2 text-left hover:bg-accent"
                 >
                   <span className="text-sm font-medium">{item.title}</span>
