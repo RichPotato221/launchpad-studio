@@ -145,7 +145,6 @@ function EventsPage() {
           {events.length === 0 && <Card className="p-8 text-center text-sm text-muted-foreground">No events yet.</Card>}
         </div>
       </div>
-    </PortalShell>
   );
 }
 
