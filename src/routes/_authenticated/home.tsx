@@ -116,22 +116,45 @@ function HomePage() {
         <div className="mt-8 space-y-3">
           <FlowBox title="Jesus Christ" subtitle="Chief Cornerstone" emphasis />
           <FlowConnector />
-          <FlowBox title="Senior Pastors" />
+          <FlowBox title="Senior Apostles / Senior Pastors" />
           <FlowConnector />
-          <div className="grid gap-3 sm:grid-cols-3">
-            <FlowBox title="Chairpersons" compact />
-            <FlowBox title="Church Secretary" compact />
-            <FlowBox title="Lead Pastors" compact />
+          <div className="grid gap-3 sm:grid-cols-5">
+            <div>
+              <FlowBox title="Governmental Structure" compact />
+              <FlowSubList
+                items={[
+                  "Chairperson",
+                  "Finance & Admin",
+                  "Strategic Advisor",
+                  "Resource Admin",
+                  "Church Secretary",
+                  "Lead / Associate Pastors",
+                  "Elders",
+                ]}
+              />
+            </div>
+            <div>
+              <FlowBox title="Functional Structure" compact />
+            </div>
+            <div>
+              <FlowBox title="Developmental Structure" compact />
+            </div>
+            <div>
+              <FlowBox title="Support Services" compact />
+            </div>
+            <div>
+              <FlowBox title="TSOM (7 Mountains)" compact />
+              <FlowSubList
+                items={[
+                  "Religion mountain →",
+                  "Five-Fold Ministry",
+                  "(Apostolic, Prophetic,",
+                  "Evangelistic, Pastoral,",
+                  "Teaching)",
+                ]}
+              />
+            </div>
           </div>
-          <FlowConnector />
-          <FlowBox title="Associate Pastors" />
-          <FlowConnector />
-          <div className="grid gap-3 sm:grid-cols-2">
-            <FlowBox title="Functional Departments" compact />
-            <FlowBox title="Developmental Structures" compact />
-          </div>
-          <FlowConnector />
-          <FlowBox title="Seven Mountains & Five-Fold Ministry" />
         </div>
       </section>
 
@@ -170,6 +193,16 @@ function FlowBox({
 
 function FlowConnector() {
   return <div className="mx-auto h-6 w-px bg-border" />;
+}
+
+function FlowSubList({ items }: { items: string[] }) {
+  return (
+    <ul className="mt-2 space-y-1 text-center text-xs text-muted-foreground">
+      {items.map((item, i) => (
+        <li key={i}>{item}</li>
+      ))}
+    </ul>
+  );
 }
 
 function DeptGroup({ title, items, basePath = "/departments" }: {
