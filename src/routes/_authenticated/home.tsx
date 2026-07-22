@@ -114,47 +114,36 @@ function HomePage() {
         <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Organisational Structure</p>
         <h2 className="mt-2 font-serif text-3xl">Governance flow</h2>
         <pre className="mt-6 overflow-x-auto rounded bg-muted p-4 text-[11px] leading-relaxed md:text-xs">
-{`                   ────────────────────────
-                    │     JESUS CHRIST       │
-                    │  (Chief Cornerstone)   │
-                    └───────────┬────────────┘
-                                │
-                    ┌───────────▼────────────┐
-                    │     Senior Pastors     │
-                    │                        │
-                    └───────────┬────────────┘
-                                │
-             ┌──────────────────┼──────────────────┐
-             │                  │                  │
-      ┌──────▼──────┐   ┌───────▼───────┐   ┌──────▼──────┐
-      │Chairpersons │   │Church Secretary│  │Lead Pastors │
-      └──────┬──────┘   └────────────────┘  └──────┬──────┘
-             │                                     │
-             └──────────────┬──────────────────────┘
-                            │
-                 ┌──────────▼──────────┐
-                 │ Associate Pastors   │
-                 └──────────┬──────────┘
-                            │
-        ┌───────────────────┼───────────────────┐
-        │                                       │
-┌───────▼────────┐                    ┌─────────▼─────────┐
-│  Functional    │                    │  Developmental    │
-│  Departments   │                    │  Structures       │
-└───────┬────────┘                    └─────────┬─────────┘
-        │                                       │
-        └───────────────────┬───────────────────┘
-                            │
-                 ┌──────────▼──────────┐
-                 │  Seven Mountains    │
-                 │  Five-Fold Ministry │
-                 └─────────────────────┘`}
+{`                              ┌────────────────────────┐
+                              │     JESUS CHRIST       │
+                              │  (Chief Cornerstone)   │
+                              └───────────┬────────────┘
+                                          │
+                              ┌───────────▼────────────┐
+                              │  Senior Apostles /     │
+                              │     Senior Pastors     │
+                              └───────────┬────────────┘
+                                          │
+        ┌─────────────────┬───────────────┼───────────────┬─────────────────┐
+        │                 │               │               │                 │
+ ┌──────▼──────┐   ┌──────▼──────┐  ┌─────▼─────┐  ┌──────▼──────┐   ┌─────▼─────┐
+ │Governmental │   │  Functional │  │ Develop.  │  │  Support    │   │   TSOM    │
+ │  Structure  │   │  Structure  │  │ Structure │  │  Services   │   │ (7 Mtns)  │
+ └──────┬──────┘   └─────────────┘  └───────────┘  └─────────────┘   └─────┬─────┘
+        │                                                                  │
+   Chairperson,                                                  Religion mountain →
+   Fin. Admin,                                                    Five-Fold Ministry
+   Strat. Advisor,                                                (Apostolic, Prophetic,
+   Resource Admin,                                                 Evangelistic,
+   Church Secretary,                                               Pastoral, Teaching)
+   Lead / Assoc.
+   Pastors, Elders`}
         </pre>
       </section>
 
       {/* Department tiles */}
-      <DeptGroup title="Functional Ministry Departments" items={functional} />
-      <DeptGroup title="Developmental Structures" items={developmental} />
+      <DeptGroup title="Functional Structure" items={functional} />
+      <DeptGroup title="Developmental Structure" items={developmental} />
       <DeptGroup title="Seven Mountains" items={mountains} basePath="/departments" />
     </div>
   );
