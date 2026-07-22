@@ -22,6 +22,7 @@ import { Route as AuthenticatedFeedRouteImport } from './routes/_authenticated/f
 import { Route as AuthenticatedEventsRouteImport } from './routes/_authenticated/events'
 import { Route as AuthenticatedDepartmentsRouteImport } from './routes/_authenticated/departments'
 import { Route as AuthenticatedAttendanceRouteImport } from './routes/_authenticated/attendance'
+import { Route as AuthenticatedAssetsRouteImport } from './routes/_authenticated/assets'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedDepartmentsSlugRouteImport } from './routes/_authenticated/departments.$slug'
 import { Route as ApiPublicHooksSendAnnouncementEmailsRouteImport } from './routes/api/public/hooks/send-announcement-emails'
@@ -91,6 +92,11 @@ const AuthenticatedAttendanceRoute = AuthenticatedAttendanceRouteImport.update({
   id: '/attendance',
   path: '/attendance',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAssetsRoute = AuthenticatedAssetsRouteImport.update({
+  id: '/assets',
+  path: '/assets',
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
