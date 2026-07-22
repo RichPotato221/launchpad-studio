@@ -228,9 +228,9 @@ function PostCard({ post, likes, currentUserId, onChange }: {
       .select("user_id, first_viewed_at")
       .eq("announcement_id", post.id)
       .order("first_viewed_at", { ascending: false });
-    const ids = Array.from(new Set((data ?? []).map((v: any) => v.user_id as string)));
+    const ids: string[] = Array.from(new Set((data ?? []).map((v: any) => v.user_id as string)));
     const { data: profs } = ids.length
-      ? await supabase.from("profiles").select("id, full_name").in("id", ids)
+      ? await supabase.from("profiles").select("id, full_name").in("id", ids as string[])
       : { data: [] as any[] };
     const nameMap = new Map((profs ?? []).map((p: any) => [p.id, p.full_name]));
     setViewers((data ?? []).map((v: any) => ({ ...v, name: nameMap.get(v.user_id) ?? "Member" })));
