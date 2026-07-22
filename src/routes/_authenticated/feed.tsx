@@ -174,7 +174,6 @@ function FeedPage() {
           )}
         </div>
       </div>
-    </PortalShell>
   );
 }
 
