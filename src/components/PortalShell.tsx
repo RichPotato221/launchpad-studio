@@ -19,6 +19,7 @@ const nav = [
   { to: "/senior-pastor-cockpit", label: "Cockpit" },
   { to: "/reports", label: "Reports" },
   { to: "/admin", label: "Admin" },
+  <Link to="/assets">Assets</Link>,
 ] as const;
 
 export function PortalShell({ children }: { children: ReactNode }) {
