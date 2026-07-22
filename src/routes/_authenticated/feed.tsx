@@ -185,6 +185,10 @@ function PostCard({ post, likes, currentUserId, onChange }: {
   const [comments, setComments] = useState<any[]>([]);
   const [comment, setComment] = useState("");
   const [isTopLeader, setIsTopLeader] = useState(false);
+  const [viewCount, setViewCount] = useState<number>(0);
+  const [shareCount, setShareCount] = useState<number>(0);
+  const [viewersOpen, setViewersOpen] = useState(false);
+  const [viewers, setViewers] = useState<any[]>([]);
   const liked = !!currentUserId && likes.some((l) => l.user_id === currentUserId);
 
   useEffect(() => {
@@ -194,6 +198,63 @@ function PostCard({ post, likes, currentUserId, onChange }: {
       setIsTopLeader((data ?? []).some((r: any) => topRoles.has(r.role)));
     });
   }, [currentUserId]);
+
+  // Log a view (once per user per day, enforced by DB unique constraint)
+  useEffect(() => {
+    if (!currentUserId) return;
+    (supabase as any).from("announcement_views").insert({
+      announcement_id: post.id,
+      user_id: currentUserId,
+    }).then(() => refreshCounts());
+  }, [currentUserId, post.id]);
+
+  const refreshCounts = async () => {
+    const [{ count: v }, { count: s }] = await Promise.all([
+      (supabase as any).from("announcement_views").select("*", { count: "exact", head: true }).eq("announcement_id", post.id),
+      (supabase as any).from("announcement_shares").select("*", { count: "exact", head: true }).eq("announcement_id", post.id),
+    ]);
+    setViewCount(v ?? 0);
+    setShareCount(s ?? 0);
+  };
+
+  useEffect(() => { refreshCounts(); }, [post.id]);
+
+  const canSeeViewers = currentUserId === post.author_id || isTopLeader;
+
+  const openViewers = async () => {
+    if (!canSeeViewers) return;
+    const { data } = await (supabase as any)
+      .from("announcement_views")
+      .select("user_id, first_viewed_at")
+      .eq("announcement_id", post.id)
+      .order("first_viewed_at", { ascending: false });
+    const ids = Array.from(new Set((data ?? []).map((v: any) => v.user_id)));
+    const { data: profs } = ids.length
+      ? await supabase.from("profiles").select("id, full_name").in("id", ids)
+      : { data: [] as any[] };
+    const nameMap = new Map((profs ?? []).map((p: any) => [p.id, p.full_name]));
+    setViewers((data ?? []).map((v: any) => ({ ...v, name: nameMap.get(v.user_id) ?? "Member" })));
+    setViewersOpen(true);
+  };
+
+  const share = async () => {
+    if (!currentUserId) return;
+    const url = `${window.location.origin}/feed#post-${post.id}`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: "Announcement", text: post.body.slice(0, 140), url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        toast.success("Link copied");
+      }
+      await (supabase as any).from("announcement_shares").insert({
+        announcement_id: post.id, user_id: currentUserId,
+      });
+      refreshCounts();
+    } catch (e) {
+      // user cancelled — do nothing
+    }
+  };
 
   const canDelete = currentUserId === post.author_id || isTopLeader;
 
@@ -250,7 +311,7 @@ function PostCard({ post, likes, currentUserId, onChange }: {
   };
 
   return (
-    <Card className="p-5">
+    <Card id={`post-${post.id}`} className="p-5">
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="text-sm font-medium">{post.author_name}</p>
@@ -276,12 +337,23 @@ function PostCard({ post, likes, currentUserId, onChange }: {
       </div>
       <p className="mt-3 whitespace-pre-wrap text-sm">{post.body}</p>
       {post.attachment_url && <AttachmentLink path={post.attachment_url} name={post.attachment_name} />}
-      <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground">
+      <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
         <button onClick={toggleLike} className={`inline-flex items-center gap-1 ${liked ? "text-red-600" : "hover:text-foreground"}`}>
           <Heart className={`h-4 w-4 ${liked ? "fill-current" : ""}`} /> {likes.length}
         </button>
         <button onClick={openComments} className="inline-flex items-center gap-1 hover:text-foreground">
           <MessageCircle className="h-4 w-4" /> Comments
+        </button>
+        <button onClick={share} className="inline-flex items-center gap-1 hover:text-foreground">
+          <Share2 className="h-4 w-4" /> {shareCount}
+        </button>
+        <button
+          onClick={openViewers}
+          disabled={!canSeeViewers}
+          className={`ml-auto inline-flex items-center gap-1 ${canSeeViewers ? "hover:text-foreground" : "cursor-default"}`}
+          title={canSeeViewers ? "See who viewed" : "Views today"}
+        >
+          <Eye className="h-4 w-4" /> {viewCount}
         </button>
       </div>
       {showComments && (
@@ -299,6 +371,21 @@ function PostCard({ post, likes, currentUserId, onChange }: {
           </div>
         </div>
       )}
+
+      <Dialog open={viewersOpen} onOpenChange={setViewersOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>Viewed by</DialogTitle></DialogHeader>
+          <div className="max-h-80 space-y-2 overflow-y-auto text-sm">
+            {viewers.length === 0 && <p className="text-muted-foreground">No views yet.</p>}
+            {viewers.map((v) => (
+              <div key={v.user_id + v.first_viewed_at} className="flex items-center justify-between border-b border-border/60 pb-2 last:border-0">
+                <span>{v.name}</span>
+                <span className="text-xs text-muted-foreground">{new Date(v.first_viewed_at).toLocaleString()}</span>
+              </div>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
