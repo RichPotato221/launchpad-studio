@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, X, LogOut } from "lucide-react";
 import logo from "@/assets/trog-logo.png";
 import { GlobalSearch } from "@/components/GlobalSearch";
+import { ProfileMenu } from "@/components/ProfileMenu";
 
 const nav = [
   { to: "/home", label: "Home" },
@@ -67,10 +68,7 @@ export function PortalShell({ children }: { children: ReactNode }) {
           </nav>
 
           <div className="ml-auto flex shrink-0 items-center gap-3">
-            <span className="hidden text-xs text-muted-foreground lg:inline">{email}</span>
-            <Button variant="ghost" size="sm" onClick={signOut} className="hidden md:inline-flex">
-              <LogOut className="mr-1 h-4 w-4" /> Sign out
-            </Button>
+            <ProfileMenu />
             <button
               className="rounded p-2 xl:hidden"
               onClick={() => setOpen((o) => !o)}
