@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Menu, X, LogOut } from "lucide-react";
 import logo from "@/assets/trog-logo.png";
+import { GlobalSearch } from "@/components/GlobalSearch";
 
 const nav = [
   { to: "/home", label: "Home" },
@@ -63,6 +64,10 @@ export function PortalShell({ children }: { children: ReactNode }) {
               </Link>
             ))}
           </nav>
+
+          <div className="hidden max-w-sm flex-1 md:mx-6 md:block">
+            <GlobalSearch />
+          </div>
 
           <div className="flex items-center gap-3">
             <span className="hidden text-xs text-muted-foreground md:inline">{email}</span>
