@@ -98,7 +98,7 @@ export function SundayRsvp({ serviceDate }: Props) {
 
     const { error } = await supabase
       .from("sunday_rsvps")
-      .upsert(payload, { onConflict: "service_date,user_id" });
+      .upsert(payload as any, { onConflict: "service_date,user_id" });
 
     if (error) {
       console.error(error);
