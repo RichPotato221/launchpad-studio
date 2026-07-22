@@ -72,6 +72,41 @@ export type Database = {
           },
         ]
       }
+      announcement_media: {
+        Row: {
+          announcement_id: string
+          created_at: string
+          id: string
+          media_type: string
+          media_url: string
+          sort_order: number
+        }
+        Insert: {
+          announcement_id: string
+          created_at?: string
+          id?: string
+          media_type?: string
+          media_url: string
+          sort_order?: number
+        }
+        Update: {
+          announcement_id?: string
+          created_at?: string
+          id?: string
+          media_type?: string
+          media_url?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcement_media_announcement_id_fkey"
+            columns: ["announcement_id"]
+            isOneToOne: false
+            referencedRelation: "announcements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       announcements: {
         Row: {
           attachment_name: string | null
@@ -209,6 +244,7 @@ export type Database = {
       attendance: {
         Row: {
           branch: Database["public"]["Enums"]["branch"] | null
+          contact: string | null
           created_at: string
           department_slug: string | null
           event_id: string | null
@@ -225,6 +261,7 @@ export type Database = {
         }
         Insert: {
           branch?: Database["public"]["Enums"]["branch"] | null
+          contact?: string | null
           created_at?: string
           department_slug?: string | null
           event_id?: string | null
@@ -241,6 +278,7 @@ export type Database = {
         }
         Update: {
           branch?: Database["public"]["Enums"]["branch"] | null
+          contact?: string | null
           created_at?: string
           department_slug?: string | null
           event_id?: string | null
@@ -1653,7 +1691,28 @@ export type Database = {
         Args: { _target: string; _viewer: string }
         Returns: boolean
       }
+      can_view_rsvp_reasons: { Args: { _user_id: string }; Returns: boolean }
       generate_upcoming_recurring_events: { Args: never; Returns: undefined }
+      get_sunday_rsvp_status: {
+        Args: { _service_date: string }
+        Returns: {
+          branch: Database["public"]["Enums"]["branch"]
+          full_name: string
+          response: string
+          user_id: string
+        }[]
+      }
+      global_search: {
+        Args: { _term: string }
+        Returns: {
+          id: string
+          path: string
+          rank: number
+          result_type: string
+          subtitle: string
+          title: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1685,6 +1744,8 @@ export type Database = {
         Args: { _branch: Database["public"]["Enums"]["branch"] }
         Returns: boolean
       }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
       user_dept_slugs: { Args: { _user_id: string }; Returns: string[] }
     }
     Enums: {
