@@ -41,7 +41,8 @@ function DepartmentPortal() {
   const gallery = DEPARTMENT_GALLERY[slug] ?? [];
   const workspace = membership.data?.isMember ? getWorkspaceFor(slug) : null;
   const WorkspaceComponent = workspace?.component;
-
+ const [activeTab, setActiveTab] = useState("overview");
+  
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
       <Link to="/departments" className="text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground">← All departments</Link>
@@ -59,15 +60,21 @@ function DepartmentPortal() {
         {d.chair_name && <p className="text-sm text-muted-foreground">Chair: <strong className="text-foreground">{d.chair_name}</strong></p>}
       </div>
 
-      <Tabs defaultValue="overview" className="mt-8">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="team">Team</TabsTrigger>
-          <TabsTrigger value="kpis">KPI Dashboard</TabsTrigger>
-          <TabsTrigger value="reports">Reports</TabsTrigger>
-          <TabsTrigger value="resources">Resources</TabsTrigger>
-          {workspace && <TabsTrigger value="workspace" className="font-semibold">{workspace.label}</TabsTrigger>}
-        </TabsList>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-8">
+        {/* Mobile: dropdown instead of a tab row */}
+        <div className="md:hidden">
+          <Select value={activeTab} onValueChange={setActiveTab}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="overview">Overview</SelectItem>
+              <SelectItem value="team">Team</SelectItem>
+              <SelectItem value="kpis">KPI Dashboard</SelectItem>
+              <SelectItem value="reports">Reports</SelectItem>
+              <SelectItem value="resources">Resources</SelectItem>
+              {workspace && <SelectItem value="workspace">{workspace.label}</SelectItem>}
+            </SelectContent>
+          </Select>
+        </div>
 
         <TabsContent value="overview" className="mt-6 space-y-6">
           {slug === "religion" && <FiveFoldHub />}
