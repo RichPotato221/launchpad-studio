@@ -116,7 +116,7 @@ function HomePage() {
         <div className="mt-8 space-y-3">
           <FlowBox title="Jesus Christ" subtitle="Chief Cornerstone" emphasis />
           <FlowConnector />
-          <FlowBox title="Senior Apostles / Senior Pastors" />
+          <FlowBox title=" Senior Pastors" />
           <FlowConnector />
           <div className="grid gap-3 sm:grid-cols-5">
             <div>
@@ -128,7 +128,7 @@ function HomePage() {
                   "Strategic Advisor",
                   "Resource Admin",
                   "Church Secretary",
-                  "Lead / Associate Pastors",
+                  "Assistant / Associate Pastors",
                   "Elders",
                 ]}
               />
@@ -143,16 +143,28 @@ function HomePage() {
               <FlowBox title="Support Services" compact />
             </div>
             <div>
-              <FlowBox title="TSOM (7 Mountains)" compact />
-              <FlowSubList
-                items={[
-                  "Religion mountain →",
-                  "Five-Fold Ministry",
-                  "(Apostolic, Prophetic,",
-                  "Evangelistic, Pastoral,",
-                  "Teaching)",
-                ]}
-              />
+              <div>
+              <FlowBox title="TSOM" subtitle="7 Mountains" compact />
+              <FlowConnector />
+              <FlowBox title="Dean" compact />
+              <FlowConnector />
+              <FlowBox title="Principal" compact />
+              <FlowConnector />
+              <div className="mt-3 grid gap-3">
+                <FlowBox title="Discipleship + TithemiSOM" compact />
+                <div>
+                  <FlowBox title="7 Mountains" compact />
+                  <FlowSubList
+                    items={[
+                      "Religion mountain →",
+                      "Five-Fold Ministry",
+                      "(Apostolic, Prophetic,",
+                      "Evangelistic, Pastoral,",
+                      "Teaching)",
+                    ]}
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
