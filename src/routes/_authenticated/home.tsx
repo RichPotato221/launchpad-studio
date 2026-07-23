@@ -166,6 +166,7 @@ function HomePage() {
       </section>
 
 
+
       {/* Department tiles */}
       <DeptGroup title="Functional Structure" items={functional} />
       <DeptGroup title="Developmental Structure" items={developmental} />
