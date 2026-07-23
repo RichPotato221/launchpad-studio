@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/_authenticated/profile")({
+export const Route = createFileRoute("/_authenticated/Profile")({
   head: () => ({ meta: [{ title: "My Profile — TRoGKC Portal" }] }),
   component: ProfilePage,
 });
