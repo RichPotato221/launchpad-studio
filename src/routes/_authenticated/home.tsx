@@ -155,12 +155,8 @@ function HomePage() {
                 <FlowBox title="Discipleship + TithemiSOM" compact />
                     <FlowConnector />
                   <FlowBox title="7 Mountains" compact />
-                  <FlowSubList
-                    items={[
-                      "Religion mountain →",
-                      "Five-Fold Ministry",
-                    ]}
-                  />
+                  <FlowSubList items={["Religion Mountain"]} />
+
                 </div>
               </div>
             </div>
