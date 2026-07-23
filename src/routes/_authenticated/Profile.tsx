@@ -5,48 +5,51 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-
-export const Route = createFileRoute("/_authenticated/Profile")({
+ 
+export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({ meta: [{ title: "My Profile — TRoGKC Portal" }] }),
   component: ProfilePage,
 });
-
+ 
 function ProfilePage() {
   const [userId, setUserId] = useState("");
-  const [form, setForm] = useState({ full_name: "", phone: "", email: "", avatar_url: "" });
-  const [deptName, setDeptName] = useState("");
+  const [form, setForm] = useState({ full_name: "", phone: "", email: "", avatar_url: "", primary_department: "" });
+  const [depts, setDepts] = useState<{ slug: string; name: string }[]>([]);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
-
+ 
   const load = async () => {
     const { data: userRes } = await supabase.auth.getUser();
     const uid = userRes.user?.id;
     if (!uid) return;
     setUserId(uid);
+ 
     const { data } = await supabase
       .from("profiles")
       .select("full_name, phone, email, avatar_url, primary_department")
       .eq("id", uid)
       .maybeSingle();
+ 
     if (data) {
       setForm({
         full_name: data.full_name ?? "",
         phone: data.phone ?? "",
         email: data.email ?? "",
         avatar_url: data.avatar_url ?? "",
+        primary_department: data.primary_department ?? "",
       });
-      if (data.primary_department) {
-        const { data: d } = await supabase.from("departments").select("name").eq("slug", data.primary_department).maybeSingle();
-        setDeptName(d?.name ?? data.primary_department);
-      }
     }
+ 
+    const { data: deptList } = await supabase.from("departments").select("slug, name").order("name");
+    setDepts(deptList ?? []);
   };
-
+ 
   useEffect(() => {
     load();
   }, []);
-
+ 
   const uploadAvatar = async (file: File) => {
     setUploading(true);
     const path = `${userId}/${Date.now()}-${file.name}`;
@@ -62,23 +65,27 @@ function ProfilePage() {
     setForm((f) => ({ ...f, avatar_url: pub.publicUrl }));
     toast.success("Profile picture updated");
   };
-
+ 
   const save = async () => {
     setSaving(true);
     const { error } = await supabase
       .from("profiles")
-      .update({ full_name: form.full_name, phone: form.phone })
+      .update({
+        full_name: form.full_name,
+        phone: form.phone,
+        primary_department: form.primary_department || null,
+      })
       .eq("id", userId);
     setSaving(false);
     if (error) return toast.error(error.message);
     toast.success("Profile updated");
   };
-
+ 
   return (
     <div className="mx-auto max-w-2xl px-4 py-10 md:px-8">
       <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Account</p>
       <h1 className="mt-2 font-serif text-3xl md:text-4xl">My Profile</h1>
-
+ 
       <Card className="mt-6 p-6">
         <div className="flex items-center gap-4">
           <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-muted text-xl font-medium">
@@ -104,7 +111,7 @@ function ProfilePage() {
             />
           </div>
         </div>
-
+ 
         <div className="mt-6 grid gap-4">
           <div>
             <Label>Full name</Label>
@@ -120,7 +127,21 @@ function ProfilePage() {
           </div>
           <div>
             <Label>Department</Label>
-            <Input value={deptName || "—"} disabled />
+            <Select
+              value={form.primary_department}
+              onValueChange={(v) => setForm({ ...form, primary_department: v })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a department" />
+              </SelectTrigger>
+              <SelectContent>
+                {depts.map((d) => (
+                  <SelectItem key={d.slug} value={d.slug}>
+                    {d.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <Button onClick={save} disabled={saving} className="w-fit">
             {saving ? "Saving…" : "Save changes"}
