@@ -50,6 +50,7 @@
 }
 
 :root {
+  color-scheme: light only;
   --radius: 0.25rem;
 
   --cream: oklch(0.985 0.008 85);        /* #fcfbf8 */
