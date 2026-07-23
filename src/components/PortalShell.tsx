@@ -21,18 +21,46 @@ const nav = [
   { to: "/admin", label: "Admin" },
   { to: "/assets", label: "Assets" },
 ] as const;
+ 
+// Only these roles ever see Governance or Cockpit in the nav at all.
+const GOVERNANCE_ROLES = new Set(["senior_apostle", "chairperson"]);
+const COCKPIT_ROLES = new Set([
+  "senior_apostle",
+  "chairperson",
+  "lead_pastor",
+  "associate_pastor",
+  "secretary",
+  "strategic_adviser",
+]);
+has context menu
 
 export function PortalShell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState<string>("");
+  const [roles, setRoles] = useState<string[]>([]);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-
+ 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setEmail(data.user?.email ?? ""));
+    supabase.auth.getUser().then(async ({ data }) => {
+      setEmail(data.user?.email ?? "");
+      if (data.user?.id) {
+        const { data: roleRows } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", data.user.id);
+        setRoles((roleRows ?? []).map((r: any) => r.role));
+      }
+    });
   }, []);
-
+ 
+  const filteredNav = nav.filter((item) => {
+    if (item.to === "/governance") return roles.some((r) => GOVERNANCE_ROLES.has(r));
+    if (item.to === "/senior-pastor-cockpit") return roles.some((r) => COCKPIT_ROLES.has(r));
+    return true;
+  });
+  
   useEffect(() => setOpen(false), [pathname]);
 
   const signOut = async () => {
@@ -56,7 +84,8 @@ export function PortalShell({ children }: { children: ReactNode }) {
           </Link>
 
           <nav className="hidden flex-1 items-center justify-center gap-5 overflow-x-auto whitespace-nowrap xl:flex">
-            {nav.map((item) => (
+            {filteredNav.map((item) => (
+      
               <Link
                 key={item.to}
                 to={item.to}
@@ -89,7 +118,7 @@ export function PortalShell({ children }: { children: ReactNode }) {
         {open && (
           <div className="border-t border-border/60 xl:hidden">
             <nav className="flex flex-col p-4">
-              {nav.map((item) => (
+              {filteredNav.map((item) => (
                 <Link
                   key={item.to}
                   to={item.to}
