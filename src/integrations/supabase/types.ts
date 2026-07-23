@@ -243,11 +243,119 @@ export type Database = {
             referencedRelation: "assets"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "asset_maintenance_logs_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets_low_stock"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      asset_stock_movements: {
+        Row: {
+          asset_id: string
+          created_at: string
+          id: string
+          movement_type: string
+          performed_by: string | null
+          quantity_after: number
+          quantity_change: number
+          reason: string | null
+        }
+        Insert: {
+          asset_id: string
+          created_at?: string
+          id?: string
+          movement_type: string
+          performed_by?: string | null
+          quantity_after: number
+          quantity_change: number
+          reason?: string | null
+        }
+        Update: {
+          asset_id?: string
+          created_at?: string
+          id?: string
+          movement_type?: string
+          performed_by?: string | null
+          quantity_after?: number
+          quantity_change?: number
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_stock_movements_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_stock_movements_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets_low_stock"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      asset_suppliers: {
+        Row: {
+          asset_id: string
+          created_at: string
+          id: string
+          lead_time_days: number | null
+          notes: string | null
+          quoted_price: number | null
+          supplier_id: string
+        }
+        Insert: {
+          asset_id: string
+          created_at?: string
+          id?: string
+          lead_time_days?: number | null
+          notes?: string | null
+          quoted_price?: number | null
+          supplier_id: string
+        }
+        Update: {
+          asset_id?: string
+          created_at?: string
+          id?: string
+          lead_time_days?: number | null
+          notes?: string | null
+          quoted_price?: number | null
+          supplier_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_suppliers_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_suppliers_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets_low_stock"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_suppliers_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
         ]
       }
       assets: {
         Row: {
           branch: Database["public"]["Enums"]["branch"] | null
+          brand: string | null
           category: string | null
           created_at: string
           created_by: string | null
@@ -256,16 +364,23 @@ export type Database = {
           id: string
           last_maintenance_alert_sent_at: string | null
           location: string | null
+          model: string | null
           name: string
           next_maintenance_date: string | null
           notes: string | null
+          primary_supplier_id: string | null
           purchase_date: string | null
           purchase_value: number | null
+          quantity_on_hand: number
+          reorder_level: number | null
+          serial_number: string | null
           status: string
+          unit_of_measure: string | null
           updated_at: string
         }
         Insert: {
           branch?: Database["public"]["Enums"]["branch"] | null
+          brand?: string | null
           category?: string | null
           created_at?: string
           created_by?: string | null
@@ -274,16 +389,23 @@ export type Database = {
           id?: string
           last_maintenance_alert_sent_at?: string | null
           location?: string | null
+          model?: string | null
           name: string
           next_maintenance_date?: string | null
           notes?: string | null
+          primary_supplier_id?: string | null
           purchase_date?: string | null
           purchase_value?: number | null
+          quantity_on_hand?: number
+          reorder_level?: number | null
+          serial_number?: string | null
           status?: string
+          unit_of_measure?: string | null
           updated_at?: string
         }
         Update: {
           branch?: Database["public"]["Enums"]["branch"] | null
+          brand?: string | null
           category?: string | null
           created_at?: string
           created_by?: string | null
@@ -292,15 +414,29 @@ export type Database = {
           id?: string
           last_maintenance_alert_sent_at?: string | null
           location?: string | null
+          model?: string | null
           name?: string
           next_maintenance_date?: string | null
           notes?: string | null
+          primary_supplier_id?: string | null
           purchase_date?: string | null
           purchase_value?: number | null
+          quantity_on_hand?: number
+          reorder_level?: number | null
+          serial_number?: string | null
           status?: string
+          unit_of_measure?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "assets_primary_supplier_id_fkey"
+            columns: ["primary_supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       attendance: {
         Row: {
@@ -1517,6 +1653,45 @@ export type Database = {
         }
         Relationships: []
       }
+      suppliers: {
+        Row: {
+          address: string | null
+          contact_person: string | null
+          created_at: string
+          created_by: string | null
+          email: string | null
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          contact_person?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          contact_person?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       tasks: {
         Row: {
           approval_status: string | null
@@ -1629,6 +1804,43 @@ export type Database = {
       }
     }
     Views: {
+      assets_low_stock: {
+        Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
+          brand: string | null
+          category: string | null
+          created_at: string | null
+          created_by: string | null
+          custodian: string | null
+          department_slug: string | null
+          id: string | null
+          last_maintenance_alert_sent_at: string | null
+          location: string | null
+          model: string | null
+          name: string | null
+          next_maintenance_date: string | null
+          notes: string | null
+          primary_supplier_id: string | null
+          primary_supplier_name: string | null
+          purchase_date: string | null
+          purchase_value: number | null
+          quantity_on_hand: number | null
+          reorder_level: number | null
+          serial_number: string | null
+          status: string | null
+          unit_of_measure: string | null
+          updated_at: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assets_primary_supplier_id_fkey"
+            columns: ["primary_supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       department_directory: {
         Row: {
           department_name: string | null
