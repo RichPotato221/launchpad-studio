@@ -3,27 +3,27 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchDepartments, fetchSetting } from "@/lib/portal";
 import { Card } from "@/components/ui/card";
 import { PORTAL_IMAGES, DEPARTMENT_HERO } from "@/lib/portalImages";
-
-
+ 
+ 
 export const Route = createFileRoute("/_authenticated/home")({
   head: () => ({ meta: [{ title: "Home — TRoGKC Portal" }] }),
   component: HomePage,
 });
-
+ 
 function HomePage() {
   const depts = useQuery({ queryKey: ["departments"], queryFn: fetchDepartments });
   const theme = useQuery({ queryKey: ["setting", "theme_of_year"], queryFn: () => fetchSetting("theme_of_year") });
   const church = useQuery({ queryKey: ["setting", "church_info"], queryFn: () => fetchSetting("church_info") });
   const apostle = useQuery({ queryKey: ["setting", "senior_apostle"], queryFn: () => fetchSetting("senior_apostle") });
-
+ 
   const info = (church.data?.value ?? {}) as { vision?: string; mission?: string[]; founding_date?: string };
   const themeV = (theme.data?.value ?? {}) as { year?: number; title?: string; description?: string };
   const apostleV = (apostle.data?.value ?? {}) as { name?: string; bio?: string; photo_url?: string };
-
+ 
   const functional = depts.data?.filter((d) => d.kind === "functional") ?? [];
   const developmental = depts.data?.filter((d) => d.kind === "developmental") ?? [];
   const mountains = depts.data?.filter((d) => d.kind === "seven_mountain") ?? [];
-
+ 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
       {/* 2026 Marching Orders banner */}
@@ -34,14 +34,13 @@ function HomePage() {
           className="mx-auto max-h-[36rem] w-full object-contain"
         />
       </section>
-
+ 
       {/* Vision */}
       <section className="rounded-lg border border-border bg-card p-6 md:p-10">
         <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Our Vision</p>
         <p className="mt-4 font-serif text-xl leading-relaxed md:text-2xl">{info.vision}</p>
       </section>
-
-
+ 
       {/* Mission */}
       <section className="mt-6 rounded-lg border border-border bg-card p-6 md:p-10">
         <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Our Mission</p>
@@ -54,7 +53,7 @@ function HomePage() {
           ))}
         </ol>
       </section>
-
+ 
       {/* Theme + Apostle */}
       <div className="mt-6 grid gap-6 md:grid-cols-2">
         <section className="rounded-lg border border-border bg-foreground p-6 text-background md:p-10">
@@ -106,9 +105,8 @@ function HomePage() {
             </p>
           )}
         </section>
-
       </div>
-
+ 
       {/* Org structure */}
       <section className="mt-6 rounded-lg border border-border bg-card p-6 md:p-10">
         <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Organisational Structure</p>
@@ -143,7 +141,6 @@ function HomePage() {
               <FlowBox title="Support Services" compact />
             </div>
             <div>
-              <div>
               <FlowBox title="TSOM" subtitle="7 Mountains" compact />
               <FlowConnector />
               <FlowBox title="Dean" compact />
@@ -159,8 +156,10 @@ function HomePage() {
                 </div>
               </div>
             </div>
-         </section>
-
+          </div>
+        </div>
+      </section>
+ 
       {/* Department tiles */}
       <DeptGroup title="Functional Structure" items={functional} />
       <DeptGroup title="Developmental Structure" items={developmental} />
@@ -168,7 +167,7 @@ function HomePage() {
     </div>
   );
 }
-
+ 
 function FlowBox({
   title,
   subtitle,
@@ -193,11 +192,11 @@ function FlowBox({
     </div>
   );
 }
-
+ 
 function FlowConnector() {
   return <div className="mx-auto h-6 w-px bg-border" />;
 }
-
+ 
 function FlowSubList({ items }: { items: string[] }) {
   return (
     <ul className="mt-2 space-y-1 text-center text-xs text-muted-foreground">
@@ -207,7 +206,7 @@ function FlowSubList({ items }: { items: string[] }) {
     </ul>
   );
 }
-
+ 
 function DeptGroup({ title, items, basePath = "/departments" }: {
   title: string;
   items: { slug: string; name: string; scripture: string | null }[];
@@ -245,4 +244,3 @@ function DeptGroup({ title, items, basePath = "/departments" }: {
     </section>
   );
 }
-
