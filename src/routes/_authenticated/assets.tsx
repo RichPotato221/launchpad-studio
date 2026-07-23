@@ -41,42 +41,40 @@ function AssetsPage() {
   const supplierName = (id: string | null) => suppliers.find((s) => s.id === id)?.name ?? "—";
 
   return (
-    <PortalShell>
-      <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
-        <div className="mb-6">
-          <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Foundation module</p>
-          <h1 className="mt-2 font-serif text-3xl md:text-4xl">Asset Register</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            What we own, what it cost, who supplied it, and a running stock-take log.
-          </p>
-        </div>
-
-        {lowStock.length > 0 && (
-          <Card className="mb-6 border-amber-300 bg-amber-50 p-4">
-            <p className="text-xs font-medium uppercase tracking-widest text-amber-800">Low stock</p>
-            <ul className="mt-2 space-y-1 text-sm text-amber-900">
-              {lowStock.map((item) => (
-                <li key={item.id}>
-                  {item.name} — {item.quantity_on_hand} {item.unit_of_measure} left (reorder at {item.reorder_level})
-                </li>
-              ))}
-            </ul>
-          </Card>
-        )}
-
-        <div className="mb-6 flex gap-2">
-          <Button size="sm" variant={tab === "assets" ? "default" : "outline"} onClick={() => setTab("assets")}>Assets</Button>
-          <Button size="sm" variant={tab === "suppliers" ? "default" : "outline"} onClick={() => setTab("suppliers")}>Suppliers</Button>
-          <Button size="sm" variant={tab === "movements" ? "default" : "outline"} onClick={() => setTab("movements")}>Stock movements</Button>
-        </div>
-
-        {tab === "assets" && (
-          <AssetsTab assets={assets} depts={depts} suppliers={suppliers} supplierName={supplierName} onChange={loadAll} />
-        )}
-        {tab === "suppliers" && <SuppliersTab suppliers={suppliers} onChange={loadAll} />}
-        {tab === "movements" && <MovementsTab assets={assets} onChange={loadAll} />}
+    <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
+      <div className="mb-6">
+        <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Foundation module</p>
+        <h1 className="mt-2 font-serif text-3xl md:text-4xl">Asset Register</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          What we own, what it cost, who supplied it, and a running stock-take log.
+        </p>
       </div>
-    </PortalShell>
+
+      {lowStock.length > 0 && (
+        <Card className="mb-6 border-amber-300 bg-amber-50 p-4">
+          <p className="text-xs font-medium uppercase tracking-widest text-amber-800">Low stock</p>
+          <ul className="mt-2 space-y-1 text-sm text-amber-900">
+            {lowStock.map((item) => (
+              <li key={item.id}>
+                {item.name} — {item.quantity_on_hand} {item.unit_of_measure} left (reorder at {item.reorder_level})
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
+
+      <div className="mb-6 flex gap-2">
+        <Button size="sm" variant={tab === "assets" ? "default" : "outline"} onClick={() => setTab("assets")}>Assets</Button>
+        <Button size="sm" variant={tab === "suppliers" ? "default" : "outline"} onClick={() => setTab("suppliers")}>Suppliers</Button>
+        <Button size="sm" variant={tab === "movements" ? "default" : "outline"} onClick={() => setTab("movements")}>Stock movements</Button>
+      </div>
+
+      {tab === "assets" && (
+        <AssetsTab assets={assets} depts={depts} suppliers={suppliers} supplierName={supplierName} onChange={loadAll} />
+      )}
+      {tab === "suppliers" && <SuppliersTab suppliers={suppliers} onChange={loadAll} />}
+      {tab === "movements" && <MovementsTab assets={assets} onChange={loadAll} />}
+    </div>
   );
 }
 
