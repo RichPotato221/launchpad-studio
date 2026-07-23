@@ -13,12 +13,12 @@ import logo from "@/assets/trog-logo.png";
 import { notifyPendingApproval } from "@/lib/notifyApproval.functions";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Sign in — TRoGKC Leadership Portal" }] }),
+  head: () => ({ meta: [{ title: "Sign in — TRoGKC Leadership domain" }] }),
   component: AuthPage,
 });
 
 const BRANCHES = [
-  { value: "twatwa", label: "Twatwa" },
+  { value: "Etwatwa", label: "Etwatwa" },
   { value: "joburg_north", label: "Joburg North" },
   { value: "joburg_south", label: "Joburg South" },
 ] as const;
@@ -229,7 +229,7 @@ function AuthPage() {
                   {loading ? "Submitting…" : "Submit for approval"}
                 </Button>
                 <p className="text-xs text-muted-foreground">
-                  Your details are sent to the Senior Apostle for approval. You cannot sign in until approved.
+                  Your details are sent to the Admin for approval. You cannot sign in until approved.
                 </p>
               </form>
             </TabsContent>
