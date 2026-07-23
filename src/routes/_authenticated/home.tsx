@@ -144,28 +144,21 @@ function HomePage() {
             </div>
             <div>
               <div>
-              <FlowBox title="TSOM" compact />
+              <FlowBox title="TSOM" subtitle="7 Mountains" compact />
               <FlowConnector />
               <FlowBox title="Dean" compact />
               <FlowConnector />
               <FlowBox title="Principal" compact />
               <FlowConnector />
-              <div className="mt-3 grid gap-3">
-                  <FlowConnector />
-                <FlowBox title="Discipleship + TithemiSOM" compact />
-                    <FlowConnector />
+              <div className="mt-3 grid gap-4 sm:grid-cols-2">
+                <FlowBox title="Discipleship + SOM" compact />
+                <div>
                   <FlowBox title="7 Mountains" compact />
-                  <FlowSubList items={["Religion Mountain"]} />
-
+                  <FlowConnector />
+                  <FlowBox title="Mountain of Religion – Five Fold Ministry" compact />
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-
-
 
       {/* Department tiles */}
       <DeptGroup title="Functional Structure" items={functional} />
