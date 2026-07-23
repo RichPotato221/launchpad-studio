@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Suspense, useState } from "react";
 import { getWorkspaceFor } from "@/lib/workspaceRegistry";
+import { TeamChat } from "@/components/departments/TeamChat";
 import { useIsDepartmentMember } from "@/lib/useIsDepartmentMember";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -111,9 +112,9 @@ function DepartmentPortal() {
         </TabsContent>
 
         <TabsContent value="team" className="mt-6">
-          <DepartmentTeam slug={slug} />
+          <DepartmentTeam slug={slug} currentUserId={membership.data?.userId ?? null} />
         </TabsContent>
-
+ 
         <TabsContent value="kpis" className="mt-6">
           <KpiDashboard slug={slug} kpis={kpis.data ?? []} onChange={() => kpis.refetch()} />
         </TabsContent>
@@ -179,7 +180,7 @@ function FiveFoldHub() {
   );
 }
 
-function DepartmentTeam({ slug }: { slug: string }) {
+function DepartmentTeam({ slug, currentUserId }: { slug: string; currentUserId: string | null }) {
   const members = useQuery({
     queryKey: ["dept-team", slug],
     queryFn: async () => {
@@ -217,26 +218,50 @@ function DepartmentTeam({ slug }: { slug: string }) {
   if (rows.length === 0) return <Card className="p-6 text-sm text-muted-foreground">No approved members yet in this department.</Card>;
 
   return (
-    <Card className="p-0 overflow-hidden">
-      <div className="grid grid-cols-12 gap-2 border-b border-border bg-muted/40 px-4 py-3 text-[0.65rem] uppercase tracking-widest text-muted-foreground">
-        <div className="col-span-4">Member</div>
-        <div className="col-span-3">Email</div>
-        <div className="col-span-2">Branch</div>
-        <div className="col-span-2">Role</div>
-        <div className="col-span-1 text-right">{slug === "finance" ? "Tithe (R)" : ""}</div>
-      </div>
-      {rows.map((m: any) => (
-        <div key={m.id} className="grid grid-cols-12 gap-2 border-b border-border px-4 py-3 text-sm last:border-0">
-          <div className="col-span-4 font-medium">{m.full_name ?? "—"}</div>
-          <div className="col-span-3 truncate text-muted-foreground">{m.email}</div>
-          <div className="col-span-2 text-muted-foreground">{m.branch ?? "—"}</div>
-          <div className="col-span-2 text-muted-foreground">{m.requested_role ?? "—"}</div>
-          <div className="col-span-1 text-right font-mono">
-            {slug === "finance" ? (tithes.data?.get(m.id) ?? 0).toFixed(2) : ""}
-          </div>
+    <div>
+      <Card className="p-0 overflow-hidden">
+        <div className="grid grid-cols-12 gap-2 border-b border-border bg-muted/40 px-4 py-3 text-[0.65rem] uppercase tracking-widest text-muted-foreground">
+          <div className="col-span-5">Member</div>
+          <div className="col-span-3">Branch</div>
+          <div className="col-span-3">Role</div>
+          <div className="col-span-1 text-right">{slug === "finance" ? "Tithe (R)" : ""}</div>
         </div>
-      ))}
-    </Card>
+        {rows.map((m: any) => (
+          <div key={m.id} className="grid grid-cols-12 gap-2 border-b border-border px-4 py-3 text-sm last:border-0">
+            <div className="col-span-5 font-medium">{m.full_name ?? "—"}</div>
+            <div className="col-span-3 text-muted-foreground">{m.branch ?? "—"}</div>
+            <div className="col-span-3 text-muted-foreground">{m.requested_role ?? "—"}</div>
+            <div className="col-span-1 text-right font-mono">
+              {slug === "finance" ? (tithes.data?.get(m.id) ?? 0).toFixed(2) : ""}
+            </div>
+          </div>
+        ))}
+      </Card>
+      <TeamChat slug={slug} currentUserId={currentUserId} />
+    </div>
+  );
+}return (
+    <div>
+      <Card className="p-0 overflow-hidden">
+        <div className="grid grid-cols-12 gap-2 border-b border-border bg-muted/40 px-4 py-3 text-[0.65rem] uppercase tracking-widest text-muted-foreground">
+          <div className="col-span-5">Member</div>
+          <div className="col-span-3">Branch</div>
+          <div className="col-span-3">Role</div>
+          <div className="col-span-1 text-right">{slug === "finance" ? "Tithe (R)" : ""}</div>
+        </div>
+        {rows.map((m: any) => (
+          <div key={m.id} className="grid grid-cols-12 gap-2 border-b border-border px-4 py-3 text-sm last:border-0">
+            <div className="col-span-5 font-medium">{m.full_name ?? "—"}</div>
+            <div className="col-span-3 text-muted-foreground">{m.branch ?? "—"}</div>
+            <div className="col-span-3 text-muted-foreground">{m.requested_role ?? "—"}</div>
+            <div className="col-span-1 text-right font-mono">
+              {slug === "finance" ? (tithes.data?.get(m.id) ?? 0).toFixed(2) : ""}
+            </div>
+          </div>
+        ))}
+      </Card>
+      <TeamChat slug={slug} currentUserId={currentUserId} />
+    </div>
   );
 }
 
