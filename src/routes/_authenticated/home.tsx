@@ -144,23 +144,21 @@ function HomePage() {
             </div>
             <div>
               <div>
-              <FlowBox title="TSOM" subtitle="7 Mountains" compact />
+              <FlowBox title="TSOM" compact />
               <FlowConnector />
               <FlowBox title="Dean" compact />
               <FlowConnector />
               <FlowBox title="Principal" compact />
               <FlowConnector />
               <div className="mt-3 grid gap-3">
+                  <FlowConnector />
                 <FlowBox title="Discipleship + TithemiSOM" compact />
-                <div>
+                    <FlowConnector />
                   <FlowBox title="7 Mountains" compact />
                   <FlowSubList
                     items={[
                       "Religion mountain →",
                       "Five-Fold Ministry",
-                      "(Apostolic, Prophetic,",
-                      "Evangelistic, Pastoral,",
-                      "Teaching)",
                     ]}
                   />
                 </div>
