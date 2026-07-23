@@ -170,7 +170,7 @@ export function SundayRsvp({ serviceDate }: Props) {
               <Textarea
                 value={declineReason}
                 onChange={(e) => setDeclineReason(e.target.value)}
-                placeholder="Only visible to Senior Pastor, Lead Pastor, Associate Pastor and Chairperson"
+                placeholder="Only visible to Senior Pastor, Assistant Pastor, Associate Pastor and Chairperson"
               />
               <Button size="sm" onClick={saveReason} disabled={savingReason}>
                 {savingReason ? "Saving…" : "Save reason"}
