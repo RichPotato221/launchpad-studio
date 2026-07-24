@@ -2066,6 +2066,27 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_task_completion: {
+        Args: { _days?: number }
+        Returns: {
+          done_tasks: number
+          overdue_tasks: number
+          total_tasks: number
+        }[]
+      }
+      get_upcoming_deadlines: {
+        Args: { _limit?: number }
+        Returns: {
+          assigned_to: string
+          branch: Database["public"]["Enums"]["branch"]
+          department_slug: string
+          due_date: string
+          id: string
+          priority: string
+          status: string
+          title: string
+        }[]
+      }
       global_search: {
         Args: { _term: string }
         Returns: {
