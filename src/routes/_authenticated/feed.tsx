@@ -315,11 +315,12 @@ function PostCard({ post, likes, currentUserId, onChange }: {
   return (
     <Card id={`post-${post.id}`} className="p-5">
       <div className="flex items-center justify-between gap-3">
-        <div>
-          <p className="text-sm font-medium">{post.author_name}</p>
-          <p className="text-xs text-muted-foreground">
-            {post.dept_name ?? "Member"} · {new Date(post.created_at).toLocaleString()}
-            {post.target_branch !== "all" && ` · ${post.target_branch}`}
+        <MemberAvatarLink
+          userId={post.author_id}
+          fullName={post.author_name}
+          avatarUrl={post.author_avatar}
+          departmentName={`${post.dept_name ?? "Member"} · ${new Date(post.created_at).toLocaleString()}${post.target_branch !== "all" ? ` · ${post.target_branch}` : ""}`}
+        />
           </p>
         </div>
         <div className="flex items-center gap-2">
