@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useMatches, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,8 +10,15 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/messages")({
   head: () => ({ meta: [{ title: "Messages — TRoGKC Portal" }] }),
-  component: MessagesIndex,
+  component: MessagesLayout,
 });
+
+function MessagesLayout() {
+  const matches = useMatches();
+  const hasChatThread = matches.some((m) => m.routeId === "/_authenticated/messages/$userId");
+  if (hasChatThread) return <Outlet />;
+  return <MessagesIndex />;
+}
 
 function MessagesIndex() {
   const navigate = useNavigate();
