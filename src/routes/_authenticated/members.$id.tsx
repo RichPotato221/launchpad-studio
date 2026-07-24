@@ -5,6 +5,7 @@ import { PortalShell } from "@/components/PortalShell";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/members/$id")({
@@ -93,6 +94,16 @@ function MemberProfilePage() {
             )}
             {profile.branch && (
               <p className="mt-1 text-xs uppercase tracking-widest text-muted-foreground">{profile.branch}</p>
+            )}
+
+            {!isOwnProfile && currentUserId && (
+              <div className="mt-4">
+                <Link to="/messages/$userId" params={{ userId: id }}>
+                  <Button size="sm" className="gap-2">
+                    <MessageCircle className="h-4 w-4" /> Message
+                  </Button>
+                </Link>
+              </div>
             )}
 
             {isOwnProfile && (

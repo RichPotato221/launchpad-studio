@@ -179,6 +179,7 @@ export type Database = {
           id: string
           priority: boolean
           target_branch: Database["public"]["Enums"]["post_branch_target"]
+          title: string | null
           updated_at: string
         }
         Insert: {
@@ -191,6 +192,7 @@ export type Database = {
           id?: string
           priority?: boolean
           target_branch?: Database["public"]["Enums"]["post_branch_target"]
+          title?: string | null
           updated_at?: string
         }
         Update: {
@@ -203,6 +205,7 @@ export type Database = {
           id?: string
           priority?: boolean
           target_branch?: Database["public"]["Enums"]["post_branch_target"]
+          title?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -772,6 +775,33 @@ export type Database = {
             referencedColumns: ["slug"]
           },
         ]
+      }
+      direct_messages: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          read_at: string | null
+          recipient_id: string
+          sender_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          recipient_id: string
+          sender_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          recipient_id?: string
+          sender_id?: string
+        }
+        Relationships: []
       }
       editorial_posts: {
         Row: {
@@ -2113,6 +2143,17 @@ export type Database = {
       is_dept_member: { Args: { _slug: string }; Returns: boolean }
       is_dept_member_or_admin: { Args: { _slug: string }; Returns: boolean }
       is_head_office: { Args: { _user_id: string }; Returns: boolean }
+      list_conversations: {
+        Args: never
+        Returns: {
+          last_body: string
+          last_created_at: string
+          partner_avatar: string
+          partner_id: string
+          partner_name: string
+          unread_count: number
+        }[]
+      }
       log_audit: {
         Args: {
           _action: string

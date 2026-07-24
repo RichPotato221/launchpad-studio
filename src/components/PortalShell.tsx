@@ -11,6 +11,7 @@ import { ProfileMenu } from "@/components/ProfileMenu";
 const nav = [
   { to: "/home", label: "Home" },
   { to: "/feed", label: "Feed" },
+  { to: "/messages", label: "Messages" },
   { to: "/departments", label: "Departments" },
   { to: "/tasks", label: "Tasks" },
   { to: "/events", label: "Events" },
