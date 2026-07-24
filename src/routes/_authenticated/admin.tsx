@@ -100,7 +100,7 @@ function AdminPage() {
   ] as const;
   const othersByBranch = BRANCH_GROUPS.map((g) => ({
     ...g,
-    members: others.filter((p: any) => p.branch === g.key),F
+    members: others.filter((p: any) => p.branch === g.key),
   }));
   const unassignedOthers = others.filter(
     (p: any) => !BRANCH_GROUPS.some((g) => g.key === p.branch)
