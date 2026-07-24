@@ -1086,6 +1086,13 @@ export type Database = {
             foreignKeyName: "finance_entries_member_id_fkey"
             columns: ["member_id"]
             isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "finance_entries_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1300,6 +1307,13 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "membership_lifecycle_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
             referencedColumns: ["id"]
           },
           {
@@ -1955,6 +1969,18 @@ export type Database = {
         }
         Relationships: []
       }
+      member_directory: {
+        Row: {
+          avatar_url: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          department_name: string | null
+          full_name: string | null
+          id: string | null
+          primary_department: string | null
+          requested_role: string | null
+        }
+        Relationships: []
+      }
       new_members_by_sunday: {
         Row: {
           branch: Database["public"]["Enums"]["branch"] | null
@@ -2015,6 +2041,20 @@ export type Database = {
           expense: number
           income: number
           period: string
+        }[]
+      }
+      get_member_profile: {
+        Args: { _member_id: string }
+        Returns: {
+          avatar_url: string
+          branch: Database["public"]["Enums"]["branch"]
+          department_name: string
+          email: string
+          full_name: string
+          id: string
+          phone: string
+          primary_department: string
+          requested_role: string
         }[]
       }
       get_sunday_rsvp_status: {
