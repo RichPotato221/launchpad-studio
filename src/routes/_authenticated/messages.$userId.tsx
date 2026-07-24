@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { PortalShell } from "@/components/PortalShell";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -82,7 +82,8 @@ function ChatPage() {
   const initial = (partner.data?.full_name || "?").charAt(0).toUpperCase();
 
   return (
-    <PortalShell>
+    <>
+
       <div className="mx-auto flex h-[calc(100vh-9rem)] max-w-2xl flex-col px-4 py-4 md:px-8">
         <div className="flex items-center gap-3 border-b border-border pb-3">
           <Link to="/messages" className="rounded p-1 hover:bg-accent">
@@ -147,6 +148,6 @@ function ChatPage() {
           </Button>
         </div>
       </div>
-    </PortalShell>
+    </>
   );
 }
