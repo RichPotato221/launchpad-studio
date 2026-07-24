@@ -321,8 +321,6 @@ function PostCard({ post, likes, currentUserId, onChange }: {
           avatarUrl={post.author_avatar}
           departmentName={`${post.dept_name ?? "Member"} · ${new Date(post.created_at).toLocaleString()}${post.target_branch !== "all" ? ` · ${post.target_branch}` : ""}`}
         />
-          </p>
-        </div>
         <div className="flex items-center gap-2">
           {post.priority && (
             <span className="rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700">Priority</span>
