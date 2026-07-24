@@ -32,7 +32,7 @@ const COCKPIT_ROLES = new Set([
   "secretary",
   "strategic_adviser",
 ]);
-has context menu
+
 
 export function PortalShell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
