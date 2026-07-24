@@ -148,6 +148,6 @@ function ChatPage() {
           </Button>
         </div>
       </div>
-    </PortalShell>
+    </>
   );
 }
