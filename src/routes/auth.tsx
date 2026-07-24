@@ -44,9 +44,14 @@ function AuthPage() {
   const signIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({ email: email.trim().toLowerCase(), password });
     setLoading(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      const msg = /invalid.*credentials/i.test(error.message)
+        ? "Email or password is incorrect. If you've forgotten your password, tap 'Forgot password?' below to reset it."
+        : error.message;
+      return toast.error(msg);
+    }
     navigate({ to: "/home", replace: true });
   };
 
