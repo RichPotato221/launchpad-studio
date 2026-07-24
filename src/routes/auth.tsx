@@ -18,7 +18,7 @@ export const Route = createFileRoute("/auth")({
 });
 
 const BRANCHES = [
-  { value: "Etwatwa", label: "Etwatwa" },
+  { value: "etwatwa", label: "Etwatwa" },
   { value: "joburg_north", label: "Joburg North" },
   { value: "joburg_south", label: "Joburg South" },
 ] as const;
@@ -70,7 +70,7 @@ function AuthPage() {
       },
     });
     setLoading(false);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(error.message || "Sign up failed. Please try again.");
     // Notify admin (best effort — do not block user on failure)
     try {
       const deptLabel = depts.data?.find((d) => d.slug === deptSlug)?.name ?? deptSlug;
