@@ -90,8 +90,21 @@ function AdminPage() {
     qc.invalidateQueries({ queryKey: ["all-profiles"] });
   };
 
-  const pending = (profiles.data ?? []).filter((p: any) => p.approval_status === "pending");
+   const pending = (profiles.data ?? []).filter((p: any) => p.approval_status === "pending");
   const others = (profiles.data ?? []).filter((p: any) => p.approval_status !== "pending");
+ 
+  const BRANCH_GROUPS = [
+    { key: "etwatwa", label: "Etwatwa" },
+    { key: "joburg_north", label: "Joburg North" },
+    { key: "joburg_south", label: "Joburg South" },
+  ] as const;
+  const othersByBranch = BRANCH_GROUPS.map((g) => ({
+    ...g,
+    members: others.filter((p: any) => p.branch === g.key),F
+  }));
+  const unassignedOthers = others.filter(
+    (p: any) => !BRANCH_GROUPS.some((g) => g.key === p.branch)
+  );
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
@@ -151,21 +164,52 @@ function AdminPage() {
         </Card>
       </div>
 
-      <h2 className="mt-12 font-serif text-2xl">Approved users &amp; roles</h2>
-      <div className="mt-4 space-y-4">
-        {others.map((p: any) => (
-          <UserRow
-            key={p.id}
-            profile={p}
-            departments={depts.data ?? []}
-            onAssign={(role, dept) => assignRole(p.id, role, dept)}
-            onRemove={removeRole}
-          />
-        ))}
-        {others.length === 0 && (
-          <Card className="p-6 text-sm text-muted-foreground">No approved users yet.</Card>
-        )}
-      </div>
+     <h2 className="mt-12 font-serif text-2xl">Approved users &amp; roles</h2>
+ 
+      {others.length === 0 && (
+        <Card className="mt-4 p-6 text-sm text-muted-foreground">No approved users yet.</Card>
+      )}
+ 
+      {othersByBranch.map((group) => (
+        <div key={group.key} className="mt-6">
+          <h3 className="text-xs uppercase tracking-widest text-muted-foreground">
+            {group.label} {group.members.length > 0 && `(${group.members.length})`}
+          </h3>
+          <div className="mt-3 space-y-4">
+            {group.members.map((p: any) => (
+              <UserRow
+                key={p.id}
+                profile={p}
+                departments={depts.data ?? []}
+                onAssign={(role, dept) => assignRole(p.id, role, dept)}
+                onRemove={removeRole}
+              />
+            ))}
+            {group.members.length === 0 && (
+              <Card className="p-4 text-sm text-muted-foreground">No members from {group.label} yet.</Card>
+            )}
+          </div>
+        </div>
+      ))}
+ 
+      {unassignedOthers.length > 0 && (
+        <div className="mt-6">
+          <h3 className="text-xs uppercase tracking-widest text-muted-foreground">
+            No branch set ({unassignedOthers.length})
+          </h3>
+          <div className="mt-3 space-y-4">
+            {unassignedOthers.map((p: any) => (
+              <UserRow
+                key={p.id}
+                profile={p}
+                departments={depts.data ?? []}
+                onAssign={(role, dept) => assignRole(p.id, role, dept)}
+                onRemove={removeRole}
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
