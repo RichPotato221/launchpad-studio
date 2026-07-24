@@ -26,6 +26,7 @@ import { Route as AuthenticatedAttendanceRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAssetsRouteImport } from './routes/_authenticated/assets'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/Profile'
+import { Route as ApiPublicCalendarDoticsRouteImport } from './routes/api/public/calendar[.]ics'
 import { Route as AuthenticatedMessagesUserIdRouteImport } from './routes/_authenticated/messages.$userId'
 import { Route as AuthenticatedMembersIdRouteImport } from './routes/_authenticated/members.$id'
 import { Route as AuthenticatedDepartmentsSlugRouteImport } from './routes/_authenticated/departments.$slug'
@@ -117,6 +118,11 @@ const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   path: '/Profile',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicCalendarDoticsRoute = ApiPublicCalendarDoticsRouteImport.update({
+  id: '/api/public/calendar.ics',
+  path: '/api/public/calendar.ics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedMessagesUserIdRoute =
   AuthenticatedMessagesUserIdRouteImport.update({
     id: '/$userId',
@@ -161,6 +167,7 @@ export interface FileRoutesByFullPath {
   '/departments/$slug': typeof AuthenticatedDepartmentsSlugRoute
   '/members/$id': typeof AuthenticatedMembersIdRoute
   '/messages/$userId': typeof AuthenticatedMessagesUserIdRoute
+  '/api/public/calendar.ics': typeof ApiPublicCalendarDoticsRoute
   '/api/public/hooks/send-announcement-emails': typeof ApiPublicHooksSendAnnouncementEmailsRoute
 }
 export interface FileRoutesByTo {
@@ -183,6 +190,7 @@ export interface FileRoutesByTo {
   '/departments/$slug': typeof AuthenticatedDepartmentsSlugRoute
   '/members/$id': typeof AuthenticatedMembersIdRoute
   '/messages/$userId': typeof AuthenticatedMessagesUserIdRoute
+  '/api/public/calendar.ics': typeof ApiPublicCalendarDoticsRoute
   '/api/public/hooks/send-announcement-emails': typeof ApiPublicHooksSendAnnouncementEmailsRoute
 }
 export interface FileRoutesById {
@@ -207,6 +215,7 @@ export interface FileRoutesById {
   '/_authenticated/departments/$slug': typeof AuthenticatedDepartmentsSlugRoute
   '/_authenticated/members/$id': typeof AuthenticatedMembersIdRoute
   '/_authenticated/messages/$userId': typeof AuthenticatedMessagesUserIdRoute
+  '/api/public/calendar.ics': typeof ApiPublicCalendarDoticsRoute
   '/api/public/hooks/send-announcement-emails': typeof ApiPublicHooksSendAnnouncementEmailsRoute
 }
 export interface FileRouteTypes {
@@ -231,6 +240,7 @@ export interface FileRouteTypes {
     | '/departments/$slug'
     | '/members/$id'
     | '/messages/$userId'
+    | '/api/public/calendar.ics'
     | '/api/public/hooks/send-announcement-emails'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -253,6 +263,7 @@ export interface FileRouteTypes {
     | '/departments/$slug'
     | '/members/$id'
     | '/messages/$userId'
+    | '/api/public/calendar.ics'
     | '/api/public/hooks/send-announcement-emails'
   id:
     | '__root__'
@@ -276,6 +287,7 @@ export interface FileRouteTypes {
     | '/_authenticated/departments/$slug'
     | '/_authenticated/members/$id'
     | '/_authenticated/messages/$userId'
+    | '/api/public/calendar.ics'
     | '/api/public/hooks/send-announcement-emails'
   fileRoutesById: FileRoutesById
 }
@@ -284,6 +296,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  ApiPublicCalendarDoticsRoute: typeof ApiPublicCalendarDoticsRoute
   ApiPublicHooksSendAnnouncementEmailsRoute: typeof ApiPublicHooksSendAnnouncementEmailsRoute
 }
 
@@ -408,6 +421,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/calendar.ics': {
+      id: '/api/public/calendar.ics'
+      path: '/api/public/calendar.ics'
+      fullPath: '/api/public/calendar.ics'
+      preLoaderRoute: typeof ApiPublicCalendarDoticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/messages/$userId': {
       id: '/_authenticated/messages/$userId'
       path: '/$userId'
@@ -508,6 +528,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  ApiPublicCalendarDoticsRoute: ApiPublicCalendarDoticsRoute,
   ApiPublicHooksSendAnnouncementEmailsRoute:
     ApiPublicHooksSendAnnouncementEmailsRoute,
 }

@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { Copy } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/events")({
   head: () => ({ meta: [{ title: "Events & Roster — TRoGKC Portal" }] }),
@@ -24,6 +25,8 @@ function EventsPage() {
   const [depts, setDepts] = useState<any[]>([]);
   const [userId, setUserId] = useState<string>("");
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [feedUrl, setFeedUrl] = useState("");
+  const [copied, setCopied] = useState(false);
   const [form, setForm] = useState({
     title: "", description: "", event_type: "meeting", event_date: "",
     start_time: "", end_time: "", location: "", branch: "", department_slug: "",
@@ -43,8 +46,17 @@ function EventsPage() {
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? ""));
     supabase.from("departments").select("slug, name").order("name").then(({ data }) => setDepts(data ?? []));
+    setFeedUrl(`${window.location.origin}/api/public/calendar.ics`);
     load();
   }, []);
+
+  const copyFeedUrl = async () => {
+    if (!feedUrl) return;
+    await navigator.clipboard.writeText(feedUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+    toast.success("Calendar feed link copied");
+  };
 
   const create = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,6 +90,36 @@ function EventsPage() {
         </div>
 
         <Card className="p-6">
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+            <div className="min-w-0">
+              <p className="text-xs uppercase tracking-widest text-muted-foreground">Subscribe to calendar</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Add this link to Google Calendar, Outlook, or Apple Calendar to see TRoGKC events automatically.
+              </p>
+            </div>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <Input readOnly value={feedUrl} className="w-full md:w-80" />
+                <Button variant="outline" size="icon" onClick={copyFeedUrl} aria-label="Copy calendar feed link">
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Button size="sm" variant="outline" asChild>
+                  <a href={`https://calendar.google.com/calendar/render?cid=${encodeURIComponent(feedUrl)}`} target="_blank" rel="noopener noreferrer">Google Calendar</a>
+                </Button>
+                <Button size="sm" variant="outline" asChild>
+                  <a href={`https://outlook.office.com/owa/?path=/calendar/action/subscribe&url=${encodeURIComponent(feedUrl)}`} target="_blank" rel="noopener noreferrer">Outlook</a>
+                </Button>
+                <Button size="sm" variant="outline" asChild>
+                  <a href={feedUrl.replace(/^https?:/, "webcal:")} target="_blank" rel="noopener noreferrer">Apple / Other</a>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        <Card className="p-6 mt-6">
           <p className="text-xs uppercase tracking-widest text-muted-foreground">Schedule an event</p>
           <form onSubmit={create} className="mt-4 grid gap-4 md:grid-cols-3">
             <div className="md:col-span-2"><Label>Title</Label><Input required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></div>
