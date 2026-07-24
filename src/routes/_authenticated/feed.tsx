@@ -464,16 +464,23 @@ function PostCard({ post, likes, currentUserId, onChange }: {
       {showComments && (
         <div className="mt-4 space-y-3 border-t border-border/60 pt-4">
           {comments.map((c) => (
-            <div key={c.id} className="text-sm">
-              <Link
-                to="/members/$id"
-                params={{ id: c.author_id }}
-                className="font-medium hover:underline"
-              >
-                {c.author_name}
-              </Link>{" "}
-              <span className="text-xs text-muted-foreground">· {new Date(c.created_at).toLocaleString()}</span>
-              <p className="mt-1 whitespace-pre-wrap">{c.body}</p>
+            <div key={c.id} className="flex gap-2 text-sm">
+              <Link to="/members/$id" params={{ id: c.author_id }} className="shrink-0">
+                {c.author_avatar ? (
+                  <img src={c.author_avatar} alt="" className="h-8 w-8 rounded-full object-cover" />
+                ) : (
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-xs font-medium">
+                    {(c.author_name || "?").charAt(0).toUpperCase()}
+                  </div>
+                )}
+              </Link>
+              <div className="min-w-0 flex-1 rounded-2xl bg-muted/60 px-3 py-2">
+                <Link to="/members/$id" params={{ id: c.author_id }} className="text-xs font-medium hover:underline">
+                  {c.author_name}
+                </Link>
+                <span className="ml-2 text-[10px] text-muted-foreground">{new Date(c.created_at).toLocaleString()}</span>
+                <p className="mt-0.5 whitespace-pre-wrap">{c.body}</p>
+              </div>
             </div>
           ))}
           <div className="flex gap-2">
