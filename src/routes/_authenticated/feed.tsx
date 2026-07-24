@@ -12,6 +12,7 @@ import { Heart, MessageCircle, Paperclip, Eye, Share2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { useCurrentRole } from "@/lib/useCurrentRole";
+import { MemberAvatarLink } from "@/components/MemberAvatarlink";
 
 export const Route = createFileRoute("/_authenticated/feed")({
   head: () => ({ meta: [{ title: "Announcements Feed — TRoGKC Portal" }] }),

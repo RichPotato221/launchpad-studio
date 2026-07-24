@@ -25,8 +25,8 @@ import { Route as AuthenticatedAttendanceRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAssetsRouteImport } from './routes/_authenticated/assets'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/Profile'
+import { Route as AuthenticatedMembersIdRouteImport } from './routes/_authenticated/members.$id'
 import { Route as AuthenticatedDepartmentsSlugRouteImport } from './routes/_authenticated/departments.$slug'
-import { Route as AuthenticatedMembersIdRouteImport } from './routes/_authenticated/Members.$id'
 import { Route as ApiPublicHooksSendAnnouncementEmailsRouteImport } from './routes/api/public/hooks/send-announcement-emails'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -110,17 +110,17 @@ const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   path: '/Profile',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedMembersIdRoute = AuthenticatedMembersIdRouteImport.update({
+  id: '/members/$id',
+  path: '/members/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDepartmentsSlugRoute =
   AuthenticatedDepartmentsSlugRouteImport.update({
     id: '/$slug',
     path: '/$slug',
     getParentRoute: () => AuthenticatedDepartmentsRoute,
   } as any)
-const AuthenticatedMembersIdRoute = AuthenticatedMembersIdRouteImport.update({
-  id: '/Members/$id',
-  path: '/Members/$id',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const ApiPublicHooksSendAnnouncementEmailsRoute =
   ApiPublicHooksSendAnnouncementEmailsRouteImport.update({
     id: '/api/public/hooks/send-announcement-emails',
@@ -144,8 +144,8 @@ export interface FileRoutesByFullPath {
   '/reports': typeof AuthenticatedReportsRoute
   '/senior-pastor-cockpit': typeof AuthenticatedSeniorPastorCockpitRoute
   '/tasks': typeof AuthenticatedTasksRoute
-  '/Members/$id': typeof AuthenticatedMembersIdRoute
   '/departments/$slug': typeof AuthenticatedDepartmentsSlugRoute
+  '/members/$id': typeof AuthenticatedMembersIdRoute
   '/api/public/hooks/send-announcement-emails': typeof ApiPublicHooksSendAnnouncementEmailsRoute
 }
 export interface FileRoutesByTo {
@@ -164,8 +164,8 @@ export interface FileRoutesByTo {
   '/reports': typeof AuthenticatedReportsRoute
   '/senior-pastor-cockpit': typeof AuthenticatedSeniorPastorCockpitRoute
   '/tasks': typeof AuthenticatedTasksRoute
-  '/Members/$id': typeof AuthenticatedMembersIdRoute
   '/departments/$slug': typeof AuthenticatedDepartmentsSlugRoute
+  '/members/$id': typeof AuthenticatedMembersIdRoute
   '/api/public/hooks/send-announcement-emails': typeof ApiPublicHooksSendAnnouncementEmailsRoute
 }
 export interface FileRoutesById {
@@ -186,8 +186,8 @@ export interface FileRoutesById {
   '/_authenticated/reports': typeof AuthenticatedReportsRoute
   '/_authenticated/senior-pastor-cockpit': typeof AuthenticatedSeniorPastorCockpitRoute
   '/_authenticated/tasks': typeof AuthenticatedTasksRoute
-  '/_authenticated/Members/$id': typeof AuthenticatedMembersIdRoute
   '/_authenticated/departments/$slug': typeof AuthenticatedDepartmentsSlugRoute
+  '/_authenticated/members/$id': typeof AuthenticatedMembersIdRoute
   '/api/public/hooks/send-announcement-emails': typeof ApiPublicHooksSendAnnouncementEmailsRoute
 }
 export interface FileRouteTypes {
@@ -208,8 +208,8 @@ export interface FileRouteTypes {
     | '/reports'
     | '/senior-pastor-cockpit'
     | '/tasks'
-    | '/Members/$id'
     | '/departments/$slug'
+    | '/members/$id'
     | '/api/public/hooks/send-announcement-emails'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -228,8 +228,8 @@ export interface FileRouteTypes {
     | '/reports'
     | '/senior-pastor-cockpit'
     | '/tasks'
-    | '/Members/$id'
     | '/departments/$slug'
+    | '/members/$id'
     | '/api/public/hooks/send-announcement-emails'
   id:
     | '__root__'
@@ -249,8 +249,8 @@ export interface FileRouteTypes {
     | '/_authenticated/reports'
     | '/_authenticated/senior-pastor-cockpit'
     | '/_authenticated/tasks'
-    | '/_authenticated/Members/$id'
     | '/_authenticated/departments/$slug'
+    | '/_authenticated/members/$id'
     | '/api/public/hooks/send-announcement-emails'
   fileRoutesById: FileRoutesById
 }
@@ -376,19 +376,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/members/$id': {
+      id: '/_authenticated/members/$id'
+      path: '/members/$id'
+      fullPath: '/members/$id'
+      preLoaderRoute: typeof AuthenticatedMembersIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/departments/$slug': {
       id: '/_authenticated/departments/$slug'
       path: '/$slug'
       fullPath: '/departments/$slug'
       preLoaderRoute: typeof AuthenticatedDepartmentsSlugRouteImport
       parentRoute: typeof AuthenticatedDepartmentsRoute
-    }
-    '/_authenticated/Members/$id': {
-      id: '/_authenticated/Members/$id'
-      path: '/Members/$id'
-      fullPath: '/Members/$id'
-      preLoaderRoute: typeof AuthenticatedMembersIdRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/api/public/hooks/send-announcement-emails': {
       id: '/api/public/hooks/send-announcement-emails'

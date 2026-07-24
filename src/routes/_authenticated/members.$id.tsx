@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/_authenticated/Members/$id")({
+export const Route = createFileRoute("/_authenticated/members/$id")({
   head: () => ({ meta: [{ title: "Member Profile — TRoGKC Portal" }] }),
   component: MemberProfilePage,
 });
