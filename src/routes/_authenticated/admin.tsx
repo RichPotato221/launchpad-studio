@@ -215,4 +215,83 @@ function AdminPage() {
     </div>
   );
 }
- 
+
+function UserRow({
+  profile,
+  departments,
+  onAssign,
+  onRemove,
+}: {
+  profile: any;
+  departments: { slug: string; name: string }[];
+  onAssign: (role: AppRole, department: string | null) => void;
+  onRemove: (id: string) => void;
+}) {
+  const [role, setRole] = useState<AppRole>("team_member");
+  const [dept, setDept] = useState<string>("");
+
+  const needsDept = role === "department_chair" || role === "team_member";
+
+  return (
+    <div className="rounded-md border border-border/60 p-3">
+      <p className="text-sm font-medium">{profile.full_name ?? "(no name)"}</p>
+      <p className="text-xs text-muted-foreground">{profile.email}</p>
+
+      {profile.roles?.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-1">
+          {profile.roles.map((r: any) => (
+            <span
+              key={r.id}
+              className="flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground"
+            >
+              {ROLE_LABELS?.[r.role as AppRole] ?? r.role}
+              {r.department_slug ? ` · ${r.department_slug}` : ""}
+              <button
+                type="button"
+                onClick={() => onRemove(r.id)}
+                className="ml-1 text-muted-foreground hover:text-red-600"
+                aria-label="Remove role"
+              >
+                ×
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <Select value={role} onValueChange={(v) => setRole(v as AppRole)}>
+          <SelectTrigger className="h-8 w-44">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {ROLES.map((r) => (
+              <SelectItem key={r} value={r}>
+                {ROLE_LABELS?.[r] ?? r}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {needsDept && (
+          <Select value={dept} onValueChange={setDept}>
+            <SelectTrigger className="h-8 w-40">
+              <SelectValue placeholder="Department" />
+            </SelectTrigger>
+            <SelectContent>
+              {departments.map((d) => (
+                <SelectItem key={d.slug} value={d.slug}>
+                  {d.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+
+        <Button size="sm" onClick={() => onAssign(role, dept || null)}>
+          Assign
+        </Button>
+      </div>
+    </div>
+  );
+}
