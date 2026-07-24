@@ -2001,6 +2001,22 @@ export type Database = {
       }
       can_view_rsvp_reasons: { Args: { _user_id: string }; Returns: boolean }
       generate_upcoming_recurring_events: { Args: never; Returns: undefined }
+      get_attendance_trend: {
+        Args: { _months?: number }
+        Returns: {
+          branch: Database["public"]["Enums"]["branch"]
+          period: string
+          total_present: number
+        }[]
+      }
+      get_financial_trend: {
+        Args: { _months?: number }
+        Returns: {
+          expense: number
+          income: number
+          period: string
+        }[]
+      }
       get_sunday_rsvp_status: {
         Args: { _service_date: string }
         Returns: {

@@ -34,6 +34,7 @@ function DepartmentPortal() {
   const dept = useQuery({ queryKey: ["department", slug], queryFn: () => fetchDepartment(slug) });
   const kpis = useQuery({ queryKey: ["kpis", slug], queryFn: () => fetchDepartmentKpis(slug) });
   const membership = useIsDepartmentMember(slug);
+  const [activeTab, setActiveTab] = useState("overview");
 
   if (dept.isLoading) return <div className="p-8 text-muted-foreground">Loading…</div>;
   if (!dept.data) throw notFound();
@@ -42,7 +43,7 @@ function DepartmentPortal() {
   const gallery = DEPARTMENT_GALLERY[slug] ?? [];
   const workspace = membership.data?.isMember ? getWorkspaceFor(slug) : null;
   const WorkspaceComponent = workspace?.component;
- const [activeTab, setActiveTab] = useState("overview");
+
   
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
