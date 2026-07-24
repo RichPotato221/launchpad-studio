@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +12,7 @@ import { Heart, MessageCircle, Paperclip, Eye, Share2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { useCurrentRole } from "@/lib/useCurrentRole";
+import { MemberAvatarLink } from "@/components/MemberAvatarlink";
 
 export const Route = createFileRoute("/_authenticated/feed")({
   head: () => ({ meta: [{ title: "Announcements Feed — TRoGKC Portal" }] }),
@@ -61,14 +62,15 @@ function FeedPage() {
       const ids = (data ?? []).map((p) => p.author_id);
       const deptSlugs = Array.from(new Set((data ?? []).map((p) => p.author_department_slug).filter(Boolean))) as string[];
       const [{ data: profs }, { data: depts }] = await Promise.all([
-        ids.length ? supabase.from("profiles").select("id, full_name").in("id", ids) : Promise.resolve({ data: [] as any[] }),
+        ids.length ? supabase.from("profiles").select("id, full_name, avatar_url").in("id", ids) : Promise.resolve({ data: [] as any[] }),
         deptSlugs.length ? supabase.from("departments").select("slug, name").in("slug", deptSlugs) : Promise.resolve({ data: [] as any[] }),
       ]);
-      const profMap = new Map((profs ?? []).map((p: any) => [p.id, p.full_name]));
+      const profMap = new Map((profs ?? []).map((p: any) => [p.id, p]));
       const deptMap = new Map((depts ?? []).map((d: any) => [d.slug, d.name]));
       return (data ?? []).map((p) => ({
         ...p,
-        author_name: profMap.get(p.author_id) ?? "Member",
+        author_name: (profMap.get(p.author_id) as any)?.full_name ?? "Member",
+        author_avatar: (profMap.get(p.author_id) as any)?.avatar_url ?? null,
         dept_name: p.author_department_slug ? deptMap.get(p.author_department_slug) : null,
       }));
     },
@@ -313,13 +315,12 @@ function PostCard({ post, likes, currentUserId, onChange }: {
   return (
     <Card id={`post-${post.id}`} className="p-5">
       <div className="flex items-center justify-between gap-3">
-        <div>
-          <p className="text-sm font-medium">{post.author_name}</p>
-          <p className="text-xs text-muted-foreground">
-            {post.dept_name ?? "Member"} · {new Date(post.created_at).toLocaleString()}
-            {post.target_branch !== "all" && ` · ${post.target_branch}`}
-          </p>
-        </div>
+        <MemberAvatarLink
+          userId={post.author_id}
+          fullName={post.author_name}
+          avatarUrl={post.author_avatar}
+          departmentName={`${post.dept_name ?? "Member"} · ${new Date(post.created_at).toLocaleString()}${post.target_branch !== "all" ? ` · ${post.target_branch}` : ""}`}
+        />
         <div className="flex items-center gap-2">
           {post.priority && (
             <span className="rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700">Priority</span>
@@ -360,7 +361,13 @@ function PostCard({ post, likes, currentUserId, onChange }: {
         <div className="mt-4 space-y-3 border-t border-border/60 pt-4">
           {comments.map((c) => (
             <div key={c.id} className="text-sm">
-              <span className="font-medium">{c.author_name}</span>{" "}
+              <Link
+                to="/members/$id"
+                params={{ id: c.author_id }}
+                className="font-medium hover:underline"
+              >
+                {c.author_name}
+              </Link>{" "}
               <span className="text-xs text-muted-foreground">· {new Date(c.created_at).toLocaleString()}</span>
               <p className="mt-1 whitespace-pre-wrap">{c.body}</p>
             </div>
