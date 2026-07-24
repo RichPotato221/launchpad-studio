@@ -92,7 +92,7 @@ function AuthPage() {
       await notifyPendingApproval({
         data: {
           fullName,
-          email,
+          email: normalizedEmail,
           branch: branchLabel,
           department: deptLabel,
           role: requestedRole,
