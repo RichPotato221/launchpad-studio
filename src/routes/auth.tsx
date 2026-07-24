@@ -18,7 +18,7 @@ export const Route = createFileRoute("/auth")({
 });
 
 const BRANCHES = [
-  { value: "Etwatwa", label: "Etwatwa" },
+  { value: "etwatwa", label: "Etwatwa" },
   { value: "joburg_north", label: "Joburg North" },
   { value: "joburg_south", label: "Joburg South" },
 ] as const;
