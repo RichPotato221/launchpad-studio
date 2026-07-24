@@ -23,10 +23,10 @@ import { Route as AuthenticatedEventsRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedDepartmentsRouteImport } from './routes/_authenticated/departments'
 import { Route as AuthenticatedAttendanceRouteImport } from './routes/_authenticated/attendance'
 import { Route as AuthenticatedAssetsRouteImport } from './routes/_authenticated/assets'
-import { Route as AuthenticatedMembersIdRouteImport } from './routes/_authenticated/members.$id'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/Profile'
 import { Route as AuthenticatedDepartmentsSlugRouteImport } from './routes/_authenticated/departments.$slug'
+import { Route as AuthenticatedMembersIdRouteImport } from './routes/_authenticated/Members.$id'
 import { Route as ApiPublicHooksSendAnnouncementEmailsRouteImport } from './routes/api/public/hooks/send-announcement-emails'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -100,11 +100,6 @@ const AuthenticatedAssetsRoute = AuthenticatedAssetsRouteImport.update({
   path: '/assets',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedMembersIdRoute = AuthenticatedMembersIdRouteImport.update({
-  id: '/members/$id',
-  path: '/members/$id',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -121,6 +116,11 @@ const AuthenticatedDepartmentsSlugRoute =
     path: '/$slug',
     getParentRoute: () => AuthenticatedDepartmentsRoute,
   } as any)
+const AuthenticatedMembersIdRoute = AuthenticatedMembersIdRouteImport.update({
+  id: '/Members/$id',
+  path: '/Members/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const ApiPublicHooksSendAnnouncementEmailsRoute =
   ApiPublicHooksSendAnnouncementEmailsRouteImport.update({
     id: '/api/public/hooks/send-announcement-emails',
@@ -141,10 +141,10 @@ export interface FileRoutesByFullPath {
   '/feed': typeof AuthenticatedFeedRoute
   '/governance': typeof AuthenticatedGovernanceRoute
   '/home': typeof AuthenticatedHomeRoute
- '/members/$id': typeof AuthenticatedMembersIdRoute
   '/reports': typeof AuthenticatedReportsRoute
   '/senior-pastor-cockpit': typeof AuthenticatedSeniorPastorCockpitRoute
   '/tasks': typeof AuthenticatedTasksRoute
+  '/Members/$id': typeof AuthenticatedMembersIdRoute
   '/departments/$slug': typeof AuthenticatedDepartmentsSlugRoute
   '/api/public/hooks/send-announcement-emails': typeof ApiPublicHooksSendAnnouncementEmailsRoute
 }
@@ -161,10 +161,10 @@ export interface FileRoutesByTo {
   '/feed': typeof AuthenticatedFeedRoute
   '/governance': typeof AuthenticatedGovernanceRoute
   '/home': typeof AuthenticatedHomeRoute
- '/members/$id': typeof AuthenticatedMembersIdRoute
   '/reports': typeof AuthenticatedReportsRoute
   '/senior-pastor-cockpit': typeof AuthenticatedSeniorPastorCockpitRoute
   '/tasks': typeof AuthenticatedTasksRoute
+  '/Members/$id': typeof AuthenticatedMembersIdRoute
   '/departments/$slug': typeof AuthenticatedDepartmentsSlugRoute
   '/api/public/hooks/send-announcement-emails': typeof ApiPublicHooksSendAnnouncementEmailsRoute
 }
@@ -183,10 +183,10 @@ export interface FileRoutesById {
   '/_authenticated/feed': typeof AuthenticatedFeedRoute
   '/_authenticated/governance': typeof AuthenticatedGovernanceRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
-'/_authenticated/members/$id': typeof AuthenticatedMembersIdRoute
   '/_authenticated/reports': typeof AuthenticatedReportsRoute
   '/_authenticated/senior-pastor-cockpit': typeof AuthenticatedSeniorPastorCockpitRoute
   '/_authenticated/tasks': typeof AuthenticatedTasksRoute
+  '/_authenticated/Members/$id': typeof AuthenticatedMembersIdRoute
   '/_authenticated/departments/$slug': typeof AuthenticatedDepartmentsSlugRoute
   '/api/public/hooks/send-announcement-emails': typeof ApiPublicHooksSendAnnouncementEmailsRoute
 }
@@ -205,10 +205,10 @@ export interface FileRouteTypes {
     | '/feed'
     | '/governance'
     | '/home'
-    | '/members/$id'
     | '/reports'
     | '/senior-pastor-cockpit'
     | '/tasks'
+    | '/Members/$id'
     | '/departments/$slug'
     | '/api/public/hooks/send-announcement-emails'
   fileRoutesByTo: FileRoutesByTo
@@ -225,10 +225,10 @@ export interface FileRouteTypes {
     | '/feed'
     | '/governance'
     | '/home'
-    | '/members/$id'
     | '/reports'
     | '/senior-pastor-cockpit'
     | '/tasks'
+    | '/Members/$id'
     | '/departments/$slug'
     | '/api/public/hooks/send-announcement-emails'
   id:
@@ -246,10 +246,10 @@ export interface FileRouteTypes {
     | '/_authenticated/feed'
     | '/_authenticated/governance'
     | '/_authenticated/home'
-    | '/_authenticated/members/$id'
     | '/_authenticated/reports'
     | '/_authenticated/senior-pastor-cockpit'
     | '/_authenticated/tasks'
+    | '/_authenticated/Members/$id'
     | '/_authenticated/departments/$slug'
     | '/api/public/hooks/send-announcement-emails'
   fileRoutesById: FileRoutesById
@@ -320,13 +320,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHomeRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-  '/_authenticated/members/$id': {
-      id: '/_authenticated/members/$id'
-      path: '/members/$id'
-      fullPath: '/members/$id'
-      preLoaderRoute: typeof AuthenticatedMembersIdRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/governance': {
       id: '/_authenticated/governance'
       path: '/governance'
@@ -390,6 +383,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDepartmentsSlugRouteImport
       parentRoute: typeof AuthenticatedDepartmentsRoute
     }
+    '/_authenticated/Members/$id': {
+      id: '/_authenticated/Members/$id'
+      path: '/Members/$id'
+      fullPath: '/Members/$id'
+      preLoaderRoute: typeof AuthenticatedMembersIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/public/hooks/send-announcement-emails': {
       id: '/api/public/hooks/send-announcement-emails'
       path: '/api/public/hooks/send-announcement-emails'
@@ -424,10 +424,10 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedFeedRoute: typeof AuthenticatedFeedRoute
   AuthenticatedGovernanceRoute: typeof AuthenticatedGovernanceRoute
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
-  AuthenticatedMembersIdRoute: typeof AuthenticatedMembersIdRoute
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
   AuthenticatedSeniorPastorCockpitRoute: typeof AuthenticatedSeniorPastorCockpitRoute
   AuthenticatedTasksRoute: typeof AuthenticatedTasksRoute
+  AuthenticatedMembersIdRoute: typeof AuthenticatedMembersIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -440,10 +440,10 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedFeedRoute: AuthenticatedFeedRoute,
   AuthenticatedGovernanceRoute: AuthenticatedGovernanceRoute,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
-  AuthenticatedMembersIdRoute: AuthenticatedMembersIdRoute,
   AuthenticatedReportsRoute: AuthenticatedReportsRoute,
   AuthenticatedSeniorPastorCockpitRoute: AuthenticatedSeniorPastorCockpitRoute,
   AuthenticatedTasksRoute: AuthenticatedTasksRoute,
+  AuthenticatedMembersIdRoute: AuthenticatedMembersIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
