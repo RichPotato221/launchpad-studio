@@ -356,10 +356,16 @@ function PostCard({ post, likes, currentUserId, onChange }: {
       .order("created_at");
     const ids = Array.from(new Set((data ?? []).map((c: any) => c.author_id)));
     const { data: profs } = ids.length
-      ? await supabase.from("profiles").select("id, full_name").in("id", ids)
+      ? await supabase.from("profiles").select("id, full_name, avatar_url").in("id", ids)
       : { data: [] as any[] };
-    const nameMap = new Map((profs ?? []).map((p: any) => [p.id, p.full_name]));
-    setComments((data ?? []).map((c: any) => ({ ...c, author_name: nameMap.get(c.author_id) ?? "Member" })));
+    const profMap = new Map((profs ?? []).map((p: any) => [p.id, p]));
+    setComments(
+      (data ?? []).map((c: any) => ({
+        ...c,
+        author_name: (profMap.get(c.author_id) as any)?.full_name ?? "Member",
+        author_avatar: (profMap.get(c.author_id) as any)?.avatar_url ?? null,
+      })),
+    );
   };
 
   const toggleLike = async () => {
