@@ -10,17 +10,17 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-
+ 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin — TRoGKC Portal" }] }),
   component: AdminPage,
 });
-
+ 
 const ROLES: AppRole[] = [
   "senior_apostle", "chairperson", "secretary", "lead_pastor",
   "associate_pastor", "department_chair", "team_member",
 ];
-
+ 
 function AdminPage() {
   const qc = useQueryClient();
   const depts = useQuery({ queryKey: ["departments"], queryFn: fetchDepartments });
@@ -42,15 +42,15 @@ function AdminPage() {
     queryKey: ["setting", "senior_apostle"],
     queryFn: async () => (await supabase.from("settings").select("*").eq("key", "senior_apostle").maybeSingle()).data,
   });
-
+ 
   const themeV = (theme.data?.value ?? {}) as any;
   const apostleV = (apostle.data?.value ?? {}) as any;
   const [themeForm, setThemeForm] = useState({ year: "", title: "", description: "" });
   const [apostleForm, setApostleForm] = useState({ name: "", bio: "", photo_url: "" });
-
+ 
   const saveTheme = async () => {
     const val = {
-      year: Number(themeForm.year || themeV.year),
+      year: Number(themeForm.year || themeV.year || 0),
       title: themeForm.title || themeV.title,
       description: themeForm.description || themeV.description,
     };
@@ -70,7 +70,7 @@ function AdminPage() {
     toast.success("Saved");
     qc.invalidateQueries({ queryKey: ["setting"] });
   };
-
+ 
   const assignRole = async (userId: string, role: AppRole, department_slug: string | null) => {
     const { error } = await supabase.from("user_roles").insert({ user_id: userId, role, department_slug });
     if (error) return toast.error(error.message);
@@ -82,15 +82,15 @@ function AdminPage() {
     if (error) return toast.error(error.message);
     qc.invalidateQueries({ queryKey: ["all-profiles"] });
   };
-
+ 
   const approve = async (userId: string, ok: boolean) => {
     const { error } = await supabase.rpc("approve_member", { _user_id: userId, _approve: ok });
     if (error) return toast.error(error.message);
     toast.success(ok ? "Member approved and added to department" : "Request rejected");
     qc.invalidateQueries({ queryKey: ["all-profiles"] });
   };
-
-   const pending = (profiles.data ?? []).filter((p: any) => p.approval_status === "pending");
+ 
+  const pending = (profiles.data ?? []).filter((p: any) => p.approval_status === "pending");
   const others = (profiles.data ?? []).filter((p: any) => p.approval_status !== "pending");
  
   const BRANCH_GROUPS = [
@@ -105,7 +105,7 @@ function AdminPage() {
   const unassignedOthers = others.filter(
     (p: any) => !BRANCH_GROUPS.some((g) => g.key === p.branch)
   );
-
+ 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
       <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Admin</p>
@@ -114,7 +114,7 @@ function AdminPage() {
         Only Senior Apostle, Church Secretary and Chairpersons can write here (enforced server-side by RLS).
         Approval notifications are directed to <strong>richardmashaba.19@gmail.com</strong>.
       </p>
-
+ 
       {/* Pending approvals */}
       <h2 className="mt-10 font-serif text-2xl">
         Pending approvals {pending.length > 0 && <span className="text-sm text-amber-600">({pending.length})</span>}
@@ -141,7 +141,7 @@ function AdminPage() {
           </Card>
         ))}
       </div>
-
+ 
       <div className="mt-10 grid gap-6 md:grid-cols-2">
         <Card className="p-6">
           <p className="text-xs uppercase tracking-widest text-muted-foreground">Theme of the year</p>
@@ -152,7 +152,7 @@ function AdminPage() {
             <Button onClick={saveTheme}>Save theme</Button>
           </div>
         </Card>
-
+ 
         <Card className="p-6">
           <p className="text-xs uppercase tracking-widest text-muted-foreground">Senior Apostle / Pastor</p>
           <div className="mt-4 space-y-3">
@@ -163,12 +163,6 @@ function AdminPage() {
           </div>
         </Card>
       </div>
-
-     <h2 className="mt-12 font-serif text-2xl">Approved users &amp; roles</h2>
- 
-      {others.length === 0 && (
-        <Card className="mt-4 p-6 text-sm text-muted-foreground">No approved users yet.</Card>
-      )}
  
       <h2 className="mt-12 font-serif text-2xl">Approved users &amp; roles</h2>
  
@@ -218,12 +212,10 @@ function AdminPage() {
           </div>
         </div>
       )}
-has context menu
-
-
-has context menu
-
-
+    </div>
+  );
+}
+ 
 function UserRow({ profile, departments, onAssign, onRemove }: {
   profile: any;
   departments: { slug: string; name: string }[];
@@ -232,7 +224,7 @@ function UserRow({ profile, departments, onAssign, onRemove }: {
 }) {
   const [role, setRole] = useState<AppRole>("team_member");
   const [dept, setDept] = useState<string>("");
-
+ 
   return (
     <Card className="p-5">
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -250,21 +242,4 @@ function UserRow({ profile, departments, onAssign, onRemove }: {
         </div>
         <div className="flex flex-wrap items-end gap-2">
           <Select value={role} onValueChange={(v) => setRole(v as AppRole)}>
-            <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              {ROLES.map((r) => <SelectItem key={r} value={r}>{ROLE_LABELS[r]}</SelectItem>)}
-            </SelectContent>
-          </Select>
-          <Select value={dept || "none"} onValueChange={(v) => setDept(v === "none" ? "" : v)}>
-            <SelectTrigger className="w-48"><SelectValue placeholder="Dept (optional)" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="none">— No department —</SelectItem>
-              {departments.map((d) => <SelectItem key={d.slug} value={d.slug}>{d.name}</SelectItem>)}
-            </SelectContent>
-          </Select>
-          <Button size="sm" onClick={() => onAssign(role, dept || null)}>Assign</Button>
-        </div>
-      </div>
-    </Card>
-  );
-}
+            <SelectTrigger classN
