@@ -240,30 +240,8 @@ function DepartmentTeam({ slug, currentUserId }: { slug: string; currentUserId: 
       <TeamChat slug={slug} currentUserId={currentUserId} />
     </div>
   );
-}return (
-    <div>
-      <Card className="p-0 overflow-hidden">
-        <div className="grid grid-cols-12 gap-2 border-b border-border bg-muted/40 px-4 py-3 text-[0.65rem] uppercase tracking-widest text-muted-foreground">
-          <div className="col-span-5">Member</div>
-          <div className="col-span-3">Branch</div>
-          <div className="col-span-3">Role</div>
-          <div className="col-span-1 text-right">{slug === "finance" ? "Tithe (R)" : ""}</div>
-        </div>
-        {rows.map((m: any) => (
-          <div key={m.id} className="grid grid-cols-12 gap-2 border-b border-border px-4 py-3 text-sm last:border-0">
-            <div className="col-span-5 font-medium">{m.full_name ?? "—"}</div>
-            <div className="col-span-3 text-muted-foreground">{m.branch ?? "—"}</div>
-            <div className="col-span-3 text-muted-foreground">{m.requested_role ?? "—"}</div>
-            <div className="col-span-1 text-right font-mono">
-              {slug === "finance" ? (tithes.data?.get(m.id) ?? 0).toFixed(2) : ""}
-            </div>
-          </div>
-        ))}
-      </Card>
-      <TeamChat slug={slug} currentUserId={currentUserId} />
-    </div>
-  );
 }
+
 
 function statusColor(actual: number | null, target: number | null) {
   if (actual == null || target == null || target === 0) return "bg-muted-foreground";
