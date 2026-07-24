@@ -361,7 +361,13 @@ function PostCard({ post, likes, currentUserId, onChange }: {
         <div className="mt-4 space-y-3 border-t border-border/60 pt-4">
           {comments.map((c) => (
             <div key={c.id} className="text-sm">
-              <span className="font-medium">{c.author_name}</span>{" "}
+              <Link
+                to="/members/$id"
+                params={{ id: c.author_id }}
+                className="font-medium hover:underline"
+              >
+                {c.author_name}
+              </Link>{" "}
               <span className="text-xs text-muted-foreground">· {new Date(c.created_at).toLocaleString()}</span>
               <p className="mt-1 whitespace-pre-wrap">{c.body}</p>
             </div>
