@@ -60,9 +60,9 @@ function MessagesIndex() {
   };
 
   const startDirect = (userId: string) => {
+    navigate({ to: "/messages/$userId", params: { userId } });
     setOpen(false);
     resetPicker();
-    navigate({ to: "/messages/$userId", params: { userId } });
   };
 
   const startGroup = () => {
