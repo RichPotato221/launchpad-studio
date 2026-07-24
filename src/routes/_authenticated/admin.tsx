@@ -243,3 +243,7 @@ function UserRow({ profile, departments, onAssign, onRemove }: {
         <div className="flex flex-wrap items-end gap-2">
           <Select value={role} onValueChange={(v) => setRole(v as AppRole)}>
             <SelectTrigger classN
+has context menu
+
+
+has context menu
