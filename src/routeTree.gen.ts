@@ -23,6 +23,7 @@ import { Route as AuthenticatedEventsRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedDepartmentsRouteImport } from './routes/_authenticated/departments'
 import { Route as AuthenticatedAttendanceRouteImport } from './routes/_authenticated/attendance'
 import { Route as AuthenticatedAssetsRouteImport } from './routes/_authenticated/assets'
+import { Route as AuthenticatedMembersIdRouteImport } from './routes/_authenticated/members.$id'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/Profile'
 import { Route as AuthenticatedDepartmentsSlugRouteImport } from './routes/_authenticated/departments.$slug'
@@ -99,6 +100,11 @@ const AuthenticatedAssetsRoute = AuthenticatedAssetsRouteImport.update({
   path: '/assets',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedMembersIdRoute = AuthenticatedMembersIdRouteImport.update({
+  id: '/members/$id',
+  path: '/members/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -135,6 +141,7 @@ export interface FileRoutesByFullPath {
   '/feed': typeof AuthenticatedFeedRoute
   '/governance': typeof AuthenticatedGovernanceRoute
   '/home': typeof AuthenticatedHomeRoute
+ '/members/$id': typeof AuthenticatedMembersIdRoute
   '/reports': typeof AuthenticatedReportsRoute
   '/senior-pastor-cockpit': typeof AuthenticatedSeniorPastorCockpitRoute
   '/tasks': typeof AuthenticatedTasksRoute
@@ -154,6 +161,7 @@ export interface FileRoutesByTo {
   '/feed': typeof AuthenticatedFeedRoute
   '/governance': typeof AuthenticatedGovernanceRoute
   '/home': typeof AuthenticatedHomeRoute
+ '/members/$id': typeof AuthenticatedMembersIdRoute
   '/reports': typeof AuthenticatedReportsRoute
   '/senior-pastor-cockpit': typeof AuthenticatedSeniorPastorCockpitRoute
   '/tasks': typeof AuthenticatedTasksRoute
@@ -175,6 +183,7 @@ export interface FileRoutesById {
   '/_authenticated/feed': typeof AuthenticatedFeedRoute
   '/_authenticated/governance': typeof AuthenticatedGovernanceRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
+'/_authenticated/members/$id': typeof AuthenticatedMembersIdRoute
   '/_authenticated/reports': typeof AuthenticatedReportsRoute
   '/_authenticated/senior-pastor-cockpit': typeof AuthenticatedSeniorPastorCockpitRoute
   '/_authenticated/tasks': typeof AuthenticatedTasksRoute
@@ -196,6 +205,7 @@ export interface FileRouteTypes {
     | '/feed'
     | '/governance'
     | '/home'
+    | '/members/$id'
     | '/reports'
     | '/senior-pastor-cockpit'
     | '/tasks'
@@ -215,6 +225,7 @@ export interface FileRouteTypes {
     | '/feed'
     | '/governance'
     | '/home'
+    | '/members/$id'
     | '/reports'
     | '/senior-pastor-cockpit'
     | '/tasks'
@@ -235,6 +246,7 @@ export interface FileRouteTypes {
     | '/_authenticated/feed'
     | '/_authenticated/governance'
     | '/_authenticated/home'
+    | '/_authenticated/members/$id'
     | '/_authenticated/reports'
     | '/_authenticated/senior-pastor-cockpit'
     | '/_authenticated/tasks'
@@ -306,6 +318,13 @@ declare module '@tanstack/react-router' {
       path: '/home'
       fullPath: '/home'
       preLoaderRoute: typeof AuthenticatedHomeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+  '/_authenticated/members/$id': {
+      id: '/_authenticated/members/$id'
+      path: '/members/$id'
+      fullPath: '/members/$id'
+      preLoaderRoute: typeof AuthenticatedMembersIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/governance': {
@@ -405,6 +424,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedFeedRoute: typeof AuthenticatedFeedRoute
   AuthenticatedGovernanceRoute: typeof AuthenticatedGovernanceRoute
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
+  AuthenticatedMembersIdRoute: typeof AuthenticatedMembersIdRoute
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
   AuthenticatedSeniorPastorCockpitRoute: typeof AuthenticatedSeniorPastorCockpitRoute
   AuthenticatedTasksRoute: typeof AuthenticatedTasksRoute
@@ -420,6 +440,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedFeedRoute: AuthenticatedFeedRoute,
   AuthenticatedGovernanceRoute: AuthenticatedGovernanceRoute,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
+  AuthenticatedMembersIdRoute: AuthenticatedMembersIdRoute,
   AuthenticatedReportsRoute: AuthenticatedReportsRoute,
   AuthenticatedSeniorPastorCockpitRoute: AuthenticatedSeniorPastorCockpitRoute,
   AuthenticatedTasksRoute: AuthenticatedTasksRoute,
