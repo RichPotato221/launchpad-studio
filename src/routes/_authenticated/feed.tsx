@@ -62,14 +62,15 @@ function FeedPage() {
       const ids = (data ?? []).map((p) => p.author_id);
       const deptSlugs = Array.from(new Set((data ?? []).map((p) => p.author_department_slug).filter(Boolean))) as string[];
       const [{ data: profs }, { data: depts }] = await Promise.all([
-        ids.length ? supabase.from("profiles").select("id, full_name").in("id", ids) : Promise.resolve({ data: [] as any[] }),
+        ids.length ? supabase.from("profiles").select("id, full_name, avatar_url").in("id", ids) : Promise.resolve({ data: [] as any[] }),
         deptSlugs.length ? supabase.from("departments").select("slug, name").in("slug", deptSlugs) : Promise.resolve({ data: [] as any[] }),
       ]);
-      const profMap = new Map((profs ?? []).map((p: any) => [p.id, p.full_name]));
+      const profMap = new Map((profs ?? []).map((p: any) => [p.id, p]));
       const deptMap = new Map((depts ?? []).map((d: any) => [d.slug, d.name]));
       return (data ?? []).map((p) => ({
         ...p,
-        author_name: profMap.get(p.author_id) ?? "Member",
+        author_name: (profMap.get(p.author_id) as any)?.full_name ?? "Member",
+        author_avatar: (profMap.get(p.author_id) as any)?.avatar_url ?? null,
         dept_name: p.author_department_slug ? deptMap.get(p.author_department_slug) : null,
       }));
     },
