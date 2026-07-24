@@ -63,7 +63,7 @@ function DepartmentPortal() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-8">
-        {/* Mobile: dropdown instead of a tab row */}
+        {/* Mobile: dropdown */}
         <div className="md:hidden">
           <Select value={activeTab} onValueChange={setActiveTab}>
             <SelectTrigger><SelectValue /></SelectTrigger>
@@ -77,6 +77,16 @@ function DepartmentPortal() {
             </SelectContent>
           </Select>
         </div>
+
+        {/* Desktop: tab row */}
+        <TabsList className="hidden md:flex flex-wrap h-auto justify-start gap-1">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="team">Team</TabsTrigger>
+          <TabsTrigger value="kpis">KPI Dashboard</TabsTrigger>
+          <TabsTrigger value="reports">Reports</TabsTrigger>
+          <TabsTrigger value="resources">Resources</TabsTrigger>
+          {workspace && <TabsTrigger value="workspace">{workspace.label}</TabsTrigger>}
+        </TabsList>
 
         <TabsContent value="overview" className="mt-6 space-y-6">
           {slug === "religion" && <FiveFoldHub />}
