@@ -44,18 +44,34 @@ function AttachmentLink({ path, name }: { path: string; name: string | null }) {
 function FeedPage() {
   const qc = useQueryClient();
   const role = useCurrentRole();
+  const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [priority, setPriority] = useState(false);
   const [targetBranch, setTargetBranch] = useState("all");
-  const [file, setFile] = useState<File | null>(null);
+  const [images, setImages] = useState<File[]>([]);
+  const [previews, setPreviews] = useState<string[]>([]);
   const [posting, setPosting] = useState(false);
+
+  useEffect(() => {
+    const urls = images.map((f) => URL.createObjectURL(f));
+    setPreviews(urls);
+    return () => urls.forEach((u) => URL.revokeObjectURL(u));
+  }, [images]);
+
+  const addImages = (files: FileList | null) => {
+    if (!files) return;
+    const arr = Array.from(files).filter((f) => f.type.startsWith("image/"));
+    setImages((prev) => [...prev, ...arr].slice(0, 10));
+  };
+
+  const removeImage = (i: number) => setImages((prev) => prev.filter((_, idx) => idx !== i));
 
   const posts = useQuery({
     queryKey: ["feed-posts"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("announcements")
-        .select("*")
+        .select("*, announcement_media ( id, media_url )")
         .order("created_at", { ascending: false })
         .limit(50);
       if (error) throw error;
@@ -67,11 +83,12 @@ function FeedPage() {
       ]);
       const profMap = new Map((profs ?? []).map((p: any) => [p.id, p]));
       const deptMap = new Map((depts ?? []).map((d: any) => [d.slug, d.name]));
-      return (data ?? []).map((p) => ({
+      return (data ?? []).map((p: any) => ({
         ...p,
         author_name: (profMap.get(p.author_id) as any)?.full_name ?? "Member",
         author_avatar: (profMap.get(p.author_id) as any)?.avatar_url ?? null,
         dept_name: p.author_department_slug ? deptMap.get(p.author_department_slug) : null,
+        media: p.announcement_media ?? [],
       }));
     },
   });
@@ -86,32 +103,48 @@ function FeedPage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!body.trim()) return;
+    if (!body.trim() || !role.data?.userId) return;
     setPosting(true);
-    let attachment_url: string | null = null;
-    let attachment_name: string | null = null;
-    if (file && role.data?.userId) {
-      const path = `${role.data.userId}/${Date.now()}-${file.name}`;
-      const up = await supabase.storage.from("announcement-attachments").upload(path, file);
-      if (up.error) {
-        setPosting(false);
-        return toast.error(up.error.message);
-      }
-      attachment_url = path;
-      attachment_name = file.name;
-    }
     const insert: any = {
-      author_id: role.data?.userId,
+      author_id: role.data.userId,
       body: body.trim(),
+      title: title.trim() || null,
       priority,
-      attachment_url,
-      attachment_name,
     };
     if (role.data?.canPostCrossBranch) insert.target_branch = targetBranch;
-    const { error } = await supabase.from("announcements").insert(insert);
+    const { data: inserted, error } = await supabase
+      .from("announcements")
+      .insert(insert)
+      .select("id")
+      .single();
+    if (error || !inserted) {
+      setPosting(false);
+      return toast.error(error?.message ?? "Could not post");
+    }
+
+    // Upload each image to the public announcement-media bucket
+    for (let i = 0; i < images.length; i++) {
+      const file = images[i];
+      const path = `${inserted.id}/${Date.now()}-${i}-${file.name}`;
+      const up = await supabase.storage.from("announcement-media").upload(path, file);
+      if (up.error) {
+        console.error(up.error);
+        continue;
+      }
+      const { data: pub } = supabase.storage.from("announcement-media").getPublicUrl(path);
+      await supabase.from("announcement_media").insert({
+        announcement_id: inserted.id,
+        media_url: pub.publicUrl,
+        media_type: "image",
+        sort_order: i,
+      });
+    }
+
     setPosting(false);
-    if (error) return toast.error(error.message);
-    setBody(""); setFile(null); setPriority(false);
+    setTitle("");
+    setBody("");
+    setPriority(false);
+    setImages([]);
     toast.success("Posted");
     qc.invalidateQueries({ queryKey: ["feed-posts"] });
   };
@@ -124,6 +157,13 @@ function FeedPage() {
         {/* Composer */}
         <Card className="mt-6 p-5">
           <form onSubmit={submit} className="space-y-3">
+            <Input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Add a header (optional)…"
+              className="text-base font-medium"
+              maxLength={140}
+            />
             <textarea
               rows={3}
               value={body}
@@ -132,13 +172,52 @@ function FeedPage() {
               className="w-full rounded-md border border-input bg-background p-3 text-sm"
               required
             />
-            <div className="flex flex-wrap items-center gap-3">
-              <label className="flex items-center gap-2 text-sm">
-                <Checkbox checked={priority} onCheckedChange={(v) => setPriority(!!v)} /> Mark as priority
+
+            {previews.length > 0 && (
+              <div
+                className={`grid gap-1 overflow-hidden rounded-lg border ${
+                  previews.length === 1
+                    ? "grid-cols-1"
+                    : previews.length === 2
+                    ? "grid-cols-2"
+                    : "grid-cols-2 sm:grid-cols-3"
+                }`}
+              >
+                {previews.map((src, i) => (
+                  <div key={i} className="group relative">
+                    <img
+                      src={src}
+                      alt=""
+                      className={`w-full object-cover ${previews.length === 1 ? "max-h-96" : "aspect-square"}`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(i)}
+                      className="absolute right-1 top-1 rounded-full bg-black/70 px-2 py-0.5 text-xs text-white opacity-0 transition group-hover:opacity-100"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="flex flex-wrap items-center gap-3 border-t border-border pt-3">
+              <label className="flex cursor-pointer items-center gap-2 rounded-md border border-input px-3 py-1.5 text-sm hover:bg-accent">
+                <Paperclip className="h-4 w-4" /> Add photos
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={(e) => {
+                    addImages(e.target.files);
+                    e.currentTarget.value = "";
+                  }}
+                />
               </label>
               <label className="flex items-center gap-2 text-sm">
-                <Paperclip className="h-4 w-4" />
-                <input type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)} className="text-xs" />
+                <Checkbox checked={priority} onCheckedChange={(v) => setPriority(!!v)} /> Mark as priority
               </label>
               {role.data?.canPostCrossBranch && (
                 <div className="ml-auto flex items-center gap-2">
