@@ -170,30 +170,38 @@ function AdminPage() {
         <Card className="mt-4 p-6 text-sm text-muted-foreground">No approved users yet.</Card>
       )}
  
-      {othersByBranch.map((group) => (
-        <div key={group.key} className="mt-6">
-          <h3 className="text-xs uppercase tracking-widest text-muted-foreground">
-            {group.label} {group.members.length > 0 && `(${group.members.length})`}
-          </h3>
-          <div className="mt-3 space-y-4">
-            {group.members.map((p: any) => (
-              <UserRow
-                key={p.id}
-                profile={p}
-                departments={depts.data ?? []}
-                onAssign={(role, dept) => assignRole(p.id, role, dept)}
-                onRemove={removeRole}
-              />
-            ))}
-            {group.members.length === 0 && (
-              <Card className="p-4 text-sm text-muted-foreground">No members from {group.label} yet.</Card>
-            )}
+      <h2 className="mt-12 font-serif text-2xl">Approved users &amp; roles</h2>
+ 
+      {others.length === 0 && (
+        <Card className="mt-4 p-6 text-sm text-muted-foreground">No approved users yet.</Card>
+      )}
+ 
+      <div className="mt-4 grid gap-4 md:grid-cols-3">
+        {othersByBranch.map((group) => (
+          <div key={group.key} className="rounded-lg border border-border p-4">
+            <h3 className="text-xs uppercase tracking-widest text-muted-foreground">
+              {group.label} {group.members.length > 0 && `(${group.members.length})`}
+            </h3>
+            <div className="mt-3 space-y-4">
+              {group.members.map((p: any) => (
+                <UserRow
+                  key={p.id}
+                  profile={p}
+                  departments={depts.data ?? []}
+                  onAssign={(role, dept) => assignRole(p.id, role, dept)}
+                  onRemove={removeRole}
+                />
+              ))}
+              {group.members.length === 0 && (
+                <p className="text-sm text-muted-foreground">No members from {group.label} yet.</p>
+              )}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
  
       {unassignedOthers.length > 0 && (
-        <div className="mt-6">
+        <div className="mt-6 rounded-lg border border-border p-4">
           <h3 className="text-xs uppercase tracking-widest text-muted-foreground">
             No branch set ({unassignedOthers.length})
           </h3>
@@ -210,9 +218,10 @@ function AdminPage() {
           </div>
         </div>
       )}
-    </div>
-  );
-}
+has context menu
+
+
+has context menu
 
 
 function UserRow({ profile, departments, onAssign, onRemove }: {
