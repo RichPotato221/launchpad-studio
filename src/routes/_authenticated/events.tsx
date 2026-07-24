@@ -25,6 +25,8 @@ function EventsPage() {
   const [depts, setDepts] = useState<any[]>([]);
   const [userId, setUserId] = useState<string>("");
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [feedUrl, setFeedUrl] = useState("");
+  const [copied, setCopied] = useState(false);
   const [form, setForm] = useState({
     title: "", description: "", event_type: "meeting", event_date: "",
     start_time: "", end_time: "", location: "", branch: "", department_slug: "",
