@@ -679,6 +679,38 @@ export type Database = {
         }
         Relationships: []
       }
+      department_chat_messages: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          department_slug: string
+          id: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          department_slug: string
+          id?: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          department_slug?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "department_chat_messages_department_slug_fkey"
+            columns: ["department_slug"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
       departments: {
         Row: {
           archived: boolean
@@ -2035,7 +2067,7 @@ export type Database = {
         | "team_member"
         | "strategic_adviser"
       approval_status: "pending" | "approved" | "rejected"
-      branch: "twatwa" | "joburg_north" | "joburg_south"
+      branch: "etwatwa" | "joburg_north" | "joburg_south"
       dept_kind:
         | "functional"
         | "developmental"
@@ -2190,7 +2222,7 @@ export const Constants = {
         "strategic_adviser",
       ],
       approval_status: ["pending", "approved", "rejected"],
-      branch: ["twatwa", "joburg_north", "joburg_south"],
+      branch: ["etwatwa", "joburg_north", "joburg_south"],
       dept_kind: [
         "functional",
         "developmental",
