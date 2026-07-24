@@ -415,8 +415,27 @@ function PostCard({ post, likes, currentUserId, onChange }: {
           )}
         </div>
       </div>
-      <p className="mt-3 whitespace-pre-wrap text-sm">{post.body}</p>
+      {post.title && <h3 className="mt-3 font-serif text-xl leading-snug">{post.title}</h3>}
+      <p className="mt-2 whitespace-pre-wrap text-sm">{post.body}</p>
       {post.attachment_url && <AttachmentLink path={post.attachment_url} name={post.attachment_name} />}
+      {post.media && post.media.length > 0 && (
+        <div
+          className={`mt-3 grid gap-1 overflow-hidden rounded-lg ${
+            post.media.length === 1 ? "grid-cols-1" : post.media.length === 2 ? "grid-cols-2" : "grid-cols-2 sm:grid-cols-3"
+          }`}
+        >
+          {post.media.map((m: any) => (
+            <a key={m.id} href={m.media_url} target="_blank" rel="noreferrer" className="block">
+              <img
+                src={m.media_url}
+                alt=""
+                loading="lazy"
+                className={`w-full object-cover ${post.media.length === 1 ? "max-h-[520px]" : "aspect-square"}`}
+              />
+            </a>
+          ))}
+        </div>
+      )}
       <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
         <button onClick={toggleLike} className={`inline-flex items-center gap-1 ${liked ? "text-red-600" : "hover:text-foreground"}`}>
           <Heart className={`h-4 w-4 ${liked ? "fill-current" : ""}`} /> {likes.length}

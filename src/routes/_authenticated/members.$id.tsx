@@ -96,6 +96,16 @@ function MemberProfilePage() {
               <p className="mt-1 text-xs uppercase tracking-widest text-muted-foreground">{profile.branch}</p>
             )}
 
+            {!isOwnProfile && currentUserId && (
+              <div className="mt-4">
+                <Link to="/messages/$userId" params={{ userId: id }}>
+                  <Button size="sm" className="gap-2">
+                    <MessageCircle className="h-4 w-4" /> Message
+                  </Button>
+                </Link>
+              </div>
+            )}
+
             {isOwnProfile && (
               <div className="mt-4">
                 <label className="text-xs text-muted-foreground">Update profile picture</label>
