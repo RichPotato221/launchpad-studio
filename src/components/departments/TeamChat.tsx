@@ -90,7 +90,3 @@ export function TeamChat({ slug, currentUserId }: { slug: string; currentUserId:
     </Card>
   );
 }
-has context menu
-
-
-has context menu
