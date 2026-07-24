@@ -216,34 +216,3 @@ function AdminPage() {
   );
 }
  
-function UserRow({ profile, departments, onAssign, onRemove }: {
-  profile: any;
-  departments: { slug: string; name: string }[];
-  onAssign: (role: AppRole, dept: string | null) => void;
-  onRemove: (id: string) => void;
-}) {
-  const [role, setRole] = useState<AppRole>("team_member");
-  const [dept, setDept] = useState<string>("");
- 
-  return (
-    <Card className="p-5">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p className="font-serif text-lg">{profile.full_name ?? "(no name)"}</p>
-          <p className="text-xs text-muted-foreground">{profile.id}</p>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {profile.roles.map((r: any) => (
-              <span key={r.id} className="inline-flex items-center gap-2 rounded bg-muted px-2 py-1 text-xs">
-                {ROLE_LABELS[r.role as AppRole]}{r.department_slug ? ` · ${r.department_slug}` : ""}
-                <button onClick={() => onRemove(r.id)} className="text-muted-foreground hover:text-foreground">×</button>
-              </span>
-            ))}
-          </div>
-        </div>
-        <div className="flex flex-wrap items-end gap-2">
-          <Select value={role} onValueChange={(v) => setRole(v as AppRole)}>
-            <SelectTrigger classN
-has context menu
-
-
-has context menu
