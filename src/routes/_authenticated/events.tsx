@@ -90,18 +90,31 @@ function EventsPage() {
         </div>
 
         <Card className="p-6">
-          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div className="min-w-0">
               <p className="text-xs uppercase tracking-widest text-muted-foreground">Subscribe to calendar</p>
               <p className="mt-1 text-sm text-muted-foreground">
                 Add this link to Google Calendar, Outlook, or Apple Calendar to see TRoGKC events automatically.
               </p>
             </div>
-            <div className="flex items-center gap-2">
-              <Input readOnly value={feedUrl} className="w-full md:w-80" />
-              <Button variant="outline" size="icon" onClick={copyFeedUrl} aria-label="Copy calendar feed link">
-                <Copy className="h-4 w-4" />
-              </Button>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <Input readOnly value={feedUrl} className="w-full md:w-80" />
+                <Button variant="outline" size="icon" onClick={copyFeedUrl} aria-label="Copy calendar feed link">
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Button size="sm" variant="outline" asChild>
+                  <a href={`https://calendar.google.com/calendar/render?cid=${encodeURIComponent(feedUrl)}`} target="_blank" rel="noopener noreferrer">Google Calendar</a>
+                </Button>
+                <Button size="sm" variant="outline" asChild>
+                  <a href={`https://outlook.office.com/owa/?path=/calendar/action/subscribe&url=${encodeURIComponent(feedUrl)}`} target="_blank" rel="noopener noreferrer">Outlook</a>
+                </Button>
+                <Button size="sm" variant="outline" asChild>
+                  <a href={feedUrl.replace(/^https?:/, "webcal:")} target="_blank" rel="noopener noreferrer">Apple / Other</a>
+                </Button>
+              </div>
             </div>
           </div>
         </Card>
