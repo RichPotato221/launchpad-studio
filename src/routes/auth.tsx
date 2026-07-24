@@ -60,22 +60,31 @@ function AuthPage() {
     if (!branch || !deptSlug || !requestedRole.trim() || !fullName.trim()) {
       return toast.error("All fields are required.");
     }
+    if (password.length < 8) {
+      return toast.error("Password must be at least 8 characters.");
+    }
+    const normalizedEmail = email.trim().toLowerCase();
     setLoading(true);
     const { error } = await supabase.auth.signUp({
-      email,
+      email: normalizedEmail,
       password,
       options: {
         emailRedirectTo: `${window.location.origin}/home`,
         data: {
-          full_name: fullName,
+          full_name: fullName.trim(),
           branch,
           department_slug: deptSlug,
-          requested_role: requestedRole,
+          requested_role: requestedRole.trim(),
         },
       },
     });
     setLoading(false);
-    if (error) return toast.error(error.message || "Sign up failed. Please try again.");
+    if (error) {
+      const msg = /already registered|already exists|user.*exists/i.test(error.message)
+        ? "This email is already registered. Try signing in, or use 'Forgot password?' to reset it."
+        : error.message || "Sign up failed. Please try again.";
+      return toast.error(msg);
+    }
     // Notify admin (best effort — do not block user on failure)
     try {
       const deptLabel = depts.data?.find((d) => d.slug === deptSlug)?.name ?? deptSlug;
@@ -83,7 +92,7 @@ function AuthPage() {
       await notifyPendingApproval({
         data: {
           fullName,
-          email,
+          email: normalizedEmail,
           branch: branchLabel,
           department: deptLabel,
           role: requestedRole,
@@ -172,8 +181,9 @@ function AuthPage() {
                     type="button"
                     className="text-xs text-primary underline"
                     onClick={async () => {
-                      if (!email) return toast.error("Enter your email first.");
-                      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                      const target = email.trim().toLowerCase();
+                      if (!target) return toast.error("Enter your email first.");
+                      const { error } = await supabase.auth.resetPasswordForEmail(target, {
                         redirectTo: `${window.location.origin}/reset-password`,
                       });
                       if (error) return toast.error(error.message);
