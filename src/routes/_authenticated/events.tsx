@@ -46,8 +46,17 @@ function EventsPage() {
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? ""));
     supabase.from("departments").select("slug, name").order("name").then(({ data }) => setDepts(data ?? []));
+    setFeedUrl(`${window.location.origin}/api/public/calendar.ics`);
     load();
   }, []);
+
+  const copyFeedUrl = async () => {
+    if (!feedUrl) return;
+    await navigator.clipboard.writeText(feedUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+    toast.success("Calendar feed link copied");
+  };
 
   const create = async (e: React.FormEvent) => {
     e.preventDefault();
