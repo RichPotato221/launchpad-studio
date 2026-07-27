@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { toast } from "sonner";
 import { FileText, Image, Paperclip, Search, Upload, Trash2, Download, File } from "lucide-react";
 import { fetchDepartments } from "@/lib/portal";
-import { MemberAvatarLink } from "@/components/MemberAvatarLink";
+import { MemberAvatarLink } from "@/components/MemberAvatarlink";
 
 export const Route = createFileRoute("/_authenticated/documents")({
   head: () => ({ meta: [{ title: "Documents — TRoGKC Portal" }] }),
