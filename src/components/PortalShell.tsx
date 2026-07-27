@@ -18,6 +18,7 @@ const nav = [
   { to: "/attendance", label: "Attendance" },
   { to: "/governance", label: "Governance" },
   { to: "/senior-pastor-cockpit", label: "Cockpit" },
+  { to: "/documents", label: "Documents" },
   { to: "/reports", label: "Reports" },
   { to: "/admin", label: "Admin" },
   { to: "/assets", label: "Assets" },
