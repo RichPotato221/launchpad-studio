@@ -2105,6 +2105,20 @@ export type Database = {
       }
       can_view_rsvp_reasons: { Args: { _user_id: string }; Returns: boolean }
       generate_upcoming_recurring_events: { Args: never; Returns: undefined }
+      get_all_uploads: {
+        Args: never
+        Returns: {
+          branch: Database["public"]["Enums"]["branch"]
+          created_at: string
+          department_slug: string
+          file_name: string
+          file_url: string
+          source: string
+          source_id: string
+          title: string
+          uploader_id: string
+        }[]
+      }
       get_attendance_trend: {
         Args: { _months?: number }
         Returns: {
