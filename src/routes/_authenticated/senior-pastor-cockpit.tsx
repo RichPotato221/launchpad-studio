@@ -45,17 +45,17 @@ function CockpitPage() {
       <CockpitPosts />
 
       <div className="mt-10 grid gap-8 lg:grid-cols-2">
-  <RiskDashboard />
-  <BranchScorecards />
-  <RedFlagKpis />
-  <PendingApprovals />
-  <ReportingCompliance />
-  <MembershipPulse />
-</div>
+        <RiskDashboard />
+        <BranchScorecards />
+        <RedFlagKpis />
+        <PendingApprovals />
+        <ReportingCompliance />
+        <MembershipPulse />
       </div>
     </div>
   );
 }
+
 
 /* -------------------- Cockpit posts (Senior Pastor Cockpit feed) -------------------- */
 function CockpitComposer() {
