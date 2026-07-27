@@ -7,6 +7,7 @@ import { useLeadershipAccess } from "@/lib/useLeadershipAccess";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { RiskDashboard } from "@/components/RiskDashboard";
 
 export const Route = createFileRoute("/_authenticated/senior-pastor-cockpit")({
   head: () => ({ meta: [{ title: "Senior Pastor Cockpit — TRoGKC Portal" }] }),
@@ -44,11 +45,13 @@ function CockpitPage() {
       <CockpitPosts />
 
       <div className="mt-10 grid gap-8 lg:grid-cols-2">
-        <BranchScorecards />
-        <RedFlagKpis />
-        <PendingApprovals />
-        <ReportingCompliance />
-        <MembershipPulse />
+  <RiskDashboard />
+  <BranchScorecards />
+  <RedFlagKpis />
+  <PendingApprovals />
+  <ReportingCompliance />
+  <MembershipPulse />
+</div>
       </div>
     </div>
   );
