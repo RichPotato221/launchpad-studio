@@ -213,7 +213,7 @@ function DocumentsPage() {
               <div className="mt-4 flex items-center justify-between border-t border-border pt-4 text-xs text-muted-foreground">
                 <div className="flex items-center gap-2">
                   {doc.uploader ? (
-                    <MemberAvatarLink userId={doc.uploader.id} name={doc.uploader.full_name} avatarUrl={doc.uploader.avatar_url} size="sm" />
+                    <MemberAvatarLink userId={doc.uploader.id} fullName={doc.uploader.full_name || "Member"} avatarUrl={doc.uploader.avatar_url} size="sm" />
                   ) : (
                     <span>Unknown member</span>
                   )}
