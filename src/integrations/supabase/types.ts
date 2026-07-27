@@ -937,6 +937,68 @@ export type Database = {
           },
         ]
       }
+      event_attendees: {
+        Row: {
+          event_id: string
+          external_event_id: string | null
+          id: string
+          provider: string | null
+          reminder_minutes_before: number | null
+          rsvp_status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          event_id: string
+          external_event_id?: string | null
+          id?: string
+          provider?: string | null
+          reminder_minutes_before?: number | null
+          rsvp_status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          event_id?: string
+          external_event_id?: string | null
+          id?: string
+          provider?: string | null
+          reminder_minutes_before?: number | null
+          rsvp_status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_attendees_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_attendees_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_attendees_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_attendees_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_rosters: {
         Row: {
           created_at: string
@@ -986,6 +1048,7 @@ export type Database = {
       }
       events: {
         Row: {
+          all_day: boolean
           branch: Database["public"]["Enums"]["branch"] | null
           created_at: string
           created_by: string
@@ -1002,10 +1065,12 @@ export type Database = {
           recurrence_interval: number
           recurrence_pattern: string | null
           start_time: string | null
+          status: string
           title: string
           updated_at: string
         }
         Insert: {
+          all_day?: boolean
           branch?: Database["public"]["Enums"]["branch"] | null
           created_at?: string
           created_by: string
@@ -1022,10 +1087,12 @@ export type Database = {
           recurrence_interval?: number
           recurrence_pattern?: string | null
           start_time?: string | null
+          status?: string
           title: string
           updated_at?: string
         }
         Update: {
+          all_day?: boolean
           branch?: Database["public"]["Enums"]["branch"] | null
           created_at?: string
           created_by?: string
@@ -1042,6 +1109,7 @@ export type Database = {
           recurrence_interval?: number
           recurrence_pattern?: string | null
           start_time?: string | null
+          status?: string
           title?: string
           updated_at?: string
         }
@@ -1253,6 +1321,45 @@ export type Database = {
           },
         ]
       }
+      integration_accounts: {
+        Row: {
+          access_token: string
+          calendar_id: string | null
+          connected_at: string
+          drive_folder_id: string | null
+          id: string
+          provider: string
+          refresh_token: string
+          scopes: string[]
+          token_expires_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token: string
+          calendar_id?: string | null
+          connected_at?: string
+          drive_folder_id?: string | null
+          id?: string
+          provider: string
+          refresh_token: string
+          scopes?: string[]
+          token_expires_at: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string
+          calendar_id?: string | null
+          connected_at?: string
+          drive_folder_id?: string | null
+          id?: string
+          provider?: string
+          refresh_token?: string
+          scopes?: string[]
+          token_expires_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       kingdom_projects: {
         Row: {
           branch: Database["public"]["Enums"]["branch"] | null
@@ -1463,6 +1570,27 @@ export type Database = {
           payload?: Json
           processed?: boolean
           recipient_scope?: string
+        }
+        Relationships: []
+      }
+      oauth_states: {
+        Row: {
+          created_at: string
+          provider: string
+          state: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          provider: string
+          state?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          provider?: string
+          state?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -1815,6 +1943,70 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      sync_logs: {
+        Row: {
+          attempt_count: number
+          created_at: string
+          id: string
+          last_error: string | null
+          next_retry_at: string | null
+          provider: string
+          resource_id: string | null
+          status: string
+          sync_type: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          attempt_count?: number
+          created_at?: string
+          id?: string
+          last_error?: string | null
+          next_retry_at?: string | null
+          provider: string
+          resource_id?: string | null
+          status?: string
+          sync_type: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          attempt_count?: number
+          created_at?: string
+          id?: string
+          last_error?: string | null
+          next_retry_at?: string | null
+          provider?: string
+          resource_id?: string | null
+          status?: string
+          sync_type?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sync_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sync_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sync_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tasks: {
         Row: {
