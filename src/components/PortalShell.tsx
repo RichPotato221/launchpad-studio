@@ -61,6 +61,7 @@ export function PortalShell({ children }: { children: ReactNode }) {
   const filteredNav = nav.filter((item) => {
     if (item.to === "/governance") return roles.some((r) => GOVERNANCE_ROLES.has(r));
     if (item.to === "/senior-pastor-cockpit") return roles.some((r) => COCKPIT_ROLES.has(r));
+    if (item.to === "/vault") return roles.some((r) => COCKPIT_ROLES.has(r));
     return true;
   });
   
