@@ -13,6 +13,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedVaultRouteImport } from './routes/_authenticated/vault'
 import { Route as AuthenticatedTasksRouteImport } from './routes/_authenticated/tasks'
 import { Route as AuthenticatedSeniorPastorCockpitRouteImport } from './routes/_authenticated/senior-pastor-cockpit'
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
@@ -51,6 +52,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedVaultRoute = AuthenticatedVaultRouteImport.update({
+  id: '/vault',
+  path: '/vault',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedTasksRoute = AuthenticatedTasksRouteImport.update({
   id: '/tasks',
@@ -171,6 +177,7 @@ export interface FileRoutesByFullPath {
   '/reports': typeof AuthenticatedReportsRoute
   '/senior-pastor-cockpit': typeof AuthenticatedSeniorPastorCockpitRoute
   '/tasks': typeof AuthenticatedTasksRoute
+  '/vault': typeof AuthenticatedVaultRoute
   '/departments/$slug': typeof AuthenticatedDepartmentsSlugRoute
   '/members/$id': typeof AuthenticatedMembersIdRoute
   '/messages/$userId': typeof AuthenticatedMessagesUserIdRoute
@@ -195,6 +202,7 @@ export interface FileRoutesByTo {
   '/reports': typeof AuthenticatedReportsRoute
   '/senior-pastor-cockpit': typeof AuthenticatedSeniorPastorCockpitRoute
   '/tasks': typeof AuthenticatedTasksRoute
+  '/vault': typeof AuthenticatedVaultRoute
   '/departments/$slug': typeof AuthenticatedDepartmentsSlugRoute
   '/members/$id': typeof AuthenticatedMembersIdRoute
   '/messages/$userId': typeof AuthenticatedMessagesUserIdRoute
@@ -221,6 +229,7 @@ export interface FileRoutesById {
   '/_authenticated/reports': typeof AuthenticatedReportsRoute
   '/_authenticated/senior-pastor-cockpit': typeof AuthenticatedSeniorPastorCockpitRoute
   '/_authenticated/tasks': typeof AuthenticatedTasksRoute
+  '/_authenticated/vault': typeof AuthenticatedVaultRoute
   '/_authenticated/departments/$slug': typeof AuthenticatedDepartmentsSlugRoute
   '/_authenticated/members/$id': typeof AuthenticatedMembersIdRoute
   '/_authenticated/messages/$userId': typeof AuthenticatedMessagesUserIdRoute
@@ -247,6 +256,7 @@ export interface FileRouteTypes {
     | '/reports'
     | '/senior-pastor-cockpit'
     | '/tasks'
+    | '/vault'
     | '/departments/$slug'
     | '/members/$id'
     | '/messages/$userId'
@@ -271,6 +281,7 @@ export interface FileRouteTypes {
     | '/reports'
     | '/senior-pastor-cockpit'
     | '/tasks'
+    | '/vault'
     | '/departments/$slug'
     | '/members/$id'
     | '/messages/$userId'
@@ -296,6 +307,7 @@ export interface FileRouteTypes {
     | '/_authenticated/reports'
     | '/_authenticated/senior-pastor-cockpit'
     | '/_authenticated/tasks'
+    | '/_authenticated/vault'
     | '/_authenticated/departments/$slug'
     | '/_authenticated/members/$id'
     | '/_authenticated/messages/$userId'
@@ -341,6 +353,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/vault': {
+      id: '/_authenticated/vault'
+      path: '/vault'
+      fullPath: '/vault'
+      preLoaderRoute: typeof AuthenticatedVaultRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/tasks': {
       id: '/_authenticated/tasks'
@@ -520,6 +539,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
   AuthenticatedSeniorPastorCockpitRoute: typeof AuthenticatedSeniorPastorCockpitRoute
   AuthenticatedTasksRoute: typeof AuthenticatedTasksRoute
+  AuthenticatedVaultRoute: typeof AuthenticatedVaultRoute
   AuthenticatedMembersIdRoute: typeof AuthenticatedMembersIdRoute
 }
 
@@ -538,6 +558,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedReportsRoute: AuthenticatedReportsRoute,
   AuthenticatedSeniorPastorCockpitRoute: AuthenticatedSeniorPastorCockpitRoute,
   AuthenticatedTasksRoute: AuthenticatedTasksRoute,
+  AuthenticatedVaultRoute: AuthenticatedVaultRoute,
   AuthenticatedMembersIdRoute: AuthenticatedMembersIdRoute,
 }
 
@@ -556,13 +577,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
