@@ -2065,6 +2065,22 @@ export type Database = {
           total_present: number
         }[]
       }
+      get_branch_activity: {
+        Args: { _days?: number }
+        Returns: {
+          branch: Database["public"]["Enums"]["branch"]
+          total_present: number
+        }[]
+      }
+      get_department_performance: {
+        Args: never
+        Returns: {
+          avg_pct: number
+          branch: Database["public"]["Enums"]["branch"]
+          department_slug: string
+          kpi_count: number
+        }[]
+      }
       get_financial_trend: {
         Args: { _months?: number }
         Returns: {
