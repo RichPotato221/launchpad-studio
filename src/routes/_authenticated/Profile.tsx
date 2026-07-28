@@ -7,6 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { CalendarCheck, CalendarClock, CheckCircle2, Info } from "lucide-react";
+
+type CalendarStatus = {
+  connector_id: string;
+  connected: boolean;
+  connected_email: string | null;
+  connected_at: string | null;
+};
  
 export const Route = createFileRoute("/_authenticated/Profile")({
   head: () => ({ meta: [{ title: "My Profile — TRoGKC Portal" }] }),
@@ -17,6 +25,7 @@ function ProfilePage() {
   const [userId, setUserId] = useState("");
   const [form, setForm] = useState({ full_name: "", phone: "", email: "", avatar_url: "", primary_department: "" });
   const [depts, setDepts] = useState<{ slug: string; name: string }[]>([]);
+  const [calendarStatuses, setCalendarStatuses] = useState<CalendarStatus[]>([]);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
  
@@ -44,7 +53,13 @@ function ProfilePage() {
  
     const { data: deptList } = await supabase.from("departments").select("slug, name").order("name");
     setDepts(deptList ?? []);
+
+    const { data: calendars, error: calendarError } = await supabase.rpc("get_my_calendar_connection_status");
+    if (!calendarError) setCalendarStatuses(calendars ?? []);
   };
+
+  const getCalendarStatus = (connectorId: string) =>
+    calendarStatuses.find((status) => status.connector_id === connectorId);
  
   useEffect(() => {
     load();
@@ -146,6 +161,69 @@ function ProfilePage() {
           <Button onClick={save} disabled={saving} className="w-fit">
             {saving ? "Saving…" : "Save changes"}
           </Button>
+        </div>
+      </Card>
+
+      <Card className="mt-6 p-6">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Calendar sync</p>
+            <h2 className="mt-2 font-serif text-2xl">Connected Calendars</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Church events, meetings, tasks and recurring activities will sync here once each calendar account is connected.
+            </p>
+          </div>
+          <CalendarCheck className="mt-1 h-6 w-6 text-primary" aria-hidden="true" />
+        </div>
+
+        <div className="mt-6 grid gap-3">
+          {[
+            {
+              connectorId: "google_calendar",
+              title: "Google Calendar",
+              description: "Ready for member calendar permissions and one-way church event sync.",
+              pending: false,
+            },
+            {
+              connectorId: "microsoft_outlook",
+              title: "Outlook Calendar",
+              description: "Microsoft stays optional until the organisation tenant and app client are ready.",
+              pending: true,
+            },
+          ].map((calendar) => {
+            const status = getCalendarStatus(calendar.connectorId);
+            const isConnected = Boolean(status?.connected);
+            return (
+              <div key={calendar.connectorId} className="rounded-md border border-border bg-muted/30 p-4">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-start gap-3">
+                    {isConnected ? (
+                      <CheckCircle2 className="mt-0.5 h-5 w-5 text-primary" aria-hidden="true" />
+                    ) : calendar.pending ? (
+                      <Info className="mt-0.5 h-5 w-5 text-muted-foreground" aria-hidden="true" />
+                    ) : (
+                      <CalendarClock className="mt-0.5 h-5 w-5 text-primary" aria-hidden="true" />
+                    )}
+                    <div>
+                      <h3 className="font-medium">{calendar.title}</h3>
+                      <p className="mt-1 text-sm text-muted-foreground">{calendar.description}</p>
+                      {status?.connected_email ? (
+                        <p className="mt-2 text-sm text-muted-foreground">Connected as {status.connected_email}</p>
+                      ) : null}
+                    </div>
+                  </div>
+                  <span className="w-fit rounded-md border border-border px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
+                    {isConnected ? "Connected" : calendar.pending ? "Pending setup" : "Ready"}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="mt-5 rounded-md border border-border bg-background p-4 text-sm text-muted-foreground">
+          Members will continue logging in through the portal. Google sign-in is enabled, and Microsoft will be used only for Outlook, email,
+          Teams and Microsoft 365 sync after the tenant/client setup is complete.
         </div>
       </Card>
     </div>

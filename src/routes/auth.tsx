@@ -11,9 +11,25 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchDepartments } from "@/lib/portal";
 import logo from "@/assets/trog-logo.png";
 import { notifyPendingApproval } from "@/lib/notifyApproval.functions";
+import { lovable } from "@/integrations/lovable";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Sign in — TRoGKC Leadership domain" }] }),
+  head: () => ({
+    meta: [
+      { title: "Sign in — TRoGKC Portal" },
+      {
+        name: "description",
+        content: "Secure member sign-in for the Throne Room of God Kingdom Center leadership portal.",
+      },
+      { property: "og:title", content: "Sign in — TRoGKC Portal" },
+      {
+        property: "og:description",
+        content: "Secure member sign-in for the Throne Room of God Kingdom Center leadership portal.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: AuthPage,
 });
 
@@ -55,6 +71,21 @@ function AuthPage() {
     navigate({ to: "/home", replace: true });
   };
 
+  const signInWithGoogle = async () => {
+    setLoading(true);
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
+      extraParams: { prompt: "select_account" },
+    });
+    setLoading(false);
+    if (result.redirected) return;
+    if (result.error) {
+      const message = result.error instanceof Error ? result.error.message : String(result.error);
+      return toast.error(message || "Google sign-in could not start.");
+    }
+    navigate({ to: "/home", replace: true });
+  };
+
   const signUp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!branch || !deptSlug || !requestedRole.trim() || !fullName.trim()) {
@@ -69,7 +100,7 @@ function AuthPage() {
       email: normalizedEmail,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/home`,
+        emailRedirectTo: window.location.origin,
         data: {
           full_name: fullName.trim(),
           branch,
@@ -195,6 +226,12 @@ function AuthPage() {
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? "Signing in…" : "Sign in"}
+                </Button>
+                <div className="relative py-1 text-center text-xs uppercase tracking-widest text-muted-foreground">
+                  <span className="bg-background px-2">or</span>
+                </div>
+                <Button type="button" variant="outline" className="w-full" disabled={loading} onClick={signInWithGoogle}>
+                  Continue with Google
                 </Button>
               </form>
             </TabsContent>
