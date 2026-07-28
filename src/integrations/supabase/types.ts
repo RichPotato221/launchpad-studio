@@ -210,6 +210,39 @@ export type Database = {
         }
         Relationships: []
       }
+      app_user_connections: {
+        Row: {
+          connected_at: string
+          connected_email: string | null
+          connection_key_ciphertext: string
+          connector_id: string
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          connected_at?: string
+          connected_email?: string | null
+          connection_key_ciphertext: string
+          connector_id: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          connected_at?: string
+          connected_email?: string | null
+          connection_key_ciphertext?: string
+          connector_id?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       asset_maintenance_logs: {
         Row: {
           asset_id: string
@@ -532,6 +565,106 @@ export type Database = {
           id?: string
         }
         Relationships: []
+      }
+      calendar_sync_log: {
+        Row: {
+          attempts: number
+          connector_id: string
+          created_at: string
+          error_message: string | null
+          event_id: string | null
+          id: string
+          next_retry_at: string | null
+          operation: string
+          provider_response: Json | null
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          attempts?: number
+          connector_id: string
+          created_at?: string
+          error_message?: string | null
+          event_id?: string | null
+          id?: string
+          next_retry_at?: string | null
+          operation: string
+          provider_response?: Json | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          attempts?: number
+          connector_id?: string
+          created_at?: string
+          error_message?: string | null
+          event_id?: string | null
+          id?: string
+          next_retry_at?: string | null
+          operation?: string
+          provider_response?: Json | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendar_sync_log_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      calendar_sync_map: {
+        Row: {
+          connector_id: string
+          created_at: string
+          event_id: string
+          external_calendar_id: string | null
+          external_event_etag: string | null
+          external_event_id: string
+          id: string
+          last_synced_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          connector_id: string
+          created_at?: string
+          event_id: string
+          external_calendar_id?: string | null
+          external_event_etag?: string | null
+          external_event_id: string
+          id?: string
+          last_synced_at?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          connector_id?: string
+          created_at?: string
+          event_id?: string
+          external_calendar_id?: string | null
+          external_event_etag?: string | null
+          external_event_id?: string
+          id?: string
+          last_synced_at?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendar_sync_map_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       child_checkins: {
         Row: {
