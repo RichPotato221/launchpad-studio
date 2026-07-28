@@ -2490,6 +2490,15 @@ export type Database = {
           requested_role: string
         }[]
       }
+      get_my_calendar_connection_status: {
+        Args: never
+        Returns: {
+          connected: boolean
+          connected_at: string
+          connected_email: string
+          connector_id: string
+        }[]
+      }
       get_sunday_rsvp_status: {
         Args: { _service_date: string }
         Returns: {
