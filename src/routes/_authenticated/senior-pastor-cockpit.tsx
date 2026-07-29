@@ -41,6 +41,11 @@ function CockpitPage() {
         departments that haven't reported, and a membership pulse.
       </p>
 
+      <Button variant="outline" size="sm" onClick={() => window.print()} className="mt-4 print:hidden">
+        Export Dashboard as PDF
+      </Button>
+
+
       {access.data.isSeniorApostle && <CockpitComposer />}
       <CockpitPosts />
 

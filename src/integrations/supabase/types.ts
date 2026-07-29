@@ -2476,6 +2476,14 @@ export type Database = {
           period: string
         }[]
       }
+      get_kpi_period_comparison: {
+        Args: never
+        Returns: {
+          current_avg_pct: number
+          period_label: string
+          previous_avg_pct: number
+        }[]
+      }
       get_member_profile: {
         Args: { _member_id: string }
         Returns: {
