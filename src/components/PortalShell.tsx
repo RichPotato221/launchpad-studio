@@ -78,7 +78,7 @@ export function PortalShell({ children }: { children: ReactNode }) {
     <div className="flex min-h-screen flex-col bg-background">
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/95 backdrop-blur print:hidden">
         {/* Top row: logo, nav (desktop only), email/sign-out/hamburger */}
-        <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 md:px-8">
+        <div className="mx-auto flex min-h-16 w-full max-w-[1800px] items-center gap-3 px-4 py-2 md:px-6">
           <Link to="/home" className="flex shrink-0 items-center gap-3">
             <img src={logo} alt="TRoGKC" className="h-9 w-auto" />
             <div className="hidden font-serif text-base leading-tight sm:block">
@@ -87,13 +87,13 @@ export function PortalShell({ children }: { children: ReactNode }) {
             </div>
           </Link>
 
-          <nav className="hidden flex-1 items-center justify-center gap-5 overflow-x-auto whitespace-nowrap xl:flex">
+          <nav className="hidden flex-1 flex-wrap items-center justify-center gap-x-4 gap-y-1 lg:flex">
             {filteredNav.map((item) => (
       
               <Link
                 key={item.to}
                 to={item.to}
-                className="shrink-0 text-sm text-muted-foreground transition hover:text-foreground"
+                className="shrink-0 whitespace-nowrap text-[0.8rem] text-muted-foreground transition hover:text-foreground"
                 activeProps={{ className: "text-foreground font-medium" }}
               >
                 {item.label}
@@ -104,7 +104,7 @@ export function PortalShell({ children }: { children: ReactNode }) {
           <div className="ml-auto flex shrink-0 items-center gap-3">
             <ProfileMenu />
             <button
-              className="rounded p-2 xl:hidden"
+              className="rounded p-2 lg:hidden"
               onClick={() => setOpen((o) => !o)}
               aria-label="Toggle menu"
             >
@@ -114,14 +114,14 @@ export function PortalShell({ children }: { children: ReactNode }) {
         </div>
 
         {/* Search row: full width, own line, all screen sizes */}
-        <div className="mx-auto max-w-7xl px-4 pb-3 md:px-8">
+        <div className="mx-auto w-full max-w-[1800px] px-4 pb-3 md:px-6">
           <GlobalSearch />
         </div>
 
-        {/* Mobile / tablet dropdown nav (below xl) */}
+        {/* Mobile / tablet dropdown nav (below lg) */}
         {open && (
-          <div className="border-t border-border/60 xl:hidden">
-            <nav className="flex flex-col p-4">
+          <div className="border-t border-border/60 lg:hidden">
+            <nav className="flex max-h-[70vh] flex-col overflow-y-auto overscroll-contain p-4">
               {filteredNav.map((item) => (
                 <Link
                   key={item.to}

@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { PortalShell } from "@/components/PortalShell";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -55,18 +54,15 @@ function MemberProfilePage() {
 
   if (!profile) {
     return (
-      <PortalShell>
         <div className="mx-auto max-w-3xl px-4 py-10 md:px-8">
           <p className="text-sm text-muted-foreground">Loading profile…</p>
         </div>
-      </PortalShell>
     );
   }
 
   const initial = (profile.full_name || "?").trim().charAt(0).toUpperCase();
 
   return (
-    <PortalShell>
       <div className="mx-auto max-w-3xl px-4 py-10 md:px-8">
         <Card className="overflow-hidden">
           <div className="h-28 bg-muted" />
@@ -138,6 +134,5 @@ function MemberProfilePage() {
           </div>
         </Card>
       </div>
-    </PortalShell>
   );
                     }
