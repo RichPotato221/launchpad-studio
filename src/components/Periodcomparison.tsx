@@ -20,8 +20,8 @@ export function PeriodComparison() {
 
   return (
     <Card className="p-6 lg:col-span-2">
-      <p className="text-xs uppercase tracking-widest text-muted-foreground">Period Comparison</p>,
-      import { PeriodComparison } from "@/components/PeriodComparison";
+      <p className="text-xs uppercase tracking-widest text-muted-foreground">Period Comparison</p>
+
       <p className="mt-1 text-xs text-muted-foreground">Average KPI achievement vs. the prior equivalent period.</p>
 
       {comparison.isLoading && <p className="mt-4 text-sm text-muted-foreground">Loading…</p>}
