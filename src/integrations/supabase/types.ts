@@ -941,46 +941,64 @@ export type Database = {
           created_at: string
           department_slug: string | null
           description: string | null
+          doc_category: string | null
+          doc_number: string | null
+          effective_date: string | null
           file_name: string
           file_size: number | null
           file_type: string | null
           file_url: string
           id: string
+          review_date: string | null
+          status: string
           storage_path: string
           tags: string[] | null
           title: string
           updated_at: string
           uploaded_by: string
+          version: string
         }
         Insert: {
           created_at?: string
           department_slug?: string | null
           description?: string | null
+          doc_category?: string | null
+          doc_number?: string | null
+          effective_date?: string | null
           file_name: string
           file_size?: number | null
           file_type?: string | null
           file_url: string
           id?: string
+          review_date?: string | null
+          status?: string
           storage_path: string
           tags?: string[] | null
           title: string
           updated_at?: string
           uploaded_by: string
+          version?: string
         }
         Update: {
           created_at?: string
           department_slug?: string | null
           description?: string | null
+          doc_category?: string | null
+          doc_number?: string | null
+          effective_date?: string | null
           file_name?: string
           file_size?: number | null
           file_type?: string | null
           file_url?: string
           id?: string
+          review_date?: string | null
+          status?: string
           storage_path?: string
           tags?: string[] | null
           title?: string
           updated_at?: string
           uploaded_by?: string
+          version?: string
         }
         Relationships: []
       }
