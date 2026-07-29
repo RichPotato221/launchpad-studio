@@ -1,8 +1,8 @@
-8import { useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { ArrowUp, ArrowDown, Minus } from "lucide-react";
-import { PeriodComparison } from "@/components/PeriodComparison";
+
 
 type CompRow = { period_label: string; current_avg_pct: number | null; previous_avg_pct: number | null };
 
