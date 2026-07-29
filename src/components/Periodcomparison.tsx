@@ -1,7 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
+8import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { ArrowUp, ArrowDown, Minus } from "lucide-react";
+import { PeriodComparison } from "@/components/PeriodComparison";
 
 type CompRow = { period_label: string; current_avg_pct: number | null; previous_avg_pct: number | null };
 
@@ -19,7 +20,8 @@ export function PeriodComparison() {
 
   return (
     <Card className="p-6 lg:col-span-2">
-      <p className="text-xs uppercase tracking-widest text-muted-foreground">Period Comparison</p>
+      <p className="text-xs uppercase tracking-widest text-muted-foreground">Period Comparison</p>,
+      import { PeriodComparison } from "@/components/PeriodComparison";
       <p className="mt-1 text-xs text-muted-foreground">Average KPI achievement vs. the prior equivalent period.</p>
 
       {comparison.isLoading && <p className="mt-4 text-sm text-muted-foreground">Loading…</p>}
