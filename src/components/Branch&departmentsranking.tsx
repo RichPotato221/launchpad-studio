@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { exportToCsv } from "@/lib/exportCsv";
 
 type PerfRow = { department_slug: string; branch: string; avg_pct: number; kpi_count: number };
 type ActivityRow = { branch: string; total_present: number };
@@ -46,12 +48,30 @@ export function DepartmentAndBranchRankings() {
   const isLoading = perf.isLoading || activity.isLoading;
   const isError = perf.isError || activity.isError;
 
+  const handleExport = () => {
+    exportToCsv(
+      "department-branch-rankings",
+      ["Department", "Branch", "Avg % of Target", "KPI Count"],
+      rows.map((r) => [deptName(r.department_slug), r.branch, r.avg_pct, r.kpi_count]),
+    );
+  };
+
   return (
     <Card className="p-6 lg:col-span-2">
-      <p className="text-xs uppercase tracking-widest text-muted-foreground">Department &amp; Branch Rankings</p>
-      <p className="mt-1 text-xs text-muted-foreground">
-        Based on the most recent KPI entries (90 days) and attendance (30 days).
-      </p>
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <div>
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">Department &amp; Branch Rankings</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Based on the most recent KPI entries (90 days) and attendance (30 days).
+          </p>
+        </div>
+        {rows.length > 0 && (
+          <Button size="sm" variant="outline" onClick={handleExport} className="print:hidden">
+            Export CSV
+          </Button>
+        )}
+      </div>
+
 
       {isLoading && <p className="mt-4 text-sm text-muted-foreground">Loading…</p>}
       {isError && <p className="mt-4 text-sm text-red-600">Couldn't load rankings. Try refreshing.</p>}

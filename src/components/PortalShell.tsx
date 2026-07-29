@@ -76,7 +76,7 @@ export function PortalShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <header className="sticky top-0 z-40 border-b border-border/60 bg-background/95 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b border-border/60 bg-background/95 backdrop-blur print:hidden">
         {/* Top row: logo, nav (desktop only), email/sign-out/hamburger */}
         <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 md:px-8">
           <Link to="/home" className="flex shrink-0 items-center gap-3">
@@ -148,7 +148,7 @@ export function PortalShell({ children }: { children: ReactNode }) {
 
       <main className="flex-1">{children}</main>
 
-      <footer className="border-t border-border/60 py-6">
+      <footer className="border-t border-border/60 py-6 print:hidden">
         <div className="mx-auto max-w-7xl px-4 text-xs text-muted-foreground md:px-8">
           © {new Date().getFullYear()} Throne Room of God Kingdom Center · Under the headship of Jesus Christ
         </div>
