@@ -207,10 +207,8 @@ function MeetingsList({
     </div>
   );
 }
-has context menu
 
 
-has context menu
 
 /* ─────────────────────────────────────────────────────────
 * MEETING DETAIL — Agenda / Minutes / Resolutions
@@ -680,7 +678,5 @@ function ResolutionsPanel({ meetingId, currentUserId }: { meetingId: string; cur
     </div>
   );
 }
-has context menu
 
 
-has context menu
