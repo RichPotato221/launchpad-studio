@@ -14,6 +14,269 @@ export type Database = {
   }
   public: {
     Tables: {
+      agenda_items: {
+        Row: {
+          agenda_id: string
+          description: string | null
+          document_id: string | null
+          estimated_minutes: number | null
+          from_template_item_id: string | null
+          id: string
+          order_index: number
+          owner_id: string | null
+          title: string
+        }
+        Insert: {
+          agenda_id: string
+          description?: string | null
+          document_id?: string | null
+          estimated_minutes?: number | null
+          from_template_item_id?: string | null
+          id?: string
+          order_index: number
+          owner_id?: string | null
+          title: string
+        }
+        Update: {
+          agenda_id?: string
+          description?: string | null
+          document_id?: string | null
+          estimated_minutes?: number | null
+          from_template_item_id?: string | null
+          id?: string
+          order_index?: number
+          owner_id?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agenda_items_agenda_id_fkey"
+            columns: ["agenda_id"]
+            isOneToOne: false
+            referencedRelation: "agendas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agenda_items_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agenda_items_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agenda_items_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agenda_items_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agenda_templates: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          department_slug: string | null
+          id: string
+          is_active: boolean
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agenda_templates_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agenda_templates_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agenda_templates_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agenda_templates_department_slug_fkey"
+            columns: ["department_slug"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
+      agendas: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          meeting_id: string
+          published_at: string | null
+          status: string
+          title: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          meeting_id: string
+          published_at?: string | null
+          status?: string
+          title: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          meeting_id?: string
+          published_at?: string | null
+          status?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agendas_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agendas_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agendas_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agendas_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agendas_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agendas_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agendas_meeting_id_fkey"
+            columns: ["meeting_id"]
+            isOneToOne: true
+            referencedRelation: "meetings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_query_log: {
+        Row: {
+          context: Json | null
+          created_at: string
+          id: string
+          query_text: string
+          response_text: string | null
+          user_id: string | null
+        }
+        Insert: {
+          context?: Json | null
+          created_at?: string
+          id?: string
+          query_text: string
+          response_text?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          context?: Json | null
+          created_at?: string
+          id?: string
+          query_text?: string
+          response_text?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_query_log_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_query_log_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_query_log_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       announcement_comments: {
         Row: {
           announcement_id: string
@@ -242,6 +505,61 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      approvals: {
+        Row: {
+          approver_id: string
+          comments: string | null
+          decided_at: string | null
+          entity_id: string
+          entity_type: string
+          id: string
+          status: Database["public"]["Enums"]["approval_status"]
+          step_order: number
+        }
+        Insert: {
+          approver_id: string
+          comments?: string | null
+          decided_at?: string | null
+          entity_id: string
+          entity_type: string
+          id?: string
+          status?: Database["public"]["Enums"]["approval_status"]
+          step_order?: number
+        }
+        Update: {
+          approver_id?: string
+          comments?: string | null
+          decided_at?: string | null
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          status?: Database["public"]["Enums"]["approval_status"]
+          step_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "approvals_approver_id_fkey"
+            columns: ["approver_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "approvals_approver_id_fkey"
+            columns: ["approver_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "approvals_approver_id_fkey"
+            columns: ["approver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       asset_maintenance_logs: {
         Row: {
@@ -566,6 +884,101 @@ export type Database = {
         }
         Relationships: []
       }
+      branch_reports: {
+        Row: {
+          branch: Database["public"]["Enums"]["branch"]
+          data: Json
+          department_slug: string | null
+          id: string
+          period_end: string
+          period_start: string
+          report_type: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          submitted_at: string | null
+          submitted_by: string | null
+        }
+        Insert: {
+          branch: Database["public"]["Enums"]["branch"]
+          data?: Json
+          department_slug?: string | null
+          id?: string
+          period_end: string
+          period_start: string
+          report_type: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          submitted_at?: string | null
+          submitted_by?: string | null
+        }
+        Update: {
+          branch?: Database["public"]["Enums"]["branch"]
+          data?: Json
+          department_slug?: string | null
+          id?: string
+          period_end?: string
+          period_start?: string
+          report_type?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          submitted_at?: string | null
+          submitted_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "branch_reports_department_slug_fkey"
+            columns: ["department_slug"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["slug"]
+          },
+          {
+            foreignKeyName: "branch_reports_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "branch_reports_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "branch_reports_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "branch_reports_submitted_by_fkey"
+            columns: ["submitted_by"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "branch_reports_submitted_by_fkey"
+            columns: ["submitted_by"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "branch_reports_submitted_by_fkey"
+            columns: ["submitted_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       calendar_sync_log: {
         Row: {
           attempts: number
@@ -779,6 +1192,366 @@ export type Database = {
         }
         Relationships: []
       }
+      compliance_alerts: {
+        Row: {
+          alert_type: string
+          compliance_item_id: string
+          id: string
+          recipient_id: string | null
+          sent_at: string
+        }
+        Insert: {
+          alert_type: string
+          compliance_item_id: string
+          id?: string
+          recipient_id?: string | null
+          sent_at?: string
+        }
+        Update: {
+          alert_type?: string
+          compliance_item_id?: string
+          id?: string
+          recipient_id?: string | null
+          sent_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "compliance_alerts_compliance_item_id_fkey"
+            columns: ["compliance_item_id"]
+            isOneToOne: false
+            referencedRelation: "compliance_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "compliance_alerts_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "compliance_alerts_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "compliance_alerts_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      compliance_items: {
+        Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
+          category: string
+          created_at: string
+          created_by: string | null
+          department_slug: string | null
+          due_date: string | null
+          id: string
+          owner_id: string | null
+          related_entity_id: string | null
+          related_entity_type: string | null
+          risk_score: number | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          category: string
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string | null
+          due_date?: string | null
+          id?: string
+          owner_id?: string | null
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          risk_score?: number | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string | null
+          due_date?: string | null
+          id?: string
+          owner_id?: string | null
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          risk_score?: number | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "compliance_items_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "compliance_items_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "compliance_items_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "compliance_items_department_slug_fkey"
+            columns: ["department_slug"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["slug"]
+          },
+          {
+            foreignKeyName: "compliance_items_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "compliance_items_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "compliance_items_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      correspondence: {
+        Row: {
+          assigned_to: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          category: string | null
+          corr_type: string
+          created_at: string
+          created_by: string | null
+          department_slug: string | null
+          direction: string
+          due_date: string | null
+          id: string
+          priority: string
+          recipient: string | null
+          reference_number: string
+          sender: string | null
+          status: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          category?: string | null
+          corr_type: string
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string | null
+          direction: string
+          due_date?: string | null
+          id?: string
+          priority?: string
+          recipient?: string | null
+          reference_number: string
+          sender?: string | null
+          status?: string
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          category?: string | null
+          corr_type?: string
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string | null
+          direction?: string
+          due_date?: string | null
+          id?: string
+          priority?: string
+          recipient?: string | null
+          reference_number?: string
+          sender?: string | null
+          status?: string
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "correspondence_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "correspondence_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "correspondence_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "correspondence_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "correspondence_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "correspondence_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "correspondence_department_slug_fkey"
+            columns: ["department_slug"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
+      correspondence_attachments: {
+        Row: {
+          correspondence_id: string
+          document_id: string
+          id: string
+        }
+        Insert: {
+          correspondence_id: string
+          document_id: string
+          id?: string
+        }
+        Update: {
+          correspondence_id?: string
+          document_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "correspondence_attachments_correspondence_id_fkey"
+            columns: ["correspondence_id"]
+            isOneToOne: false
+            referencedRelation: "correspondence"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "correspondence_attachments_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      correspondence_responses: {
+        Row: {
+          correspondence_id: string
+          document_id: string | null
+          id: string
+          responded_at: string
+          responded_by: string | null
+          response_text: string | null
+        }
+        Insert: {
+          correspondence_id: string
+          document_id?: string | null
+          id?: string
+          responded_at?: string
+          responded_by?: string | null
+          response_text?: string | null
+        }
+        Update: {
+          correspondence_id?: string
+          document_id?: string | null
+          id?: string
+          responded_at?: string
+          responded_by?: string | null
+          response_text?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "correspondence_responses_correspondence_id_fkey"
+            columns: ["correspondence_id"]
+            isOneToOne: false
+            referencedRelation: "correspondence"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "correspondence_responses_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "correspondence_responses_responded_by_fkey"
+            columns: ["responded_by"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "correspondence_responses_responded_by_fkey"
+            columns: ["responded_by"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "correspondence_responses_responded_by_fkey"
+            columns: ["responded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       courses: {
         Row: {
           branch: Database["public"]["Enums"]["branch"] | null
@@ -909,6 +1682,58 @@ export type Database = {
           },
         ]
       }
+      digital_signatures: {
+        Row: {
+          entity_id: string
+          entity_type: string
+          id: string
+          ip_address: string | null
+          signature_data: string
+          signed_at: string
+          signer_id: string
+        }
+        Insert: {
+          entity_id: string
+          entity_type: string
+          id?: string
+          ip_address?: string | null
+          signature_data: string
+          signed_at?: string
+          signer_id: string
+        }
+        Update: {
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          ip_address?: string | null
+          signature_data?: string
+          signed_at?: string
+          signer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "digital_signatures_signer_id_fkey"
+            columns: ["signer_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "digital_signatures_signer_id_fkey"
+            columns: ["signer_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "digital_signatures_signer_id_fkey"
+            columns: ["signer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       direct_messages: {
         Row: {
           body: string
@@ -936,19 +1761,193 @@ export type Database = {
         }
         Relationships: []
       }
+      document_permissions: {
+        Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
+          document_id: string
+          id: string
+          permission: string
+          role: Database["public"]["Enums"]["app_role"] | null
+          user_id: string | null
+        }
+        Insert: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          document_id: string
+          id?: string
+          permission: string
+          role?: Database["public"]["Enums"]["app_role"] | null
+          user_id?: string | null
+        }
+        Update: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          document_id?: string
+          id?: string
+          permission?: string
+          role?: Database["public"]["Enums"]["app_role"] | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_permissions_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_permissions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_permissions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_permissions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_read_confirmations: {
+        Row: {
+          confirmed_at: string
+          document_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          confirmed_at?: string
+          document_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          confirmed_at?: string
+          document_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_read_confirmations_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_read_confirmations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_read_confirmations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_read_confirmations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_versions: {
+        Row: {
+          document_id: string
+          file_name: string | null
+          file_url: string
+          id: string
+          notes: string | null
+          storage_path: string | null
+          uploaded_at: string
+          uploaded_by: string | null
+          version_number: number
+        }
+        Insert: {
+          document_id: string
+          file_name?: string | null
+          file_url: string
+          id?: string
+          notes?: string | null
+          storage_path?: string | null
+          uploaded_at?: string
+          uploaded_by?: string | null
+          version_number: number
+        }
+        Update: {
+          document_id?: string
+          file_name?: string | null
+          file_url?: string
+          id?: string
+          notes?: string | null
+          storage_path?: string | null
+          uploaded_at?: string
+          uploaded_by?: string | null
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_versions_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_versions_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_versions_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_versions_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       documents: {
         Row: {
+          approval_date: string | null
           created_at: string
           department_slug: string | null
           description: string | null
           doc_category: string | null
           doc_number: string | null
           effective_date: string | null
+          expiry_date: string | null
           file_name: string
           file_size: number | null
           file_type: string | null
           file_url: string
           id: string
+          policy_type: string | null
           review_date: string | null
           status: string
           storage_path: string
@@ -959,17 +1958,20 @@ export type Database = {
           version: string
         }
         Insert: {
+          approval_date?: string | null
           created_at?: string
           department_slug?: string | null
           description?: string | null
           doc_category?: string | null
           doc_number?: string | null
           effective_date?: string | null
+          expiry_date?: string | null
           file_name: string
           file_size?: number | null
           file_type?: string | null
           file_url: string
           id?: string
+          policy_type?: string | null
           review_date?: string | null
           status?: string
           storage_path: string
@@ -980,17 +1982,20 @@ export type Database = {
           version?: string
         }
         Update: {
+          approval_date?: string | null
           created_at?: string
           department_slug?: string | null
           description?: string | null
           doc_category?: string | null
           doc_number?: string | null
           effective_date?: string | null
+          expiry_date?: string | null
           file_name?: string
           file_size?: number | null
           file_type?: string | null
           file_url?: string
           id?: string
+          policy_type?: string | null
           review_date?: string | null
           status?: string
           storage_path?: string
@@ -1612,6 +2617,359 @@ export type Database = {
           },
         ]
       }
+      meeting_apologies: {
+        Row: {
+          created_at: string
+          id: string
+          meeting_id: string
+          reason: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          meeting_id: string
+          reason?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          meeting_id?: string
+          reason?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meeting_apologies_meeting_id_fkey"
+            columns: ["meeting_id"]
+            isOneToOne: false
+            referencedRelation: "meetings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meeting_apologies_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meeting_apologies_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meeting_apologies_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meeting_documents: {
+        Row: {
+          document_id: string
+          document_role: string
+          id: string
+          meeting_id: string
+        }
+        Insert: {
+          document_id: string
+          document_role: string
+          id?: string
+          meeting_id: string
+        }
+        Update: {
+          document_id?: string
+          document_role?: string
+          id?: string
+          meeting_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meeting_documents_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meeting_documents_meeting_id_fkey"
+            columns: ["meeting_id"]
+            isOneToOne: false
+            referencedRelation: "meetings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meeting_visitors: {
+        Row: {
+          contact: string | null
+          id: string
+          meeting_id: string
+          name: string
+          organization: string | null
+        }
+        Insert: {
+          contact?: string | null
+          id?: string
+          meeting_id: string
+          name: string
+          organization?: string | null
+        }
+        Update: {
+          contact?: string | null
+          id?: string
+          meeting_id?: string
+          name?: string
+          organization?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meeting_visitors_meeting_id_fkey"
+            columns: ["meeting_id"]
+            isOneToOne: false
+            referencedRelation: "meetings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meeting_vote_records: {
+        Row: {
+          id: string
+          user_id: string
+          vote_choice: string
+          vote_id: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          vote_choice: string
+          vote_id: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          vote_choice?: string
+          vote_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meeting_vote_records_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meeting_vote_records_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meeting_vote_records_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meeting_vote_records_vote_id_fkey"
+            columns: ["vote_id"]
+            isOneToOne: false
+            referencedRelation: "meeting_votes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meeting_votes: {
+        Row: {
+          abstentions: number | null
+          agenda_item_id: string | null
+          created_at: string
+          id: string
+          meeting_id: string
+          motion_text: string
+          recorded_by: string | null
+          result: string | null
+          vote_type: string
+          votes_against: number | null
+          votes_for: number | null
+        }
+        Insert: {
+          abstentions?: number | null
+          agenda_item_id?: string | null
+          created_at?: string
+          id?: string
+          meeting_id: string
+          motion_text: string
+          recorded_by?: string | null
+          result?: string | null
+          vote_type: string
+          votes_against?: number | null
+          votes_for?: number | null
+        }
+        Update: {
+          abstentions?: number | null
+          agenda_item_id?: string | null
+          created_at?: string
+          id?: string
+          meeting_id?: string
+          motion_text?: string
+          recorded_by?: string | null
+          result?: string | null
+          vote_type?: string
+          votes_against?: number | null
+          votes_for?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meeting_votes_agenda_item_id_fkey"
+            columns: ["agenda_item_id"]
+            isOneToOne: false
+            referencedRelation: "agenda_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meeting_votes_meeting_id_fkey"
+            columns: ["meeting_id"]
+            isOneToOne: false
+            referencedRelation: "meetings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meeting_votes_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meeting_votes_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meeting_votes_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meetings: {
+        Row: {
+          chairperson_id: string | null
+          created_at: string
+          created_by: string | null
+          event_id: string
+          id: string
+          secretary_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          chairperson_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          event_id: string
+          id?: string
+          secretary_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          chairperson_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          event_id?: string
+          id?: string
+          secretary_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meetings_chairperson_id_fkey"
+            columns: ["chairperson_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meetings_chairperson_id_fkey"
+            columns: ["chairperson_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meetings_chairperson_id_fkey"
+            columns: ["chairperson_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meetings_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meetings_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meetings_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meetings_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: true
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meetings_secretary_id_fkey"
+            columns: ["secretary_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meetings_secretary_id_fkey"
+            columns: ["secretary_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meetings_secretary_id_fkey"
+            columns: ["secretary_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       membership_lifecycle: {
         Row: {
           created_at: string
@@ -1657,6 +3015,249 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      minute_decisions: {
+        Row: {
+          agenda_item_id: string | null
+          decision_text: string
+          id: string
+          minute_id: string
+          recording_timestamp_seconds: number | null
+        }
+        Insert: {
+          agenda_item_id?: string | null
+          decision_text: string
+          id?: string
+          minute_id: string
+          recording_timestamp_seconds?: number | null
+        }
+        Update: {
+          agenda_item_id?: string | null
+          decision_text?: string
+          id?: string
+          minute_id?: string
+          recording_timestamp_seconds?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "minute_decisions_agenda_item_id_fkey"
+            columns: ["agenda_item_id"]
+            isOneToOne: false
+            referencedRelation: "agenda_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "minute_decisions_minute_id_fkey"
+            columns: ["minute_id"]
+            isOneToOne: false
+            referencedRelation: "minutes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      minute_speakers: {
+        Row: {
+          id: string
+          minute_id: string
+          speaker_label: string
+          user_id: string | null
+        }
+        Insert: {
+          id?: string
+          minute_id: string
+          speaker_label: string
+          user_id?: string | null
+        }
+        Update: {
+          id?: string
+          minute_id?: string
+          speaker_label?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "minute_speakers_minute_id_fkey"
+            columns: ["minute_id"]
+            isOneToOne: false
+            referencedRelation: "minutes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "minute_speakers_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "minute_speakers_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "minute_speakers_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      minute_versions: {
+        Row: {
+          change_summary: string | null
+          content: Json
+          edited_at: string
+          edited_by: string | null
+          id: string
+          minute_id: string
+          version_number: number
+        }
+        Insert: {
+          change_summary?: string | null
+          content: Json
+          edited_at?: string
+          edited_by?: string | null
+          id?: string
+          minute_id: string
+          version_number: number
+        }
+        Update: {
+          change_summary?: string | null
+          content?: Json
+          edited_at?: string
+          edited_by?: string | null
+          id?: string
+          minute_id?: string
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "minute_versions_edited_by_fkey"
+            columns: ["edited_by"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "minute_versions_edited_by_fkey"
+            columns: ["edited_by"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "minute_versions_edited_by_fkey"
+            columns: ["edited_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "minute_versions_minute_id_fkey"
+            columns: ["minute_id"]
+            isOneToOne: false
+            referencedRelation: "minutes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      minutes: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          content: Json
+          created_at: string
+          created_by: string | null
+          id: string
+          meeting_id: string
+          recording_url: string | null
+          status: string
+          transcription_status: string | null
+          transcription_text: string | null
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          content?: Json
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          meeting_id: string
+          recording_url?: string | null
+          status?: string
+          transcription_status?: string | null
+          transcription_text?: string | null
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          content?: Json
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          meeting_id?: string
+          recording_url?: string | null
+          status?: string
+          transcription_status?: string | null
+          transcription_text?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "minutes_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "minutes_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "minutes_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "minutes_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "minutes_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "minutes_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "minutes_meeting_id_fkey"
+            columns: ["meeting_id"]
+            isOneToOne: true
+            referencedRelation: "meetings"
             referencedColumns: ["id"]
           },
         ]
@@ -1843,6 +3444,85 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "departments"
             referencedColumns: ["slug"]
+          },
+        ]
+      }
+      resolutions: {
+        Row: {
+          agenda_item_id: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          meeting_id: string
+          minute_id: string | null
+          resolution_number: string | null
+          resolution_text: string
+          status: string
+        }
+        Insert: {
+          agenda_item_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          meeting_id: string
+          minute_id?: string | null
+          resolution_number?: string | null
+          resolution_text: string
+          status?: string
+        }
+        Update: {
+          agenda_item_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          meeting_id?: string
+          minute_id?: string | null
+          resolution_number?: string | null
+          resolution_text?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resolutions_agenda_item_id_fkey"
+            columns: ["agenda_item_id"]
+            isOneToOne: false
+            referencedRelation: "agenda_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resolutions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resolutions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resolutions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resolutions_meeting_id_fkey"
+            columns: ["meeting_id"]
+            isOneToOne: false
+            referencedRelation: "meetings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resolutions_minute_id_fkey"
+            columns: ["minute_id"]
+            isOneToOne: false
+            referencedRelation: "minutes"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -2181,6 +3861,7 @@ export type Database = {
           recurrence_interval: number
           recurrence_pattern: string | null
           requires_approval: boolean
+          resolution_id: string | null
           status: string
           title: string
           updated_at: string
@@ -2206,6 +3887,7 @@ export type Database = {
           recurrence_interval?: number
           recurrence_pattern?: string | null
           requires_approval?: boolean
+          resolution_id?: string | null
           status?: string
           title: string
           updated_at?: string
@@ -2231,6 +3913,7 @@ export type Database = {
           recurrence_interval?: number
           recurrence_pattern?: string | null
           requires_approval?: boolean
+          resolution_id?: string | null
           status?: string
           title?: string
           updated_at?: string
@@ -2241,6 +3924,13 @@ export type Database = {
             columns: ["parent_task_id"]
             isOneToOne: false
             referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_resolution_id_fkey"
+            columns: ["resolution_id"]
+            isOneToOne: false
+            referencedRelation: "resolutions"
             referencedColumns: ["id"]
           },
         ]
@@ -2566,6 +4256,26 @@ export type Database = {
           title: string
         }[]
       }
+      gov_can_access_branch: {
+        Args: {
+          p_branch: Database["public"]["Enums"]["branch"]
+          p_user: string
+        }
+        Returns: boolean
+      }
+      gov_can_access_department: {
+        Args: { p_dept: string; p_user: string }
+        Returns: boolean
+      }
+      gov_has_role: {
+        Args: {
+          p_role: Database["public"]["Enums"]["app_role"]
+          p_user: string
+        }
+        Returns: boolean
+      }
+      gov_is_admin: { Args: { p_user: string }; Returns: boolean }
+      gov_user_department_slugs: { Args: { p_user: string }; Returns: string[] }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
