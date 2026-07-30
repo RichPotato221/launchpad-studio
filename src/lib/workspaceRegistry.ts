@@ -51,6 +51,10 @@ export const workspaceRegistry: Record<string, Entry> = {
     label: "Check-In / Check-Out",
     component: lazy(() => import("@/components/workspaces/ChildrensWorkspace")),
   },
+  secretary: {
+    label: "Meetings, Agendas & Minutes",
+    component: lazy(() => import("@/components/workspaces/SecretaryWorkspace")),
+  },
   finance: {
     label: "Expense Claims",
     component: lazy(() => import("@/components/workspaces/FinanceWorkspace")),
