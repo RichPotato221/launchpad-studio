@@ -17,6 +17,7 @@ const nav = [
   { to: "/events", label: "Events" },
   { to: "/attendance", label: "Attendance" },
   { to: "/governance", label: "Governance" },
+  { to: "/secretariat", label: "Secretariat" },
   { to: "/senior-pastor-cockpit", label: "Cockpit" },
   { to: "/documents", label: "Documents" },
   { to: "/vault", label: "Central Vault" },
