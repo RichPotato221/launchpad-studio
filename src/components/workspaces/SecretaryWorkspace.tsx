@@ -211,3 +211,476 @@ has context menu
 
 
 has context menu
+
+/* ─────────────────────────────────────────────────────────
+* MEETING DETAIL — Agenda / Minutes / Resolutions
+* ───────────────────────────────────────────────────────── */
+ 
+function MeetingDetail({
+  meetingId,
+  currentUserId,
+  onBack,
+}: {
+  meetingId: string;
+  currentUserId: string;
+  onBack: () => void;
+}) {
+  const meeting = useQuery({
+    queryKey: ["secretary-meeting", meetingId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("meetings")
+        .select("*, events(title, start_time)")
+        .eq("id", meetingId)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+ 
+  return (
+    <div className="space-y-6">
+      <button onClick={onBack} className="text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground">
+        ← All meetings
+      </button>
+ 
+      <div>
+        <h3 className="font-serif text-2xl">{meeting.data?.events?.title ?? "Meeting"}</h3>
+        <p className="text-xs text-muted-foreground">
+          {meeting.data?.events?.start_time ? new Date(meeting.data.events.start_time).toLocaleString() : ""} · status: {meeting.data?.status}
+        </p>
+      </div>
+ 
+      <Tabs defaultValue="agenda">
+        <TabsList>
+          <TabsTrigger value="agenda">Agenda</TabsTrigger>
+          <TabsTrigger value="minutes">Minutes</TabsTrigger>
+          <TabsTrigger value="resolutions">Resolutions</TabsTrigger>
+        </TabsList>
+ 
+        <TabsContent value="agenda" className="mt-6">
+          <AgendaPanel meetingId={meetingId} currentUserId={currentUserId} />
+        </TabsContent>
+        <TabsContent value="minutes" className="mt-6">
+          <MinutesPanel meetingId={meetingId} currentUserId={currentUserId} />
+        </TabsContent>
+        <TabsContent value="resolutions" className="mt-6">
+          <ResolutionsPanel meetingId={meetingId} currentUserId={currentUserId} />
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}
+ 
+/* ─────────────────────────────────────────────────────────
+* AGENDA + AGENDA ITEMS
+* ───────────────────────────────────────────────────────── */
+ 
+function AgendaPanel({ meetingId, currentUserId }: { meetingId: string; currentUserId: string }) {
+  const queryClient = useQueryClient();
+  const [itemForm, setItemForm] = useState({ title: "", description: "", estimated_minutes: "", owner_id: "" });
+  const profiles = useApprovedProfiles();
+ 
+  const agenda = useQuery({
+    queryKey: ["secretary-agenda", meetingId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("agendas")
+        .select("*")
+        .eq("meeting_id", meetingId)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+ 
+  const items = useQuery({
+    enabled: !!agenda.data?.id,
+    queryKey: ["secretary-agenda-items", agenda.data?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("agenda_items")
+        .select("*")
+        .eq("agenda_id", agenda.data!.id)
+        .order("order_index");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+ 
+  const invalidate = () => {
+    queryClient.invalidateQueries({ queryKey: ["secretary-agenda", meetingId] });
+    queryClient.invalidateQueries({ queryKey: ["secretary-agenda-items", agenda.data?.id] });
+  };
+ 
+  const createAgenda = async () => {
+    const { error } = await supabase.from("agendas").insert({
+      meeting_id: meetingId,
+      title: "Meeting Agenda",
+      status: "draft",
+      created_by: currentUserId,
+    });
+    if (error) return toast.error(error.message);
+    toast.success("Agenda started");
+    invalidate();
+  };
+ 
+  const addItem = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!agenda.data) return;
+    const nextOrder = (items.data?.length ?? 0) + 1;
+    const { error } = await supabase.from("agenda_items").insert({
+      agenda_id: agenda.data.id,
+      order_index: nextOrder,
+      title: itemForm.title,
+      description: itemForm.description || null,
+      estimated_minutes: itemForm.estimated_minutes ? Number(itemForm.estimated_minutes) : null,
+      owner_id: itemForm.owner_id || null,
+    });
+    if (error) return toast.error(error.message);
+    toast.success("Item added");
+    setItemForm({ title: "", description: "", estimated_minutes: "", owner_id: "" });
+    invalidate();
+  };
+ 
+  const approveAgenda = async () => {
+    const { error } = await supabase
+      .from("agendas")
+      .update({ status: "approved", approved_by: currentUserId, approved_at: new Date().toISOString() })
+      .eq("id", agenda.data!.id);
+    if (error) return toast.error(error.message);
+    toast.success("Agenda approved");
+    invalidate();
+  };
+ 
+  const publishAgenda = async () => {
+    const { error } = await supabase
+      .from("agendas")
+      .update({ status: "published", published_at: new Date().toISOString() })
+      .eq("id", agenda.data!.id);
+    if (error) return toast.error(error.message);
+    toast.success("Agenda published — attendees can now view it");
+    invalidate();
+  };
+ 
+  if (!agenda.data) {
+    return (
+      <Card className="p-8 text-center">
+        <p className="text-sm text-muted-foreground">No agenda started for this meeting yet.</p>
+        <Button className="mt-4" onClick={createAgenda}>Start Agenda</Button>
+      </Card>
+    );
+  }
+ 
+  return (
+    <div className="space-y-4">
+      <Card className="flex items-center justify-between p-5">
+        <div>
+          <p className="font-serif text-lg">{agenda.data.title}</p>
+          <p className="text-xs text-muted-foreground">status: {agenda.data.status}</p>
+        </div>
+        <div className="flex gap-2">
+          {agenda.data.status === "draft" && <Button size="sm" onClick={approveAgenda}>Approve</Button>}
+          {agenda.data.status === "approved" && <Button size="sm" onClick={publishAgenda}>Publish</Button>}
+        </div>
+      </Card>
+ 
+      <Card className="p-6">
+        <p className="text-xs uppercase tracking-widest text-muted-foreground">Add agenda item</p>
+        <form onSubmit={addItem} className="mt-4 grid gap-4 md:grid-cols-2">
+          <div className="md:col-span-2">
+            <Label>Title</Label>
+            <Input required value={itemForm.title} onChange={(e) => setItemForm({ ...itemForm, title: e.target.value })} />
+          </div>
+          <div className="md:col-span-2">
+            <Label>Description</Label>
+            <Textarea rows={2} value={itemForm.description} onChange={(e) => setItemForm({ ...itemForm, description: e.target.value })} />
+          </div>
+          <div>
+            <Label>Estimated minutes</Label>
+            <Input type="number" value={itemForm.estimated_minutes} onChange={(e) => setItemForm({ ...itemForm, estimated_minutes: e.target.value })} />
+          </div>
+          <div>
+            <Label>Discussion owner</Label>
+            <Select value={itemForm.owner_id} onValueChange={(v) => setItemForm({ ...itemForm, owner_id: v })}>
+              <SelectTrigger><SelectValue placeholder="Optional…" /></SelectTrigger>
+              <SelectContent>
+                {(profiles.data ?? []).map((p: any) => <SelectItem key={p.id} value={p.id}>{p.full_name}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="md:col-span-2">
+            <Button type="submit">Add Item</Button>
+          </div>
+        </form>
+      </Card>
+ 
+      <div className="space-y-2">
+        {(items.data ?? []).map((it: any) => (
+          <Card key={it.id} className="flex items-start gap-3 p-4">
+            <span className="font-mono text-xs text-muted-foreground">{String(it.order_index).padStart(2, "0")}</span>
+            <div className="flex-1">
+              <p className="text-sm font-medium">{it.title}</p>
+              {it.description && <p className="mt-1 text-xs text-muted-foreground">{it.description}</p>}
+            </div>
+            {it.estimated_minutes && <span className="text-xs text-muted-foreground">{it.estimated_minutes} min</span>}
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
+* MINUTES + MINUTE VERSIONS
+* ───────────────────────────────────────────────────────── */
+ 
+function MinutesPanel({ meetingId, currentUserId }: { meetingId: string; currentUserId: string }) {
+  const queryClient = useQueryClient();
+  const [draft, setDraft] = useState("");
+  const [changeSummary, setChangeSummary] = useState("");
+  const [saving, setSaving] = useState(false);
+ 
+  const minutes = useQuery({
+    queryKey: ["secretary-minutes", meetingId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("minutes")
+        .select("*")
+        .eq("meeting_id", meetingId)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+ 
+  const versions = useQuery({
+    enabled: !!minutes.data?.id,
+    queryKey: ["secretary-minute-versions", minutes.data?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("minute_versions")
+        .select("*")
+        .eq("minute_id", minutes.data!.id)
+        .order("version_number", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+ 
+  const invalidate = () => {
+    queryClient.invalidateQueries({ queryKey: ["secretary-minutes", meetingId] });
+    queryClient.invalidateQueries({ queryKey: ["secretary-minute-versions", minutes.data?.id] });
+  };
+ 
+  const startMinutes = async () => {
+    const { error } = await supabase.from("minutes").insert({
+      meeting_id: meetingId,
+      content: { text: "" },
+      status: "draft",
+      transcription_status: "not_started",
+      created_by: currentUserId,
+    });
+    if (error) return toast.error(error.message);
+    toast.success("Minutes started");
+    invalidate();
+  };
+ 
+  const saveVersion = async () => {
+    if (!minutes.data) return;
+    setSaving(true);
+    const nextVersion = (versions.data?.[0]?.version_number ?? 0) + 1;
+    const content = { text: draft };
+ 
+    const [{ error: minutesError }, { error: versionError }] = await Promise.all([
+      supabase.from("minutes").update({ content }).eq("id", minutes.data.id),
+      supabase.from("minute_versions").insert({
+        minute_id: minutes.data.id,
+        version_number: nextVersion,
+        content,
+        edited_by: currentUserId,
+        change_summary: changeSummary || null,
+      }),
+    ]);
+    setSaving(false);
+    if (minutesError || versionError) return toast.error((minutesError ?? versionError)!.message);
+    toast.success(`Saved as version ${nextVersion}`);
+    setChangeSummary("");
+    invalidate();
+  };
+ 
+  const approveMinutes = async () => {
+    const { error } = await supabase
+      .from("minutes")
+      .update({ status: "approved", approved_by: currentUserId, approved_at: new Date().toISOString() })
+      .eq("id", minutes.data!.id);
+    if (error) return toast.error(error.message);
+    toast.success("Minutes approved");
+    invalidate();
+  };
+ 
+  const updateTranscriptionStatus = async (status: string) => {
+    const { error } = await supabase.from("minutes").update({ transcription_status: status }).eq("id", minutes.data!.id);
+    if (error) return toast.error(error.message);
+    invalidate();
+  };
+ 
+  if (!minutes.data) {
+    return (
+      <Card className="p-8 text-center">
+        <p className="text-sm text-muted-foreground">No minutes started for this meeting yet.</p>
+        <Button className="mt-4" onClick={startMinutes}>Start Minutes</Button>
+      </Card>
+    );
+  }
+ 
+  const currentText = (minutes.data.content as any)?.text ?? "";
+ 
+  return (
+    <div className="space-y-4">
+      <Card className="flex items-center justify-between p-5">
+        <p className="text-sm">status: <strong>{minutes.data.status}</strong></p>
+        <div className="flex items-center gap-3">
+          <Select value={minutes.data.transcription_status ?? "not_started"} onValueChange={updateTranscriptionStatus}>
+            <SelectTrigger className="h-8 w-40 text-xs"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="not_started">Transcription: not started</SelectItem>
+              <SelectItem value="in_progress">Transcription: in progress</SelectItem>
+              <SelectItem value="complete">Transcription: complete</SelectItem>
+              <SelectItem value="failed">Transcription: failed</SelectItem>
+            </SelectContent>
+          </Select>
+          {minutes.data.status !== "approved" && <Button size="sm" onClick={approveMinutes}>Approve</Button>}
+        </div>
+      </Card>
+ 
+      <Card className="p-6">
+        <Label>Minutes content</Label>
+        <Textarea
+          rows={10}
+          defaultValue={currentText}
+          onChange={(e) => setDraft(e.target.value)}
+          placeholder="Type minutes here — each save creates a new version, nothing is overwritten."
+        />
+        <div className="mt-3 flex items-end gap-3">
+          <div className="flex-1">
+            <Label className="text-xs">Change summary (optional)</Label>
+            <Input value={changeSummary} onChange={(e) => setChangeSummary(e.target.value)} placeholder="e.g. Added action items from discussion" />
+          </div>
+          <Button onClick={saveVersion} disabled={saving}>{saving ? "Saving…" : "Save New Version"}</Button>
+        </div>
+      </Card>
+ 
+      <div>
+        <p className="text-xs uppercase tracking-widest text-muted-foreground">Version history</p>
+        <div className="mt-2 space-y-2">
+          {(versions.data ?? []).map((v: any) => (
+            <Card key={v.id} className="p-4 text-sm">
+              <div className="flex justify-between">
+                <span>Version {v.version_number}</span>
+                <span className="text-xs text-muted-foreground">{new Date(v.edited_at).toLocaleString()}</span>
+              </div>
+              {v.change_summary && <p className="mt-1 text-xs text-muted-foreground">{v.change_summary}</p>}
+            </Card>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+ 
+/* ─────────────────────────────────────────────────────────
+* RESOLUTIONS
+* ───────────────────────────────────────────────────────── */
+ 
+function ResolutionsPanel({ meetingId, currentUserId }: { meetingId: string; currentUserId: string }) {
+  const queryClient = useQueryClient();
+  const [text, setText] = useState("");
+  const [saving, setSaving] = useState(false);
+ 
+  const resolutions = useQuery({
+    queryKey: ["secretary-resolutions", meetingId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("resolutions")
+        .select("*")
+        .eq("meeting_id", meetingId)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+ 
+  // Resolutions can optionally link to the meeting's minutes row —
+  // fetched here just to attach minute_id automatically if it exists.
+  const minutes = useQuery({
+    queryKey: ["secretary-minutes-for-resolution", meetingId],
+    queryFn: async () => {
+      const { data } = await supabase.from("minutes").select("id").eq("meeting_id", meetingId).maybeSingle();
+      return data;
+    },
+  });
+ 
+  const addResolution = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!text.trim()) return;
+    setSaving(true);
+    const { error } = await supabase.from("resolutions").insert({
+      meeting_id: meetingId,
+      minute_id: minutes.data?.id ?? null,
+      resolution_text: text.trim(),
+      status: "open",
+      created_by: currentUserId,
+    });
+    setSaving(false);
+    if (error) return toast.error(error.message);
+    toast.success("Resolution logged");
+    setText("");
+    queryClient.invalidateQueries({ queryKey: ["secretary-resolutions", meetingId] });
+  };
+ 
+  const toggleStatus = async (id: string, current: string) => {
+    const { error } = await supabase
+      .from("resolutions")
+      .update({ status: current === "open" ? "closed" : "open" })
+      .eq("id", id);
+    if (error) return toast.error(error.message);
+    queryClient.invalidateQueries({ queryKey: ["secretary-resolutions", meetingId] });
+  };
+ 
+  return (
+    <div className="space-y-4">
+      <Card className="p-6">
+        <p className="text-xs uppercase tracking-widest text-muted-foreground">Log a resolution</p>
+        <form onSubmit={addResolution} className="mt-4 flex items-end gap-3">
+          <Textarea
+            rows={2}
+            className="flex-1"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="e.g. Approved 2027 budget allocation for Youth Ministry"
+          />
+          <Button type="submit" disabled={saving}>{saving ? "Saving…" : "Log Resolution"}</Button>
+        </form>
+      </Card>
+ 
+      <div className="space-y-2">
+        {(resolutions.data ?? []).map((r: any) => (
+          <Card key={r.id} className="flex items-start justify-between gap-3 p-4">
+            <p className="flex-1 text-sm">{r.resolution_text}</p>
+            <Button size="sm" variant="outline" onClick={() => toggleStatus(r.id, r.status)}>
+              {r.status === "open" ? "Mark Closed" : "Reopen"}
+            </Button>
+          </Card>
+        ))}
+        {(resolutions.data ?? []).length === 0 && (
+          <Card className="p-6 text-center text-sm text-muted-foreground">No resolutions logged yet.</Card>
+        )}
+      </div>
+    </div>
+  );
+}
+has context menu
+
+
+has context menu
