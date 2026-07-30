@@ -1361,6 +1361,7 @@ export type Database = {
           priority: string
           recipient: string | null
           reference_number: string
+          responded_at: string | null
           sender: string | null
           status: string
           subject: string
@@ -1380,6 +1381,7 @@ export type Database = {
           priority?: string
           recipient?: string | null
           reference_number: string
+          responded_at?: string | null
           sender?: string | null
           status?: string
           subject: string
@@ -1399,6 +1401,7 @@ export type Database = {
           priority?: string
           recipient?: string | null
           reference_number?: string
+          responded_at?: string | null
           sender?: string | null
           status?: string
           subject?: string
@@ -3450,36 +3453,57 @@ export type Database = {
       resolutions: {
         Row: {
           agenda_item_id: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          closed_at: string | null
           created_at: string
           created_by: string | null
+          department_slug: string | null
+          due_date: string | null
           id: string
           meeting_id: string
           minute_id: string | null
+          owner_id: string | null
+          priority: string
           resolution_number: string | null
           resolution_text: string
           status: string
+          updated_at: string
         }
         Insert: {
           agenda_item_id?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          closed_at?: string | null
           created_at?: string
           created_by?: string | null
+          department_slug?: string | null
+          due_date?: string | null
           id?: string
           meeting_id: string
           minute_id?: string | null
+          owner_id?: string | null
+          priority?: string
           resolution_number?: string | null
           resolution_text: string
           status?: string
+          updated_at?: string
         }
         Update: {
           agenda_item_id?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          closed_at?: string | null
           created_at?: string
           created_by?: string | null
+          department_slug?: string | null
+          due_date?: string | null
           id?: string
           meeting_id?: string
           minute_id?: string | null
+          owner_id?: string | null
+          priority?: string
           resolution_number?: string | null
           resolution_text?: string
           status?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -4129,6 +4153,10 @@ export type Database = {
         Returns: undefined
       }
       can_access_admin_panel: { Args: { _user_id: string }; Returns: boolean }
+      can_manage_meeting: {
+        Args: { _meeting_id: string; _user_id: string }
+        Returns: boolean
+      }
       can_post_cross_branch: { Args: { _user_id: string }; Returns: boolean }
       can_view_all_kpis: { Args: { _user_id: string }; Returns: boolean }
       can_view_checkup_watch: { Args: { _user_id: string }; Returns: boolean }
@@ -4284,6 +4312,7 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      is_approved_member: { Args: { _user_id: string }; Returns: boolean }
       is_dept_branch_member_or_admin: {
         Args: { _branch: Database["public"]["Enums"]["branch"]; _slug: string }
         Returns: boolean
@@ -4291,6 +4320,7 @@ export type Database = {
       is_dept_member: { Args: { _slug: string }; Returns: boolean }
       is_dept_member_or_admin: { Args: { _slug: string }; Returns: boolean }
       is_head_office: { Args: { _user_id: string }; Returns: boolean }
+      is_secretariat: { Args: { _user_id: string }; Returns: boolean }
       list_conversations: {
         Args: never
         Returns: {
