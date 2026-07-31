@@ -979,6 +979,98 @@ export type Database = {
           },
         ]
       }
+      budget_lines: {
+        Row: {
+          budget_id: string
+          category: string
+          created_at: string
+          id: string
+          line_type: string
+          notes: string | null
+          planned_amount: number
+          updated_at: string
+        }
+        Insert: {
+          budget_id: string
+          category: string
+          created_at?: string
+          id?: string
+          line_type?: string
+          notes?: string | null
+          planned_amount?: number
+          updated_at?: string
+        }
+        Update: {
+          budget_id?: string
+          category?: string
+          created_at?: string
+          id?: string
+          line_type?: string
+          notes?: string | null
+          planned_amount?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budget_lines_budget_id_fkey"
+            columns: ["budget_id"]
+            isOneToOne: false
+            referencedRelation: "budgets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      budgets: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          archived_at: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          created_at: string
+          created_by: string | null
+          department_slug: string | null
+          fiscal_year: number
+          id: string
+          name: string
+          notes: string | null
+          status: string
+          total_amount: number
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          archived_at?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string | null
+          fiscal_year: number
+          id?: string
+          name: string
+          notes?: string | null
+          status?: string
+          total_amount?: number
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          archived_at?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string | null
+          fiscal_year?: number
+          id?: string
+          name?: string
+          notes?: string | null
+          status?: string
+          total_amount?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       calendar_sync_log: {
         Row: {
           attempts: number
@@ -2287,6 +2379,7 @@ export type Database = {
           amount: number
           approved_by_chair: string | null
           approved_by_senior: string | null
+          archived_at: string | null
           branch: Database["public"]["Enums"]["branch"] | null
           claim_type: string | null
           claimant_id: string
@@ -2294,7 +2387,10 @@ export type Database = {
           department_slug: string
           description: string
           id: string
+          ministry: string | null
+          paid_at: string | null
           receipt_url: string | null
+          reference_number: string | null
           status: string
           updated_at: string
         }
@@ -2302,6 +2398,7 @@ export type Database = {
           amount: number
           approved_by_chair?: string | null
           approved_by_senior?: string | null
+          archived_at?: string | null
           branch?: Database["public"]["Enums"]["branch"] | null
           claim_type?: string | null
           claimant_id: string
@@ -2309,7 +2406,10 @@ export type Database = {
           department_slug: string
           description: string
           id?: string
+          ministry?: string | null
+          paid_at?: string | null
           receipt_url?: string | null
+          reference_number?: string | null
           status?: string
           updated_at?: string
         }
@@ -2317,6 +2417,7 @@ export type Database = {
           amount?: number
           approved_by_chair?: string | null
           approved_by_senior?: string | null
+          archived_at?: string | null
           branch?: Database["public"]["Enums"]["branch"] | null
           claim_type?: string | null
           claimant_id?: string
@@ -2324,7 +2425,10 @@ export type Database = {
           department_slug?: string
           description?: string
           id?: string
+          ministry?: string | null
+          paid_at?: string | null
           receipt_url?: string | null
+          reference_number?: string | null
           status?: string
           updated_at?: string
         }
@@ -2333,7 +2437,11 @@ export type Database = {
       finance_entries: {
         Row: {
           amount: number | null
+          approved_at: string | null
+          approved_by: string | null
+          archived_at: string | null
           branch: Database["public"]["Enums"]["branch"] | null
+          category: string | null
           created_at: string
           created_by: string
           department_slug: string
@@ -2343,13 +2451,23 @@ export type Database = {
           id: string
           kind: string
           member_id: string | null
+          ministry: string | null
           notes: string | null
+          posting_date: string | null
+          reference_number: string | null
+          status: string
           title: string
+          transaction_no: string | null
           updated_at: string
+          updated_by: string | null
         }
         Insert: {
           amount?: number | null
+          approved_at?: string | null
+          approved_by?: string | null
+          archived_at?: string | null
           branch?: Database["public"]["Enums"]["branch"] | null
+          category?: string | null
           created_at?: string
           created_by: string
           department_slug?: string
@@ -2359,13 +2477,23 @@ export type Database = {
           id?: string
           kind: string
           member_id?: string | null
+          ministry?: string | null
           notes?: string | null
+          posting_date?: string | null
+          reference_number?: string | null
+          status?: string
           title: string
+          transaction_no?: string | null
           updated_at?: string
+          updated_by?: string | null
         }
         Update: {
           amount?: number | null
+          approved_at?: string | null
+          approved_by?: string | null
+          archived_at?: string | null
           branch?: Database["public"]["Enums"]["branch"] | null
+          category?: string | null
           created_at?: string
           created_by?: string
           department_slug?: string
@@ -2375,9 +2503,15 @@ export type Database = {
           id?: string
           kind?: string
           member_id?: string | null
+          ministry?: string | null
           notes?: string | null
+          posting_date?: string | null
+          reference_number?: string | null
+          status?: string
           title?: string
+          transaction_no?: string | null
           updated_at?: string
+          updated_by?: string | null
         }
         Relationships: [
           {
@@ -4195,6 +4329,19 @@ export type Database = {
           total_present: number
         }[]
       }
+      get_budget_utilisation: {
+        Args: { _fiscal_year?: number }
+        Returns: {
+          actual: number
+          branch: Database["public"]["Enums"]["branch"]
+          budget_id: string
+          department_slug: string
+          fiscal_year: number
+          name: string
+          planned: number
+          utilisation_pct: number
+        }[]
+      }
       get_department_performance: {
         Args: never
         Returns: {
@@ -4202,6 +4349,20 @@ export type Database = {
           branch: Database["public"]["Enums"]["branch"]
           department_slug: string
           kpi_count: number
+        }[]
+      }
+      get_finance_summary: {
+        Args: { _months?: number }
+        Returns: {
+          cash_position: number
+          expense_this_month: number
+          giving_this_month: number
+          giving_today: number
+          income_this_month: number
+          outstanding_payments: number
+          pending_approvals: number
+          total_expense: number
+          total_income: number
         }[]
       }
       get_financial_trend: {
@@ -4319,6 +4480,7 @@ export type Database = {
       }
       is_dept_member: { Args: { _slug: string }; Returns: boolean }
       is_dept_member_or_admin: { Args: { _slug: string }; Returns: boolean }
+      is_finance_officer: { Args: { _user_id: string }; Returns: boolean }
       is_head_office: { Args: { _user_id: string }; Returns: boolean }
       is_secretariat: { Args: { _user_id: string }; Returns: boolean }
       list_conversations: {
