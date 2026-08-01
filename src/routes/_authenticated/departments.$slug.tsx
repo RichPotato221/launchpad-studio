@@ -46,7 +46,7 @@ function DepartmentPortal() {
 
   
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
+    <div className="mx-auto w-full max-w-[1800px] px-4 py-10 md:px-8">
       <Link to="/departments" className="text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground">← All departments</Link>
       {hero && (
         <div className="mt-4 overflow-hidden rounded-lg border border-border bg-muted">
