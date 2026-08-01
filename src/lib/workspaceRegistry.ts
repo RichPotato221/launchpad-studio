@@ -52,16 +52,16 @@ export const workspaceRegistry: Record<string, Entry> = {
     component: lazy(() => import("@/components/workspaces/ChildrensWorkspace")),
   },
   secretary: {
-    label: "Meetings, Agendas & Minutes",
-    component: lazy(() => import("@/components/workspaces/SecretaryWorkspace")),
+    label: "Secretarial Office",
+    component: lazy(() => import("@/components/secretariat/SecretariatCenter")),
   },
   finance: {
-    label: "Expense Claims",
-    component: lazy(() => import("@/components/workspaces/FinanceWorkspace")),
+    label: "Financial Command Centre",
+    component: lazy(() => import("@/components/finance/FinanceCenter")),
   },
   "finance-administration": {
-    label: "Expense Claims",
-    component: lazy(() => import("@/components/workspaces/FinanceWorkspace")),
+    label: "Financial Command Centre",
+    component: lazy(() => import("@/components/finance/FinanceCenter")),
   },
   // Seven Mountains — share the same shape
   family: { label: "Kingdom Projects", component: lazy(() => import("@/components/workspaces/SevenMountainsWorkspace")) },
