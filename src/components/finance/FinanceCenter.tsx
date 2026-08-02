@@ -56,6 +56,7 @@ export default function FinanceCenter({ currentUserId }: { departmentSlug?: stri
           <TabsTrigger value="giving">Member giving</TabsTrigger>
           <TabsTrigger value="budgets">Budgets</TabsTrigger>
           <TabsTrigger value="approvals">Approvals & payments</TabsTrigger>
+          <TabsTrigger value="procurement">Procurement</TabsTrigger>
           <TabsTrigger value="audit">Audit trail</TabsTrigger>
         </TabsList>
 
@@ -71,6 +72,9 @@ export default function FinanceCenter({ currentUserId }: { departmentSlug?: stri
         </TabsContent>
         <TabsContent value="approvals" className="mt-6">
           <ApprovalsModule canManage={canManage} currentUserId={currentUserId} />
+        </TabsContent>
+        <TabsContent value="procurement" className="mt-6">
+          <ProcurementModule canManage={canManage} currentUserId={currentUserId} />
         </TabsContent>
         <TabsContent value="audit" className="mt-6"><FinanceAudit /></TabsContent>
       </Tabs>

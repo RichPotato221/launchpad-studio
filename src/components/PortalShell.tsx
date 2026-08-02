@@ -93,7 +93,7 @@ export function PortalShell({ children }: { children: ReactNode }) {
               <Link
                 key={item.to}
                 to={item.to}
-                className="shrink-0 whitespace-nowrap text-[0.8rem] text-muted-foreground transition hover:text-foreground"
+                className="shrink-0 whitespace-nowrap text-[0.95rem] text-muted-foreground transition hover:text-foreground xl:text-base"
                 activeProps={{ className: "text-foreground font-medium" }}
               >
                 {item.label}
@@ -126,7 +126,7 @@ export function PortalShell({ children }: { children: ReactNode }) {
                 <Link
                   key={item.to}
                   to={item.to}
-                  className="rounded px-3 py-3 text-sm text-muted-foreground hover:bg-muted"
+                  className="rounded px-3 py-3 text-base text-muted-foreground hover:bg-muted"
                   activeProps={{ className: "text-foreground font-medium bg-muted" }}
                 >
                   {item.label}
