@@ -3537,6 +3537,158 @@ export type Database = {
         }
         Relationships: []
       }
+      purchase_request_items: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          quantity: number
+          request_id: string
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          quantity?: number
+          request_id: string
+          unit_price?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          quantity?: number
+          request_id?: string
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "purchase_request_items_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      purchase_requests: {
+        Row: {
+          amount_actual: number | null
+          amount_estimated: number
+          approved_by_chair: string | null
+          approved_by_senior: string | null
+          archived_at: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          budget_id: string | null
+          category: string | null
+          chair_approved_at: string | null
+          chair_comment: string | null
+          created_at: string
+          created_by: string | null
+          department_slug: string
+          description: string | null
+          id: string
+          needed_by: string | null
+          ordered_at: string | null
+          po_number: string | null
+          pr_number: string | null
+          priority: string
+          quote_name: string | null
+          quote_url: string | null
+          received_at: string | null
+          rejection_reason: string | null
+          requester_id: string
+          senior_approved_at: string | null
+          senior_comment: string | null
+          status: string
+          supplier_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          amount_actual?: number | null
+          amount_estimated?: number
+          approved_by_chair?: string | null
+          approved_by_senior?: string | null
+          archived_at?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          budget_id?: string | null
+          category?: string | null
+          chair_approved_at?: string | null
+          chair_comment?: string | null
+          created_at?: string
+          created_by?: string | null
+          department_slug: string
+          description?: string | null
+          id?: string
+          needed_by?: string | null
+          ordered_at?: string | null
+          po_number?: string | null
+          pr_number?: string | null
+          priority?: string
+          quote_name?: string | null
+          quote_url?: string | null
+          received_at?: string | null
+          rejection_reason?: string | null
+          requester_id?: string
+          senior_approved_at?: string | null
+          senior_comment?: string | null
+          status?: string
+          supplier_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          amount_actual?: number | null
+          amount_estimated?: number
+          approved_by_chair?: string | null
+          approved_by_senior?: string | null
+          archived_at?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          budget_id?: string | null
+          category?: string | null
+          chair_approved_at?: string | null
+          chair_comment?: string | null
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string
+          description?: string | null
+          id?: string
+          needed_by?: string | null
+          ordered_at?: string | null
+          po_number?: string | null
+          pr_number?: string | null
+          priority?: string
+          quote_name?: string | null
+          quote_url?: string | null
+          received_at?: string | null
+          rejection_reason?: string | null
+          requester_id?: string
+          senior_approved_at?: string | null
+          senior_comment?: string | null
+          status?: string
+          supplier_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "purchase_requests_budget_id_fkey"
+            columns: ["budget_id"]
+            isOneToOne: false
+            referencedRelation: "budgets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "purchase_requests_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       report_entries: {
         Row: {
           body: string | null
