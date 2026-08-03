@@ -9,6 +9,10 @@ const DecisionsModule = lazy(() => import("@/components/chairperson/DecisionsMod
 const RiskRegisterModule = lazy(() => import("@/components/chairperson/RiskRegisterModule"));
 const ExecutiveApprovalsModule = lazy(() => import("@/components/chairperson/ExecutiveApprovalsModule"));
 const GovernanceReports = lazy(() => import("@/components/chairperson/GovernanceReports"));
+const ComplianceCentre = lazy(() => import("@/components/chairperson/ComplianceCentre"));
+const CommunicationsCentre = lazy(() => import("@/components/chairperson/CommunicationsCentre"));
+const AccountabilityTracker = lazy(() => import("@/components/chairperson/AccountabilityTracker"));
+const GovernanceAssistant = lazy(() => import("@/components/chairperson/GovernanceAssistant"));
 
 const LEADERSHIP = ["senior_apostle", "chairperson", "secretary", "lead_pastor", "associate_pastor"];
 
