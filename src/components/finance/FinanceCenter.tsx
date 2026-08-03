@@ -59,6 +59,8 @@ export default function FinanceCenter({ currentUserId }: { departmentSlug?: stri
           <TabsTrigger value="budgets">Budgets</TabsTrigger>
           <TabsTrigger value="approvals">Approvals & payments</TabsTrigger>
           <TabsTrigger value="procurement">Procurement</TabsTrigger>
+          <TabsTrigger value="payroll">Payroll</TabsTrigger>
+          <TabsTrigger value="reconciliation">Bank reconciliation</TabsTrigger>
           <TabsTrigger value="audit">Audit trail</TabsTrigger>
         </TabsList>
 
