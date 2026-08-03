@@ -203,7 +203,21 @@ export default function AssetRegister({ canManage, currentUserId }: { canManage:
           <h3 className="font-serif text-lg">Asset register</h3>
           <div className="flex gap-2">
             <Input className="w-56" placeholder="Search assets…" value={filter} onChange={(e) => setFilter(e.target.value)} />
-            <Button variant="outline" onClick={() => exportRows("technical-assets", visible)}>Export CSV</Button>
+            <Button
+              variant="outline"
+              onClick={() =>
+                exportRows(
+                  "technical-assets",
+                  ["Asset number", "Name", "Category", "Make", "Model", "Serial", "Location", "Condition", "Status", "Warranty", "Cost"],
+                  visible.map((a) => [
+                    a.asset_number, a.name, labelFor(ASSET_CATEGORIES, a.category), a.make, a.model,
+                    a.serial_number, a.location, a.condition, a.status, a.warranty_expiry, a.purchase_cost,
+                  ]),
+                )
+              }
+            >
+              Export CSV
+            </Button>
           </div>
         </div>
         <div className="mt-4 overflow-x-auto">
