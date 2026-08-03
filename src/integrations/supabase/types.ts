@@ -1383,6 +1383,130 @@ export type Database = {
         }
         Relationships: []
       }
+      coaching_sessions: {
+        Row: {
+          action_plan: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          coach_id: string | null
+          created_at: string
+          created_by: string | null
+          department_slug: string | null
+          follow_up_date: string | null
+          growth_plan: string | null
+          id: string
+          leader_id: string
+          notes: string | null
+          rating: number | null
+          session_date: string
+          session_type: string
+          status: string
+          topics: string | null
+          updated_at: string
+        }
+        Insert: {
+          action_plan?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          coach_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string | null
+          follow_up_date?: string | null
+          growth_plan?: string | null
+          id?: string
+          leader_id: string
+          notes?: string | null
+          rating?: number | null
+          session_date?: string
+          session_type?: string
+          status?: string
+          topics?: string | null
+          updated_at?: string
+        }
+        Update: {
+          action_plan?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          coach_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string | null
+          follow_up_date?: string | null
+          growth_plan?: string | null
+          id?: string
+          leader_id?: string
+          notes?: string | null
+          rating?: number | null
+          session_date?: string
+          session_type?: string
+          status?: string
+          topics?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coaching_sessions_coach_id_fkey"
+            columns: ["coach_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coaching_sessions_coach_id_fkey"
+            columns: ["coach_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coaching_sessions_coach_id_fkey"
+            columns: ["coach_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coaching_sessions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coaching_sessions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coaching_sessions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coaching_sessions_leader_id_fkey"
+            columns: ["leader_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coaching_sessions_leader_id_fkey"
+            columns: ["leader_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coaching_sessions_leader_id_fkey"
+            columns: ["leader_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cockpit_post_comments: {
         Row: {
           author_id: string
@@ -3186,6 +3310,121 @@ export type Database = {
           },
         ]
       }
+      leader_profiles: {
+        Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
+          burnout_risk: string
+          calling_assessment: string | null
+          certificates: number
+          competency_notes: string | null
+          courses_completed: number
+          created_at: string
+          department_slug: string | null
+          id: string
+          last_coached_on: string | null
+          leadership_journey: string | null
+          leadership_role: string | null
+          mentor_id: string | null
+          mentorship_plan: string | null
+          promotion_readiness: string
+          readiness_score: number
+          spiritual_gifts: string | null
+          succession_status: string
+          training_history: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          burnout_risk?: string
+          calling_assessment?: string | null
+          certificates?: number
+          competency_notes?: string | null
+          courses_completed?: number
+          created_at?: string
+          department_slug?: string | null
+          id?: string
+          last_coached_on?: string | null
+          leadership_journey?: string | null
+          leadership_role?: string | null
+          mentor_id?: string | null
+          mentorship_plan?: string | null
+          promotion_readiness?: string
+          readiness_score?: number
+          spiritual_gifts?: string | null
+          succession_status?: string
+          training_history?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          burnout_risk?: string
+          calling_assessment?: string | null
+          certificates?: number
+          competency_notes?: string | null
+          courses_completed?: number
+          created_at?: string
+          department_slug?: string | null
+          id?: string
+          last_coached_on?: string | null
+          leadership_journey?: string | null
+          leadership_role?: string | null
+          mentor_id?: string | null
+          mentorship_plan?: string | null
+          promotion_readiness?: string
+          readiness_score?: number
+          spiritual_gifts?: string | null
+          succession_status?: string
+          training_history?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leader_profiles_mentor_id_fkey"
+            columns: ["mentor_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leader_profiles_mentor_id_fkey"
+            columns: ["mentor_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leader_profiles_mentor_id_fkey"
+            columns: ["mentor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leader_profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leader_profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leader_profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       meeting_apologies: {
         Row: {
           created_at: string
@@ -3588,6 +3827,145 @@ export type Database = {
           },
         ]
       }
+      ministry_plans: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          budget_amount: number
+          created_at: string
+          created_by: string | null
+          department_slug: string | null
+          dependencies: string | null
+          end_date: string | null
+          expected_outcomes: string | null
+          horizon: string
+          id: string
+          milestones: string | null
+          objectives: string | null
+          owner_id: string | null
+          period_label: string | null
+          progress_pct: number
+          risk_assessment: string | null
+          start_date: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          budget_amount?: number
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string | null
+          dependencies?: string | null
+          end_date?: string | null
+          expected_outcomes?: string | null
+          horizon?: string
+          id?: string
+          milestones?: string | null
+          objectives?: string | null
+          owner_id?: string | null
+          period_label?: string | null
+          progress_pct?: number
+          risk_assessment?: string | null
+          start_date?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          budget_amount?: number
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string | null
+          dependencies?: string | null
+          end_date?: string | null
+          expected_outcomes?: string | null
+          horizon?: string
+          id?: string
+          milestones?: string | null
+          objectives?: string | null
+          owner_id?: string | null
+          period_label?: string | null
+          progress_pct?: number
+          risk_assessment?: string | null
+          start_date?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ministry_plans_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ministry_plans_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ministry_plans_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ministry_plans_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ministry_plans_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ministry_plans_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ministry_plans_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ministry_plans_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ministry_plans_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       minute_decisions: {
         Row: {
           agenda_item_id: string | null
@@ -3915,6 +4293,237 @@ export type Database = {
         }
         Relationships: []
       }
+      pastoral_case_notes: {
+        Row: {
+          author_id: string | null
+          case_id: string
+          confidential: boolean
+          created_at: string
+          id: string
+          note: string
+          note_type: string
+          visit_date: string
+        }
+        Insert: {
+          author_id?: string | null
+          case_id: string
+          confidential?: boolean
+          created_at?: string
+          id?: string
+          note: string
+          note_type?: string
+          visit_date?: string
+        }
+        Update: {
+          author_id?: string | null
+          case_id?: string
+          confidential?: boolean
+          created_at?: string
+          id?: string
+          note?: string
+          note_type?: string
+          visit_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pastoral_case_notes_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pastoral_case_notes_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pastoral_case_notes_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pastoral_case_notes_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "pastoral_cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pastoral_cases: {
+        Row: {
+          assigned_to: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          care_plan: string | null
+          case_number: string | null
+          case_type: string
+          closed_at: string | null
+          closed_by: string | null
+          confidential: boolean
+          contact: string | null
+          created_at: string
+          created_by: string | null
+          department_slug: string | null
+          follow_up_date: string | null
+          id: string
+          location: string | null
+          member_id: string | null
+          opened_on: string
+          outcome: string | null
+          priority: string
+          referral_to: string | null
+          scheduled_for: string | null
+          status: string
+          subject_name: string
+          summary: string | null
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          care_plan?: string | null
+          case_number?: string | null
+          case_type?: string
+          closed_at?: string | null
+          closed_by?: string | null
+          confidential?: boolean
+          contact?: string | null
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string | null
+          follow_up_date?: string | null
+          id?: string
+          location?: string | null
+          member_id?: string | null
+          opened_on?: string
+          outcome?: string | null
+          priority?: string
+          referral_to?: string | null
+          scheduled_for?: string | null
+          status?: string
+          subject_name: string
+          summary?: string | null
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          care_plan?: string | null
+          case_number?: string | null
+          case_type?: string
+          closed_at?: string | null
+          closed_by?: string | null
+          confidential?: boolean
+          contact?: string | null
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string | null
+          follow_up_date?: string | null
+          id?: string
+          location?: string | null
+          member_id?: string | null
+          opened_on?: string
+          outcome?: string | null
+          priority?: string
+          referral_to?: string | null
+          scheduled_for?: string | null
+          status?: string
+          subject_name?: string
+          summary?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pastoral_cases_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pastoral_cases_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pastoral_cases_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pastoral_cases_closed_by_fkey"
+            columns: ["closed_by"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pastoral_cases_closed_by_fkey"
+            columns: ["closed_by"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pastoral_cases_closed_by_fkey"
+            columns: ["closed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pastoral_cases_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pastoral_cases_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pastoral_cases_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pastoral_cases_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pastoral_cases_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pastoral_cases_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payroll_lines: {
         Row: {
           allowances: number
@@ -4042,6 +4651,97 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      prayer_requests: {
+        Row: {
+          answered_note: string | null
+          assigned_to: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          confidential: boolean
+          created_at: string
+          department_slug: string | null
+          id: string
+          request: string
+          requester_id: string | null
+          requester_name: string | null
+          status: string
+          updated_at: string
+          urgency: string
+        }
+        Insert: {
+          answered_note?: string | null
+          assigned_to?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          confidential?: boolean
+          created_at?: string
+          department_slug?: string | null
+          id?: string
+          request: string
+          requester_id?: string | null
+          requester_name?: string | null
+          status?: string
+          updated_at?: string
+          urgency?: string
+        }
+        Update: {
+          answered_note?: string | null
+          assigned_to?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          confidential?: boolean
+          created_at?: string
+          department_slug?: string | null
+          id?: string
+          request?: string
+          requester_id?: string | null
+          requester_name?: string | null
+          status?: string
+          updated_at?: string
+          urgency?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prayer_requests_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prayer_requests_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prayer_requests_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prayer_requests_requester_id_fkey"
+            columns: ["requester_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prayer_requests_requester_id_fkey"
+            columns: ["requester_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prayer_requests_requester_id_fkey"
+            columns: ["requester_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -4573,6 +5273,136 @@ export type Database = {
         }
         Relationships: []
       }
+      succession_candidates: {
+        Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
+          candidate_id: string | null
+          candidate_name: string | null
+          competency_assessment: string | null
+          created_at: string
+          created_by: string | null
+          delegated_responsibilities: string | null
+          department_slug: string | null
+          id: string
+          incumbent_id: string | null
+          mentorship_progress: number
+          position_title: string
+          readiness_band: string
+          readiness_score: number
+          recommendation: string | null
+          status: string
+          target_date: string | null
+          training_status: string
+          updated_at: string
+        }
+        Insert: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          candidate_id?: string | null
+          candidate_name?: string | null
+          competency_assessment?: string | null
+          created_at?: string
+          created_by?: string | null
+          delegated_responsibilities?: string | null
+          department_slug?: string | null
+          id?: string
+          incumbent_id?: string | null
+          mentorship_progress?: number
+          position_title: string
+          readiness_band?: string
+          readiness_score?: number
+          recommendation?: string | null
+          status?: string
+          target_date?: string | null
+          training_status?: string
+          updated_at?: string
+        }
+        Update: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          candidate_id?: string | null
+          candidate_name?: string | null
+          competency_assessment?: string | null
+          created_at?: string
+          created_by?: string | null
+          delegated_responsibilities?: string | null
+          department_slug?: string | null
+          id?: string
+          incumbent_id?: string | null
+          mentorship_progress?: number
+          position_title?: string
+          readiness_band?: string
+          readiness_score?: number
+          recommendation?: string | null
+          status?: string
+          target_date?: string | null
+          training_status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "succession_candidates_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "succession_candidates_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "succession_candidates_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "succession_candidates_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "succession_candidates_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "succession_candidates_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "succession_candidates_incumbent_id_fkey"
+            columns: ["incumbent_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "succession_candidates_incumbent_id_fkey"
+            columns: ["incumbent_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "succession_candidates_incumbent_id_fkey"
+            columns: ["incumbent_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sunday_rsvps: {
         Row: {
           branch: Database["public"]["Enums"]["branch"] | null
@@ -4828,6 +5658,198 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      volunteer_profiles: {
+        Row: {
+          availability: string | null
+          badges: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          burnout_risk: string
+          created_at: string
+          created_by: string | null
+          department_slug: string | null
+          full_name: string
+          id: string
+          leave_reason: string | null
+          leave_until: string | null
+          notes: string | null
+          on_leave: boolean
+          performance_rating: number | null
+          recognition: string | null
+          role_title: string | null
+          services_attended: number
+          services_missed: number
+          serving_since: string | null
+          skills: string | null
+          status: string
+          total_hours: number
+          training_status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          availability?: string | null
+          badges?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          burnout_risk?: string
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string | null
+          full_name: string
+          id?: string
+          leave_reason?: string | null
+          leave_until?: string | null
+          notes?: string | null
+          on_leave?: boolean
+          performance_rating?: number | null
+          recognition?: string | null
+          role_title?: string | null
+          services_attended?: number
+          services_missed?: number
+          serving_since?: string | null
+          skills?: string | null
+          status?: string
+          total_hours?: number
+          training_status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          availability?: string | null
+          badges?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          burnout_risk?: string
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string | null
+          full_name?: string
+          id?: string
+          leave_reason?: string | null
+          leave_until?: string | null
+          notes?: string | null
+          on_leave?: boolean
+          performance_rating?: number | null
+          recognition?: string | null
+          role_title?: string | null
+          services_attended?: number
+          services_missed?: number
+          serving_since?: string | null
+          skills?: string | null
+          status?: string
+          total_hours?: number
+          training_status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "volunteer_profiles_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "volunteer_profiles_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "volunteer_profiles_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "volunteer_profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "volunteer_profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "volunteer_profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      volunteer_service_logs: {
+        Row: {
+          attended: boolean
+          created_at: string
+          department_slug: string | null
+          hours: number
+          id: string
+          logged_by: string | null
+          notes: string | null
+          service_date: string
+          volunteer_id: string
+        }
+        Insert: {
+          attended?: boolean
+          created_at?: string
+          department_slug?: string | null
+          hours?: number
+          id?: string
+          logged_by?: string | null
+          notes?: string | null
+          service_date?: string
+          volunteer_id: string
+        }
+        Update: {
+          attended?: boolean
+          created_at?: string
+          department_slug?: string | null
+          hours?: number
+          id?: string
+          logged_by?: string | null
+          notes?: string | null
+          service_date?: string
+          volunteer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "volunteer_service_logs_logged_by_fkey"
+            columns: ["logged_by"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "volunteer_service_logs_logged_by_fkey"
+            columns: ["logged_by"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "volunteer_service_logs_logged_by_fkey"
+            columns: ["logged_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "volunteer_service_logs_volunteer_id_fkey"
+            columns: ["volunteer_id"]
+            isOneToOne: false
+            referencedRelation: "volunteer_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -5218,6 +6240,7 @@ export type Database = {
       is_dept_member_or_admin: { Args: { _slug: string }; Returns: boolean }
       is_finance_officer: { Args: { _user_id: string }; Returns: boolean }
       is_head_office: { Args: { _user_id: string }; Returns: boolean }
+      is_pastoral_team: { Args: { _user_id: string }; Returns: boolean }
       is_secretariat: { Args: { _user_id: string }; Returns: boolean }
       list_conversations: {
         Args: never
