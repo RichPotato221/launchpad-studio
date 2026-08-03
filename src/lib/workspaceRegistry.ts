@@ -12,9 +12,22 @@ type Entry = {
 
 export const workspaceRegistry: Record<string, Entry> = {
   worship: {
-    label: "Set-Lists & Song Library",
-    component: lazy(() => import("@/components/workspaces/WorshipWorkspace")),
+    label: "Worship Operations Platform",
+    component: lazy(() => import("@/components/worship/WorshipCenter")),
   },
+  "worship-music": {
+    label: "Worship Operations Platform",
+    component: lazy(() => import("@/components/worship/WorshipCenter")),
+  },
+  music: {
+    label: "Worship Operations Platform",
+    component: lazy(() => import("@/components/worship/WorshipCenter")),
+  },
+  "praise-worship": {
+    label: "Worship Operations Platform",
+    component: lazy(() => import("@/components/worship/WorshipCenter")),
+  },
+
   "school-of-ministry": {
     label: "Courses & Enrolments",
     component: lazy(() => import("@/components/workspaces/SchoolOfMinistryWorkspace")),

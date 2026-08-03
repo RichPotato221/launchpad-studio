@@ -5857,45 +5857,105 @@ export type Database = {
       }
       songs: {
         Row: {
+          arrangement: string | null
+          artist: string | null
           branch: Database["public"]["Enums"]["branch"] | null
           ccli_number: string | null
           chord_chart_url: string | null
+          composer: string | null
           created_at: string
           created_by: string | null
           department_slug: string
+          duration_seconds: number | null
           id: string
+          is_favourite: boolean
+          language: string | null
+          last_used_on: string | null
+          licence_notes: string | null
+          lyrics: string | null
+          mp3_url: string | null
+          multitrack_url: string | null
+          notes: string | null
+          practice_url: string | null
+          scripture_theme: string | null
+          sheet_music_url: string | null
           song_key: string | null
+          tags: string[] | null
           tempo: number | null
+          themes: string[] | null
+          time_signature: string | null
+          times_used: number
           title: string
           updated_at: string
+          version: number
           youtube_url: string | null
         }
         Insert: {
+          arrangement?: string | null
+          artist?: string | null
           branch?: Database["public"]["Enums"]["branch"] | null
           ccli_number?: string | null
           chord_chart_url?: string | null
+          composer?: string | null
           created_at?: string
           created_by?: string | null
           department_slug: string
+          duration_seconds?: number | null
           id?: string
+          is_favourite?: boolean
+          language?: string | null
+          last_used_on?: string | null
+          licence_notes?: string | null
+          lyrics?: string | null
+          mp3_url?: string | null
+          multitrack_url?: string | null
+          notes?: string | null
+          practice_url?: string | null
+          scripture_theme?: string | null
+          sheet_music_url?: string | null
           song_key?: string | null
+          tags?: string[] | null
           tempo?: number | null
+          themes?: string[] | null
+          time_signature?: string | null
+          times_used?: number
           title: string
           updated_at?: string
+          version?: number
           youtube_url?: string | null
         }
         Update: {
+          arrangement?: string | null
+          artist?: string | null
           branch?: Database["public"]["Enums"]["branch"] | null
           ccli_number?: string | null
           chord_chart_url?: string | null
+          composer?: string | null
           created_at?: string
           created_by?: string | null
           department_slug?: string
+          duration_seconds?: number | null
           id?: string
+          is_favourite?: boolean
+          language?: string | null
+          last_used_on?: string | null
+          licence_notes?: string | null
+          lyrics?: string | null
+          mp3_url?: string | null
+          multitrack_url?: string | null
+          notes?: string | null
+          practice_url?: string | null
+          scripture_theme?: string | null
+          sheet_music_url?: string | null
           song_key?: string | null
+          tags?: string[] | null
           tempo?: number | null
+          themes?: string[] | null
+          time_signature?: string | null
+          times_used?: number
           title?: string
           updated_at?: string
+          version?: number
           youtube_url?: string | null
         }
         Relationships: []
@@ -6523,6 +6583,778 @@ export type Database = {
           },
         ]
       }
+      worship_assignments: {
+        Row: {
+          created_at: string
+          id: string
+          member_id: string
+          notes: string | null
+          response: string
+          role_title: string
+          service_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          member_id: string
+          notes?: string | null
+          response?: string
+          role_title: string
+          service_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          member_id?: string
+          notes?: string | null
+          response?: string
+          role_title?: string
+          service_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "worship_assignments_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "worship_team_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "worship_assignments_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "worship_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      worship_courses: {
+        Row: {
+          active: boolean
+          category: string
+          created_at: string
+          description: string | null
+          duration_hours: number | null
+          facilitator: string | null
+          id: string
+          renewal_months: number | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          category?: string
+          created_at?: string
+          description?: string | null
+          duration_hours?: number | null
+          facilitator?: string | null
+          id?: string
+          renewal_months?: number | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          category?: string
+          created_at?: string
+          description?: string | null
+          duration_hours?: number | null
+          facilitator?: string | null
+          id?: string
+          renewal_months?: number | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      worship_equipment: {
+        Row: {
+          asset_number: string | null
+          assigned_to: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          category: string
+          condition: string
+          created_at: string
+          id: string
+          last_service_date: string | null
+          location: string | null
+          name: string
+          next_service_date: string | null
+          notes: string | null
+          purchase_date: string | null
+          replacement_year: number | null
+          serial_number: string | null
+          status: string
+          updated_at: string
+          warranty_expiry: string | null
+        }
+        Insert: {
+          asset_number?: string | null
+          assigned_to?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          category?: string
+          condition?: string
+          created_at?: string
+          id?: string
+          last_service_date?: string | null
+          location?: string | null
+          name: string
+          next_service_date?: string | null
+          notes?: string | null
+          purchase_date?: string | null
+          replacement_year?: number | null
+          serial_number?: string | null
+          status?: string
+          updated_at?: string
+          warranty_expiry?: string | null
+        }
+        Update: {
+          asset_number?: string | null
+          assigned_to?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          category?: string
+          condition?: string
+          created_at?: string
+          id?: string
+          last_service_date?: string | null
+          location?: string | null
+          name?: string
+          next_service_date?: string | null
+          notes?: string | null
+          purchase_date?: string | null
+          replacement_year?: number | null
+          serial_number?: string | null
+          status?: string
+          updated_at?: string
+          warranty_expiry?: string | null
+        }
+        Relationships: []
+      }
+      worship_equipment_faults: {
+        Row: {
+          created_at: string
+          description: string
+          equipment_id: string
+          id: string
+          reported_by: string | null
+          reported_on: string
+          resolution: string | null
+          resolved_on: string | null
+          severity: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          equipment_id: string
+          id?: string
+          reported_by?: string | null
+          reported_on?: string
+          resolution?: string | null
+          resolved_on?: string | null
+          severity?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          equipment_id?: string
+          id?: string
+          reported_by?: string | null
+          reported_on?: string
+          resolution?: string | null
+          resolved_on?: string | null
+          severity?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "worship_equipment_faults_equipment_id_fkey"
+            columns: ["equipment_id"]
+            isOneToOne: false
+            referencedRelation: "worship_equipment"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      worship_rehearsal_attendance: {
+        Row: {
+          created_at: string
+          id: string
+          member_id: string
+          notes: string | null
+          on_time: boolean
+          prepared: boolean
+          present: boolean
+          rehearsal_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          member_id: string
+          notes?: string | null
+          on_time?: boolean
+          prepared?: boolean
+          present?: boolean
+          rehearsal_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          member_id?: string
+          notes?: string | null
+          on_time?: boolean
+          prepared?: boolean
+          present?: boolean
+          rehearsal_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "worship_rehearsal_attendance_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "worship_team_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "worship_rehearsal_attendance_rehearsal_id_fkey"
+            columns: ["rehearsal_id"]
+            isOneToOne: false
+            referencedRelation: "worship_rehearsals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      worship_rehearsals: {
+        Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
+          created_at: string
+          created_by: string | null
+          id: string
+          objectives: string | null
+          practice_notes: string | null
+          prayer_session: boolean
+          readiness_score: number | null
+          recording_url: string | null
+          rehearsal_date: string
+          service_id: string | null
+          start_time: string | null
+          status: string
+          technical_runthrough: boolean
+          updated_at: string
+          venue: string | null
+        }
+        Insert: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          objectives?: string | null
+          practice_notes?: string | null
+          prayer_session?: boolean
+          readiness_score?: number | null
+          recording_url?: string | null
+          rehearsal_date: string
+          service_id?: string | null
+          start_time?: string | null
+          status?: string
+          technical_runthrough?: boolean
+          updated_at?: string
+          venue?: string | null
+        }
+        Update: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          objectives?: string | null
+          practice_notes?: string | null
+          prayer_session?: boolean
+          readiness_score?: number | null
+          recording_url?: string | null
+          rehearsal_date?: string
+          service_id?: string | null
+          start_time?: string | null
+          status?: string
+          technical_runthrough?: boolean
+          updated_at?: string
+          venue?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "worship_rehearsals_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "worship_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      worship_risks: {
+        Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
+          category: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          escalation_level: string
+          id: string
+          impact: number
+          likelihood: number
+          mitigation: string | null
+          owner: string | null
+          review_date: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          escalation_level?: string
+          id?: string
+          impact?: number
+          likelihood?: number
+          mitigation?: string | null
+          owner?: string | null
+          review_date?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          escalation_level?: string
+          id?: string
+          impact?: number
+          likelihood?: number
+          mitigation?: string | null
+          owner?: string | null
+          review_date?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      worship_service_items: {
+        Row: {
+          created_at: string
+          detail: string | null
+          duration_min: number
+          id: string
+          item_type: string
+          order_index: number
+          responsible: string | null
+          service_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          detail?: string | null
+          duration_min?: number
+          id?: string
+          item_type?: string
+          order_index?: number
+          responsible?: string | null
+          service_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          detail?: string | null
+          duration_min?: number
+          id?: string
+          item_type?: string
+          order_index?: number
+          responsible?: string | null
+          service_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "worship_service_items_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "worship_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      worship_services: {
+        Row: {
+          backup_plan: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          created_at: string
+          created_by: string | null
+          department_slug: string
+          id: string
+          livestream_ready: boolean
+          notes: string | null
+          preacher: string | null
+          scriptures_loaded: boolean
+          sermon_scriptures: string | null
+          sermon_title: string | null
+          service_date: string
+          service_type: string
+          set_approved: boolean
+          stage_layout_ready: boolean
+          start_time: string | null
+          status: string
+          tech_team_confirmed: boolean
+          theme: string | null
+          title: string
+          updated_at: string
+          venue: string | null
+          worship_leader: string | null
+          worship_leader_id: string | null
+        }
+        Insert: {
+          backup_plan?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string
+          id?: string
+          livestream_ready?: boolean
+          notes?: string | null
+          preacher?: string | null
+          scriptures_loaded?: boolean
+          sermon_scriptures?: string | null
+          sermon_title?: string | null
+          service_date: string
+          service_type?: string
+          set_approved?: boolean
+          stage_layout_ready?: boolean
+          start_time?: string | null
+          status?: string
+          tech_team_confirmed?: boolean
+          theme?: string | null
+          title: string
+          updated_at?: string
+          venue?: string | null
+          worship_leader?: string | null
+          worship_leader_id?: string | null
+        }
+        Update: {
+          backup_plan?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string
+          id?: string
+          livestream_ready?: boolean
+          notes?: string | null
+          preacher?: string | null
+          scriptures_loaded?: boolean
+          sermon_scriptures?: string | null
+          sermon_title?: string | null
+          service_date?: string
+          service_type?: string
+          set_approved?: boolean
+          stage_layout_ready?: boolean
+          start_time?: string | null
+          status?: string
+          tech_team_confirmed?: boolean
+          theme?: string | null
+          title?: string
+          updated_at?: string
+          venue?: string | null
+          worship_leader?: string | null
+          worship_leader_id?: string | null
+        }
+        Relationships: []
+      }
+      worship_set_songs: {
+        Row: {
+          created_at: string
+          duration_seconds: number | null
+          id: string
+          notes: string | null
+          order_index: number
+          segment: string
+          service_id: string
+          song_id: string | null
+          song_key: string | null
+          transition_note: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          duration_seconds?: number | null
+          id?: string
+          notes?: string | null
+          order_index?: number
+          segment?: string
+          service_id: string
+          song_id?: string | null
+          song_key?: string | null
+          transition_note?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          duration_seconds?: number | null
+          id?: string
+          notes?: string | null
+          order_index?: number
+          segment?: string
+          service_id?: string
+          song_id?: string | null
+          song_key?: string | null
+          transition_note?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "worship_set_songs_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "worship_services"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "worship_set_songs_song_id_fkey"
+            columns: ["song_id"]
+            isOneToOne: false
+            referencedRelation: "songs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      worship_spiritual_log: {
+        Row: {
+          activity_date: string
+          activity_type: string
+          created_at: string
+          created_by: string | null
+          detail: string | null
+          id: string
+          member_id: string | null
+        }
+        Insert: {
+          activity_date?: string
+          activity_type?: string
+          created_at?: string
+          created_by?: string | null
+          detail?: string | null
+          id?: string
+          member_id?: string | null
+        }
+        Update: {
+          activity_date?: string
+          activity_type?: string
+          created_at?: string
+          created_by?: string | null
+          detail?: string | null
+          id?: string
+          member_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "worship_spiritual_log_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "worship_team_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      worship_team_members: {
+        Row: {
+          availability: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          created_at: string
+          email: string | null
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
+          experience_years: number | null
+          full_name: string
+          id: string
+          instruments: string[] | null
+          mentor: string | null
+          notes: string | null
+          performance_score: number | null
+          phone: string | null
+          rehearsals_attended: number
+          rehearsals_missed: number
+          role_title: string
+          services_served: number
+          skills: string | null
+          status: string
+          updated_at: string
+          user_id: string | null
+          vocal_range: string | null
+        }
+        Insert: {
+          availability?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          email?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          experience_years?: number | null
+          full_name: string
+          id?: string
+          instruments?: string[] | null
+          mentor?: string | null
+          notes?: string | null
+          performance_score?: number | null
+          phone?: string | null
+          rehearsals_attended?: number
+          rehearsals_missed?: number
+          role_title?: string
+          services_served?: number
+          skills?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+          vocal_range?: string | null
+        }
+        Update: {
+          availability?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          email?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          experience_years?: number | null
+          full_name?: string
+          id?: string
+          instruments?: string[] | null
+          mentor?: string | null
+          notes?: string | null
+          performance_score?: number | null
+          phone?: string | null
+          rehearsals_attended?: number
+          rehearsals_missed?: number
+          role_title?: string
+          services_served?: number
+          skills?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+          vocal_range?: string | null
+        }
+        Relationships: []
+      }
+      worship_tech_items: {
+        Row: {
+          assigned_to: string | null
+          category: string
+          created_at: string
+          detail: string | null
+          done: boolean
+          id: string
+          label: string
+          service_id: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          category?: string
+          created_at?: string
+          detail?: string | null
+          done?: boolean
+          id?: string
+          label: string
+          service_id: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          category?: string
+          created_at?: string
+          detail?: string | null
+          done?: boolean
+          id?: string
+          label?: string
+          service_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "worship_tech_items_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "worship_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      worship_training_records: {
+        Row: {
+          certificate_url: string | null
+          completed_on: string | null
+          course_id: string
+          created_at: string
+          id: string
+          member_id: string
+          notes: string | null
+          renewal_due: string | null
+          score: number | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          certificate_url?: string | null
+          completed_on?: string | null
+          course_id: string
+          created_at?: string
+          id?: string
+          member_id: string
+          notes?: string | null
+          renewal_due?: string | null
+          score?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          certificate_url?: string | null
+          completed_on?: string | null
+          course_id?: string
+          created_at?: string
+          id?: string
+          member_id?: string
+          notes?: string | null
+          renewal_due?: string | null
+          score?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "worship_training_records_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "worship_courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "worship_training_records_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "worship_team_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       assets_low_stock: {
@@ -6919,6 +7751,7 @@ export type Database = {
       is_kids_team: { Args: { _user_id: string }; Returns: boolean }
       is_pastoral_team: { Args: { _user_id: string }; Returns: boolean }
       is_secretariat: { Args: { _user_id: string }; Returns: boolean }
+      is_worship_team: { Args: { _user_id: string }; Returns: boolean }
       list_conversations: {
         Args: never
         Returns: {
