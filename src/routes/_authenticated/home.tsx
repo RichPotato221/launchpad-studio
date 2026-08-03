@@ -163,7 +163,7 @@ function HomePage() {
       {/* Department tiles */}
       <DeptGroup title="Functional Structure" items={functional} />
       <DeptGroup title="Developmental Structure" items={developmental} />
-      <DeptGroup title="Seven Mountains" items={mountains} basePath="/departments" />
+      
     </div>
   );
 }
