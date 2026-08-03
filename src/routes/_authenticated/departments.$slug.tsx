@@ -135,20 +135,9 @@ function DepartmentPortal() {
         </TabsContent>
 
         <TabsContent value="resources" className="mt-6">
-          <Card className="p-6">
-            <p className="text-xs uppercase tracking-widest text-muted-foreground">Manuals &amp; SOPs</p>
-            <ul className="mt-4 grid gap-3 md:grid-cols-2">
-              {MANUALS.map((m) => (
-                <li key={m.key}>
-                  <a href={m.href} className="block rounded border border-border p-4 transition hover:border-foreground">
-                    <p className="font-serif text-lg">{m.title}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">Download .docx</p>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </Card>
+          <DepartmentResources slug={slug} />
         </TabsContent>
+
 
         {workspace && WorkspaceComponent && membership.data?.userId && (
           <TabsContent value="workspace" className="mt-6">
