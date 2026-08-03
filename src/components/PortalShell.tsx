@@ -23,6 +23,7 @@ const nav = [
   { to: "/reports", label: "Reports" },
   { to: "/admin", label: "Admin" },
   { to: "/assets", label: "Assets" },
+  { to: "/kids-parent", label: "Kids Portal" },
 ] as const;
  
 // Only these roles ever see Governance or Cockpit in the nav at all.
