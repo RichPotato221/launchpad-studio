@@ -80,6 +80,12 @@ export default function FinanceCenter({ currentUserId }: { departmentSlug?: stri
         <TabsContent value="procurement" className="mt-6">
           <ProcurementModule canManage={canManage} currentUserId={currentUserId} />
         </TabsContent>
+        <TabsContent value="payroll" className="mt-6">
+          <PayrollModule canManage={canManage} currentUserId={currentUserId} />
+        </TabsContent>
+        <TabsContent value="reconciliation" className="mt-6">
+          <ReconciliationModule canManage={canManage} currentUserId={currentUserId} />
+        </TabsContent>
         <TabsContent value="audit" className="mt-6"><FinanceAudit /></TabsContent>
       </Tabs>
     </div>
