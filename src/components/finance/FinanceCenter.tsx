@@ -11,6 +11,8 @@ import GivingModule from "@/components/finance/GivingModule";
 import BudgetsModule from "@/components/finance/BudgetsModule";
 import ApprovalsModule from "@/components/finance/ApprovalsModule";
 import ProcurementModule from "@/components/finance/ProcurementModule";
+import PayrollModule from "@/components/finance/PayrollModule";
+import ReconciliationModule from "@/components/finance/ReconciliationModule";
 import { useCurrentRole } from "@/lib/useCurrentRole";
 import { exportRows, fmtDate, titleCase } from "@/lib/finance";
 
