@@ -5855,6 +5855,628 @@ export type Database = {
         }
         Relationships: []
       }
+      smo_courses: {
+        Row: {
+          category: string
+          certification: boolean
+          created_at: string
+          description: string | null
+          duration_hours: number | null
+          id: string
+          title: string
+          updated_at: string
+          validity_months: number | null
+        }
+        Insert: {
+          category?: string
+          certification?: boolean
+          created_at?: string
+          description?: string | null
+          duration_hours?: number | null
+          id?: string
+          title: string
+          updated_at?: string
+          validity_months?: number | null
+        }
+        Update: {
+          category?: string
+          certification?: boolean
+          created_at?: string
+          description?: string | null
+          duration_hours?: number | null
+          id?: string
+          title?: string
+          updated_at?: string
+          validity_months?: number | null
+        }
+        Relationships: []
+      }
+      smo_decisions: {
+        Row: {
+          action_items: string | null
+          affected_departments: string | null
+          created_at: string
+          created_by: string | null
+          deadline: string | null
+          decision_date: string
+          decision_type: string
+          id: string
+          impact: string | null
+          implementation_status: string
+          notes: string | null
+          owner: string | null
+          title: string
+          updated_at: string
+          vote_outcome: string | null
+        }
+        Insert: {
+          action_items?: string | null
+          affected_departments?: string | null
+          created_at?: string
+          created_by?: string | null
+          deadline?: string | null
+          decision_date?: string
+          decision_type?: string
+          id?: string
+          impact?: string | null
+          implementation_status?: string
+          notes?: string | null
+          owner?: string | null
+          title: string
+          updated_at?: string
+          vote_outcome?: string | null
+        }
+        Update: {
+          action_items?: string | null
+          affected_departments?: string | null
+          created_at?: string
+          created_by?: string | null
+          deadline?: string | null
+          decision_date?: string
+          decision_type?: string
+          id?: string
+          impact?: string | null
+          implementation_status?: string
+          notes?: string | null
+          owner?: string | null
+          title?: string
+          updated_at?: string
+          vote_outcome?: string | null
+        }
+        Relationships: []
+      }
+      smo_ideas: {
+        Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
+          created_at: string
+          department_slug: string | null
+          description: string | null
+          id: string
+          idea_type: string
+          review_notes: string | null
+          stage: string
+          submitted_by: string | null
+          submitter_name: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          department_slug?: string | null
+          description?: string | null
+          id?: string
+          idea_type?: string
+          review_notes?: string | null
+          stage?: string
+          submitted_by?: string | null
+          submitter_name?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          department_slug?: string | null
+          description?: string | null
+          id?: string
+          idea_type?: string
+          review_notes?: string | null
+          stage?: string
+          submitted_by?: string | null
+          submitter_name?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      smo_kpis: {
+        Row: {
+          actual: number
+          branch: Database["public"]["Enums"]["branch"] | null
+          created_at: string
+          department_slug: string | null
+          forecast: number | null
+          id: string
+          kpi_group: string
+          name: string
+          objective_id: string | null
+          period: string
+          period_label: string | null
+          target: number
+          unit: string | null
+          updated_at: string
+        }
+        Insert: {
+          actual?: number
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          department_slug?: string | null
+          forecast?: number | null
+          id?: string
+          kpi_group?: string
+          name: string
+          objective_id?: string | null
+          period?: string
+          period_label?: string | null
+          target?: number
+          unit?: string | null
+          updated_at?: string
+        }
+        Update: {
+          actual?: number
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          department_slug?: string | null
+          forecast?: number | null
+          id?: string
+          kpi_group?: string
+          name?: string
+          objective_id?: string | null
+          period?: string
+          period_label?: string | null
+          target?: number
+          unit?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "smo_kpis_objective_id_fkey"
+            columns: ["objective_id"]
+            isOneToOne: false
+            referencedRelation: "smo_objectives"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      smo_milestones: {
+        Row: {
+          completed_on: string | null
+          created_at: string
+          deliverable: string | null
+          due_date: string | null
+          id: string
+          owner: string | null
+          project_id: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          completed_on?: string | null
+          created_at?: string
+          deliverable?: string | null
+          due_date?: string | null
+          id?: string
+          owner?: string | null
+          project_id: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          completed_on?: string | null
+          created_at?: string
+          deliverable?: string | null
+          due_date?: string | null
+          id?: string
+          owner?: string | null
+          project_id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "smo_milestones_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "smo_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      smo_objectives: {
+        Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
+          budget: number | null
+          created_at: string
+          department_slug: string | null
+          dependencies: string | null
+          description: string | null
+          due_date: string | null
+          id: string
+          key_results: Json
+          owner: string | null
+          period: string
+          perspective: string
+          plan_id: string | null
+          progress_pct: number
+          risks: string | null
+          start_date: string | null
+          status: string
+          theme: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          budget?: number | null
+          created_at?: string
+          department_slug?: string | null
+          dependencies?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          key_results?: Json
+          owner?: string | null
+          period?: string
+          perspective?: string
+          plan_id?: string | null
+          progress_pct?: number
+          risks?: string | null
+          start_date?: string | null
+          status?: string
+          theme?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          budget?: number | null
+          created_at?: string
+          department_slug?: string | null
+          dependencies?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          key_results?: Json
+          owner?: string | null
+          period?: string
+          perspective?: string
+          plan_id?: string | null
+          progress_pct?: number
+          risks?: string | null
+          start_date?: string | null
+          status?: string
+          theme?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "smo_objectives_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "smo_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      smo_plans: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          horizon_end: string | null
+          horizon_start: string | null
+          id: string
+          mission_statement: string | null
+          owner: string | null
+          plan_type: string
+          progress_pct: number
+          status: string
+          themes: Json
+          title: string
+          updated_at: string
+          vision_statement: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          horizon_end?: string | null
+          horizon_start?: string | null
+          id?: string
+          mission_statement?: string | null
+          owner?: string | null
+          plan_type?: string
+          progress_pct?: number
+          status?: string
+          themes?: Json
+          title: string
+          updated_at?: string
+          vision_statement?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          horizon_end?: string | null
+          horizon_start?: string | null
+          id?: string
+          mission_statement?: string | null
+          owner?: string | null
+          plan_type?: string
+          progress_pct?: number
+          status?: string
+          themes?: Json
+          title?: string
+          updated_at?: string
+          vision_statement?: string | null
+        }
+        Relationships: []
+      }
+      smo_projects: {
+        Row: {
+          approval_status: string
+          branch: Database["public"]["Enums"]["branch"] | null
+          budget_approved: number | null
+          budget_requested: number | null
+          business_case: string | null
+          created_at: string
+          created_by: string | null
+          department_slug: string | null
+          document_url: string | null
+          end_date: string | null
+          funding_source: string | null
+          id: string
+          manager: string | null
+          name: string
+          objective_id: string | null
+          objectives: string | null
+          photo_url: string | null
+          progress_pct: number
+          project_type: string
+          risks: string | null
+          scope: string | null
+          spent: number
+          sponsor: string | null
+          stage: string
+          stakeholders: string | null
+          start_date: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          approval_status?: string
+          branch?: Database["public"]["Enums"]["branch"] | null
+          budget_approved?: number | null
+          budget_requested?: number | null
+          business_case?: string | null
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string | null
+          document_url?: string | null
+          end_date?: string | null
+          funding_source?: string | null
+          id?: string
+          manager?: string | null
+          name: string
+          objective_id?: string | null
+          objectives?: string | null
+          photo_url?: string | null
+          progress_pct?: number
+          project_type?: string
+          risks?: string | null
+          scope?: string | null
+          spent?: number
+          sponsor?: string | null
+          stage?: string
+          stakeholders?: string | null
+          start_date?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          approval_status?: string
+          branch?: Database["public"]["Enums"]["branch"] | null
+          budget_approved?: number | null
+          budget_requested?: number | null
+          business_case?: string | null
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string | null
+          document_url?: string | null
+          end_date?: string | null
+          funding_source?: string | null
+          id?: string
+          manager?: string | null
+          name?: string
+          objective_id?: string | null
+          objectives?: string | null
+          photo_url?: string | null
+          progress_pct?: number
+          project_type?: string
+          risks?: string | null
+          scope?: string | null
+          spent?: number
+          sponsor?: string | null
+          stage?: string
+          stakeholders?: string | null
+          start_date?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "smo_projects_objective_id_fkey"
+            columns: ["objective_id"]
+            isOneToOne: false
+            referencedRelation: "smo_objectives"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      smo_requests: {
+        Row: {
+          amount: number | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          created_at: string
+          decision_notes: string | null
+          department_slug: string | null
+          description: string | null
+          id: string
+          request_type: string
+          requested_by: string | null
+          requester_name: string | null
+          route_to: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          decision_notes?: string | null
+          department_slug?: string | null
+          description?: string | null
+          id?: string
+          request_type?: string
+          requested_by?: string | null
+          requester_name?: string | null
+          route_to?: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          decision_notes?: string | null
+          department_slug?: string | null
+          description?: string | null
+          id?: string
+          request_type?: string
+          requested_by?: string | null
+          requester_name?: string | null
+          route_to?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      smo_risks: {
+        Row: {
+          category: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          escalation_level: string
+          id: string
+          impact: number
+          likelihood: number
+          mitigation: string | null
+          owner: string | null
+          review_date: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          escalation_level?: string
+          id?: string
+          impact?: number
+          likelihood?: number
+          mitigation?: string | null
+          owner?: string | null
+          review_date?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          escalation_level?: string
+          id?: string
+          impact?: number
+          likelihood?: number
+          mitigation?: string | null
+          owner?: string | null
+          review_date?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      smo_training_records: {
+        Row: {
+          certificate_url: string | null
+          completed_on: string | null
+          course_id: string | null
+          created_at: string
+          department_slug: string | null
+          expires_on: string | null
+          id: string
+          learner_name: string
+          score: number | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          certificate_url?: string | null
+          completed_on?: string | null
+          course_id?: string | null
+          created_at?: string
+          department_slug?: string | null
+          expires_on?: string | null
+          id?: string
+          learner_name: string
+          score?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          certificate_url?: string | null
+          completed_on?: string | null
+          course_id?: string | null
+          created_at?: string
+          department_slug?: string | null
+          expires_on?: string | null
+          id?: string
+          learner_name?: string
+          score?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "smo_training_records_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "smo_courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       songs: {
         Row: {
           arrangement: string | null
@@ -6363,6 +6985,630 @@ export type Database = {
             columns: ["resolution_id"]
             isOneToOne: false
             referencedRelation: "resolutions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tech_assets: {
+        Row: {
+          asset_number: string | null
+          assigned_to: string | null
+          barcode: string | null
+          battery_level: number | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          category: string
+          condition: string
+          created_at: string
+          id: string
+          insurance_ref: string | null
+          location: string | null
+          make: string | null
+          manual_url: string | null
+          model: string | null
+          name: string
+          notes: string | null
+          photo_url: string | null
+          purchase_cost: number | null
+          purchase_date: string | null
+          qr_payload: string | null
+          replacement_date: string | null
+          serial_number: string | null
+          status: string
+          subcategory: string | null
+          supplier: string | null
+          updated_at: string
+          warranty_expiry: string | null
+        }
+        Insert: {
+          asset_number?: string | null
+          assigned_to?: string | null
+          barcode?: string | null
+          battery_level?: number | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          category?: string
+          condition?: string
+          created_at?: string
+          id?: string
+          insurance_ref?: string | null
+          location?: string | null
+          make?: string | null
+          manual_url?: string | null
+          model?: string | null
+          name: string
+          notes?: string | null
+          photo_url?: string | null
+          purchase_cost?: number | null
+          purchase_date?: string | null
+          qr_payload?: string | null
+          replacement_date?: string | null
+          serial_number?: string | null
+          status?: string
+          subcategory?: string | null
+          supplier?: string | null
+          updated_at?: string
+          warranty_expiry?: string | null
+        }
+        Update: {
+          asset_number?: string | null
+          assigned_to?: string | null
+          barcode?: string | null
+          battery_level?: number | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          category?: string
+          condition?: string
+          created_at?: string
+          id?: string
+          insurance_ref?: string | null
+          location?: string | null
+          make?: string | null
+          manual_url?: string | null
+          model?: string | null
+          name?: string
+          notes?: string | null
+          photo_url?: string | null
+          purchase_cost?: number | null
+          purchase_date?: string | null
+          qr_payload?: string | null
+          replacement_date?: string | null
+          serial_number?: string | null
+          status?: string
+          subcategory?: string | null
+          supplier?: string | null
+          updated_at?: string
+          warranty_expiry?: string | null
+        }
+        Relationships: []
+      }
+      tech_courses: {
+        Row: {
+          category: string
+          certification: boolean
+          created_at: string
+          description: string | null
+          duration_hours: number | null
+          id: string
+          title: string
+          updated_at: string
+          validity_months: number | null
+        }
+        Insert: {
+          category?: string
+          certification?: boolean
+          created_at?: string
+          description?: string | null
+          duration_hours?: number | null
+          id?: string
+          title: string
+          updated_at?: string
+          validity_months?: number | null
+        }
+        Update: {
+          category?: string
+          certification?: boolean
+          created_at?: string
+          description?: string | null
+          duration_hours?: number | null
+          id?: string
+          title?: string
+          updated_at?: string
+          validity_months?: number | null
+        }
+        Relationships: []
+      }
+      tech_faults: {
+        Row: {
+          asset_id: string | null
+          assigned_to: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          created_at: string
+          description: string | null
+          fault_type: string
+          id: string
+          priority: string
+          reported_by: string | null
+          resolution: string | null
+          resolved_at: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          asset_id?: string | null
+          assigned_to?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          description?: string | null
+          fault_type?: string
+          id?: string
+          priority?: string
+          reported_by?: string | null
+          resolution?: string | null
+          resolved_at?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          asset_id?: string | null
+          assigned_to?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          description?: string | null
+          fault_type?: string
+          id?: string
+          priority?: string
+          reported_by?: string | null
+          resolution?: string | null
+          resolved_at?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tech_faults_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "tech_assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tech_inventory: {
+        Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
+          category: string
+          created_at: string
+          id: string
+          item: string
+          location: string | null
+          missing_count: number
+          notes: string | null
+          quantity: number
+          reorder_level: number
+          unit: string | null
+          unit_cost: number | null
+          updated_at: string
+        }
+        Insert: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          category?: string
+          created_at?: string
+          id?: string
+          item: string
+          location?: string | null
+          missing_count?: number
+          notes?: string | null
+          quantity?: number
+          reorder_level?: number
+          unit?: string | null
+          unit_cost?: number | null
+          updated_at?: string
+        }
+        Update: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          category?: string
+          created_at?: string
+          id?: string
+          item?: string
+          location?: string | null
+          missing_count?: number
+          notes?: string | null
+          quantity?: number
+          reorder_level?: number
+          unit?: string | null
+          unit_cost?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      tech_maintenance: {
+        Row: {
+          asset_id: string | null
+          completed_by: string | null
+          completed_on: string | null
+          cost: number | null
+          created_at: string
+          due_date: string
+          frequency: string
+          id: string
+          maintenance_type: string
+          notes: string | null
+          status: string
+          task: string
+          updated_at: string
+        }
+        Insert: {
+          asset_id?: string | null
+          completed_by?: string | null
+          completed_on?: string | null
+          cost?: number | null
+          created_at?: string
+          due_date: string
+          frequency?: string
+          id?: string
+          maintenance_type?: string
+          notes?: string | null
+          status?: string
+          task: string
+          updated_at?: string
+        }
+        Update: {
+          asset_id?: string | null
+          completed_by?: string | null
+          completed_on?: string | null
+          cost?: number | null
+          created_at?: string
+          due_date?: string
+          frequency?: string
+          id?: string
+          maintenance_type?: string
+          notes?: string | null
+          status?: string
+          task?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tech_maintenance_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "tech_assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tech_productions: {
+        Row: {
+          audio_plan: string | null
+          audio_ready: boolean
+          branch: Database["public"]["Enums"]["branch"] | null
+          camera_plan: string | null
+          cameras_ready: boolean
+          created_at: string
+          created_by: string | null
+          id: string
+          internet_ok: boolean
+          lighting_plan: string | null
+          lighting_ready: boolean
+          livestream_plan: string | null
+          livestream_ready: boolean
+          power_ok: boolean
+          preacher: string | null
+          presentation_plan: string | null
+          presentation_ready: boolean
+          service_date: string
+          service_flow: Json
+          service_type: string
+          start_time: string | null
+          status: string
+          technical_notes: string | null
+          theme: string | null
+          title: string
+          updated_at: string
+          venue: string | null
+          visual_ready: boolean
+          worship_leader: string | null
+        }
+        Insert: {
+          audio_plan?: string | null
+          audio_ready?: boolean
+          branch?: Database["public"]["Enums"]["branch"] | null
+          camera_plan?: string | null
+          cameras_ready?: boolean
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          internet_ok?: boolean
+          lighting_plan?: string | null
+          lighting_ready?: boolean
+          livestream_plan?: string | null
+          livestream_ready?: boolean
+          power_ok?: boolean
+          preacher?: string | null
+          presentation_plan?: string | null
+          presentation_ready?: boolean
+          service_date: string
+          service_flow?: Json
+          service_type?: string
+          start_time?: string | null
+          status?: string
+          technical_notes?: string | null
+          theme?: string | null
+          title: string
+          updated_at?: string
+          venue?: string | null
+          visual_ready?: boolean
+          worship_leader?: string | null
+        }
+        Update: {
+          audio_plan?: string | null
+          audio_ready?: boolean
+          branch?: Database["public"]["Enums"]["branch"] | null
+          camera_plan?: string | null
+          cameras_ready?: boolean
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          internet_ok?: boolean
+          lighting_plan?: string | null
+          lighting_ready?: boolean
+          livestream_plan?: string | null
+          livestream_ready?: boolean
+          power_ok?: boolean
+          preacher?: string | null
+          presentation_plan?: string | null
+          presentation_ready?: boolean
+          service_date?: string
+          service_flow?: Json
+          service_type?: string
+          start_time?: string | null
+          status?: string
+          technical_notes?: string | null
+          theme?: string | null
+          title?: string
+          updated_at?: string
+          venue?: string | null
+          visual_ready?: boolean
+          worship_leader?: string | null
+        }
+        Relationships: []
+      }
+      tech_risks: {
+        Row: {
+          category: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          escalation_level: string
+          id: string
+          impact: number
+          likelihood: number
+          mitigation: string | null
+          owner: string | null
+          review_date: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          escalation_level?: string
+          id?: string
+          impact?: number
+          likelihood?: number
+          mitigation?: string | null
+          owner?: string | null
+          review_date?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          escalation_level?: string
+          id?: string
+          impact?: number
+          likelihood?: number
+          mitigation?: string | null
+          owner?: string | null
+          review_date?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      tech_streams: {
+        Row: {
+          audio_feed_ok: boolean
+          bitrate_kbps: number | null
+          camera_status: string | null
+          created_at: string
+          encoder: string | null
+          health: string
+          id: string
+          incident_notes: string | null
+          internet_mbps: number | null
+          peak_viewers: number | null
+          platform: string
+          production_id: string | null
+          recording_url: string | null
+          resolution: string | null
+          status: string
+          stream_date: string
+          total_views: number | null
+          updated_at: string
+          uptime_pct: number | null
+        }
+        Insert: {
+          audio_feed_ok?: boolean
+          bitrate_kbps?: number | null
+          camera_status?: string | null
+          created_at?: string
+          encoder?: string | null
+          health?: string
+          id?: string
+          incident_notes?: string | null
+          internet_mbps?: number | null
+          peak_viewers?: number | null
+          platform?: string
+          production_id?: string | null
+          recording_url?: string | null
+          resolution?: string | null
+          status?: string
+          stream_date: string
+          total_views?: number | null
+          updated_at?: string
+          uptime_pct?: number | null
+        }
+        Update: {
+          audio_feed_ok?: boolean
+          bitrate_kbps?: number | null
+          camera_status?: string | null
+          created_at?: string
+          encoder?: string | null
+          health?: string
+          id?: string
+          incident_notes?: string | null
+          internet_mbps?: number | null
+          peak_viewers?: number | null
+          platform?: string
+          production_id?: string | null
+          recording_url?: string | null
+          resolution?: string | null
+          status?: string
+          stream_date?: string
+          total_views?: number | null
+          updated_at?: string
+          uptime_pct?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tech_streams_production_id_fkey"
+            columns: ["production_id"]
+            isOneToOne: false
+            referencedRelation: "tech_productions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tech_team_members: {
+        Row: {
+          attendance_pct: number | null
+          availability: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          certifications: string | null
+          created_at: string
+          email: string | null
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
+          full_name: string
+          id: string
+          notes: string | null
+          performance_score: number | null
+          phone: string | null
+          role_title: string
+          skills: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          attendance_pct?: number | null
+          availability?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          certifications?: string | null
+          created_at?: string
+          email?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          full_name: string
+          id?: string
+          notes?: string | null
+          performance_score?: number | null
+          phone?: string | null
+          role_title?: string
+          skills?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          attendance_pct?: number | null
+          availability?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          certifications?: string | null
+          created_at?: string
+          email?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          full_name?: string
+          id?: string
+          notes?: string | null
+          performance_score?: number | null
+          phone?: string | null
+          role_title?: string
+          skills?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      tech_training_records: {
+        Row: {
+          certificate_url: string | null
+          completed_on: string | null
+          course_id: string | null
+          created_at: string
+          expires_on: string | null
+          id: string
+          member_id: string | null
+          score: number | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          certificate_url?: string | null
+          completed_on?: string | null
+          course_id?: string | null
+          created_at?: string
+          expires_on?: string | null
+          id?: string
+          member_id?: string | null
+          score?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          certificate_url?: string | null
+          completed_on?: string | null
+          course_id?: string | null
+          created_at?: string
+          expires_on?: string | null
+          id?: string
+          member_id?: string | null
+          score?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tech_training_records_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "tech_courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tech_training_records_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "tech_team_members"
             referencedColumns: ["id"]
           },
         ]
@@ -7751,6 +8997,8 @@ export type Database = {
       is_kids_team: { Args: { _user_id: string }; Returns: boolean }
       is_pastoral_team: { Args: { _user_id: string }; Returns: boolean }
       is_secretariat: { Args: { _user_id: string }; Returns: boolean }
+      is_strategy_team: { Args: { _user_id: string }; Returns: boolean }
+      is_tech_team: { Args: { _user_id: string }; Returns: boolean }
       is_worship_team: { Args: { _user_id: string }; Returns: boolean }
       list_conversations: {
         Args: never
