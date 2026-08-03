@@ -9,6 +9,10 @@ const DecisionsModule = lazy(() => import("@/components/chairperson/DecisionsMod
 const RiskRegisterModule = lazy(() => import("@/components/chairperson/RiskRegisterModule"));
 const ExecutiveApprovalsModule = lazy(() => import("@/components/chairperson/ExecutiveApprovalsModule"));
 const GovernanceReports = lazy(() => import("@/components/chairperson/GovernanceReports"));
+const ComplianceCentre = lazy(() => import("@/components/chairperson/ComplianceCentre"));
+const CommunicationsCentre = lazy(() => import("@/components/chairperson/CommunicationsCentre"));
+const AccountabilityTracker = lazy(() => import("@/components/chairperson/AccountabilityTracker"));
+const GovernanceAssistant = lazy(() => import("@/components/chairperson/GovernanceAssistant"));
 
 const LEADERSHIP = ["senior_apostle", "chairperson", "secretary", "lead_pastor", "associate_pastor"];
 
@@ -37,8 +41,12 @@ export default function ChairpersonCenter({ currentUserId }: { departmentSlug?: 
           <TabsTrigger value="oversight">Department oversight</TabsTrigger>
           <TabsTrigger value="decisions">Decisions</TabsTrigger>
           <TabsTrigger value="risk">Risk register</TabsTrigger>
+          <TabsTrigger value="compliance">Compliance & statutory</TabsTrigger>
+          <TabsTrigger value="accountability">Accountability tracker</TabsTrigger>
+          <TabsTrigger value="communications">Communications</TabsTrigger>
           <TabsTrigger value="approvals">Executive approvals</TabsTrigger>
           <TabsTrigger value="reports">Reporting & analytics</TabsTrigger>
+          <TabsTrigger value="assistant">AI assistant</TabsTrigger>
         </TabsList>
 
         <Suspense fallback={<Card className="mt-6 p-8 text-center text-sm text-muted-foreground">Loading…</Card>}>
@@ -50,10 +58,18 @@ export default function ChairpersonCenter({ currentUserId }: { departmentSlug?: 
           <TabsContent value="risk" className="mt-6">
             <RiskRegisterModule canManage={canManage} currentUserId={currentUserId} />
           </TabsContent>
+          <TabsContent value="compliance" className="mt-6">
+            <ComplianceCentre canManage={canManage} currentUserId={currentUserId} />
+          </TabsContent>
+          <TabsContent value="accountability" className="mt-6"><AccountabilityTracker /></TabsContent>
+          <TabsContent value="communications" className="mt-6">
+            <CommunicationsCentre canManage={canManage} currentUserId={currentUserId} />
+          </TabsContent>
           <TabsContent value="approvals" className="mt-6">
             <ExecutiveApprovalsModule canManage={canManage} currentUserId={currentUserId} />
           </TabsContent>
           <TabsContent value="reports" className="mt-6"><GovernanceReports /></TabsContent>
+          <TabsContent value="assistant" className="mt-6"><GovernanceAssistant /></TabsContent>
         </Suspense>
       </Tabs>
     </div>
