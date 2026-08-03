@@ -107,12 +107,13 @@ export default function BudgetsModule({ canManage, currentUserId }: { canManage:
           onClick={() =>
             exportRows(
               "budgets",
-              ["Budget", "Year", "Department", "Branch", "Planned", "Actual", "Utilisation %", "Status"],
+              ["Budget", "Type", "Year", "Department", "Branch", "Planned", "Actual", "Committed", "Remaining", "Variance", "Utilisation %", "Version", "Status"],
               (budgets.data ?? []).map((b) => {
                 const u = utilFor(b.id);
-                return [b.name, b.fiscal_year, b.department_slug, b.branch, u?.planned ?? 0, u?.actual ?? 0, u?.utilisation_pct ?? 0, b.status];
+                return [b.name, budgetTypeLabel(b.budget_type), b.fiscal_year, b.department_slug, b.branch, u?.planned ?? 0, u?.actual ?? 0, u?.committed ?? 0, u?.remaining ?? 0, u?.variance ?? 0, u?.utilisation_pct ?? 0, b.version, b.status];
               }),
             )
+
           }
         >
           <Download className="mr-2 h-4 w-4" /> Excel (CSV)
