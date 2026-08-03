@@ -55,6 +55,10 @@ export const workspaceRegistry: Record<string, Entry> = {
     label: "Secretarial Office",
     component: lazy(() => import("@/components/secretariat/SecretariatCenter")),
   },
+  chairperson: {
+    label: "Executive Governance Command Centre",
+    component: lazy(() => import("@/components/chairperson/ChairpersonCenter")),
+  },
   finance: {
     label: "Financial Command Centre",
     component: lazy(() => import("@/components/finance/FinanceCenter")),
