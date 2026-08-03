@@ -1,4 +1,13 @@
 // Photo mapping wired to /public/images (see trogkc-assets/INSTRUCTIONS.md)
+import outreachCover from "@/assets/dept/outreach-evangelism.png.asset.json";
+import womensCover from "@/assets/dept/womens-ministry.png.asset.json";
+import mensCover from "@/assets/dept/mens-ministry.png.asset.json";
+import somCover from "@/assets/dept/school-of-ministry.png.asset.json";
+import discipleshipCover from "@/assets/dept/discipleship.png.asset.json";
+import mediaCover from "@/assets/dept/media.png.asset.json";
+import ushersCover from "@/assets/dept/ushers.png.asset.json";
+import hospitalityCover from "@/assets/dept/hospitality.png.asset.json";
+import prayerCover from "@/assets/dept/prayer-intercession.png.asset.json";
 export const PORTAL_IMAGES = {
   logo: "/images/landing/logo-flame-emblem.jpg",
   marchingOrdersBanner: "/images/landing/marching-orders-2026-banner.jpg",
