@@ -884,6 +884,114 @@ export type Database = {
         }
         Relationships: []
       }
+      bank_statements: {
+        Row: {
+          account_name: string
+          branch: Database["public"]["Enums"]["branch"] | null
+          closing_balance: number
+          created_at: string
+          file_name: string | null
+          file_url: string | null
+          id: string
+          imported_by: string
+          opening_balance: number
+          period_end: string
+          period_start: string
+          updated_at: string
+        }
+        Insert: {
+          account_name: string
+          branch?: Database["public"]["Enums"]["branch"] | null
+          closing_balance?: number
+          created_at?: string
+          file_name?: string | null
+          file_url?: string | null
+          id?: string
+          imported_by: string
+          opening_balance?: number
+          period_end: string
+          period_start: string
+          updated_at?: string
+        }
+        Update: {
+          account_name?: string
+          branch?: Database["public"]["Enums"]["branch"] | null
+          closing_balance?: number
+          created_at?: string
+          file_name?: string | null
+          file_url?: string | null
+          id?: string
+          imported_by?: string
+          opening_balance?: number
+          period_end?: string
+          period_start?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      bank_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string
+          direction: string
+          id: string
+          match_status: string
+          matched_at: string | null
+          matched_by: string | null
+          matched_entry_id: string | null
+          reference: string | null
+          statement_id: string
+          txn_date: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description: string
+          direction?: string
+          id?: string
+          match_status?: string
+          matched_at?: string | null
+          matched_by?: string | null
+          matched_entry_id?: string | null
+          reference?: string | null
+          statement_id: string
+          txn_date: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string
+          direction?: string
+          id?: string
+          match_status?: string
+          matched_at?: string | null
+          matched_by?: string | null
+          matched_entry_id?: string | null
+          reference?: string | null
+          statement_id?: string
+          txn_date?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bank_transactions_matched_entry_id_fkey"
+            columns: ["matched_entry_id"]
+            isOneToOne: false
+            referencedRelation: "finance_entries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bank_transactions_statement_id_fkey"
+            columns: ["statement_id"]
+            isOneToOne: false
+            referencedRelation: "bank_statements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       branch_reports: {
         Row: {
           branch: Database["public"]["Enums"]["branch"]
@@ -3804,6 +3912,134 @@ export type Database = {
           provider?: string
           state?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      payroll_lines: {
+        Row: {
+          allowances: number
+          created_at: string
+          deductions: number
+          department_slug: string | null
+          gross_amount: number
+          id: string
+          member_id: string | null
+          net_amount: number | null
+          notes: string | null
+          payment_status: string
+          person_name: string
+          role_title: string | null
+          run_id: string
+          updated_at: string
+        }
+        Insert: {
+          allowances?: number
+          created_at?: string
+          deductions?: number
+          department_slug?: string | null
+          gross_amount?: number
+          id?: string
+          member_id?: string | null
+          net_amount?: number | null
+          notes?: string | null
+          payment_status?: string
+          person_name: string
+          role_title?: string | null
+          run_id: string
+          updated_at?: string
+        }
+        Update: {
+          allowances?: number
+          created_at?: string
+          deductions?: number
+          department_slug?: string | null
+          gross_amount?: number
+          id?: string
+          member_id?: string | null
+          net_amount?: number | null
+          notes?: string | null
+          payment_status?: string
+          person_name?: string
+          role_title?: string | null
+          run_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payroll_lines_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payroll_lines_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payroll_lines_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payroll_lines_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "payroll_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payroll_runs: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          created_at: string
+          created_by: string
+          id: string
+          notes: string | null
+          paid_at: string | null
+          period_end: string
+          period_label: string
+          period_start: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          created_by: string
+          id?: string
+          notes?: string | null
+          paid_at?: string | null
+          period_end: string
+          period_label: string
+          period_start: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          created_by?: string
+          id?: string
+          notes?: string | null
+          paid_at?: string | null
+          period_end?: string
+          period_label?: string
+          period_start?: string
+          status?: string
+          updated_at?: string
         }
         Relationships: []
       }
