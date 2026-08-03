@@ -8,6 +8,8 @@ import mediaCover from "@/assets/dept/media.png.asset.json";
 import ushersCover from "@/assets/dept/ushers.png.asset.json";
 import hospitalityCover from "@/assets/dept/hospitality.png.asset.json";
 import prayerCover from "@/assets/dept/prayer-intercession.png.asset.json";
+import childrensCover from "@/assets/dept/childrens-ministry.png.asset.json";
+import soundTechCover from "@/assets/dept/sound-technical.png.asset.json";
 export const PORTAL_IMAGES = {
   logo: "/images/landing/logo-flame-emblem.jpg",
   marchingOrdersBanner: "/images/landing/marching-orders-2026-banner.jpg",
@@ -21,7 +23,8 @@ export const PORTAL_IMAGES = {
 export const DEPARTMENT_HERO: Record<string, { src: string; alt: string }> = {
   worship: { src: "/images/departments/worship/worship-leader-podium.jpg", alt: "Worship Department — team member ministering at the podium" },
   protocol: { src: "/images/departments/protocol/podium-announcement.jpg", alt: "Protocol Department — formal announcement at the podium" },
-  "childrens-ministry": { src: "/images/departments/childrens-ministry/face-paint-group.jpg", alt: "Children's Ministry — kids with face paint at a church event" },
+  "childrens-ministry": { src: childrensCover.url, alt: "Children's Ministry emblem" },
+  "sound-technical": { src: soundTechCover.url, alt: "Sound & Technical Team emblem" },
   discipleship: { src: discipleshipCover.url, alt: "Discipleship — open Bible emblem" },
   "school-of-ministry": { src: somCover.url, alt: "School of Ministry emblem" },
   "womens-ministry": { src: womensCover.url, alt: "Women's Ministry emblem" },
