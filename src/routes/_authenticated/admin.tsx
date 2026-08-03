@@ -23,6 +23,16 @@ const ROLES: AppRole[] = [
  
 function AdminPage() {
   const qc = useQueryClient();
+  const access = useQuery({
+    queryKey: ["is-chairperson"],
+    queryFn: async () => {
+      const { data: userRes } = await supabase.auth.getUser();
+      const uid = userRes.user?.id;
+      if (!uid) return { isChair: false, userId: null as string | null };
+      const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", uid);
+      return { isChair: (roles ?? []).some((r: any) => r.role === "chairperson"), userId: uid };
+    },
+  });
   const depts = useQuery({ queryKey: ["departments"], queryFn: fetchDepartments });
   const profiles = useQuery({
     queryKey: ["all-profiles"],
