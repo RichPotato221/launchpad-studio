@@ -11,6 +11,8 @@ import GivingModule from "@/components/finance/GivingModule";
 import BudgetsModule from "@/components/finance/BudgetsModule";
 import ApprovalsModule from "@/components/finance/ApprovalsModule";
 import ProcurementModule from "@/components/finance/ProcurementModule";
+import PayrollModule from "@/components/finance/PayrollModule";
+import ReconciliationModule from "@/components/finance/ReconciliationModule";
 import { useCurrentRole } from "@/lib/useCurrentRole";
 import { exportRows, fmtDate, titleCase } from "@/lib/finance";
 
@@ -57,6 +59,8 @@ export default function FinanceCenter({ currentUserId }: { departmentSlug?: stri
           <TabsTrigger value="budgets">Budgets</TabsTrigger>
           <TabsTrigger value="approvals">Approvals & payments</TabsTrigger>
           <TabsTrigger value="procurement">Procurement</TabsTrigger>
+          <TabsTrigger value="payroll">Payroll</TabsTrigger>
+          <TabsTrigger value="reconciliation">Bank reconciliation</TabsTrigger>
           <TabsTrigger value="audit">Audit trail</TabsTrigger>
         </TabsList>
 
@@ -75,6 +79,12 @@ export default function FinanceCenter({ currentUserId }: { departmentSlug?: stri
         </TabsContent>
         <TabsContent value="procurement" className="mt-6">
           <ProcurementModule canManage={canManage} currentUserId={currentUserId} />
+        </TabsContent>
+        <TabsContent value="payroll" className="mt-6">
+          <PayrollModule canManage={canManage} currentUserId={currentUserId} />
+        </TabsContent>
+        <TabsContent value="reconciliation" className="mt-6">
+          <ReconciliationModule canManage={canManage} currentUserId={currentUserId} />
         </TabsContent>
         <TabsContent value="audit" className="mt-6"><FinanceAudit /></TabsContent>
       </Tabs>
