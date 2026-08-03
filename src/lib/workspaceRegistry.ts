@@ -89,6 +89,48 @@ export const workspaceRegistry: Record<string, Entry> = {
     component: lazy(() => import("@/components/pastoral/PastoralCenter")),
   },
 
+  "sound-technical": {
+    label: "Technical Operations Centre",
+    component: lazy(() => import("@/components/technical/TechnicalCenter")),
+  },
+  "sound-and-technical": {
+    label: "Technical Operations Centre",
+    component: lazy(() => import("@/components/technical/TechnicalCenter")),
+  },
+  sound: {
+    label: "Technical Operations Centre",
+    component: lazy(() => import("@/components/technical/TechnicalCenter")),
+  },
+  technical: {
+    label: "Technical Operations Centre",
+    component: lazy(() => import("@/components/technical/TechnicalCenter")),
+  },
+  av: {
+    label: "Technical Operations Centre",
+    component: lazy(() => import("@/components/technical/TechnicalCenter")),
+  },
+
+  "strategic-adviser": {
+    label: "Strategy Management Office",
+    component: lazy(() => import("@/components/strategy/StrategyCenter")),
+  },
+  "strategic-adviser-planner": {
+    label: "Strategy Management Office",
+    component: lazy(() => import("@/components/strategy/StrategyCenter")),
+  },
+  strategy: {
+    label: "Strategy Management Office",
+    component: lazy(() => import("@/components/strategy/StrategyCenter")),
+  },
+  "strategic-planning": {
+    label: "Strategy Management Office",
+    component: lazy(() => import("@/components/strategy/StrategyCenter")),
+  },
+  planning: {
+    label: "Strategy Management Office",
+    component: lazy(() => import("@/components/strategy/StrategyCenter")),
+  },
+
   finance: {
     label: "Financial Command Centre",
     component: lazy(() => import("@/components/finance/FinanceCenter")),
