@@ -3,13 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import { Suspense, useState } from "react";
 import { getWorkspaceFor } from "@/lib/workspaceRegistry";
 import { TeamChat } from "@/components/departments/TeamChat";
+import { DepartmentResources } from "@/components/departments/DepartmentResources";
 import { useIsDepartmentMember } from "@/lib/useIsDepartmentMember";
 import { supabase } from "@/integrations/supabase/client";
 import {
   fetchDepartment,
   fetchDepartmentKpis,
   KPI_CATEGORIES,
-  MANUALS,
   type KpiCategory,
 } from "@/lib/portal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
