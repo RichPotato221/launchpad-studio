@@ -1383,6 +1383,148 @@ export type Database = {
         }
         Relationships: []
       }
+      child_guardians: {
+        Row: {
+          can_pickup: boolean
+          child_id: string
+          created_at: string
+          email: string | null
+          full_name: string
+          id: string
+          is_emergency: boolean
+          is_primary: boolean
+          phone: string | null
+          profile_id: string | null
+          relationship: string | null
+        }
+        Insert: {
+          can_pickup?: boolean
+          child_id: string
+          created_at?: string
+          email?: string | null
+          full_name: string
+          id?: string
+          is_emergency?: boolean
+          is_primary?: boolean
+          phone?: string | null
+          profile_id?: string | null
+          relationship?: string | null
+        }
+        Update: {
+          can_pickup?: boolean
+          child_id?: string
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id?: string
+          is_emergency?: boolean
+          is_primary?: boolean
+          phone?: string | null
+          profile_id?: string | null
+          relationship?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "child_guardians_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      children: {
+        Row: {
+          address: string | null
+          age_group: string | null
+          allergies: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          child_code: string
+          classroom_id: string | null
+          consent_media: boolean
+          consent_medical: boolean
+          consent_signed_at: string | null
+          consent_signed_by: string | null
+          created_at: string
+          created_by: string | null
+          date_of_birth: string | null
+          full_name: string
+          gender: string | null
+          id: string
+          medical_conditions: string | null
+          medication: string | null
+          nickname: string | null
+          notes: string | null
+          photo_url: string | null
+          pin: string | null
+          special_needs: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          age_group?: string | null
+          allergies?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          child_code?: string
+          classroom_id?: string | null
+          consent_media?: boolean
+          consent_medical?: boolean
+          consent_signed_at?: string | null
+          consent_signed_by?: string | null
+          created_at?: string
+          created_by?: string | null
+          date_of_birth?: string | null
+          full_name: string
+          gender?: string | null
+          id?: string
+          medical_conditions?: string | null
+          medication?: string | null
+          nickname?: string | null
+          notes?: string | null
+          photo_url?: string | null
+          pin?: string | null
+          special_needs?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          age_group?: string | null
+          allergies?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          child_code?: string
+          classroom_id?: string | null
+          consent_media?: boolean
+          consent_medical?: boolean
+          consent_signed_at?: string | null
+          consent_signed_by?: string | null
+          created_at?: string
+          created_by?: string | null
+          date_of_birth?: string | null
+          full_name?: string
+          gender?: string | null
+          id?: string
+          medical_conditions?: string | null
+          medication?: string | null
+          nickname?: string | null
+          notes?: string | null
+          photo_url?: string | null
+          pin?: string | null
+          special_needs?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "children_classroom_fk"
+            columns: ["classroom_id"]
+            isOneToOne: false
+            referencedRelation: "kids_classrooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       coaching_sessions: {
         Row: {
           action_plan: string | null
@@ -3208,6 +3350,536 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      kids_certifications: {
+        Row: {
+          cert_type: string
+          certificate_url: string | null
+          created_at: string
+          expires_on: string | null
+          hours: number
+          id: string
+          issued_on: string | null
+          notes: string | null
+          status: string
+          volunteer_id: string
+        }
+        Insert: {
+          cert_type: string
+          certificate_url?: string | null
+          created_at?: string
+          expires_on?: string | null
+          hours?: number
+          id?: string
+          issued_on?: string | null
+          notes?: string | null
+          status?: string
+          volunteer_id: string
+        }
+        Update: {
+          cert_type?: string
+          certificate_url?: string | null
+          created_at?: string
+          expires_on?: string | null
+          hours?: number
+          id?: string
+          issued_on?: string | null
+          notes?: string | null
+          status?: string
+          volunteer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kids_certifications_volunteer_id_fkey"
+            columns: ["volunteer_id"]
+            isOneToOne: false
+            referencedRelation: "kids_volunteers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      kids_checkins: {
+        Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
+          checked_in_at: string
+          checked_in_by: string | null
+          checked_out_at: string | null
+          checked_out_by: string | null
+          child_id: string
+          classroom_id: string | null
+          created_at: string
+          id: string
+          is_first_time: boolean
+          late_arrival: boolean
+          method: string
+          notes: string | null
+          released_to: string | null
+          service_date: string
+        }
+        Insert: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          checked_in_at?: string
+          checked_in_by?: string | null
+          checked_out_at?: string | null
+          checked_out_by?: string | null
+          child_id: string
+          classroom_id?: string | null
+          created_at?: string
+          id?: string
+          is_first_time?: boolean
+          late_arrival?: boolean
+          method?: string
+          notes?: string | null
+          released_to?: string | null
+          service_date?: string
+        }
+        Update: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          checked_in_at?: string
+          checked_in_by?: string | null
+          checked_out_at?: string | null
+          checked_out_by?: string | null
+          child_id?: string
+          classroom_id?: string | null
+          created_at?: string
+          id?: string
+          is_first_time?: boolean
+          late_arrival?: boolean
+          method?: string
+          notes?: string | null
+          released_to?: string | null
+          service_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kids_checkins_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kids_checkins_classroom_id_fkey"
+            columns: ["classroom_id"]
+            isOneToOne: false
+            referencedRelation: "kids_classrooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      kids_classrooms: {
+        Row: {
+          active: boolean
+          age_max: number | null
+          age_min: number | null
+          assistant_id: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          capacity: number
+          created_at: string
+          id: string
+          name: string
+          notes: string | null
+          room: string | null
+          teacher_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          age_max?: number | null
+          age_min?: number | null
+          assistant_id?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          capacity?: number
+          created_at?: string
+          id?: string
+          name: string
+          notes?: string | null
+          room?: string | null
+          teacher_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          age_max?: number | null
+          age_min?: number | null
+          assistant_id?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          capacity?: number
+          created_at?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          room?: string | null
+          teacher_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      kids_family_engagement: {
+        Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
+          child_id: string | null
+          created_at: string
+          engaged_on: string
+          engagement_type: string
+          family_name: string | null
+          feedback: string | null
+          id: string
+          participation_score: number | null
+          recorded_by: string | null
+          summary: string | null
+        }
+        Insert: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          child_id?: string | null
+          created_at?: string
+          engaged_on?: string
+          engagement_type?: string
+          family_name?: string | null
+          feedback?: string | null
+          id?: string
+          participation_score?: number | null
+          recorded_by?: string | null
+          summary?: string | null
+        }
+        Update: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          child_id?: string | null
+          created_at?: string
+          engaged_on?: string
+          engagement_type?: string
+          family_name?: string | null
+          feedback?: string | null
+          id?: string
+          participation_score?: number | null
+          recorded_by?: string | null
+          summary?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kids_family_engagement_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      kids_incidents: {
+        Row: {
+          action_taken: string | null
+          assigned_to: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          child_id: string | null
+          classroom_id: string | null
+          created_at: string
+          description: string
+          id: string
+          incident_type: string
+          occurred_at: string
+          reported_by: string | null
+          resolution: string | null
+          resolved_at: string | null
+          severity: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          action_taken?: string | null
+          assigned_to?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          child_id?: string | null
+          classroom_id?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          incident_type?: string
+          occurred_at?: string
+          reported_by?: string | null
+          resolution?: string | null
+          resolved_at?: string | null
+          severity?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          action_taken?: string | null
+          assigned_to?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          child_id?: string | null
+          classroom_id?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          incident_type?: string
+          occurred_at?: string
+          reported_by?: string | null
+          resolution?: string | null
+          resolved_at?: string | null
+          severity?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kids_incidents_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kids_incidents_classroom_id_fkey"
+            columns: ["classroom_id"]
+            isOneToOne: false
+            referencedRelation: "kids_classrooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      kids_lesson_delivery: {
+        Row: {
+          attendance_count: number
+          classroom_id: string | null
+          created_at: string
+          delivered_on: string
+          id: string
+          lesson_id: string
+          memory_verses_completed: number
+          notes: string | null
+          parent_summary_sent: boolean
+          taught_by: string | null
+        }
+        Insert: {
+          attendance_count?: number
+          classroom_id?: string | null
+          created_at?: string
+          delivered_on?: string
+          id?: string
+          lesson_id: string
+          memory_verses_completed?: number
+          notes?: string | null
+          parent_summary_sent?: boolean
+          taught_by?: string | null
+        }
+        Update: {
+          attendance_count?: number
+          classroom_id?: string | null
+          created_at?: string
+          delivered_on?: string
+          id?: string
+          lesson_id?: string
+          memory_verses_completed?: number
+          notes?: string | null
+          parent_summary_sent?: boolean
+          taught_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kids_lesson_delivery_classroom_id_fkey"
+            columns: ["classroom_id"]
+            isOneToOne: false
+            referencedRelation: "kids_classrooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kids_lesson_delivery_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "kids_lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      kids_lessons: {
+        Row: {
+          activities: string | null
+          age_group: string | null
+          assessment: string | null
+          crafts: string | null
+          created_at: string
+          created_by: string | null
+          discussion_questions: string | null
+          games: string | null
+          homework: string | null
+          id: string
+          memory_verse: string | null
+          objectives: string | null
+          resources_url: string | null
+          scheduled_date: string | null
+          scripture: string | null
+          songs: string | null
+          status: string
+          teaching_notes: string | null
+          theme: string | null
+          title: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          activities?: string | null
+          age_group?: string | null
+          assessment?: string | null
+          crafts?: string | null
+          created_at?: string
+          created_by?: string | null
+          discussion_questions?: string | null
+          games?: string | null
+          homework?: string | null
+          id?: string
+          memory_verse?: string | null
+          objectives?: string | null
+          resources_url?: string | null
+          scheduled_date?: string | null
+          scripture?: string | null
+          songs?: string | null
+          status?: string
+          teaching_notes?: string | null
+          theme?: string | null
+          title: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          activities?: string | null
+          age_group?: string | null
+          assessment?: string | null
+          crafts?: string | null
+          created_at?: string
+          created_by?: string | null
+          discussion_questions?: string | null
+          games?: string | null
+          homework?: string | null
+          id?: string
+          memory_verse?: string | null
+          objectives?: string | null
+          resources_url?: string | null
+          scheduled_date?: string | null
+          scripture?: string | null
+          songs?: string | null
+          status?: string
+          teaching_notes?: string | null
+          theme?: string | null
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
+      kids_milestones: {
+        Row: {
+          achieved_on: string
+          child_id: string
+          created_at: string
+          detail: string | null
+          id: string
+          milestone_type: string
+          recorded_by: string | null
+        }
+        Insert: {
+          achieved_on?: string
+          child_id: string
+          created_at?: string
+          detail?: string | null
+          id?: string
+          milestone_type: string
+          recorded_by?: string | null
+        }
+        Update: {
+          achieved_on?: string
+          child_id?: string
+          created_at?: string
+          detail?: string | null
+          id?: string
+          milestone_type?: string
+          recorded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kids_milestones_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      kids_volunteers: {
+        Row: {
+          availability: string | null
+          background_check_expiry: string | null
+          background_check_status: string
+          branch: Database["public"]["Enums"]["branch"] | null
+          classroom_id: string | null
+          created_at: string
+          emergency_contact: string | null
+          full_name: string
+          id: string
+          notes: string | null
+          phone: string | null
+          role_title: string | null
+          safeguarding_expiry: string | null
+          services_attended: number
+          services_missed: number
+          skills: string | null
+          status: string
+          total_hours: number
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          availability?: string | null
+          background_check_expiry?: string | null
+          background_check_status?: string
+          branch?: Database["public"]["Enums"]["branch"] | null
+          classroom_id?: string | null
+          created_at?: string
+          emergency_contact?: string | null
+          full_name: string
+          id?: string
+          notes?: string | null
+          phone?: string | null
+          role_title?: string | null
+          safeguarding_expiry?: string | null
+          services_attended?: number
+          services_missed?: number
+          skills?: string | null
+          status?: string
+          total_hours?: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          availability?: string | null
+          background_check_expiry?: string | null
+          background_check_status?: string
+          branch?: Database["public"]["Enums"]["branch"] | null
+          classroom_id?: string | null
+          created_at?: string
+          emergency_contact?: string | null
+          full_name?: string
+          id?: string
+          notes?: string | null
+          phone?: string | null
+          role_title?: string | null
+          safeguarding_expiry?: string | null
+          services_attended?: number
+          services_missed?: number
+          skills?: string | null
+          status?: string
+          total_hours?: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kids_volunteers_classroom_id_fkey"
+            columns: ["classroom_id"]
+            isOneToOne: false
+            referencedRelation: "kids_classrooms"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       kingdom_projects: {
         Row: {
@@ -6232,6 +6904,10 @@ export type Database = {
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
       is_approved_member: { Args: { _user_id: string }; Returns: boolean }
+      is_child_guardian: {
+        Args: { _child_id: string; _user_id: string }
+        Returns: boolean
+      }
       is_dept_branch_member_or_admin: {
         Args: { _branch: Database["public"]["Enums"]["branch"]; _slug: string }
         Returns: boolean
@@ -6240,6 +6916,7 @@ export type Database = {
       is_dept_member_or_admin: { Args: { _slug: string }; Returns: boolean }
       is_finance_officer: { Args: { _user_id: string }; Returns: boolean }
       is_head_office: { Args: { _user_id: string }; Returns: boolean }
+      is_kids_team: { Args: { _user_id: string }; Returns: boolean }
       is_pastoral_team: { Args: { _user_id: string }; Returns: boolean }
       is_secretariat: { Args: { _user_id: string }; Returns: boolean }
       list_conversations: {

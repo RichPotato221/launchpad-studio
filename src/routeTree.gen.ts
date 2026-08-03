@@ -19,6 +19,7 @@ import { Route as AuthenticatedSeniorPastorCockpitRouteImport } from './routes/_
 import { Route as AuthenticatedSecretariatRouteImport } from './routes/_authenticated/secretariat'
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
 import { Route as AuthenticatedMessagesRouteImport } from './routes/_authenticated/messages'
+import { Route as AuthenticatedKidsParentRouteImport } from './routes/_authenticated/kids-parent'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
 import { Route as AuthenticatedGovernanceRouteImport } from './routes/_authenticated/governance'
 import { Route as AuthenticatedFinanceRouteImport } from './routes/_authenticated/finance'
@@ -85,6 +86,11 @@ const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
 const AuthenticatedMessagesRoute = AuthenticatedMessagesRouteImport.update({
   id: '/messages',
   path: '/messages',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedKidsParentRoute = AuthenticatedKidsParentRouteImport.update({
+  id: '/kids-parent',
+  path: '/kids-parent',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
@@ -187,6 +193,7 @@ export interface FileRoutesByFullPath {
   '/finance': typeof AuthenticatedFinanceRoute
   '/governance': typeof AuthenticatedGovernanceRoute
   '/home': typeof AuthenticatedHomeRoute
+  '/kids-parent': typeof AuthenticatedKidsParentRoute
   '/messages': typeof AuthenticatedMessagesRouteWithChildren
   '/reports': typeof AuthenticatedReportsRoute
   '/secretariat': typeof AuthenticatedSecretariatRoute
@@ -214,6 +221,7 @@ export interface FileRoutesByTo {
   '/finance': typeof AuthenticatedFinanceRoute
   '/governance': typeof AuthenticatedGovernanceRoute
   '/home': typeof AuthenticatedHomeRoute
+  '/kids-parent': typeof AuthenticatedKidsParentRoute
   '/messages': typeof AuthenticatedMessagesRouteWithChildren
   '/reports': typeof AuthenticatedReportsRoute
   '/secretariat': typeof AuthenticatedSecretariatRoute
@@ -243,6 +251,7 @@ export interface FileRoutesById {
   '/_authenticated/finance': typeof AuthenticatedFinanceRoute
   '/_authenticated/governance': typeof AuthenticatedGovernanceRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
+  '/_authenticated/kids-parent': typeof AuthenticatedKidsParentRoute
   '/_authenticated/messages': typeof AuthenticatedMessagesRouteWithChildren
   '/_authenticated/reports': typeof AuthenticatedReportsRoute
   '/_authenticated/secretariat': typeof AuthenticatedSecretariatRoute
@@ -272,6 +281,7 @@ export interface FileRouteTypes {
     | '/finance'
     | '/governance'
     | '/home'
+    | '/kids-parent'
     | '/messages'
     | '/reports'
     | '/secretariat'
@@ -299,6 +309,7 @@ export interface FileRouteTypes {
     | '/finance'
     | '/governance'
     | '/home'
+    | '/kids-parent'
     | '/messages'
     | '/reports'
     | '/secretariat'
@@ -327,6 +338,7 @@ export interface FileRouteTypes {
     | '/_authenticated/finance'
     | '/_authenticated/governance'
     | '/_authenticated/home'
+    | '/_authenticated/kids-parent'
     | '/_authenticated/messages'
     | '/_authenticated/reports'
     | '/_authenticated/secretariat'
@@ -419,6 +431,13 @@ declare module '@tanstack/react-router' {
       path: '/messages'
       fullPath: '/messages'
       preLoaderRoute: typeof AuthenticatedMessagesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/kids-parent': {
+      id: '/_authenticated/kids-parent'
+      path: '/kids-parent'
+      fullPath: '/kids-parent'
+      preLoaderRoute: typeof AuthenticatedKidsParentRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/home': {
@@ -575,6 +594,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedFinanceRoute: typeof AuthenticatedFinanceRoute
   AuthenticatedGovernanceRoute: typeof AuthenticatedGovernanceRoute
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
+  AuthenticatedKidsParentRoute: typeof AuthenticatedKidsParentRoute
   AuthenticatedMessagesRoute: typeof AuthenticatedMessagesRouteWithChildren
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
   AuthenticatedSecretariatRoute: typeof AuthenticatedSecretariatRoute
@@ -596,6 +616,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedFinanceRoute: AuthenticatedFinanceRoute,
   AuthenticatedGovernanceRoute: AuthenticatedGovernanceRoute,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
+  AuthenticatedKidsParentRoute: AuthenticatedKidsParentRoute,
   AuthenticatedMessagesRoute: AuthenticatedMessagesRouteWithChildren,
   AuthenticatedReportsRoute: AuthenticatedReportsRoute,
   AuthenticatedSecretariatRoute: AuthenticatedSecretariatRoute,
