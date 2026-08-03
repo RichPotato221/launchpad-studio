@@ -59,6 +59,15 @@ export const workspaceRegistry: Record<string, Entry> = {
     label: "Executive Governance Command Centre",
     component: lazy(() => import("@/components/chairperson/ChairpersonCenter")),
   },
+  "associate-pastor": {
+    label: "Ministry Operations & Shepherding Command Centre",
+    component: lazy(() => import("@/components/pastoral/PastoralCenter")),
+  },
+  "lead-pastor": {
+    label: "Ministry Operations & Shepherding Command Centre",
+    component: lazy(() => import("@/components/pastoral/PastoralCenter")),
+  },
+
   finance: {
     label: "Financial Command Centre",
     component: lazy(() => import("@/components/finance/FinanceCenter")),
