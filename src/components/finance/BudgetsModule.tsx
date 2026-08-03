@@ -24,6 +24,19 @@ import {
 
 const sb = supabase as any;
 
+export const BUDGET_TYPES = [
+  { key: "annual_church", label: "Annual church budget" },
+  { key: "branch", label: "Branch budget" },
+  { key: "department", label: "Department budget" },
+  { key: "ministry", label: "Ministry budget" },
+  { key: "event", label: "Event budget" },
+  { key: "project", label: "Project / capital budget" },
+] as const;
+
+const budgetTypeLabel = (k?: string | null) =>
+  BUDGET_TYPES.find((t) => t.key === k)?.label ?? titleCase(k);
+
+
 export default function BudgetsModule({ canManage, currentUserId }: { canManage: boolean; currentUserId: string }) {
   const qc = useQueryClient();
   const [year, setYear] = useState(String(new Date().getFullYear()));
@@ -94,12 +107,13 @@ export default function BudgetsModule({ canManage, currentUserId }: { canManage:
           onClick={() =>
             exportRows(
               "budgets",
-              ["Budget", "Year", "Department", "Branch", "Planned", "Actual", "Utilisation %", "Status"],
+              ["Budget", "Type", "Year", "Department", "Branch", "Planned", "Actual", "Committed", "Remaining", "Variance", "Utilisation %", "Version", "Status"],
               (budgets.data ?? []).map((b) => {
                 const u = utilFor(b.id);
-                return [b.name, b.fiscal_year, b.department_slug, b.branch, u?.planned ?? 0, u?.actual ?? 0, u?.utilisation_pct ?? 0, b.status];
+                return [b.name, budgetTypeLabel(b.budget_type), b.fiscal_year, b.department_slug, b.branch, u?.planned ?? 0, u?.actual ?? 0, u?.committed ?? 0, u?.remaining ?? 0, u?.variance ?? 0, u?.utilisation_pct ?? 0, b.version, b.status];
               }),
             )
+
           }
         >
           <Download className="mr-2 h-4 w-4" /> Excel (CSV)
@@ -145,28 +159,40 @@ export default function BudgetsModule({ canManage, currentUserId }: { canManage:
                   <div>
                     <p className="font-serif text-lg">{b.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      {titleCase(b.department_slug)} · {branchLabel(b.branch)} · FY {b.fiscal_year}
+                      {budgetTypeLabel(b.budget_type)} · {titleCase(b.department_slug)} · {branchLabel(b.branch)} · FY {b.fiscal_year} · v{b.version ?? 1}
                     </p>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      <Badge variant="outline">{titleCase(b.status)}</Badge>
+                      {b.locked_at && <Badge variant="outline" className="border-amber-200 bg-amber-100 text-amber-900">Locked</Badge>}
+                    </div>
                     {b.notes && <p className="mt-2 text-sm text-muted-foreground">{b.notes}</p>}
                   </div>
                   <div className="text-right">
                     <Badge variant="outline" className={RAG_CLASS[ragForUtilisation(pct)]}>{pct}% utilised</Badge>
                     <p className="mt-1 text-xs text-muted-foreground">
-                      {money(u?.actual)} of {money(u?.planned)}
+                      {money(Number(u?.actual ?? 0) + Number(u?.committed ?? 0))} of {money(u?.planned)}
                     </p>
                   </div>
                 </div>
                 <div className="mt-3 h-2 w-full rounded bg-muted">
                   <div className="h-2 rounded bg-primary" style={{ width: `${Math.min(100, pct)}%` }} />
                 </div>
+                <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-xs md:grid-cols-5">
+                  <Stat label="Planned" value={money(u?.planned)} />
+                  <Stat label="Actual spend" value={money(u?.actual)} />
+                  <Stat label="Committed (approved PRs)" value={money(u?.committed)} />
+                  <Stat label="Remaining" value={money(u?.remaining)} />
+                  <Stat label="Variance" value={money(u?.variance)} />
+                </dl>
                 <div className="mt-3 flex flex-wrap gap-2 print:hidden">
                   <Button size="sm" variant="outline" onClick={() => setExpanded(isOpen ? null : b.id)}>
-                    {isOpen ? "Hide lines" : `Budget lines (${(b.budget_lines ?? []).length})`}
+                    {isOpen ? "Hide detail" : `Budget lines (${(b.budget_lines ?? []).length})`}
                   </Button>
                   {canManage && (
                     <Button size="sm" variant="ghost" onClick={() => archive.mutate(b.id)}>Archive</Button>
                   )}
                 </div>
+
 
                 {isOpen && (
                   <div className="mt-4 border-t pt-4">
@@ -193,7 +219,9 @@ export default function BudgetsModule({ canManage, currentUserId }: { canManage:
                       </table>
                     )}
                     {canManage && <LineForm onAdd={(v) => addLine.mutate({ budget_id: b.id, ...v })} />}
+                    <RevisionHistory budgetId={b.id} />
                   </div>
+
                 )}
               </Card>
             );
@@ -203,6 +231,58 @@ export default function BudgetsModule({ canManage, currentUserId }: { canManage:
     </div>
   );
 }
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <dt className="text-muted-foreground">{label}</dt>
+      <dd className="font-medium">{value}</dd>
+    </div>
+  );
+}
+
+function RevisionHistory({ budgetId }: { budgetId: string }) {
+  const { data } = useQuery({
+    queryKey: ["budget-revisions", budgetId],
+    queryFn: async () => {
+      const { data } = await sb
+        .from("budget_revisions")
+        .select("*")
+        .eq("budget_id", budgetId)
+        .order("created_at", { ascending: false });
+      return (data ?? []) as any[];
+    },
+  });
+
+  if (!data || data.length === 0) return null;
+
+  return (
+    <div className="mt-6 border-t pt-4">
+      <p className="text-xs uppercase tracking-widest text-muted-foreground">Amendment history</p>
+      <table className="mt-2 w-full text-sm">
+        <thead>
+          <tr className="border-b text-left text-xs uppercase tracking-widest text-muted-foreground">
+            <th className="py-2">Version</th>
+            <th className="py-2">Amount change</th>
+            <th className="py-2">Status change</th>
+            <th className="py-2 text-right">Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((r) => (
+            <tr key={r.id} className="border-b last:border-0">
+              <td className="py-2">v{r.version}</td>
+              <td className="py-2">{money(r.previous_amount)} → {money(r.new_amount)}</td>
+              <td className="py-2">{titleCase(r.previous_status)} → {titleCase(r.new_status)}</td>
+              <td className="py-2 text-right">{new Date(r.created_at).toLocaleDateString("en-ZA")}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 
 function LineForm({ onAdd }: { onAdd: (v: { category: string; line_type: string; planned_amount: number }) => void }) {
   const [category, setCategory] = useState("");
@@ -262,6 +342,8 @@ function BudgetForm({
     name: "",
     fiscal_year: String(defaultYear),
     department_slug: "finance",
+    budget_type: "department",
+    total_amount: "",
     branch: "",
     notes: "",
     status: "draft",
@@ -284,6 +366,8 @@ function BudgetForm({
       name: form.name.trim(),
       fiscal_year: Number(form.fiscal_year),
       department_slug: form.department_slug,
+      budget_type: form.budget_type,
+      total_amount: form.total_amount ? Number(form.total_amount) : 0,
       branch: form.branch || null,
       notes: form.notes || null,
       status: form.status,
@@ -303,9 +387,30 @@ function BudgetForm({
       </div>
       <div className="grid gap-4 md:grid-cols-2">
         <div>
+          <Label>Budget type</Label>
+          <Select value={form.budget_type} onValueChange={(v) => setForm({ ...form, budget_type: v })}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {BUDGET_TYPES.map((t) => <SelectItem key={t.key} value={t.key}>{t.label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label>Total budget amount</Label>
+          <Input
+            type="number"
+            step="any"
+            min="0"
+            value={form.total_amount}
+            onChange={(e) => setForm({ ...form, total_amount: e.target.value })}
+            placeholder="Leave blank to total from budget lines"
+          />
+        </div>
+        <div>
           <Label>Financial year</Label>
           <Input type="number" value={form.fiscal_year} onChange={(e) => setForm({ ...form, fiscal_year: e.target.value })} />
         </div>
+
         <div>
           <Label>Department</Label>
           <Select value={form.department_slug} onValueChange={(v) => setForm({ ...form, department_slug: v })}>
