@@ -2537,6 +2537,189 @@ export type Database = {
           },
         ]
       }
+      governance_approvals: {
+        Row: {
+          amount: number | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          decision_comment: string | null
+          department_slug: string | null
+          detail: string | null
+          document_url: string | null
+          id: string
+          item_type: string
+          reference: string | null
+          signature_name: string | null
+          status: string
+          submitted_by: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decision_comment?: string | null
+          department_slug?: string | null
+          detail?: string | null
+          document_url?: string | null
+          id?: string
+          item_type: string
+          reference?: string | null
+          signature_name?: string | null
+          status?: string
+          submitted_by?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decision_comment?: string | null
+          department_slug?: string | null
+          detail?: string | null
+          document_url?: string | null
+          id?: string
+          item_type?: string
+          reference?: string | null
+          signature_name?: string | null
+          status?: string
+          submitted_by?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "governance_approvals_decided_by_fkey"
+            columns: ["decided_by"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "governance_approvals_decided_by_fkey"
+            columns: ["decided_by"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "governance_approvals_decided_by_fkey"
+            columns: ["decided_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      governance_decisions: {
+        Row: {
+          ai_summary: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          category: string
+          completion_date: string | null
+          created_at: string
+          created_by: string | null
+          decision_date: string
+          decision_number: string | null
+          department_slug: string | null
+          detail: string | null
+          document_url: string | null
+          due_date: string | null
+          evidence: string | null
+          id: string
+          implementation_pct: number
+          meeting_id: string | null
+          owner_id: string | null
+          priority: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          ai_summary?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          category?: string
+          completion_date?: string | null
+          created_at?: string
+          created_by?: string | null
+          decision_date?: string
+          decision_number?: string | null
+          department_slug?: string | null
+          detail?: string | null
+          document_url?: string | null
+          due_date?: string | null
+          evidence?: string | null
+          id?: string
+          implementation_pct?: number
+          meeting_id?: string | null
+          owner_id?: string | null
+          priority?: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          ai_summary?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          category?: string
+          completion_date?: string | null
+          created_at?: string
+          created_by?: string | null
+          decision_date?: string
+          decision_number?: string | null
+          department_slug?: string | null
+          detail?: string | null
+          document_url?: string | null
+          due_date?: string | null
+          evidence?: string | null
+          id?: string
+          implementation_pct?: number
+          meeting_id?: string | null
+          owner_id?: string | null
+          priority?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "governance_decisions_meeting_id_fkey"
+            columns: ["meeting_id"]
+            isOneToOne: false
+            referencedRelation: "meetings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "governance_decisions_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "governance_decisions_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "governance_decisions_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       governance_documents: {
         Row: {
           created_at: string
@@ -2560,6 +2743,91 @@ export type Database = {
           title?: string
         }
         Relationships: []
+      }
+      governance_risks: {
+        Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
+          category: string
+          closed_at: string | null
+          created_at: string
+          created_by: string | null
+          department_slug: string | null
+          description: string
+          escalation_level: string
+          id: string
+          impact: number
+          likelihood: number
+          mitigation: string | null
+          owner_id: string | null
+          rating: number | null
+          review_date: string | null
+          risk_number: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          category?: string
+          closed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string | null
+          description: string
+          escalation_level?: string
+          id?: string
+          impact?: number
+          likelihood?: number
+          mitigation?: string | null
+          owner_id?: string | null
+          rating?: number | null
+          review_date?: string | null
+          risk_number?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          category?: string
+          closed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string | null
+          description?: string
+          escalation_level?: string
+          id?: string
+          impact?: number
+          likelihood?: number
+          mitigation?: string | null
+          owner_id?: string | null
+          rating?: number | null
+          review_date?: string | null
+          risk_number?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "governance_risks_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "governance_risks_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "governance_risks_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       hospitality_checkups: {
         Row: {
@@ -4492,6 +4760,25 @@ export type Database = {
           name: string
           planned: number
           utilisation_pct: number
+        }[]
+      }
+      get_department_oversight: {
+        Args: never
+        Returns: {
+          critical_risks: number
+          department_name: string
+          department_slug: string
+          kind: string
+          kpi_avg_pct: number
+          kpi_count: number
+          last_activity: string
+          members: number
+          open_compliance: number
+          open_decisions: number
+          open_risks: number
+          open_tasks: number
+          overdue_tasks: number
+          reports_90d: number
         }[]
       }
       get_department_performance: {
