@@ -708,79 +708,124 @@ export type Database = {
       }
       assets: {
         Row: {
+          asset_code: string | null
+          barcode: string | null
           branch: Database["public"]["Enums"]["branch"] | null
           brand: string | null
           category: string | null
+          condition: string | null
           created_at: string
           created_by: string | null
+          current_value: number | null
           custodian: string | null
           department_slug: string | null
+          depreciation_rate: number | null
+          description: string | null
+          document_urls: Json
+          facility_id: string | null
           id: string
+          insurance_status: string | null
+          is_bookable: boolean
           last_maintenance_alert_sent_at: string | null
+          lifecycle_status: string | null
           location: string | null
           model: string | null
           name: string
           next_maintenance_date: string | null
           notes: string | null
+          photo_urls: Json
           primary_supplier_id: string | null
           purchase_date: string | null
           purchase_value: number | null
+          qr_token: string
           quantity_on_hand: number
           reorder_level: number | null
+          room_number: string | null
           serial_number: string | null
           status: string
           unit_of_measure: string | null
           updated_at: string
+          warranty_expiry: string | null
         }
         Insert: {
+          asset_code?: string | null
+          barcode?: string | null
           branch?: Database["public"]["Enums"]["branch"] | null
           brand?: string | null
           category?: string | null
+          condition?: string | null
           created_at?: string
           created_by?: string | null
+          current_value?: number | null
           custodian?: string | null
           department_slug?: string | null
+          depreciation_rate?: number | null
+          description?: string | null
+          document_urls?: Json
+          facility_id?: string | null
           id?: string
+          insurance_status?: string | null
+          is_bookable?: boolean
           last_maintenance_alert_sent_at?: string | null
+          lifecycle_status?: string | null
           location?: string | null
           model?: string | null
           name: string
           next_maintenance_date?: string | null
           notes?: string | null
+          photo_urls?: Json
           primary_supplier_id?: string | null
           purchase_date?: string | null
           purchase_value?: number | null
+          qr_token?: string
           quantity_on_hand?: number
           reorder_level?: number | null
+          room_number?: string | null
           serial_number?: string | null
           status?: string
           unit_of_measure?: string | null
           updated_at?: string
+          warranty_expiry?: string | null
         }
         Update: {
+          asset_code?: string | null
+          barcode?: string | null
           branch?: Database["public"]["Enums"]["branch"] | null
           brand?: string | null
           category?: string | null
+          condition?: string | null
           created_at?: string
           created_by?: string | null
+          current_value?: number | null
           custodian?: string | null
           department_slug?: string | null
+          depreciation_rate?: number | null
+          description?: string | null
+          document_urls?: Json
+          facility_id?: string | null
           id?: string
+          insurance_status?: string | null
+          is_bookable?: boolean
           last_maintenance_alert_sent_at?: string | null
+          lifecycle_status?: string | null
           location?: string | null
           model?: string | null
           name?: string
           next_maintenance_date?: string | null
           notes?: string | null
+          photo_urls?: Json
           primary_supplier_id?: string | null
           purchase_date?: string | null
           purchase_value?: number | null
+          qr_token?: string
           quantity_on_hand?: number
           reorder_level?: number | null
+          room_number?: string | null
           serial_number?: string | null
           status?: string
           unit_of_measure?: string | null
           updated_at?: string
+          warranty_expiry?: string | null
         }
         Relationships: [
           {
@@ -5668,6 +5713,959 @@ export type Database = {
           },
         ]
       }
+      res_asset_checkouts: {
+        Row: {
+          asset_id: string
+          checked_in_at: string | null
+          checked_out_at: string
+          checked_out_to: string | null
+          condition_in: string | null
+          condition_out: string | null
+          created_at: string
+          department_slug: string | null
+          due_back_at: string | null
+          holder_name: string | null
+          id: string
+          notes: string | null
+          purpose: string | null
+          quantity: number
+          recorded_by: string | null
+          request_id: string | null
+        }
+        Insert: {
+          asset_id: string
+          checked_in_at?: string | null
+          checked_out_at?: string
+          checked_out_to?: string | null
+          condition_in?: string | null
+          condition_out?: string | null
+          created_at?: string
+          department_slug?: string | null
+          due_back_at?: string | null
+          holder_name?: string | null
+          id?: string
+          notes?: string | null
+          purpose?: string | null
+          quantity?: number
+          recorded_by?: string | null
+          request_id?: string | null
+        }
+        Update: {
+          asset_id?: string
+          checked_in_at?: string | null
+          checked_out_at?: string
+          checked_out_to?: string | null
+          condition_in?: string | null
+          condition_out?: string | null
+          created_at?: string
+          department_slug?: string | null
+          due_back_at?: string | null
+          holder_name?: string | null
+          id?: string
+          notes?: string | null
+          purpose?: string | null
+          quantity?: number
+          recorded_by?: string | null
+          request_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "res_asset_checkouts_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "res_asset_checkouts_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets_low_stock"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "res_asset_checkouts_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "res_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      res_bookings: {
+        Row: {
+          asset_id: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          created_at: string
+          department_slug: string | null
+          ends_at: string
+          event_id: string | null
+          facility_id: string | null
+          id: string
+          notes: string | null
+          purpose: string | null
+          requested_by: string | null
+          starts_at: string
+          status: string
+          title: string
+          updated_at: string
+          waitlisted: boolean
+        }
+        Insert: {
+          asset_id?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          department_slug?: string | null
+          ends_at: string
+          event_id?: string | null
+          facility_id?: string | null
+          id?: string
+          notes?: string | null
+          purpose?: string | null
+          requested_by?: string | null
+          starts_at: string
+          status?: string
+          title: string
+          updated_at?: string
+          waitlisted?: boolean
+        }
+        Update: {
+          asset_id?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          department_slug?: string | null
+          ends_at?: string
+          event_id?: string | null
+          facility_id?: string | null
+          id?: string
+          notes?: string | null
+          purpose?: string | null
+          requested_by?: string | null
+          starts_at?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          waitlisted?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "res_bookings_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "res_bookings_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets_low_stock"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "res_bookings_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "res_bookings_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "res_facilities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      res_facilities: {
+        Row: {
+          access_notes: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          building: string | null
+          capacity: number | null
+          cleaning_schedule: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          facility_type: string
+          floor: string | null
+          floor_plan_url: string | null
+          id: string
+          last_safety_inspection: string | null
+          maintenance_schedule: string | null
+          name: string
+          next_safety_inspection: string | null
+          photo_urls: Json
+          pos_x: number | null
+          pos_y: number | null
+          room_number: string | null
+          safety_status: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          access_notes?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          building?: string | null
+          capacity?: number | null
+          cleaning_schedule?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          facility_type?: string
+          floor?: string | null
+          floor_plan_url?: string | null
+          id?: string
+          last_safety_inspection?: string | null
+          maintenance_schedule?: string | null
+          name: string
+          next_safety_inspection?: string | null
+          photo_urls?: Json
+          pos_x?: number | null
+          pos_y?: number | null
+          room_number?: string | null
+          safety_status?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          access_notes?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          building?: string | null
+          capacity?: number | null
+          cleaning_schedule?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          facility_type?: string
+          floor?: string | null
+          floor_plan_url?: string | null
+          id?: string
+          last_safety_inspection?: string | null
+          maintenance_schedule?: string | null
+          name?: string
+          next_safety_inspection?: string | null
+          photo_urls?: Json
+          pos_x?: number | null
+          pos_y?: number | null
+          room_number?: string | null
+          safety_status?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      res_inventory_items: {
+        Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
+          category: string
+          created_at: string
+          created_by: string | null
+          expiry_date: string | null
+          id: string
+          last_counted_on: string | null
+          maximum_stock: number | null
+          minimum_stock: number
+          name: string
+          notes: string | null
+          quantity_on_hand: number
+          storage_location: string | null
+          supplier_id: string | null
+          unit: string
+          unit_cost: number | null
+          updated_at: string
+        }
+        Insert: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          expiry_date?: string | null
+          id?: string
+          last_counted_on?: string | null
+          maximum_stock?: number | null
+          minimum_stock?: number
+          name: string
+          notes?: string | null
+          quantity_on_hand?: number
+          storage_location?: string | null
+          supplier_id?: string | null
+          unit?: string
+          unit_cost?: number | null
+          updated_at?: string
+        }
+        Update: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          expiry_date?: string | null
+          id?: string
+          last_counted_on?: string | null
+          maximum_stock?: number | null
+          minimum_stock?: number
+          name?: string
+          notes?: string | null
+          quantity_on_hand?: number
+          storage_location?: string | null
+          supplier_id?: string | null
+          unit?: string
+          unit_cost?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "res_inventory_items_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      res_inventory_movements: {
+        Row: {
+          created_at: string
+          department_slug: string | null
+          id: string
+          item_id: string
+          movement_type: string
+          performed_by: string | null
+          quantity_after: number | null
+          quantity_change: number
+          reason: string | null
+        }
+        Insert: {
+          created_at?: string
+          department_slug?: string | null
+          id?: string
+          item_id: string
+          movement_type?: string
+          performed_by?: string | null
+          quantity_after?: number | null
+          quantity_change: number
+          reason?: string | null
+        }
+        Update: {
+          created_at?: string
+          department_slug?: string | null
+          id?: string
+          item_id?: string
+          movement_type?: string
+          performed_by?: string | null
+          quantity_after?: number | null
+          quantity_change?: number
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "res_inventory_movements_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "res_inventory_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      res_maintenance_schedules: {
+        Row: {
+          active: boolean
+          asset_id: string | null
+          created_at: string
+          created_by: string | null
+          facility_id: string | null
+          frequency: string
+          id: string
+          instructions: string | null
+          last_done_on: string | null
+          next_due_on: string | null
+          responsible: string | null
+          title: string
+          trigger_type: string
+          updated_at: string
+          usage_hours_interval: number | null
+        }
+        Insert: {
+          active?: boolean
+          asset_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          facility_id?: string | null
+          frequency?: string
+          id?: string
+          instructions?: string | null
+          last_done_on?: string | null
+          next_due_on?: string | null
+          responsible?: string | null
+          title: string
+          trigger_type?: string
+          updated_at?: string
+          usage_hours_interval?: number | null
+        }
+        Update: {
+          active?: boolean
+          asset_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          facility_id?: string | null
+          frequency?: string
+          id?: string
+          instructions?: string | null
+          last_done_on?: string | null
+          next_due_on?: string | null
+          responsible?: string | null
+          title?: string
+          trigger_type?: string
+          updated_at?: string
+          usage_hours_interval?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "res_maintenance_schedules_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "res_maintenance_schedules_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets_low_stock"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "res_maintenance_schedules_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "res_facilities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      res_maintenance_tickets: {
+        Row: {
+          actual_cost: number | null
+          after_photo_urls: Json
+          asset_id: string | null
+          assigned_to: string | null
+          before_photo_urls: Json
+          branch: Database["public"]["Enums"]["branch"] | null
+          completed_at: string | null
+          created_at: string
+          department_slug: string | null
+          description: string | null
+          downtime_hours: number | null
+          due_date: string | null
+          estimated_cost: number | null
+          facility_id: string | null
+          fault_type: string
+          id: string
+          labour_hours: number | null
+          maintenance_kind: string
+          parts_used: string | null
+          priority: string
+          reported_by: string | null
+          root_cause: string | null
+          status: string
+          technician: string | null
+          ticket_number: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          actual_cost?: number | null
+          after_photo_urls?: Json
+          asset_id?: string | null
+          assigned_to?: string | null
+          before_photo_urls?: Json
+          branch?: Database["public"]["Enums"]["branch"] | null
+          completed_at?: string | null
+          created_at?: string
+          department_slug?: string | null
+          description?: string | null
+          downtime_hours?: number | null
+          due_date?: string | null
+          estimated_cost?: number | null
+          facility_id?: string | null
+          fault_type?: string
+          id?: string
+          labour_hours?: number | null
+          maintenance_kind?: string
+          parts_used?: string | null
+          priority?: string
+          reported_by?: string | null
+          root_cause?: string | null
+          status?: string
+          technician?: string | null
+          ticket_number?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          actual_cost?: number | null
+          after_photo_urls?: Json
+          asset_id?: string | null
+          assigned_to?: string | null
+          before_photo_urls?: Json
+          branch?: Database["public"]["Enums"]["branch"] | null
+          completed_at?: string | null
+          created_at?: string
+          department_slug?: string | null
+          description?: string | null
+          downtime_hours?: number | null
+          due_date?: string | null
+          estimated_cost?: number | null
+          facility_id?: string | null
+          fault_type?: string
+          id?: string
+          labour_hours?: number | null
+          maintenance_kind?: string
+          parts_used?: string | null
+          priority?: string
+          reported_by?: string | null
+          root_cause?: string | null
+          status?: string
+          technician?: string | null
+          ticket_number?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "res_maintenance_tickets_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "res_maintenance_tickets_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets_low_stock"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "res_maintenance_tickets_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "res_facilities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      res_project_milestones: {
+        Row: {
+          completed_on: string | null
+          created_at: string
+          due_date: string | null
+          id: string
+          notes: string | null
+          project_id: string
+          status: string
+          title: string
+          weight: number
+        }
+        Insert: {
+          completed_on?: string | null
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          notes?: string | null
+          project_id: string
+          status?: string
+          title: string
+          weight?: number
+        }
+        Update: {
+          completed_on?: string | null
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          notes?: string | null
+          project_id?: string
+          status?: string
+          title?: string
+          weight?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "res_project_milestones_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "res_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      res_projects: {
+        Row: {
+          actual_end_date: string | null
+          approvals: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          budget: number | null
+          completion_pct: number
+          contractor: string | null
+          created_at: string
+          department_slug: string | null
+          description: string | null
+          document_urls: Json
+          facility_id: string | null
+          id: string
+          name: string
+          owner_id: string | null
+          photo_urls: Json
+          project_type: string
+          resource_usage: string | null
+          risks: string | null
+          spent: number | null
+          start_date: string | null
+          status: string
+          target_end_date: string | null
+          updated_at: string
+        }
+        Insert: {
+          actual_end_date?: string | null
+          approvals?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          budget?: number | null
+          completion_pct?: number
+          contractor?: string | null
+          created_at?: string
+          department_slug?: string | null
+          description?: string | null
+          document_urls?: Json
+          facility_id?: string | null
+          id?: string
+          name: string
+          owner_id?: string | null
+          photo_urls?: Json
+          project_type?: string
+          resource_usage?: string | null
+          risks?: string | null
+          spent?: number | null
+          start_date?: string | null
+          status?: string
+          target_end_date?: string | null
+          updated_at?: string
+        }
+        Update: {
+          actual_end_date?: string | null
+          approvals?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          budget?: number | null
+          completion_pct?: number
+          contractor?: string | null
+          created_at?: string
+          department_slug?: string | null
+          description?: string | null
+          document_urls?: Json
+          facility_id?: string | null
+          id?: string
+          name?: string
+          owner_id?: string | null
+          photo_urls?: Json
+          project_type?: string
+          resource_usage?: string | null
+          risks?: string | null
+          spent?: number | null
+          start_date?: string | null
+          status?: string
+          target_end_date?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "res_projects_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "res_facilities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      res_request_items: {
+        Row: {
+          asset_id: string | null
+          created_at: string
+          fulfilled_quantity: number
+          id: string
+          item_name: string
+          notes: string | null
+          quantity: number
+          request_id: string
+        }
+        Insert: {
+          asset_id?: string | null
+          created_at?: string
+          fulfilled_quantity?: number
+          id?: string
+          item_name: string
+          notes?: string | null
+          quantity?: number
+          request_id: string
+        }
+        Update: {
+          asset_id?: string | null
+          created_at?: string
+          fulfilled_quantity?: number
+          id?: string
+          item_name?: string
+          notes?: string | null
+          quantity?: number
+          request_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "res_request_items_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "res_request_items_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets_low_stock"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "res_request_items_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "res_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      res_requests: {
+        Row: {
+          admin_reviewed_at: string | null
+          admin_reviewed_by: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          budget_impact: number | null
+          chair_approved_at: string | null
+          chair_approved_by: string | null
+          created_at: string
+          department_slug: string
+          event_name: string | null
+          id: string
+          inspected_at: string | null
+          inspection_notes: string | null
+          issued_at: string | null
+          notes: string | null
+          priority: string
+          procurement_request_id: string | null
+          purpose: string | null
+          request_number: string | null
+          requested_by: string | null
+          responsible_officer: string | null
+          return_date: string | null
+          returned_at: string | null
+          start_date: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          admin_reviewed_at?: string | null
+          admin_reviewed_by?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          budget_impact?: number | null
+          chair_approved_at?: string | null
+          chair_approved_by?: string | null
+          created_at?: string
+          department_slug: string
+          event_name?: string | null
+          id?: string
+          inspected_at?: string | null
+          inspection_notes?: string | null
+          issued_at?: string | null
+          notes?: string | null
+          priority?: string
+          procurement_request_id?: string | null
+          purpose?: string | null
+          request_number?: string | null
+          requested_by?: string | null
+          responsible_officer?: string | null
+          return_date?: string | null
+          returned_at?: string | null
+          start_date?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          admin_reviewed_at?: string | null
+          admin_reviewed_by?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          budget_impact?: number | null
+          chair_approved_at?: string | null
+          chair_approved_by?: string | null
+          created_at?: string
+          department_slug?: string
+          event_name?: string | null
+          id?: string
+          inspected_at?: string | null
+          inspection_notes?: string | null
+          issued_at?: string | null
+          notes?: string | null
+          priority?: string
+          procurement_request_id?: string | null
+          purpose?: string | null
+          request_number?: string | null
+          requested_by?: string | null
+          responsible_officer?: string | null
+          return_date?: string | null
+          returned_at?: string | null
+          start_date?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "res_requests_procurement_request_id_fkey"
+            columns: ["procurement_request_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      res_risks: {
+        Row: {
+          asset_id: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          category: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          facility_id: string | null
+          id: string
+          impact: number
+          likelihood: number
+          mitigation: string | null
+          owner_id: string | null
+          owner_name: string | null
+          review_date: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          asset_id?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          facility_id?: string | null
+          id?: string
+          impact?: number
+          likelihood?: number
+          mitigation?: string | null
+          owner_id?: string | null
+          owner_name?: string | null
+          review_date?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          asset_id?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          facility_id?: string | null
+          id?: string
+          impact?: number
+          likelihood?: number
+          mitigation?: string | null
+          owner_id?: string | null
+          owner_name?: string | null
+          review_date?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "res_risks_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "res_risks_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets_low_stock"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "res_risks_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "res_facilities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      res_training_records: {
+        Row: {
+          certificate_url: string | null
+          competency_level: string
+          completed_on: string | null
+          course: string
+          created_at: string
+          created_by: string | null
+          expiry_date: string | null
+          id: string
+          notes: string | null
+          person_name: string
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          certificate_url?: string | null
+          competency_level?: string
+          completed_on?: string | null
+          course: string
+          created_at?: string
+          created_by?: string | null
+          expiry_date?: string | null
+          id?: string
+          notes?: string | null
+          person_name: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          certificate_url?: string | null
+          competency_level?: string
+          completed_on?: string | null
+          course?: string
+          created_at?: string
+          created_by?: string | null
+          expiry_date?: string | null
+          id?: string
+          notes?: string | null
+          person_name?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       resolutions: {
         Row: {
           agenda_item_id: string | null
@@ -8996,6 +9994,7 @@ export type Database = {
       is_head_office: { Args: { _user_id: string }; Returns: boolean }
       is_kids_team: { Args: { _user_id: string }; Returns: boolean }
       is_pastoral_team: { Args: { _user_id: string }; Returns: boolean }
+      is_resource_team: { Args: { _user_id: string }; Returns: boolean }
       is_secretariat: { Args: { _user_id: string }; Returns: boolean }
       is_strategy_team: { Args: { _user_id: string }; Returns: boolean }
       is_tech_team: { Args: { _user_id: string }; Returns: boolean }
