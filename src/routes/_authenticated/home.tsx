@@ -22,7 +22,7 @@ function HomePage() {
  
   const functional = depts.data?.filter((d) => d.kind === "functional") ?? [];
   const developmental = depts.data?.filter((d) => d.kind === "developmental") ?? [];
-  const mountains = depts.data?.filter((d) => d.kind === "seven_mountain") ?? [];
+  
  
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
