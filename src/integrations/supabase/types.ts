@@ -2190,6 +2190,42 @@ export type Database = {
           },
         ]
       }
+      department_resources: {
+        Row: {
+          created_at: string
+          department_slug: string
+          description: string | null
+          file_url: string
+          id: string
+          storage_path: string | null
+          title: string
+          updated_at: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          department_slug: string
+          description?: string | null
+          file_url: string
+          id?: string
+          storage_path?: string | null
+          title: string
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          department_slug?: string
+          description?: string | null
+          file_url?: string
+          id?: string
+          storage_path?: string | null
+          title?: string
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Relationships: []
+      }
       departments: {
         Row: {
           archived: boolean

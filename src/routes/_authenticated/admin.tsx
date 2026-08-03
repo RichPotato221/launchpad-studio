@@ -23,6 +23,16 @@ const ROLES: AppRole[] = [
  
 function AdminPage() {
   const qc = useQueryClient();
+  const access = useQuery({
+    queryKey: ["is-chairperson"],
+    queryFn: async () => {
+      const { data: userRes } = await supabase.auth.getUser();
+      const uid = userRes.user?.id;
+      if (!uid) return { isChair: false, userId: null as string | null };
+      const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", uid);
+      return { isChair: (roles ?? []).some((r: any) => r.role === "chairperson"), userId: uid };
+    },
+  });
   const depts = useQuery({ queryKey: ["departments"], queryFn: fetchDepartments });
   const profiles = useQuery({
     queryKey: ["all-profiles"],
@@ -106,7 +116,19 @@ function AdminPage() {
     (p: any) => !BRANCH_GROUPS.some((g) => g.key === p.branch)
   );
  
+  if (access.isLoading) return <div className="mx-auto max-w-7xl px-4 py-10 text-sm text-muted-foreground">Loading…</div>;
+  if (!access.data?.isChair)
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-16 md:px-8">
+        <h1 className="font-serif text-3xl">Restricted</h1>
+        <p className="mt-3 text-sm text-muted-foreground">
+          The Admin console is available to Chairpersons only.
+        </p>
+      </div>
+    );
+
   return (
+
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
       <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Admin</p>
       <h1 className="mt-2 font-serif text-4xl md:text-5xl">User &amp; portal settings</h1>

@@ -74,8 +74,5 @@ export async function fetchSetting(key: string) {
 
 export const MANUALS = [
   { key: "constitution", title: "Apostolic Constitution", href: "/manuals/1_Apostolic_Constitution.docx" },
-  { key: "governance", title: "Governance Manual", href: "/manuals/2_Governance_Manual.docx" },
   { key: "operations", title: "Ministry Operations Manual", href: "/manuals/3_Ministry_Operations_Manual.docx" },
-  { key: "finance", title: "Finance Manual", href: "/manuals/4_Finance_Manual.docx" },
-  { key: "kpi", title: "KPI Manual", href: "/manuals/5_KPI_Manual.docx" },
 ];

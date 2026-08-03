@@ -13,7 +13,6 @@ const nav = [
   { to: "/feed", label: "Feed" },
   { to: "/messages", label: "Messages" },
   { to: "/departments", label: "Departments" },
-  { to: "/tasks", label: "Tasks" },
   { to: "/events", label: "Events" },
   { to: "/attendance", label: "Attendance" },
   { to: "/governance", label: "Governance" },
@@ -61,6 +60,7 @@ export function PortalShell({ children }: { children: ReactNode }) {
     if (item.to === "/governance") return roles.some((r) => GOVERNANCE_ROLES.has(r));
     if (item.to === "/senior-pastor-cockpit") return roles.some((r) => COCKPIT_ROLES.has(r));
     if (item.to === "/vault") return roles.some((r) => COCKPIT_ROLES.has(r));
+    if (item.to === "/admin") return roles.includes("chairperson");
     return true;
   });
   

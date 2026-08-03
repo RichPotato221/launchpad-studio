@@ -10,6 +10,8 @@ import hospitalityCover from "@/assets/dept/hospitality.png.asset.json";
 import prayerCover from "@/assets/dept/prayer-intercession.png.asset.json";
 import childrensCover from "@/assets/dept/childrens-ministry.png.asset.json";
 import soundTechCover from "@/assets/dept/sound-technical.png.asset.json";
+import youthCover from "@/assets/dept/youth-ministry.png.asset.json";
+import worshipCover from "@/assets/dept/worship.png.asset.json";
 export const PORTAL_IMAGES = {
   logo: "/images/landing/logo-flame-emblem.jpg",
   marchingOrdersBanner: "/images/landing/marching-orders-2026-banner.jpg",
@@ -21,7 +23,7 @@ export const PORTAL_IMAGES = {
 
 // Department slug → hero image (matches supabase department slugs)
 export const DEPARTMENT_HERO: Record<string, { src: string; alt: string }> = {
-  worship: { src: "/images/departments/worship/worship-leader-podium.jpg", alt: "Worship Department — team member ministering at the podium" },
+  worship: { src: worshipCover.url, alt: "Worship / Music Team emblem" },
   protocol: { src: "/images/departments/protocol/podium-announcement.jpg", alt: "Protocol Department — formal announcement at the podium" },
   "childrens-ministry": { src: childrensCover.url, alt: "Children's Ministry emblem" },
   "sound-technical": { src: soundTechCover.url, alt: "Sound & Technical Team emblem" },
@@ -42,7 +44,7 @@ export const DEPARTMENT_HERO: Record<string, { src: string; alt: string }> = {
   "business-economics": { src: "/images/departments/business-economics/cover-hero.jpg", alt: "Business & Economics Department cover photo" },
   education: { src: "/images/departments/education/cover-hero.jpg", alt: "Education Department cover photo" },
   government: { src: "/images/departments/government/cover-hero.jpg", alt: "Government Department cover photo" },
-  "youth-ministry": { src: "/images/departments/youth-ministry/cover-hero.jpg", alt: "Youth Ministry cover photo" },
+  "youth-ministry": { src: youthCover.url, alt: "Youth Ministry emblem" },
   ushers: { src: ushersCover.url, alt: "Ushers Department emblem" },
 };
 

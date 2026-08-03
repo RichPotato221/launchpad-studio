@@ -3,13 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import { Suspense, useState } from "react";
 import { getWorkspaceFor } from "@/lib/workspaceRegistry";
 import { TeamChat } from "@/components/departments/TeamChat";
+import { DepartmentResources } from "@/components/departments/DepartmentResources";
 import { useIsDepartmentMember } from "@/lib/useIsDepartmentMember";
 import { supabase } from "@/integrations/supabase/client";
 import {
   fetchDepartment,
   fetchDepartmentKpis,
   KPI_CATEGORIES,
-  MANUALS,
   type KpiCategory,
 } from "@/lib/portal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -135,20 +135,9 @@ function DepartmentPortal() {
         </TabsContent>
 
         <TabsContent value="resources" className="mt-6">
-          <Card className="p-6">
-            <p className="text-xs uppercase tracking-widest text-muted-foreground">Manuals &amp; SOPs</p>
-            <ul className="mt-4 grid gap-3 md:grid-cols-2">
-              {MANUALS.map((m) => (
-                <li key={m.key}>
-                  <a href={m.href} className="block rounded border border-border p-4 transition hover:border-foreground">
-                    <p className="font-serif text-lg">{m.title}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">Download .docx</p>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </Card>
+          <DepartmentResources slug={slug} />
         </TabsContent>
+
 
         {workspace && WorkspaceComponent && membership.data?.userId && (
           <TabsContent value="workspace" className="mt-6">
@@ -195,16 +184,31 @@ function DepartmentTeam({ slug, currentUserId }: { slug: string; currentUserId: 
   const members = useQuery({
     queryKey: ["dept-team", slug],
     queryFn: async () => {
-      const { data: profs, error } = await supabase
-        .from("profiles")
-        .select("id, full_name, email, branch, requested_role, primary_department, approval_status")
-        .eq("approval_status", "approved")
-        .eq("primary_department", slug)
-        .order("full_name");
+      const [{ data: assigned }, { data: profs, error }] = await Promise.all([
+        supabase.from("user_roles").select("user_id, role").eq("department_slug", slug),
+        supabase
+          .from("profiles")
+          .select("id, full_name, email, branch, requested_role, primary_department, approval_status")
+          .eq("approval_status", "approved")
+          .eq("primary_department", slug)
+          .order("full_name"),
+      ]);
       if (error) throw error;
-      return profs ?? [];
+      const rows = [...(profs ?? [])];
+      const have = new Set(rows.map((p: any) => p.id));
+      const extraIds = (assigned ?? []).map((r: any) => r.user_id).filter((id: string) => !have.has(id));
+      if (extraIds.length) {
+        const { data: extras } = await supabase
+          .from("profiles")
+          .select("id, full_name, email, branch, requested_role, primary_department, approval_status")
+          .in("id", extraIds);
+        const roleBy = new Map((assigned ?? []).map((r: any) => [r.user_id, r.role]));
+        for (const p of extras ?? []) rows.push({ ...p, requested_role: roleBy.get(p.id) ?? p.requested_role });
+      }
+      return rows.sort((a: any, b: any) => (a.full_name ?? "").localeCompare(b.full_name ?? ""));
     },
   });
+
 
   const tithes = useQuery({
     enabled: slug === "finance",
