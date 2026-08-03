@@ -159,28 +159,40 @@ export default function BudgetsModule({ canManage, currentUserId }: { canManage:
                   <div>
                     <p className="font-serif text-lg">{b.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      {titleCase(b.department_slug)} · {branchLabel(b.branch)} · FY {b.fiscal_year}
+                      {budgetTypeLabel(b.budget_type)} · {titleCase(b.department_slug)} · {branchLabel(b.branch)} · FY {b.fiscal_year} · v{b.version ?? 1}
                     </p>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      <Badge variant="outline">{titleCase(b.status)}</Badge>
+                      {b.locked_at && <Badge variant="outline" className="border-amber-200 bg-amber-100 text-amber-900">Locked</Badge>}
+                    </div>
                     {b.notes && <p className="mt-2 text-sm text-muted-foreground">{b.notes}</p>}
                   </div>
                   <div className="text-right">
                     <Badge variant="outline" className={RAG_CLASS[ragForUtilisation(pct)]}>{pct}% utilised</Badge>
                     <p className="mt-1 text-xs text-muted-foreground">
-                      {money(u?.actual)} of {money(u?.planned)}
+                      {money(Number(u?.actual ?? 0) + Number(u?.committed ?? 0))} of {money(u?.planned)}
                     </p>
                   </div>
                 </div>
                 <div className="mt-3 h-2 w-full rounded bg-muted">
                   <div className="h-2 rounded bg-primary" style={{ width: `${Math.min(100, pct)}%` }} />
                 </div>
+                <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-xs md:grid-cols-5">
+                  <Stat label="Planned" value={money(u?.planned)} />
+                  <Stat label="Actual spend" value={money(u?.actual)} />
+                  <Stat label="Committed (approved PRs)" value={money(u?.committed)} />
+                  <Stat label="Remaining" value={money(u?.remaining)} />
+                  <Stat label="Variance" value={money(u?.variance)} />
+                </dl>
                 <div className="mt-3 flex flex-wrap gap-2 print:hidden">
                   <Button size="sm" variant="outline" onClick={() => setExpanded(isOpen ? null : b.id)}>
-                    {isOpen ? "Hide lines" : `Budget lines (${(b.budget_lines ?? []).length})`}
+                    {isOpen ? "Hide detail" : `Budget lines (${(b.budget_lines ?? []).length})`}
                   </Button>
                   {canManage && (
                     <Button size="sm" variant="ghost" onClick={() => archive.mutate(b.id)}>Archive</Button>
                   )}
                 </div>
+
 
                 {isOpen && (
                   <div className="mt-4 border-t pt-4">
