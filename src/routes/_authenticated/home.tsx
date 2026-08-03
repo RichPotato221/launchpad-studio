@@ -22,7 +22,7 @@ function HomePage() {
  
   const functional = depts.data?.filter((d) => d.kind === "functional") ?? [];
   const developmental = depts.data?.filter((d) => d.kind === "developmental") ?? [];
-  const mountains = depts.data?.filter((d) => d.kind === "seven_mountain") ?? [];
+  
  
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
@@ -95,7 +95,7 @@ function HomePage() {
               </div>
               <div className="p-6 md:p-8">
                 <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Senior Pastor</p>
-                <h3 className="mt-3 font-serif text-2xl">Prophetess Ntombikayise Mnyandu</h3>
+                <h3 className="mt-3 font-serif text-2xl">Prophet Ntombikayise Mnyandu</h3>
               </div>
             </div>
           </div>
@@ -163,7 +163,7 @@ function HomePage() {
       {/* Department tiles */}
       <DeptGroup title="Functional Structure" items={functional} />
       <DeptGroup title="Developmental Structure" items={developmental} />
-      <DeptGroup title="Seven Mountains" items={mountains} basePath="/departments" />
+      
     </div>
   );
 }
