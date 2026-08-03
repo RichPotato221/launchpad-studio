@@ -12,7 +12,7 @@ const sb = supabase as any;
 /** MODULES 13 & 14 — Worship analytics and executive reporting. */
 export default function WorshipAnalytics() {
   const [services, setServices] = useState<any[]>([]);
-  const [setSongs, setSetSongs] = useState<any[]>([]);
+  const [setlistSongs, setSetlistSongs] = useState<any[]>([]);
   const [songs, setSongs] = useState<any[]>([]);
   const [assignments, setAssignments] = useState<any[]>([]);
   const [attendance, setAttendance] = useState<any[]>([]);
@@ -28,13 +28,13 @@ export default function WorshipAnalytics() {
         sb.from("worship_rehearsal_attendance").select("*"),
         sb.from("worship_team_members").select("id, full_name, status"),
       ]);
-      setServices(sv.data ?? []); setSetSongs(ss.data ?? []); setSongs(sg.data ?? []);
+      setServices(sv.data ?? []); setSetlistSongs(ss.data ?? []); setSongs(sg.data ?? []);
       setAssignments(as.data ?? []); setAttendance(at.data ?? []); setMembers(mm.data ?? []);
     })();
   }, []);
 
   const stats = useMemo(() => {
-    const readiness = services.length ? Math.round(services.reduce((s, x) => s + serviceReadiness(x), 0) / services.length) : 0;
+    const readiness = services.length ? Math.round(services.reduce((s, x) => s + serviceReadiness(x).pct, 0) / services.length) : 0;
     const present = attendance.filter((a) => a.present).length;
     return {
       services: services.length,
@@ -43,18 +43,18 @@ export default function WorshipAnalytics() {
       punctuality: pct(attendance.filter((a) => a.on_time).length, Math.max(present, 1)),
       confirmation: pct(assignments.filter((a) => a.response === "confirmed").length, Math.max(assignments.length, 1)),
       activeTeam: members.filter((m) => m.status === "active").length,
-      songsUsed: new Set(setSongs.map((s) => s.song_id)).size,
+      songsUsed: new Set(setlistSongs.map((s) => s.song_id)).size,
     };
-  }, [services, attendance, assignments, members, setSongs]);
+  }, [services, attendance, assignments, members, setlistSongs]);
 
   const topSongs = useMemo(() => {
     const counts = new Map<string, number>();
-    setSongs.forEach((s) => counts.set(s.song_id, (counts.get(s.song_id) ?? 0) + 1));
+    setlistSongs.forEach((s) => counts.set(s.song_id, (counts.get(s.song_id) ?? 0) + 1));
     return songs
       .map((s) => ({ ...s, used: counts.get(s.id) ?? Number(s.times_used ?? 0) }))
       .sort((a, b) => b.used - a.used)
       .slice(0, 15);
-  }, [songs, setSongs]);
+  }, [songs, setlistSongs]);
 
   const staleSongs = useMemo(
     () => songs.filter((s) => !s.last_used_on).slice(0, 15),
@@ -76,7 +76,7 @@ export default function WorshipAnalytics() {
       <div className="flex items-center justify-between print:hidden">
         <p className="text-xs uppercase tracking-widest text-muted-foreground">Worship analytics</p>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={() => exportRows("worship-service-readiness", ["Service", "Date", "Type", "Status", "Readiness %"], services.map((s) => [s.title, s.service_date, s.service_type, s.status, serviceReadiness(s)]))}>Export services</Button>
+          <Button variant="outline" size="sm" onClick={() => exportRows("worship-service-readiness", ["Service", "Date", "Type", "Status", "Readiness %"], services.map((s) => [s.title, s.service_date, s.service_type, s.status, serviceReadiness(s).pct]))}>Export services</Button>
           <Button variant="outline" size="sm" onClick={() => window.print()}>Print report</Button>
         </div>
       </div>
@@ -124,7 +124,7 @@ export default function WorshipAnalytics() {
         <p className="text-xs uppercase tracking-widest text-muted-foreground">Service readiness log</p>
         <div className="mt-3 divide-y rounded-md border border-border">
           {services.slice(0, 25).map((s) => {
-            const r = serviceReadiness(s);
+            const r = serviceReadiness(s).pct;
             return (
               <div key={s.id} className="flex flex-wrap items-center justify-between gap-3 p-3 text-sm">
                 <span>{fmtDate(s.service_date)} — {s.title}</span>
