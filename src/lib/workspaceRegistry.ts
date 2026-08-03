@@ -28,6 +28,23 @@ export const workspaceRegistry: Record<string, Entry> = {
     component: lazy(() => import("@/components/worship/WorshipCenter")),
   },
 
+  "resource-administrator": {
+    label: "Enterprise Asset, Facilities & Resource Management",
+    component: lazy(() => import("@/components/resources/ResourceCenter")),
+  },
+  resources: {
+    label: "Enterprise Asset, Facilities & Resource Management",
+    component: lazy(() => import("@/components/resources/ResourceCenter")),
+  },
+  assets: {
+    label: "Enterprise Asset, Facilities & Resource Management",
+    component: lazy(() => import("@/components/resources/ResourceCenter")),
+  },
+  facilities: {
+    label: "Enterprise Asset, Facilities & Resource Management",
+    component: lazy(() => import("@/components/resources/ResourceCenter")),
+  },
+
   "school-of-ministry": {
     label: "Courses & Enrolments",
     component: lazy(() => import("@/components/workspaces/SchoolOfMinistryWorkspace")),

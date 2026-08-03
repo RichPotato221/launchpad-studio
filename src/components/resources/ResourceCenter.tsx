@@ -29,7 +29,7 @@ export default function ResourceCenter({ departmentSlug, currentUserId }: Worksp
   const [tab, setTab] = useState("dashboard");
 
   const roles = role?.roles ?? [];
-  const canManage = !!isMember || roles.some((r) => MANAGER_ROLES.includes(r));
+  const canManage = !!isMember?.isMember || roles.some((r) => MANAGER_ROLES.includes(r));
   const isChair = roles.some((r) => ["chairperson", "senior_apostle"].includes(r));
 
   return (
