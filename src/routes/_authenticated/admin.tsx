@@ -116,7 +116,19 @@ function AdminPage() {
     (p: any) => !BRANCH_GROUPS.some((g) => g.key === p.branch)
   );
  
+  if (access.isLoading) return <div className="mx-auto max-w-7xl px-4 py-10 text-sm text-muted-foreground">Loading…</div>;
+  if (!access.data?.isChair)
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-16 md:px-8">
+        <h1 className="font-serif text-3xl">Restricted</h1>
+        <p className="mt-3 text-sm text-muted-foreground">
+          The Admin console is available to Chairpersons only.
+        </p>
+      </div>
+    );
+
   return (
+
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
       <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Admin</p>
       <h1 className="mt-2 font-serif text-4xl md:text-5xl">User &amp; portal settings</h1>
