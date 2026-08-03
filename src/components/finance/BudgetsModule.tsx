@@ -342,6 +342,8 @@ function BudgetForm({
     name: "",
     fiscal_year: String(defaultYear),
     department_slug: "finance",
+    budget_type: "department",
+    total_amount: "",
     branch: "",
     notes: "",
     status: "draft",
@@ -364,6 +366,8 @@ function BudgetForm({
       name: form.name.trim(),
       fiscal_year: Number(form.fiscal_year),
       department_slug: form.department_slug,
+      budget_type: form.budget_type,
+      total_amount: form.total_amount ? Number(form.total_amount) : 0,
       branch: form.branch || null,
       notes: form.notes || null,
       status: form.status,
@@ -383,9 +387,30 @@ function BudgetForm({
       </div>
       <div className="grid gap-4 md:grid-cols-2">
         <div>
+          <Label>Budget type</Label>
+          <Select value={form.budget_type} onValueChange={(v) => setForm({ ...form, budget_type: v })}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {BUDGET_TYPES.map((t) => <SelectItem key={t.key} value={t.key}>{t.label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label>Total budget amount</Label>
+          <Input
+            type="number"
+            step="any"
+            min="0"
+            value={form.total_amount}
+            onChange={(e) => setForm({ ...form, total_amount: e.target.value })}
+            placeholder="Leave blank to total from budget lines"
+          />
+        </div>
+        <div>
           <Label>Financial year</Label>
           <Input type="number" value={form.fiscal_year} onChange={(e) => setForm({ ...form, fiscal_year: e.target.value })} />
         </div>
+
         <div>
           <Label>Department</Label>
           <Select value={form.department_slug} onValueChange={(v) => setForm({ ...form, department_slug: v })}>
