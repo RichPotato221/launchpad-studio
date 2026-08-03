@@ -8,6 +8,8 @@ import mediaCover from "@/assets/dept/media.png.asset.json";
 import ushersCover from "@/assets/dept/ushers.png.asset.json";
 import hospitalityCover from "@/assets/dept/hospitality.png.asset.json";
 import prayerCover from "@/assets/dept/prayer-intercession.png.asset.json";
+import childrensCover from "@/assets/dept/childrens-ministry.png.asset.json";
+import soundTechCover from "@/assets/dept/sound-technical.png.asset.json";
 export const PORTAL_IMAGES = {
   logo: "/images/landing/logo-flame-emblem.jpg",
   marchingOrdersBanner: "/images/landing/marching-orders-2026-banner.jpg",
