@@ -24,6 +24,19 @@ import {
 
 const sb = supabase as any;
 
+export const BUDGET_TYPES = [
+  { key: "annual_church", label: "Annual church budget" },
+  { key: "branch", label: "Branch budget" },
+  { key: "department", label: "Department budget" },
+  { key: "ministry", label: "Ministry budget" },
+  { key: "event", label: "Event budget" },
+  { key: "project", label: "Project / capital budget" },
+] as const;
+
+const budgetTypeLabel = (k?: string | null) =>
+  BUDGET_TYPES.find((t) => t.key === k)?.label ?? titleCase(k);
+
+
 export default function BudgetsModule({ canManage, currentUserId }: { canManage: boolean; currentUserId: string }) {
   const qc = useQueryClient();
   const [year, setYear] = useState(String(new Date().getFullYear()));
