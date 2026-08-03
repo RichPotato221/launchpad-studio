@@ -100,3 +100,33 @@ export function ragForHealth(score: number): Rag {
   if (score >= 60) return "amber";
   return "red";
 }
+
+export const COMPLIANCE_CATEGORIES = [
+  "Statutory & regulatory",
+  "Tax & SARS",
+  "NPO / PBO obligations",
+  "Labour & HR",
+  "Health, safety & facilities",
+  "Child protection & safeguarding",
+  "Data protection (POPIA)",
+  "Insurance & licences",
+  "Internal policy",
+  "Audit action",
+] as const;
+
+export const COMPLIANCE_STATUSES = ["open", "in_progress", "overdue", "complete", "waived"] as const;
+
+/** Compliance obligation → RAG band based on due date, status and risk score. */
+export function complianceRag(item: {
+  status?: string | null;
+  due_date?: string | null;
+  risk_score?: number | null;
+}): Rag {
+  if (item.status === "complete" || item.status === "waived") return "green";
+  const today = new Date().toISOString().slice(0, 10);
+  if (item.due_date && item.due_date < today) return "red";
+  if (Number(item.risk_score ?? 0) >= 4) return "red";
+  const in30 = new Date(Date.now() + 30 * 864e5).toISOString().slice(0, 10);
+  if (item.due_date && item.due_date <= in30) return "amber";
+  return "green";
+}
