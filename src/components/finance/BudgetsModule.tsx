@@ -232,6 +232,58 @@ export default function BudgetsModule({ canManage, currentUserId }: { canManage:
   );
 }
 
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <dt className="text-muted-foreground">{label}</dt>
+      <dd className="font-medium">{value}</dd>
+    </div>
+  );
+}
+
+function RevisionHistory({ budgetId }: { budgetId: string }) {
+  const { data } = useQuery({
+    queryKey: ["budget-revisions", budgetId],
+    queryFn: async () => {
+      const { data } = await sb
+        .from("budget_revisions")
+        .select("*")
+        .eq("budget_id", budgetId)
+        .order("created_at", { ascending: false });
+      return (data ?? []) as any[];
+    },
+  });
+
+  if (!data || data.length === 0) return null;
+
+  return (
+    <div className="mt-6 border-t pt-4">
+      <p className="text-xs uppercase tracking-widest text-muted-foreground">Amendment history</p>
+      <table className="mt-2 w-full text-sm">
+        <thead>
+          <tr className="border-b text-left text-xs uppercase tracking-widest text-muted-foreground">
+            <th className="py-2">Version</th>
+            <th className="py-2">Amount change</th>
+            <th className="py-2">Status change</th>
+            <th className="py-2 text-right">Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((r) => (
+            <tr key={r.id} className="border-b last:border-0">
+              <td className="py-2">v{r.version}</td>
+              <td className="py-2">{money(r.previous_amount)} → {money(r.new_amount)}</td>
+              <td className="py-2">{titleCase(r.previous_status)} → {titleCase(r.new_status)}</td>
+              <td className="py-2 text-right">{new Date(r.created_at).toLocaleDateString("en-ZA")}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+
 function LineForm({ onAdd }: { onAdd: (v: { category: string; line_type: string; planned_amount: number }) => void }) {
   const [category, setCategory] = useState("");
   const [lineType, setLineType] = useState("expense");
