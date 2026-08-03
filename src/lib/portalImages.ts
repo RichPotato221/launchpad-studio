@@ -23,7 +23,8 @@ export const PORTAL_IMAGES = {
 export const DEPARTMENT_HERO: Record<string, { src: string; alt: string }> = {
   worship: { src: "/images/departments/worship/worship-leader-podium.jpg", alt: "Worship Department — team member ministering at the podium" },
   protocol: { src: "/images/departments/protocol/podium-announcement.jpg", alt: "Protocol Department — formal announcement at the podium" },
-  "childrens-ministry": { src: "/images/departments/childrens-ministry/face-paint-group.jpg", alt: "Children's Ministry — kids with face paint at a church event" },
+  "childrens-ministry": { src: childrensCover.url, alt: "Children's Ministry emblem" },
+  "sound-technical": { src: soundTechCover.url, alt: "Sound & Technical Team emblem" },
   discipleship: { src: discipleshipCover.url, alt: "Discipleship — open Bible emblem" },
   "school-of-ministry": { src: somCover.url, alt: "School of Ministry emblem" },
   "womens-ministry": { src: womensCover.url, alt: "Women's Ministry emblem" },
