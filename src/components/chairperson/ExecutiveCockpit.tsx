@@ -131,8 +131,8 @@ export default function ExecutiveCockpit() {
             <div />
             {[1, 2, 3, 4, 5].map((i) => <div key={`h${i}`} className="text-center text-muted-foreground">I{i}</div>)}
             {[5, 4, 3, 2, 1].map((l) => (
-              <>
-                <div key={`l${l}`} className="text-muted-foreground">L{l}</div>
+              <div key={`row${l}`} className="contents">
+                <div className="text-muted-foreground">L{l}</div>
                 {[1, 2, 3, 4, 5].map((i) => {
                   const count = data.risks.filter((r: any) => Number(r.likelihood) === l && Number(r.impact) === i).length;
                   const rag = ragForRisk(l * i);
