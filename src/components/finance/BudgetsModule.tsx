@@ -219,7 +219,9 @@ export default function BudgetsModule({ canManage, currentUserId }: { canManage:
                       </table>
                     )}
                     {canManage && <LineForm onAdd={(v) => addLine.mutate({ budget_id: b.id, ...v })} />}
+                    <RevisionHistory budgetId={b.id} />
                   </div>
+
                 )}
               </Card>
             );
