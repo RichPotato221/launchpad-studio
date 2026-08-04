@@ -65,8 +65,10 @@ export default function MinistryTeamCenter({
           <TabsTrigger value="tasks">{cfg.tabs?.tasks ?? "Tasks & projects"}</TabsTrigger>
 
           <TabsTrigger value="risk">Risk &amp; training</TabsTrigger>
+          {team === "outreach" && <TabsTrigger value="souls">Souls-won register</TabsTrigger>}
           <TabsTrigger value="reports">KPIs &amp; reports</TabsTrigger>
           <TabsTrigger value="assistant">AI assistant</TabsTrigger>
+
         </TabsList>
 
         <Suspense fallback={<Loading />}>
