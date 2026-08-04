@@ -74,6 +74,7 @@ function DepartmentPortal() {
               <SelectItem value="kpis">KPI Dashboard</SelectItem>
               <SelectItem value="reports">Reports</SelectItem>
               <SelectItem value="resources">Resources</SelectItem>
+              <SelectItem value="finance">Financial Command Centre</SelectItem>
               {workspace && <SelectItem value="workspace">{workspace.label}</SelectItem>}
             </SelectContent>
           </Select>
