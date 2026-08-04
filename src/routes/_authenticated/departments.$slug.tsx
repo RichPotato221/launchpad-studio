@@ -87,6 +87,7 @@ function DepartmentPortal() {
           <TabsTrigger value="kpis">KPI Dashboard</TabsTrigger>
           <TabsTrigger value="reports">Reports</TabsTrigger>
           <TabsTrigger value="resources">Resources</TabsTrigger>
+          <TabsTrigger value="finance">Financial Command Centre</TabsTrigger>
           {workspace && <TabsTrigger value="workspace">{workspace.label}</TabsTrigger>}
         </TabsList>
 
