@@ -104,7 +104,7 @@ export default function ExecutiveOversight() {
           lastCoached: lp?.last_coached_on ?? null,
         };
       })
-      .sort((a, b) => (a.office === b.office ? a.name.localeCompare(b.name) : a.office.localeCompare(b.office)));
+            .sort((a: any, b: any) => (a.office === b.office ? a.name.localeCompare(b.name) : a.office.localeCompare(b.office)));
 
     const pendingReviews = data.reports.filter((r: any) => r.status === "submitted").length;
 
@@ -187,7 +187,7 @@ export default function ExecutiveOversight() {
               </tr>
             </thead>
             <tbody>
-              {view.line.map((l) => (
+              {view.line.map((l: any) => (
                 <tr key={l.id} className="border-b last:border-0">
                   <td className="py-2 pr-3 font-medium">{l.name}</td>
                   <td className="py-2 pr-3">{l.office}</td>
