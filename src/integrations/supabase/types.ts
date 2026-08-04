@@ -6709,6 +6709,682 @@ export type Database = {
           },
         ]
       }
+      mt_attendance: {
+        Row: {
+          attended_on: string
+          context: string
+          created_at: string
+          created_by: string | null
+          event_id: string | null
+          id: string
+          member_id: string | null
+          member_name: string | null
+          notes: string | null
+          present: boolean
+          team: string
+        }
+        Insert: {
+          attended_on?: string
+          context?: string
+          created_at?: string
+          created_by?: string | null
+          event_id?: string | null
+          id?: string
+          member_id?: string | null
+          member_name?: string | null
+          notes?: string | null
+          present?: boolean
+          team: string
+        }
+        Update: {
+          attended_on?: string
+          context?: string
+          created_at?: string
+          created_by?: string | null
+          event_id?: string | null
+          id?: string
+          member_id?: string | null
+          member_name?: string | null
+          notes?: string | null
+          present?: boolean
+          team?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mt_attendance_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "mt_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mt_attendance_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "mt_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mt_courses: {
+        Row: {
+          created_at: string
+          description: string | null
+          document_url: string | null
+          duration_hours: number | null
+          id: string
+          required: boolean
+          team: string
+          title: string
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          document_url?: string | null
+          duration_hours?: number | null
+          id?: string
+          required?: boolean
+          team?: string
+          title: string
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          document_url?: string | null
+          duration_hours?: number | null
+          id?: string
+          required?: boolean
+          team?: string
+          title?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
+      mt_events: {
+        Row: {
+          actual_cost: number | null
+          attendance_count: number
+          budget: number | null
+          capacity: number | null
+          checklist: string | null
+          created_at: string
+          created_by: string | null
+          event_date: string
+          event_type: string
+          feedback: string | null
+          follow_up: string | null
+          id: string
+          registrations: number
+          resources: string | null
+          risk_notes: string | null
+          speaker: string | null
+          start_time: string | null
+          status: string
+          team: string
+          theme: string | null
+          title: string
+          updated_at: string
+          venue: string | null
+        }
+        Insert: {
+          actual_cost?: number | null
+          attendance_count?: number
+          budget?: number | null
+          capacity?: number | null
+          checklist?: string | null
+          created_at?: string
+          created_by?: string | null
+          event_date: string
+          event_type?: string
+          feedback?: string | null
+          follow_up?: string | null
+          id?: string
+          registrations?: number
+          resources?: string | null
+          risk_notes?: string | null
+          speaker?: string | null
+          start_time?: string | null
+          status?: string
+          team: string
+          theme?: string | null
+          title: string
+          updated_at?: string
+          venue?: string | null
+        }
+        Update: {
+          actual_cost?: number | null
+          attendance_count?: number
+          budget?: number | null
+          capacity?: number | null
+          checklist?: string | null
+          created_at?: string
+          created_by?: string | null
+          event_date?: string
+          event_type?: string
+          feedback?: string | null
+          follow_up?: string | null
+          id?: string
+          registrations?: number
+          resources?: string | null
+          risk_notes?: string | null
+          speaker?: string | null
+          start_time?: string | null
+          status?: string
+          team?: string
+          theme?: string | null
+          title?: string
+          updated_at?: string
+          venue?: string | null
+        }
+        Relationships: []
+      }
+      mt_groups: {
+        Row: {
+          assistant_name: string | null
+          capacity: number | null
+          created_at: string
+          created_by: string | null
+          focus: string | null
+          id: string
+          leader_name: string | null
+          meeting_day: string | null
+          meeting_time: string | null
+          mentor_name: string | null
+          name: string
+          notes: string | null
+          status: string
+          team: string
+          updated_at: string
+          venue: string | null
+        }
+        Insert: {
+          assistant_name?: string | null
+          capacity?: number | null
+          created_at?: string
+          created_by?: string | null
+          focus?: string | null
+          id?: string
+          leader_name?: string | null
+          meeting_day?: string | null
+          meeting_time?: string | null
+          mentor_name?: string | null
+          name: string
+          notes?: string | null
+          status?: string
+          team: string
+          updated_at?: string
+          venue?: string | null
+        }
+        Update: {
+          assistant_name?: string | null
+          capacity?: number | null
+          created_at?: string
+          created_by?: string | null
+          focus?: string | null
+          id?: string
+          leader_name?: string | null
+          meeting_day?: string | null
+          meeting_time?: string | null
+          mentor_name?: string | null
+          name?: string
+          notes?: string | null
+          status?: string
+          team?: string
+          updated_at?: string
+          venue?: string | null
+        }
+        Relationships: []
+      }
+      mt_members: {
+        Row: {
+          address: string | null
+          baptism_status: string
+          branch: Database["public"]["Enums"]["branch"] | null
+          created_at: string
+          created_by: string | null
+          date_of_birth: string | null
+          email: string | null
+          emergency_contact: string | null
+          emergency_phone: string | null
+          full_name: string
+          gender: string | null
+          guardian_name: string | null
+          guardian_phone: string | null
+          id: string
+          leadership_level: string
+          marital_status: string | null
+          membership_status: string
+          mentor_name: string | null
+          ministry_involvement: string | null
+          notes: string | null
+          occupation: string | null
+          phone: string | null
+          photo_url: string | null
+          safeguarding_status: string
+          salvation_date: string | null
+          school: string | null
+          small_group_id: string | null
+          spiritual_gifts: string | null
+          stage: string
+          talents: string | null
+          team: string
+          training_completed: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          address?: string | null
+          baptism_status?: string
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          created_by?: string | null
+          date_of_birth?: string | null
+          email?: string | null
+          emergency_contact?: string | null
+          emergency_phone?: string | null
+          full_name: string
+          gender?: string | null
+          guardian_name?: string | null
+          guardian_phone?: string | null
+          id?: string
+          leadership_level?: string
+          marital_status?: string | null
+          membership_status?: string
+          mentor_name?: string | null
+          ministry_involvement?: string | null
+          notes?: string | null
+          occupation?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          safeguarding_status?: string
+          salvation_date?: string | null
+          school?: string | null
+          small_group_id?: string | null
+          spiritual_gifts?: string | null
+          stage?: string
+          talents?: string | null
+          team: string
+          training_completed?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          address?: string | null
+          baptism_status?: string
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          created_by?: string | null
+          date_of_birth?: string | null
+          email?: string | null
+          emergency_contact?: string | null
+          emergency_phone?: string | null
+          full_name?: string
+          gender?: string | null
+          guardian_name?: string | null
+          guardian_phone?: string | null
+          id?: string
+          leadership_level?: string
+          marital_status?: string | null
+          membership_status?: string
+          mentor_name?: string | null
+          ministry_involvement?: string | null
+          notes?: string | null
+          occupation?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          safeguarding_status?: string
+          salvation_date?: string | null
+          school?: string | null
+          small_group_id?: string | null
+          spiritual_gifts?: string | null
+          stage?: string
+          talents?: string | null
+          team?: string
+          training_completed?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      mt_mentorships: {
+        Row: {
+          cadence: string
+          confidential_notes: string | null
+          created_at: string
+          created_by: string | null
+          goals: string | null
+          id: string
+          last_session_date: string | null
+          member_id: string | null
+          mentee_name: string
+          mentor_name: string
+          next_session_date: string | null
+          prayer_notes: string | null
+          progress_notes: string | null
+          progress_pct: number
+          sessions_completed: number
+          status: string
+          team: string
+          updated_at: string
+        }
+        Insert: {
+          cadence?: string
+          confidential_notes?: string | null
+          created_at?: string
+          created_by?: string | null
+          goals?: string | null
+          id?: string
+          last_session_date?: string | null
+          member_id?: string | null
+          mentee_name: string
+          mentor_name: string
+          next_session_date?: string | null
+          prayer_notes?: string | null
+          progress_notes?: string | null
+          progress_pct?: number
+          sessions_completed?: number
+          status?: string
+          team: string
+          updated_at?: string
+        }
+        Update: {
+          cadence?: string
+          confidential_notes?: string | null
+          created_at?: string
+          created_by?: string | null
+          goals?: string | null
+          id?: string
+          last_session_date?: string | null
+          member_id?: string | null
+          mentee_name?: string
+          mentor_name?: string
+          next_session_date?: string | null
+          prayer_notes?: string | null
+          progress_notes?: string | null
+          progress_pct?: number
+          sessions_completed?: number
+          status?: string
+          team?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mt_mentorships_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "mt_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mt_outreach: {
+        Row: {
+          beneficiaries: string | null
+          budget: number | null
+          category: string
+          created_at: string
+          created_by: string | null
+          end_date: string | null
+          follow_ups: number
+          id: string
+          impact: string | null
+          leader_name: string | null
+          location: string | null
+          people_reached: number
+          salvations: number
+          start_date: string | null
+          status: string
+          team: string
+          title: string
+          updated_at: string
+          volunteer_hours: number
+          volunteers: number
+        }
+        Insert: {
+          beneficiaries?: string | null
+          budget?: number | null
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          end_date?: string | null
+          follow_ups?: number
+          id?: string
+          impact?: string | null
+          leader_name?: string | null
+          location?: string | null
+          people_reached?: number
+          salvations?: number
+          start_date?: string | null
+          status?: string
+          team: string
+          title: string
+          updated_at?: string
+          volunteer_hours?: number
+          volunteers?: number
+        }
+        Update: {
+          beneficiaries?: string | null
+          budget?: number | null
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          end_date?: string | null
+          follow_ups?: number
+          id?: string
+          impact?: string | null
+          leader_name?: string | null
+          location?: string | null
+          people_reached?: number
+          salvations?: number
+          start_date?: string | null
+          status?: string
+          team?: string
+          title?: string
+          updated_at?: string
+          volunteer_hours?: number
+          volunteers?: number
+        }
+        Relationships: []
+      }
+      mt_prayer: {
+        Row: {
+          answered_note: string | null
+          assigned_to: string | null
+          category: string
+          confidential: boolean
+          created_at: string
+          created_by: string | null
+          follow_up_date: string | null
+          id: string
+          request: string
+          requester_name: string | null
+          status: string
+          team: string
+          updated_at: string
+        }
+        Insert: {
+          answered_note?: string | null
+          assigned_to?: string | null
+          category?: string
+          confidential?: boolean
+          created_at?: string
+          created_by?: string | null
+          follow_up_date?: string | null
+          id?: string
+          request: string
+          requester_name?: string | null
+          status?: string
+          team: string
+          updated_at?: string
+        }
+        Update: {
+          answered_note?: string | null
+          assigned_to?: string | null
+          category?: string
+          confidential?: boolean
+          created_at?: string
+          created_by?: string | null
+          follow_up_date?: string | null
+          id?: string
+          request?: string
+          requester_name?: string | null
+          status?: string
+          team?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      mt_risks: {
+        Row: {
+          category: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          impact: number
+          likelihood: number
+          mitigation: string | null
+          owner_id: string | null
+          owner_name: string | null
+          review_date: string | null
+          status: string
+          team: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          impact?: number
+          likelihood?: number
+          mitigation?: string | null
+          owner_id?: string | null
+          owner_name?: string | null
+          review_date?: string | null
+          status?: string
+          team?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          impact?: number
+          likelihood?: number
+          mitigation?: string | null
+          owner_id?: string | null
+          owner_name?: string | null
+          review_date?: string | null
+          status?: string
+          team?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      mt_tasks: {
+        Row: {
+          assignee_name: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          due_date: string | null
+          id: string
+          priority: string
+          progress_pct: number
+          status: string
+          team: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assignee_name?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          priority?: string
+          progress_pct?: number
+          status?: string
+          team: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assignee_name?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          priority?: string
+          progress_pct?: number
+          status?: string
+          team?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      mt_training_records: {
+        Row: {
+          certificate_url: string | null
+          completed_at: string | null
+          course_id: string
+          created_at: string
+          id: string
+          member_name: string | null
+          progress_pct: number
+          score: number | null
+          team: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          certificate_url?: string | null
+          completed_at?: string | null
+          course_id: string
+          created_at?: string
+          id?: string
+          member_name?: string | null
+          progress_pct?: number
+          score?: number | null
+          team?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          certificate_url?: string | null
+          completed_at?: string | null
+          course_id?: string
+          created_at?: string
+          id?: string
+          member_name?: string | null
+          progress_pct?: number
+          score?: number | null
+          team?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mt_training_records_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "mt_courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           branch: Database["public"]["Enums"]["branch"] | null
