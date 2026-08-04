@@ -57,10 +57,10 @@ export default function HospitalityCenter({ currentUserId }: { departmentSlug?: 
         <TabsContent value="training" className="mt-6">
           <TrainingModule
             canManage={canManage}
-            currentUserId={currentUserId}
-            table="hos_training_records"
-            courses={HOS_COURSES}
-            title="Hospitality training & competency"
+            courseTable="hos_courses"
+            recordTable="hos_training_records"
+            members={members}
+            seedCourses={asStrings(HOS_COURSES)}
           />
         </TabsContent>
         <TabsContent value="risk" className="mt-6">
@@ -68,7 +68,7 @@ export default function HospitalityCenter({ currentUserId }: { departmentSlug?: 
             canManage={canManage}
             currentUserId={currentUserId}
             table="hos_risks"
-            categories={HOS_RISK_CATEGORIES}
+            categories={asStrings(HOS_RISK_CATEGORIES)}
             title="Hospitality risk register"
           />
         </TabsContent>
