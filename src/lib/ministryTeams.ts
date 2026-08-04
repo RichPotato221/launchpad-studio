@@ -1,8 +1,8 @@
 import type { Rag } from "@/lib/finance";
 
-/** Shared vocabulary, configuration and scoring for the Youth, Women's and Men's team workspaces. */
+/** Shared vocabulary, configuration and scoring for the ministry team workspaces. */
 
-export type TeamKey = "youth" | "women" | "men";
+export type TeamKey = "youth" | "women" | "men" | "care" | "life_groups" | "outreach";
 
 export const TEAM_BY_SLUG: Record<string, TeamKey> = {
   "youth-ministry": "youth",
@@ -11,7 +11,17 @@ export const TEAM_BY_SLUG: Record<string, TeamKey> = {
   women: "women",
   "mens-ministry": "men",
   men: "men",
+  "hand-of-christ": "care",
+  "hand-of-christ-social-relationships": "care",
+  benevolence: "care",
+  "life-groups": "life_groups",
+  "life-group": "life_groups",
+  cells: "life_groups",
+  "outreach-evangelism": "outreach",
+  outreach: "outreach",
+  evangelism: "outreach",
 };
+
 
 export const DISCIPLESHIP_STAGES = [
   { key: "first_time_visitor", label: "First-time visitor" },
@@ -59,6 +69,9 @@ type TeamConfig = {
   courses: string[];
   riskCategories: string[];
   groupWord: string;
+  /** Optional per-team tab captions for the shared operations centre. */
+  tabs?: Partial<Record<"members" | "groups" | "events" | "outreach" | "tasks", string>>;
+
 };
 
 const SHARED_RISKS = [
@@ -181,7 +194,176 @@ export const TEAM_CONFIG: Record<TeamKey, TeamConfig> = {
     ],
     riskCategories: SHARED_RISKS,
   },
+  care: {
+    key: "care",
+    label: "Hand of Christ Team",
+    title: "Hand of Christ — Compassion, Benevolence & Family Support Centre",
+    strapline:
+      "“Whatever you did for one of the least of these brothers and sisters of mine, you did for me.” — Matthew 25:40. Benevolence cases, family support, community outreach, volunteers and referrals — handled with confidentiality and Kingdom stewardship.",
+    memberWord: "care worker",
+    groupWord: "care team",
+    tabs: {
+      members: "Care team & volunteers",
+      groups: "Case coordination & referrals",
+      events: "Outreach projects & attendance",
+      outreach: "Benevolence, community care & prayer",
+      tasks: "Cases, visits & tasks",
+    },
+    eventTypes: [
+      { key: "feeding", label: "Feeding scheme" },
+      { key: "clothing", label: "Clothing drive" },
+      { key: "winter", label: "Winter campaign" },
+      { key: "hospital", label: "Hospital visit" },
+      { key: "prison", label: "Prison ministry" },
+      { key: "orphanage", label: "Orphanage visit" },
+      { key: "elderly", label: "Elderly support" },
+      { key: "school", label: "School support" },
+      { key: "cleanup", label: "Community clean-up" },
+      { key: "home_visit", label: "Home / welfare visit" },
+      { key: "bereavement", label: "Bereavement support" },
+      { key: "training", label: "Volunteer training" },
+    ],
+    courses: [
+      "Compassion ministry",
+      "Case management",
+      "Safeguarding",
+      "Confidentiality & POPIA",
+      "Family support",
+      "Crisis response",
+      "Community outreach",
+      "Leadership development",
+      "Biblical stewardship",
+      "Volunteer care",
+    ],
+    riskCategories: [
+      "benevolence_fund_misuse",
+      "confidentiality_breach",
+      "volunteer_burnout",
+      "delayed_assistance",
+      "resource_shortage",
+      "fraud",
+      "case_backlog",
+      "outreach_safety",
+      "partnership",
+      "safeguarding",
+      "budget",
+      "communication",
+    ],
+  },
+  life_groups: {
+    key: "life_groups",
+    label: "Life Groups Team",
+    title: "Life Groups — Discipleship, Small Groups & Pastoral Care Centre",
+    strapline:
+      "“They broke bread in their homes and ate together with glad and sincere hearts.” — Acts 2:46. Every group, leader, meeting, member and multiplication milestone in one discipleship ecosystem.",
+    memberWord: "group member",
+    groupWord: "life group",
+    tabs: {
+      members: "Members & discipleship journey",
+      groups: "Life group directory & leaders",
+      events: "Meetings, huddles & attendance",
+      outreach: "Pastoral care, referrals & prayer",
+      tasks: "Follow-ups & tasks",
+    },
+    eventTypes: [
+      { key: "weekly_meeting", label: "Weekly life group meeting" },
+      { key: "leader_huddle", label: "Leader huddle" },
+      { key: "prayer_night", label: "Prayer night" },
+      { key: "training", label: "Leader training" },
+      { key: "evangelism", label: "Evangelism / invite night" },
+      { key: "retreat", label: "Retreat" },
+      { key: "conference", label: "Conference" },
+      { key: "fellowship", label: "Fellowship / social" },
+      { key: "outreach", label: "Community outreach" },
+      { key: "launch", label: "New group launch" },
+    ],
+    courses: [
+      "Life group leadership",
+      "Discipleship",
+      "Pastoral care",
+      "Conflict resolution",
+      "Biblical doctrine",
+      "Counselling basics",
+      "Leadership development",
+      "Evangelism",
+      "Small group facilitation",
+      "Kingdom culture",
+    ],
+    riskCategories: [
+      "leader_burnout",
+      "inactive_groups",
+      "declining_attendance",
+      "doctrinal",
+      "pastoral_issue",
+      "member_conflict",
+      "volunteer_shortage",
+      "communication",
+      "leadership_vacancy",
+      "safeguarding",
+      "follow_up",
+      "budget",
+    ],
+  },
+  outreach: {
+    key: "outreach",
+    label: "Outreach & Evangelism Team",
+    title: "Outreach & Evangelism — Kingdom Mission Management Centre",
+    strapline:
+      "“Go into all the world and preach the gospel to all creation.” — Mark 16:15. Campaigns, gospel contacts, salvations, discipleship handoff, volunteers, partnerships and Kingdom impact in one system.",
+    memberWord: "evangelist / contact",
+    groupWord: "outreach team",
+    tabs: {
+      members: "Evangelism CRM & converts",
+      groups: "Teams & discipleship handoff",
+      events: "Campaigns, events & attendance",
+      outreach: "Outreach projects & prayer",
+      tasks: "Follow-ups & tasks",
+    },
+    eventTypes: [
+      { key: "street", label: "Street evangelism" },
+      { key: "mall", label: "Mall evangelism" },
+      { key: "door_to_door", label: "Door-to-door" },
+      { key: "hospital", label: "Hospital ministry" },
+      { key: "prison", label: "Prison ministry" },
+      { key: "school", label: "School outreach" },
+      { key: "campus", label: "University outreach" },
+      { key: "marketplace", label: "Marketplace evangelism" },
+      { key: "crusade", label: "Crusade / revival" },
+      { key: "prayer_walk", label: "Prayer walk" },
+      { key: "mission_trip", label: "Mission trip" },
+      { key: "community", label: "Community service project" },
+      { key: "training", label: "Evangelism training" },
+    ],
+    courses: [
+      "Personal evangelism",
+      "Apologetics",
+      "Street evangelism",
+      "Marketplace evangelism",
+      "Cross-cultural missions",
+      "Children & youth evangelism",
+      "Follow-up & discipleship",
+      "Outreach safety",
+      "Prayer & intercession",
+      "Kingdom worldview & seven spheres",
+      "Leadership development",
+    ],
+    riskCategories: [
+      "outreach_safety",
+      "follow_up",
+      "volunteer_burnout",
+      "volunteer_shortage",
+      "transport",
+      "budget",
+      "community_permission",
+      "partnership",
+      "doctrinal",
+      "data_privacy",
+      "communication",
+      "leadership_shortage",
+    ],
+  },
 };
+
 
 export function teamFromSlug(slug: string): TeamKey {
   return TEAM_BY_SLUG[slug] ?? "youth";

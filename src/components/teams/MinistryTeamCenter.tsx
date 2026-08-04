@@ -14,6 +14,8 @@ const TeamTasksModule = lazy(() => import("@/components/teams/TeamTasksModule"))
 const TeamRiskTrainingModule = lazy(() => import("@/components/teams/TeamRiskTrainingModule"));
 const TeamReportsModule = lazy(() => import("@/components/teams/TeamReportsModule"));
 const TeamAssistant = lazy(() => import("@/components/teams/TeamAssistant"));
+const OutreachWorkspace = lazy(() => import("@/components/workspaces/OutreachWorkspace"));
+
 
 const sb = supabase as any;
 
@@ -58,14 +60,17 @@ export default function MinistryTeamCenter({
       <Tabs defaultValue="dashboard">
         <TabsList className="flex h-auto w-full flex-wrap justify-start print:hidden">
           <TabsTrigger value="dashboard">Command centre</TabsTrigger>
-          <TabsTrigger value="members">Members &amp; discipleship</TabsTrigger>
-          <TabsTrigger value="groups">Groups &amp; mentorship</TabsTrigger>
-          <TabsTrigger value="events">Events &amp; attendance</TabsTrigger>
-          <TabsTrigger value="outreach">Outreach &amp; prayer</TabsTrigger>
-          <TabsTrigger value="tasks">Tasks &amp; projects</TabsTrigger>
+          <TabsTrigger value="members">{cfg.tabs?.members ?? "Members & discipleship"}</TabsTrigger>
+          <TabsTrigger value="groups">{cfg.tabs?.groups ?? "Groups & mentorship"}</TabsTrigger>
+          <TabsTrigger value="events">{cfg.tabs?.events ?? "Events & attendance"}</TabsTrigger>
+          <TabsTrigger value="outreach">{cfg.tabs?.outreach ?? "Outreach & prayer"}</TabsTrigger>
+          <TabsTrigger value="tasks">{cfg.tabs?.tasks ?? "Tasks & projects"}</TabsTrigger>
+
           <TabsTrigger value="risk">Risk &amp; training</TabsTrigger>
+          {team === "outreach" && <TabsTrigger value="souls">Souls-won register</TabsTrigger>}
           <TabsTrigger value="reports">KPIs &amp; reports</TabsTrigger>
           <TabsTrigger value="assistant">AI assistant</TabsTrigger>
+
         </TabsList>
 
         <Suspense fallback={<Loading />}>
@@ -88,7 +93,13 @@ export default function MinistryTeamCenter({
           <TabsContent value="risk" className="mt-6">
             <TeamRiskTrainingModule team={team} canManage={canManage} currentUserId={currentUserId} />
           </TabsContent>
+          {team === "outreach" && (
+            <TabsContent value="souls" className="mt-6">
+              <OutreachWorkspace departmentSlug={departmentSlug} currentUserId={currentUserId} />
+            </TabsContent>
+          )}
           <TabsContent value="reports" className="mt-6"><TeamReportsModule team={team} /></TabsContent>
+
           <TabsContent value="assistant" className="mt-6"><TeamAssistant team={team} /></TabsContent>
         </Suspense>
       </Tabs>
