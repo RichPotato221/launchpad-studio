@@ -69,6 +69,9 @@ type TeamConfig = {
   courses: string[];
   riskCategories: string[];
   groupWord: string;
+  /** Optional per-team tab captions for the shared operations centre. */
+  tabs?: Partial<Record<"members" | "groups" | "events" | "outreach" | "tasks", string>>;
+
 };
 
 const SHARED_RISKS = [
