@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { RiskDashboard } from "@/components/RiskDashboard";
+import { ApostolicCenter } from "@/components/apostolic/ApostolicCenter";
 
 export const Route = createFileRoute("/_authenticated/senior-pastor-cockpit")({
   head: () => ({ meta: [{ title: "Senior Pastor Cockpit — TRoGKC Portal" }] }),
@@ -33,21 +34,25 @@ function CockpitPage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
-      <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Governance-Level Oversight</p>
-      <h1 className="mt-2 font-serif text-4xl md:text-5xl">Senior Pastor Cockpit</h1>
-      <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
-        A single view of what needs your attention this month — underperforming KPIs, claims awaiting your sign-off,
-        departments that haven't reported, and a membership pulse.
+    <div className="mx-auto max-w-[1800px] px-4 py-10 md:px-8">
+      <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Office of the Senior Apostle</p>
+      <h1 className="mt-2 font-serif text-4xl md:text-5xl">Apostolic Command Centre</h1>
+      <p className="mt-3 max-w-3xl text-sm text-muted-foreground">
+        The highest level of oversight — every branch, department, office, financial system, governance structure,
+        development project and Kingdom assignment in one real-time view.
       </p>
 
       <Button variant="outline" size="sm" onClick={() => window.print()} className="mt-4 print:hidden">
         Export Dashboard as PDF
       </Button>
 
+      <ApostolicCenter />
 
-      {access.data.isSeniorApostle && <CockpitComposer />}
-      <CockpitPosts />
+      <div className="mt-12">
+        <h2 className="font-serif text-2xl">Apostolic broadcasts</h2>
+        {access.data.isSeniorApostle && <CockpitComposer />}
+        <CockpitPosts />
+      </div>
 
       <div className="mt-10 grid gap-8 lg:grid-cols-2">
         <RiskDashboard />
