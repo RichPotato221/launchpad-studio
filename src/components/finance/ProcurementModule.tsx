@@ -231,10 +231,11 @@ export default function ProcurementModule({ canManage, currentUserId, department
   const exportCsv = () =>
     exportRows(
       "procurement-register",
-      ["PR number", "Date", "Title", "Category", "Supplier", "Branch", "Estimated", "Priority", "Needed by", "Status", "PO number"],
+      ["PR number", "Date", "Department", "Title", "Category", "Supplier", "Branch", "Estimated", "Priority", "Needed by", "Status", "PO number"],
       filtered.map((r) => [
         r.pr_number,
         fmtDate(r.created_at),
+        r.department_slug ?? "",
         r.title,
         r.category ?? "",
         r.supplier?.name ?? "",
