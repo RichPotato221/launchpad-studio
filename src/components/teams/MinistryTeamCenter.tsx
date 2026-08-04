@@ -91,7 +91,13 @@ export default function MinistryTeamCenter({
           <TabsContent value="risk" className="mt-6">
             <TeamRiskTrainingModule team={team} canManage={canManage} currentUserId={currentUserId} />
           </TabsContent>
+          {team === "outreach" && (
+            <TabsContent value="souls" className="mt-6">
+              <OutreachWorkspace departmentSlug={departmentSlug} currentUserId={currentUserId} />
+            </TabsContent>
+          )}
           <TabsContent value="reports" className="mt-6"><TeamReportsModule team={team} /></TabsContent>
+
           <TabsContent value="assistant" className="mt-6"><TeamAssistant team={team} /></TabsContent>
         </Suspense>
       </Tabs>
