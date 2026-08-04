@@ -58,11 +58,12 @@ export default function MinistryTeamCenter({
       <Tabs defaultValue="dashboard">
         <TabsList className="flex h-auto w-full flex-wrap justify-start print:hidden">
           <TabsTrigger value="dashboard">Command centre</TabsTrigger>
-          <TabsTrigger value="members">Members &amp; discipleship</TabsTrigger>
-          <TabsTrigger value="groups">Groups &amp; mentorship</TabsTrigger>
-          <TabsTrigger value="events">Events &amp; attendance</TabsTrigger>
-          <TabsTrigger value="outreach">Outreach &amp; prayer</TabsTrigger>
-          <TabsTrigger value="tasks">Tasks &amp; projects</TabsTrigger>
+          <TabsTrigger value="members">{cfg.tabs?.members ?? "Members & discipleship"}</TabsTrigger>
+          <TabsTrigger value="groups">{cfg.tabs?.groups ?? "Groups & mentorship"}</TabsTrigger>
+          <TabsTrigger value="events">{cfg.tabs?.events ?? "Events & attendance"}</TabsTrigger>
+          <TabsTrigger value="outreach">{cfg.tabs?.outreach ?? "Outreach & prayer"}</TabsTrigger>
+          <TabsTrigger value="tasks">{cfg.tabs?.tasks ?? "Tasks & projects"}</TabsTrigger>
+
           <TabsTrigger value="risk">Risk &amp; training</TabsTrigger>
           <TabsTrigger value="reports">KPIs &amp; reports</TabsTrigger>
           <TabsTrigger value="assistant">AI assistant</TabsTrigger>
