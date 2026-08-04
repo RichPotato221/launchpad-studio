@@ -1,0 +1,263 @@
+import type { Rag } from "@/lib/finance";
+
+/** Shared vocabulary, configuration and scoring for the Youth, Women's and Men's team workspaces. */
+
+export type TeamKey = "youth" | "women" | "men";
+
+export const TEAM_BY_SLUG: Record<string, TeamKey> = {
+  "youth-ministry": "youth",
+  youth: "youth",
+  "womens-ministry": "women",
+  women: "women",
+  "mens-ministry": "men",
+  men: "men",
+};
+
+export const DISCIPLESHIP_STAGES = [
+  { key: "first_time_visitor", label: "First-time visitor" },
+  { key: "new_believer", label: "New believer" },
+  { key: "foundations", label: "Foundations class" },
+  { key: "baptism", label: "Water baptism" },
+  { key: "holy_spirit", label: "Holy Spirit teaching" },
+  { key: "small_group", label: "Small group integration" },
+  { key: "ministry", label: "Ministry involvement" },
+  { key: "leadership_dev", label: "Leadership development" },
+  { key: "mentoring", label: "Mentoring" },
+  { key: "team_leader", label: "Team leadership" },
+  { key: "department_leader", label: "Department leadership" },
+] as const;
+
+export const MEMBERSHIP_STATUSES = ["active", "irregular", "inactive", "transferred"] as const;
+export const BAPTISM_STATUSES = ["not_baptised", "candidate", "baptised"] as const;
+export const LEADERSHIP_LEVELS = ["member", "volunteer", "emerging_leader", "mentor", "team_leader", "coordinator"] as const;
+export const SAFEGUARDING_STATUSES = ["pending", "in_progress", "cleared", "expired"] as const;
+
+export const PRAYER_CATEGORIES = [
+  "general",
+  "family",
+  "health",
+  "academic",
+  "career",
+  "emotional",
+  "marriage",
+  "provision",
+  "salvation",
+  "leadership",
+] as const;
+
+export const TASK_PRIORITIES = ["low", "medium", "high", "urgent"] as const;
+export const TASK_STATUSES = ["todo", "in_progress", "blocked", "done"] as const;
+export const OUTREACH_CATEGORIES = ["community", "school", "campus", "missions", "evangelism", "social", "support_project"] as const;
+
+type TeamConfig = {
+  key: TeamKey;
+  label: string;
+  title: string;
+  strapline: string;
+  memberWord: string;
+  eventTypes: { key: string; label: string }[];
+  courses: string[];
+  riskCategories: string[];
+  groupWord: string;
+};
+
+const SHARED_RISKS = [
+  "safeguarding",
+  "disengagement",
+  "leadership_shortage",
+  "volunteer_burnout",
+  "doctrinal",
+  "attendance",
+  "follow_up",
+  "team_conflict",
+  "event_safety",
+  "budget",
+  "communication",
+  "transition",
+];
+
+export const TEAM_CONFIG: Record<TeamKey, TeamConfig> = {
+  youth: {
+    key: "youth",
+    label: "Youth Team",
+    title: "Youth Discipleship, Leadership & Kingdom Purpose Centre",
+    strapline:
+      "“Let no one despise your youth, but be an example to the believers.” — 1 Timothy 4:12. Every young person tracked, discipled, mentored and released into their Kingdom assignment.",
+    memberWord: "youth member",
+    groupWord: "small group",
+    eventTypes: [
+      { key: "service", label: "Youth service" },
+      { key: "bible_study", label: "Bible study" },
+      { key: "prayer_night", label: "Prayer night" },
+      { key: "worship_night", label: "Worship night" },
+      { key: "conference", label: "Youth conference" },
+      { key: "camp", label: "Camp" },
+      { key: "retreat", label: "Leadership retreat" },
+      { key: "outreach", label: "Evangelism outreach" },
+      { key: "sports", label: "Sports event" },
+      { key: "fellowship", label: "Fellowship gathering" },
+      { key: "community", label: "Community service" },
+      { key: "training", label: "Leadership / training session" },
+    ],
+    courses: [
+      "Safeguarding certification",
+      "Biblical discipleship",
+      "Youth ministry leadership",
+      "Mentoring skills",
+      "Teaching & communication",
+      "Conflict resolution",
+      "Event planning",
+      "Evangelism",
+      "Leadership coaching",
+      "Identity in Christ",
+      "Kingdom leadership",
+    ],
+    riskCategories: SHARED_RISKS,
+  },
+  women: {
+    key: "women",
+    label: "Women's Team",
+    title: "Women's Ministry Discipleship, Mentorship & Outreach Centre",
+    strapline:
+      "“She is clothed with strength and dignity.” — Proverbs 31:25. Discipleship, mentorship, family support, outreach and leadership development for every woman of the house.",
+    memberWord: "woman",
+    groupWord: "small group",
+    eventTypes: [
+      { key: "fellowship", label: "Women's fellowship" },
+      { key: "prayer", label: "Prayer meeting" },
+      { key: "bible_study", label: "Bible study" },
+      { key: "retreat", label: "Retreat" },
+      { key: "conference", label: "Conference" },
+      { key: "workshop", label: "Workshop" },
+      { key: "family", label: "Family event" },
+      { key: "outreach", label: "Community outreach" },
+      { key: "service", label: "Special service" },
+      { key: "training", label: "Training session" },
+    ],
+    courses: [
+      "Mentorship",
+      "Leadership development",
+      "Women's discipleship",
+      "Family ministry",
+      "Communication skills",
+      "Pastoral care",
+      "Biblical studies",
+      "Volunteer development",
+      "School of Ministry",
+    ],
+    riskCategories: SHARED_RISKS,
+  },
+  men: {
+    key: "men",
+    label: "Men's Team",
+    title: "Men's Discipleship, Fatherhood & Leadership Development Centre",
+    strapline:
+      "“Watch, stand fast in the faith, be brave, be strong.” — 1 Corinthians 16:13. Discipleship, mentorship, fatherhood, service projects and leadership pipeline for every man of the house.",
+    memberWord: "man",
+    groupWord: "small group",
+    eventTypes: [
+      { key: "fellowship", label: "Men's fellowship" },
+      { key: "breakfast", label: "Men's breakfast" },
+      { key: "retreat", label: "Retreat" },
+      { key: "prayer", label: "Prayer meeting" },
+      { key: "bible_study", label: "Bible study" },
+      { key: "fatherhood", label: "Fatherhood programme" },
+      { key: "outreach", label: "Outreach" },
+      { key: "support_project", label: "Church support project" },
+      { key: "training", label: "Training session" },
+      { key: "conference", label: "Conference" },
+    ],
+    courses: [
+      "Fatherhood & family leadership",
+      "Biblical manhood",
+      "Mentorship training",
+      "Discipleship",
+      "Leadership development",
+      "Communication skills",
+      "Volunteer leadership",
+      "Apostolic foundations",
+      "Kingdom identity",
+      "Servant leadership",
+    ],
+    riskCategories: SHARED_RISKS,
+  },
+};
+
+export function teamFromSlug(slug: string): TeamKey {
+  return TEAM_BY_SLUG[slug] ?? "youth";
+}
+
+export function labelFor(list: readonly { key: string; label: string }[], key?: string | null) {
+  return list.find((l) => l.key === key)?.label ?? nice(key);
+}
+
+export function nice(s?: string | null) {
+  if (!s) return "—";
+  return s.replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase());
+}
+
+export function today() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+export function pct(part: number, total: number) {
+  if (!total) return 0;
+  return Math.round((part / total) * 100);
+}
+
+export function stageIndex(stage?: string | null) {
+  const i = DISCIPLESHIP_STAGES.findIndex((s) => s.key === stage);
+  return i < 0 ? 0 : i;
+}
+
+export function stageProgress(stage?: string | null) {
+  return Math.round((stageIndex(stage) / (DISCIPLESHIP_STAGES.length - 1)) * 100);
+}
+
+export function nextStage(stage?: string | null) {
+  const i = stageIndex(stage);
+  return DISCIPLESHIP_STAGES[Math.min(i + 1, DISCIPLESHIP_STAGES.length - 1)];
+}
+
+export function ragForScore(value: number, amberAt = 75, redAt = 50): Rag {
+  if (value >= amberAt) return "green";
+  if (value >= redAt) return "amber";
+  return "red";
+}
+
+export function riskScore(likelihood: number, impact: number) {
+  return Number(likelihood ?? 0) * Number(impact ?? 0);
+}
+
+export function ragForRisk(score: number): Rag {
+  if (score >= 15) return "red";
+  if (score >= 8) return "amber";
+  return "green";
+}
+
+export function daysUntil(iso?: string | null) {
+  if (!iso) return null;
+  return Math.round((new Date(iso).getTime() - Date.now()) / 86400000);
+}
+
+export function age(dob?: string | null) {
+  if (!dob) return null;
+  const d = new Date(dob);
+  const diff = Date.now() - d.getTime();
+  return Math.floor(diff / (365.25 * 86400000));
+}
+
+/** Birthdays falling in the next `days` window (ignores year). */
+export function upcomingBirthdays(members: any[], days = 30) {
+  const now = new Date();
+  return members
+    .filter((m) => m.date_of_birth)
+    .map((m) => {
+      const d = new Date(m.date_of_birth);
+      const next = new Date(now.getFullYear(), d.getMonth(), d.getDate());
+      if (next < new Date(now.getFullYear(), now.getMonth(), now.getDate())) next.setFullYear(now.getFullYear() + 1);
+      return { ...m, _in: Math.round((next.getTime() - now.getTime()) / 86400000), _on: next.toISOString().slice(0, 10) };
+    })
+    .filter((m) => m._in <= days)
+    .sort((a, b) => a._in - b._in);
+}
