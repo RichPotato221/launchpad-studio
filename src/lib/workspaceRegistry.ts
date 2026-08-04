@@ -70,17 +70,34 @@ export const workspaceRegistry: Record<string, Entry> = {
     component: lazy(() => import("@/components/workspaces/SchoolOfMinistryWorkspace")),
   },
   "outreach-evangelism": {
-    label: "Souls-Won Register",
-    component: lazy(() => import("@/components/workspaces/OutreachWorkspace")),
+    label: "Outreach & Evangelism — Kingdom Mission Management Centre",
+    component: lazy(() => import("@/components/teams/MinistryTeamCenter")),
   },
   outreach: {
-    label: "Souls-Won Register",
-    component: lazy(() => import("@/components/workspaces/OutreachWorkspace")),
+    label: "Outreach & Evangelism — Kingdom Mission Management Centre",
+    component: lazy(() => import("@/components/teams/MinistryTeamCenter")),
   },
-  "evangelism": {
-    label: "Souls-Won Register",
-    component: lazy(() => import("@/components/workspaces/OutreachWorkspace")),
+  evangelism: {
+    label: "Outreach & Evangelism — Kingdom Mission Management Centre",
+    component: lazy(() => import("@/components/teams/MinistryTeamCenter")),
   },
+  "hand-of-christ": {
+    label: "Hand of Christ Compassion & Benevolence Centre",
+    component: lazy(() => import("@/components/teams/MinistryTeamCenter")),
+  },
+  benevolence: {
+    label: "Hand of Christ Compassion & Benevolence Centre",
+    component: lazy(() => import("@/components/teams/MinistryTeamCenter")),
+  },
+  "life-groups": {
+    label: "Life Groups Discipleship & Pastoral Care Centre",
+    component: lazy(() => import("@/components/teams/MinistryTeamCenter")),
+  },
+  cells: {
+    label: "Life Groups Discipleship & Pastoral Care Centre",
+    component: lazy(() => import("@/components/teams/MinistryTeamCenter")),
+  },
+
   media: {
     label: "Kingdom Media Operations Centre",
     component: lazy(() => import("@/components/media/MediaCenter")),
