@@ -64,15 +64,26 @@ export default function ProcurementModule({ canManage, currentUserId, department
     setLoading(true);
     let prq = sb
       .from("purchase_requests")
-      .select("*, supplier:suppliers(id, name), requester:profiles!purchase_requests_requester_id_fkey(id, full_name, email)")
+      .select("*, supplier:suppliers(id, name)")
       .is("archived_at", null);
     if (scoped) prq = prq.eq("department_slug", departmentSlug);
-    const [{ data: prs }, { data: sup }, { data: bud }] = await Promise.all([
+    const [{ data: prs, error: prErr }, { data: sup }, { data: bud }] = await Promise.all([
       prq.order("created_at", { ascending: false }),
       sb.from("suppliers").select("id, name").order("name"),
       sb.from("budgets").select("id, name, fiscal_year").is("archived_at", null).order("fiscal_year", { ascending: false }),
     ]);
-    setRows(prs ?? []);
+    if (prErr) toast.error(prErr.message ?? "Could not load purchase requests");
+
+    // requester_id has no database relationship to profiles, so the names are
+    // resolved in a second lookup rather than through an embedded join.
+    const list = (prs ?? []) as any[];
+    const ids = Array.from(new Set(list.map((r) => r.requester_id).filter(Boolean)));
+    let people: Record<string, any> = {};
+    if (ids.length) {
+      const { data: profs } = await sb.from("profiles").select("id, full_name, email").in("id", ids);
+      people = Object.fromEntries(((profs ?? []) as any[]).map((p) => [p.id, p]));
+    }
+    setRows(list.map((r) => ({ ...r, requester: people[r.requester_id] ?? null })));
     setSuppliers(sup ?? []);
     setBudgets(bud ?? []);
     setLoading(false);
