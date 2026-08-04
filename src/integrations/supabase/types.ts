@@ -473,6 +473,475 @@ export type Database = {
         }
         Relationships: []
       }
+      apo_appointments: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          branch: string | null
+          created_at: string
+          created_by: string | null
+          department_slug: string | null
+          effective_date: string | null
+          end_date: string | null
+          id: string
+          kind: string
+          notes: string | null
+          person_name: string
+          role_title: string | null
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          branch?: string | null
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string | null
+          effective_date?: string | null
+          end_date?: string | null
+          id?: string
+          kind?: string
+          notes?: string | null
+          person_name: string
+          role_title?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          branch?: string | null
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string | null
+          effective_date?: string | null
+          end_date?: string | null
+          id?: string
+          kind?: string
+          notes?: string | null
+          person_name?: string
+          role_title?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      apo_approvals: {
+        Row: {
+          amount: number | null
+          audit: Json
+          category: string
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          decision_notes: string | null
+          document_name: string | null
+          document_url: string | null
+          id: string
+          reference: string | null
+          requested_by: string | null
+          signature_name: string | null
+          status: string
+          summary: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number | null
+          audit?: Json
+          category: string
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decision_notes?: string | null
+          document_name?: string | null
+          document_url?: string | null
+          id?: string
+          reference?: string | null
+          requested_by?: string | null
+          signature_name?: string | null
+          status?: string
+          summary?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number | null
+          audit?: Json
+          category?: string
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decision_notes?: string | null
+          document_name?: string | null
+          document_url?: string | null
+          id?: string
+          reference?: string | null
+          requested_by?: string | null
+          signature_name?: string | null
+          status?: string
+          summary?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      apo_communications: {
+        Row: {
+          audience: string
+          body: string
+          channels: string[]
+          created_at: string
+          created_by: string | null
+          id: string
+          kind: string
+          sent_at: string | null
+          status: string
+          subject: string
+        }
+        Insert: {
+          audience?: string
+          body: string
+          channels?: string[]
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kind?: string
+          sent_at?: string | null
+          status?: string
+          subject: string
+        }
+        Update: {
+          audience?: string
+          body?: string
+          channels?: string[]
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kind?: string
+          sent_at?: string | null
+          status?: string
+          subject?: string
+        }
+        Relationships: []
+      }
+      apo_directives: {
+        Row: {
+          body: string
+          category: string
+          created_at: string
+          created_by: string | null
+          id: string
+          issued_at: string
+          status: string
+          title: string
+          vision_id: string | null
+        }
+        Insert: {
+          body: string
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          issued_at?: string
+          status?: string
+          title: string
+          vision_id?: string | null
+        }
+        Update: {
+          body?: string
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          issued_at?: string
+          status?: string
+          title?: string
+          vision_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "apo_directives_vision_id_fkey"
+            columns: ["vision_id"]
+            isOneToOne: false
+            referencedRelation: "apo_vision"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      apo_fivefold: {
+        Row: {
+          appointment_date: string | null
+          branch: string | null
+          calling: string | null
+          created_at: string
+          development_plan: string | null
+          full_name: string
+          id: string
+          mentor_name: string | null
+          ministry_assignments: string | null
+          office: string
+          ordination_history: string | null
+          performance_pct: number
+          spiritual_gifts: string[]
+          status: string
+          succession_readiness: string
+          teaching_schedule: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          appointment_date?: string | null
+          branch?: string | null
+          calling?: string | null
+          created_at?: string
+          development_plan?: string | null
+          full_name: string
+          id?: string
+          mentor_name?: string | null
+          ministry_assignments?: string | null
+          office: string
+          ordination_history?: string | null
+          performance_pct?: number
+          spiritual_gifts?: string[]
+          status?: string
+          succession_readiness?: string
+          teaching_schedule?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          appointment_date?: string | null
+          branch?: string | null
+          calling?: string | null
+          created_at?: string
+          development_plan?: string | null
+          full_name?: string
+          id?: string
+          mentor_name?: string | null
+          ministry_assignments?: string | null
+          office?: string
+          ordination_history?: string | null
+          performance_pct?: number
+          spiritual_gifts?: string[]
+          status?: string
+          succession_readiness?: string
+          teaching_schedule?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      apo_objectives: {
+        Row: {
+          created_at: string
+          department_slug: string | null
+          description: string | null
+          id: string
+          owner_id: string | null
+          progress_pct: number
+          status: string
+          target_date: string | null
+          title: string
+          updated_at: string
+          vision_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          department_slug?: string | null
+          description?: string | null
+          id?: string
+          owner_id?: string | null
+          progress_pct?: number
+          status?: string
+          target_date?: string | null
+          title: string
+          updated_at?: string
+          vision_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          department_slug?: string | null
+          description?: string | null
+          id?: string
+          owner_id?: string | null
+          progress_pct?: number
+          status?: string
+          target_date?: string | null
+          title?: string
+          updated_at?: string
+          vision_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "apo_objectives_vision_id_fkey"
+            columns: ["vision_id"]
+            isOneToOne: false
+            referencedRelation: "apo_vision"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      apo_projects: {
+        Row: {
+          branch: string | null
+          budget: number
+          category: string
+          contractor: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          milestones: string | null
+          name: string
+          owner_name: string | null
+          progress_pct: number
+          risks: string | null
+          spent: number
+          start_date: string | null
+          status: string
+          target_date: string | null
+          updated_at: string
+        }
+        Insert: {
+          branch?: string | null
+          budget?: number
+          category?: string
+          contractor?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          milestones?: string | null
+          name: string
+          owner_name?: string | null
+          progress_pct?: number
+          risks?: string | null
+          spent?: number
+          start_date?: string | null
+          status?: string
+          target_date?: string | null
+          updated_at?: string
+        }
+        Update: {
+          branch?: string | null
+          budget?: number
+          category?: string
+          contractor?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          milestones?: string | null
+          name?: string
+          owner_name?: string | null
+          progress_pct?: number
+          risks?: string | null
+          spent?: number
+          start_date?: string | null
+          status?: string
+          target_date?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      apo_risks: {
+        Row: {
+          category: string
+          created_at: string
+          created_by: string | null
+          description: string
+          evidence: string | null
+          id: string
+          impact: number
+          likelihood: number
+          mitigation: string | null
+          owner_name: string | null
+          rating: number | null
+          review_date: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          created_by?: string | null
+          description: string
+          evidence?: string | null
+          id?: string
+          impact?: number
+          likelihood?: number
+          mitigation?: string | null
+          owner_name?: string | null
+          rating?: number | null
+          review_date?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          evidence?: string | null
+          id?: string
+          impact?: number
+          likelihood?: number
+          mitigation?: string | null
+          owner_name?: string | null
+          rating?: number | null
+          review_date?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      apo_vision: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          kingdom_priorities: string[]
+          published_at: string | null
+          scripture: string | null
+          status: string
+          theme: string
+          updated_at: string
+          vision_statement: string | null
+          year: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kingdom_priorities?: string[]
+          published_at?: string | null
+          scripture?: string | null
+          status?: string
+          theme: string
+          updated_at?: string
+          vision_statement?: string | null
+          year: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kingdom_priorities?: string[]
+          published_at?: string | null
+          scripture?: string | null
+          status?: string
+          theme?: string
+          updated_at?: string
+          vision_statement?: string | null
+          year?: number
+        }
+        Relationships: []
+      }
       app_user_connections: {
         Row: {
           connected_at: string
@@ -13158,6 +13627,7 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      is_apostolic_office: { Args: { _user_id: string }; Returns: boolean }
       is_approved_member: { Args: { _user_id: string }; Returns: boolean }
       is_child_guardian: {
         Args: { _child_id: string; _user_id: string }
