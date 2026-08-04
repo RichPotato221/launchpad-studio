@@ -17,7 +17,7 @@ const asStrings = (list: readonly any[]): string[] =>
 
 export default function HospitalityCenter({ currentUserId }: { departmentSlug?: string; currentUserId: string }) {
   const role = useCurrentRole();
-  const members: { id: string; full_name: string }[] = [];
+  const members: { id: string; name: string }[] = [];
   const canManage =
     (role.data?.roles ?? []).some((r) => LEADERS.includes(r)) || role.data?.canViewCheckupWatch === true;
 
