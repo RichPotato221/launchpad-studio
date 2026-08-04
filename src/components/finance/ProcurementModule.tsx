@@ -374,6 +374,7 @@ export default function ProcurementModule({ canManage, currentUserId, department
                 <p className="text-xs uppercase tracking-widest text-muted-foreground">
                   {r.pr_number}
                   {r.po_number && <> · {r.po_number}</>}
+                  {!scoped && r.department_slug && <> · {titleCase(r.department_slug.replace(/-/g, " "))}</>}
                 </p>
                 <p className="font-serif text-lg">{r.title}</p>
                 <p className="text-xs text-muted-foreground">
