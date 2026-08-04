@@ -43,6 +43,8 @@ function DepartmentPortal() {
   const hero = DEPARTMENT_HERO[slug];
   const gallery = DEPARTMENT_GALLERY[slug] ?? [];
   const workspace = membership.data?.isMember ? getWorkspaceFor(slug) : null;
+  // The Finance department already has a full Financial Command Centre in its workspace.
+  const showFinanceTab = slug !== "finance" && slug !== "finance-administration";
   const WorkspaceComponent = workspace?.component;
 
   
@@ -74,7 +76,7 @@ function DepartmentPortal() {
               <SelectItem value="kpis">KPI Dashboard</SelectItem>
               <SelectItem value="reports">Reports</SelectItem>
               <SelectItem value="resources">Resources</SelectItem>
-              <SelectItem value="finance">Financial Command Centre</SelectItem>
+              {showFinanceTab && <SelectItem value="finance">Financial Command Centre</SelectItem>}
               {workspace && <SelectItem value="workspace">{workspace.label}</SelectItem>}
             </SelectContent>
           </Select>
@@ -87,7 +89,7 @@ function DepartmentPortal() {
           <TabsTrigger value="kpis">KPI Dashboard</TabsTrigger>
           <TabsTrigger value="reports">Reports</TabsTrigger>
           <TabsTrigger value="resources">Resources</TabsTrigger>
-          <TabsTrigger value="finance">Financial Command Centre</TabsTrigger>
+          {showFinanceTab && <TabsTrigger value="finance">Financial Command Centre</TabsTrigger>}
           {workspace && <TabsTrigger value="workspace">{workspace.label}</TabsTrigger>}
         </TabsList>
 
@@ -141,9 +143,11 @@ function DepartmentPortal() {
           <DepartmentResources slug={slug} />
         </TabsContent>
 
-        <TabsContent value="finance" className="mt-6">
-          <DepartmentProcurement slug={slug} />
-        </TabsContent>
+        {showFinanceTab && (
+          <TabsContent value="finance" className="mt-6">
+            <DepartmentProcurement slug={slug} />
+          </TabsContent>
+        )}
 
 
 
