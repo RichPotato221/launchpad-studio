@@ -82,12 +82,32 @@ export const workspaceRegistry: Record<string, Entry> = {
     component: lazy(() => import("@/components/workspaces/OutreachWorkspace")),
   },
   media: {
-    label: "Editorial Calendar",
-    component: lazy(() => import("@/components/workspaces/MediaWorkspace")),
+    label: "Kingdom Media Operations Centre",
+    component: lazy(() => import("@/components/media/MediaCenter")),
   },
   "media-communications": {
-    label: "Editorial Calendar",
-    component: lazy(() => import("@/components/workspaces/MediaWorkspace")),
+    label: "Kingdom Media Operations Centre",
+    component: lazy(() => import("@/components/media/MediaCenter")),
+  },
+  "media-and-communications": {
+    label: "Kingdom Media Operations Centre",
+    component: lazy(() => import("@/components/media/MediaCenter")),
+  },
+  ushers: {
+    label: "Church Operations, Hospitality & Congregational Care",
+    component: lazy(() => import("@/components/ushers/UsheringCenter")),
+  },
+  ushering: {
+    label: "Church Operations, Hospitality & Congregational Care",
+    component: lazy(() => import("@/components/ushers/UsheringCenter")),
+  },
+  protocol: {
+    label: "Church Operations, Hospitality & Congregational Care",
+    component: lazy(() => import("@/components/ushers/UsheringCenter")),
+  },
+  "ushering-protocol": {
+    label: "Church Operations, Hospitality & Congregational Care",
+    component: lazy(() => import("@/components/ushers/UsheringCenter")),
   },
   "childrens-ministry": {
     label: "Children's Ministry Management System",

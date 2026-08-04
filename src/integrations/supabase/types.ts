@@ -5360,6 +5360,571 @@ export type Database = {
           },
         ]
       }
+      med_analytics: {
+        Row: {
+          captured_on: string
+          created_at: string
+          created_by: string | null
+          engagement_rate: number
+          followers: number
+          id: string
+          impressions: number
+          period_label: string
+          platform: string
+          reach: number
+          updated_at: string
+          views: number
+          watch_minutes: number
+          website_visits: number
+        }
+        Insert: {
+          captured_on?: string
+          created_at?: string
+          created_by?: string | null
+          engagement_rate?: number
+          followers?: number
+          id?: string
+          impressions?: number
+          period_label: string
+          platform?: string
+          reach?: number
+          updated_at?: string
+          views?: number
+          watch_minutes?: number
+          website_visits?: number
+        }
+        Update: {
+          captured_on?: string
+          created_at?: string
+          created_by?: string | null
+          engagement_rate?: number
+          followers?: number
+          id?: string
+          impressions?: number
+          period_label?: string
+          platform?: string
+          reach?: number
+          updated_at?: string
+          views?: number
+          watch_minutes?: number
+          website_visits?: number
+        }
+        Relationships: []
+      }
+      med_assets: {
+        Row: {
+          asset_type: string
+          brand_approved: boolean
+          captured_on: string | null
+          category: string
+          created_at: string
+          created_by: string | null
+          credited_to: string | null
+          event_name: string | null
+          file_url: string | null
+          id: string
+          license_expires_on: string | null
+          ministry: string | null
+          speaker: string | null
+          tags: string | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          version_note: string | null
+        }
+        Insert: {
+          asset_type?: string
+          brand_approved?: boolean
+          captured_on?: string | null
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          credited_to?: string | null
+          event_name?: string | null
+          file_url?: string | null
+          id?: string
+          license_expires_on?: string | null
+          ministry?: string | null
+          speaker?: string | null
+          tags?: string | null
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+          version_note?: string | null
+        }
+        Update: {
+          asset_type?: string
+          brand_approved?: boolean
+          captured_on?: string | null
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          credited_to?: string | null
+          event_name?: string | null
+          file_url?: string | null
+          id?: string
+          license_expires_on?: string | null
+          ministry?: string | null
+          speaker?: string | null
+          tags?: string | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          version_note?: string | null
+        }
+        Relationships: []
+      }
+      med_courses: {
+        Row: {
+          created_at: string
+          description: string | null
+          document_url: string | null
+          duration_hours: number | null
+          id: string
+          required: boolean
+          title: string
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          document_url?: string | null
+          duration_hours?: number | null
+          id?: string
+          required?: boolean
+          title: string
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          document_url?: string | null
+          duration_hours?: number | null
+          id?: string
+          required?: boolean
+          title?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
+      med_livestreams: {
+        Row: {
+          checklist: Json
+          created_at: string
+          created_by: string | null
+          id: string
+          peak_viewers: number
+          platform: string
+          recording_url: string | null
+          starts_at: string | null
+          status: string
+          stream_quality: string | null
+          stream_type: string
+          technical_issues: string | null
+          title: string
+          updated_at: string
+          viewers: number
+          watch_minutes: number
+        }
+        Insert: {
+          checklist?: Json
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          peak_viewers?: number
+          platform?: string
+          recording_url?: string | null
+          starts_at?: string | null
+          status?: string
+          stream_quality?: string | null
+          stream_type?: string
+          technical_issues?: string | null
+          title: string
+          updated_at?: string
+          viewers?: number
+          watch_minutes?: number
+        }
+        Update: {
+          checklist?: Json
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          peak_viewers?: number
+          platform?: string
+          recording_url?: string | null
+          starts_at?: string | null
+          status?: string
+          stream_quality?: string | null
+          stream_type?: string
+          technical_issues?: string | null
+          title?: string
+          updated_at?: string
+          viewers?: number
+          watch_minutes?: number
+        }
+        Relationships: []
+      }
+      med_posts: {
+        Row: {
+          asset_url: string | null
+          campaign: string | null
+          caption: string | null
+          clicks: number
+          comments_count: number
+          created_at: string
+          created_by: string | null
+          engagements: number
+          hashtags: string | null
+          id: string
+          impressions: number
+          platform: string
+          reach: number
+          scheduled_at: string | null
+          shares: number
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          asset_url?: string | null
+          campaign?: string | null
+          caption?: string | null
+          clicks?: number
+          comments_count?: number
+          created_at?: string
+          created_by?: string | null
+          engagements?: number
+          hashtags?: string | null
+          id?: string
+          impressions?: number
+          platform?: string
+          reach?: number
+          scheduled_at?: string | null
+          shares?: number
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          asset_url?: string | null
+          campaign?: string | null
+          caption?: string | null
+          clicks?: number
+          comments_count?: number
+          created_at?: string
+          created_by?: string | null
+          engagements?: number
+          hashtags?: string | null
+          id?: string
+          impressions?: number
+          platform?: string
+          reach?: number
+          scheduled_at?: string | null
+          shares?: number
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      med_projects: {
+        Row: {
+          archived: boolean
+          assigned_team: string | null
+          checklist: Json
+          created_at: string
+          created_by: string | null
+          deadline: string | null
+          description: string | null
+          id: string
+          ministry: string | null
+          name: string
+          priority: string
+          progress_pct: number
+          project_type: string
+          publish_date: string | null
+          publish_url: string | null
+          request_id: string | null
+          shoot_date: string | null
+          stage: string
+          updated_at: string
+        }
+        Insert: {
+          archived?: boolean
+          assigned_team?: string | null
+          checklist?: Json
+          created_at?: string
+          created_by?: string | null
+          deadline?: string | null
+          description?: string | null
+          id?: string
+          ministry?: string | null
+          name: string
+          priority?: string
+          progress_pct?: number
+          project_type?: string
+          publish_date?: string | null
+          publish_url?: string | null
+          request_id?: string | null
+          shoot_date?: string | null
+          stage?: string
+          updated_at?: string
+        }
+        Update: {
+          archived?: boolean
+          assigned_team?: string | null
+          checklist?: Json
+          created_at?: string
+          created_by?: string | null
+          deadline?: string | null
+          description?: string | null
+          id?: string
+          ministry?: string | null
+          name?: string
+          priority?: string
+          progress_pct?: number
+          project_type?: string
+          publish_date?: string | null
+          publish_url?: string | null
+          request_id?: string | null
+          shoot_date?: string | null
+          stage?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "med_projects_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "med_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      med_requests: {
+        Row: {
+          approval_history: Json
+          approval_stage: string
+          assigned_to: string | null
+          attachment_url: string | null
+          audience: string | null
+          created_at: string
+          department_slug: string | null
+          description: string | null
+          id: string
+          needed_by: string | null
+          priority: string
+          published_at: string | null
+          request_type: string
+          requester_id: string | null
+          requester_name: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          approval_history?: Json
+          approval_stage?: string
+          assigned_to?: string | null
+          attachment_url?: string | null
+          audience?: string | null
+          created_at?: string
+          department_slug?: string | null
+          description?: string | null
+          id?: string
+          needed_by?: string | null
+          priority?: string
+          published_at?: string | null
+          request_type?: string
+          requester_id?: string | null
+          requester_name?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          approval_history?: Json
+          approval_stage?: string
+          assigned_to?: string | null
+          attachment_url?: string | null
+          audience?: string | null
+          created_at?: string
+          department_slug?: string | null
+          description?: string | null
+          id?: string
+          needed_by?: string | null
+          priority?: string
+          published_at?: string | null
+          request_type?: string
+          requester_id?: string | null
+          requester_name?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      med_risks: {
+        Row: {
+          category: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          impact: number
+          likelihood: number
+          mitigation: string | null
+          owner_name: string | null
+          review_date: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          impact?: number
+          likelihood?: number
+          mitigation?: string | null
+          owner_name?: string | null
+          review_date?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          impact?: number
+          likelihood?: number
+          mitigation?: string | null
+          owner_name?: string | null
+          review_date?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      med_training_records: {
+        Row: {
+          certificate_url: string | null
+          completed_at: string | null
+          course_id: string
+          created_at: string
+          expires_on: string | null
+          id: string
+          member_name: string | null
+          progress_pct: number
+          score: number | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          certificate_url?: string | null
+          completed_at?: string | null
+          course_id: string
+          created_at?: string
+          expires_on?: string | null
+          id?: string
+          member_name?: string | null
+          progress_pct?: number
+          score?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          certificate_url?: string | null
+          completed_at?: string | null
+          course_id?: string
+          created_at?: string
+          expires_on?: string | null
+          id?: string
+          member_name?: string | null
+          progress_pct?: number
+          score?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "med_training_records_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "med_courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      med_volunteers: {
+        Row: {
+          active: boolean
+          attendance_pct: number
+          availability: string
+          created_at: string
+          created_by: string | null
+          equipment_experience: string | null
+          full_name: string
+          growth_notes: string | null
+          id: string
+          leadership_potential: string | null
+          mentor_name: string | null
+          ministry_experience: string | null
+          performance_score: number
+          projects_completed: number
+          role: string
+          skills: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          active?: boolean
+          attendance_pct?: number
+          availability?: string
+          created_at?: string
+          created_by?: string | null
+          equipment_experience?: string | null
+          full_name: string
+          growth_notes?: string | null
+          id?: string
+          leadership_potential?: string | null
+          mentor_name?: string | null
+          ministry_experience?: string | null
+          performance_score?: number
+          projects_completed?: number
+          role?: string
+          skills?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          active?: boolean
+          attendance_pct?: number
+          availability?: string
+          created_at?: string
+          created_by?: string | null
+          equipment_experience?: string | null
+          full_name?: string
+          growth_notes?: string | null
+          id?: string
+          leadership_potential?: string | null
+          mentor_name?: string | null
+          ministry_experience?: string | null
+          performance_score?: number
+          projects_completed?: number
+          role?: string
+          skills?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       meeting_apologies: {
         Row: {
           created_at: string
@@ -9853,6 +10418,726 @@ export type Database = {
         }
         Relationships: []
       }
+      ush_attendance: {
+        Row: {
+          adults: number
+          avg_entry_minutes: number | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          children: number
+          created_at: string
+          created_by: string | null
+          first_timers: number
+          id: string
+          notes: string | null
+          peak_arrival_time: string | null
+          returning_visitors: number
+          service_date: string
+          service_id: string | null
+          updated_at: string
+          vip_guests: number
+          volunteers_present: number
+        }
+        Insert: {
+          adults?: number
+          avg_entry_minutes?: number | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          children?: number
+          created_at?: string
+          created_by?: string | null
+          first_timers?: number
+          id?: string
+          notes?: string | null
+          peak_arrival_time?: string | null
+          returning_visitors?: number
+          service_date?: string
+          service_id?: string | null
+          updated_at?: string
+          vip_guests?: number
+          volunteers_present?: number
+        }
+        Update: {
+          adults?: number
+          avg_entry_minutes?: number | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          children?: number
+          created_at?: string
+          created_by?: string | null
+          first_timers?: number
+          id?: string
+          notes?: string | null
+          peak_arrival_time?: string | null
+          returning_visitors?: number
+          service_date?: string
+          service_id?: string | null
+          updated_at?: string
+          vip_guests?: number
+          volunteers_present?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ush_attendance_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "ush_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ush_care: {
+        Row: {
+          assigned_volunteer: string | null
+          assistance_provided: string | null
+          assistance_requested: string | null
+          care_group: string
+          created_at: string
+          created_by: string | null
+          followup_notes: string | null
+          followup_required: boolean
+          id: string
+          member_name: string
+          service_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_volunteer?: string | null
+          assistance_provided?: string | null
+          assistance_requested?: string | null
+          care_group?: string
+          created_at?: string
+          created_by?: string | null
+          followup_notes?: string | null
+          followup_required?: boolean
+          id?: string
+          member_name: string
+          service_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_volunteer?: string | null
+          assistance_provided?: string | null
+          assistance_requested?: string | null
+          care_group?: string
+          created_at?: string
+          created_by?: string | null
+          followup_notes?: string | null
+          followup_required?: boolean
+          id?: string
+          member_name?: string
+          service_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ush_care_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "ush_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ush_comms: {
+        Row: {
+          audience: string
+          channels: Json
+          comm_type: string
+          created_at: string
+          created_by: string | null
+          id: string
+          message: string
+          priority: string
+          send_at: string | null
+          sent: boolean
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          audience?: string
+          channels?: Json
+          comm_type?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          message: string
+          priority?: string
+          send_at?: string | null
+          sent?: boolean
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          audience?: string
+          channels?: Json
+          comm_type?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          message?: string
+          priority?: string
+          send_at?: string | null
+          sent?: boolean
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ush_courses: {
+        Row: {
+          created_at: string
+          description: string | null
+          document_url: string | null
+          duration_hours: number | null
+          id: string
+          required: boolean
+          title: string
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          document_url?: string | null
+          duration_hours?: number | null
+          id?: string
+          required?: boolean
+          title: string
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          document_url?: string | null
+          duration_hours?: number | null
+          id?: string
+          required?: boolean
+          title?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
+      ush_incidents: {
+        Row: {
+          actions_taken: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          escalated_to: string | null
+          followup_status: string
+          id: string
+          incident_type: string
+          location: string | null
+          occurred_at: string
+          photo_url: string | null
+          resolution: string | null
+          response_minutes: number | null
+          responsible_leader: string | null
+          service_id: string | null
+          severity: string
+          updated_at: string
+          witnesses: string | null
+        }
+        Insert: {
+          actions_taken?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          escalated_to?: string | null
+          followup_status?: string
+          id?: string
+          incident_type?: string
+          location?: string | null
+          occurred_at?: string
+          photo_url?: string | null
+          resolution?: string | null
+          response_minutes?: number | null
+          responsible_leader?: string | null
+          service_id?: string | null
+          severity?: string
+          updated_at?: string
+          witnesses?: string | null
+        }
+        Update: {
+          actions_taken?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          escalated_to?: string | null
+          followup_status?: string
+          id?: string
+          incident_type?: string
+          location?: string | null
+          occurred_at?: string
+          photo_url?: string | null
+          resolution?: string | null
+          response_minutes?: number | null
+          responsible_leader?: string | null
+          service_id?: string | null
+          severity?: string
+          updated_at?: string
+          witnesses?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ush_incidents_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "ush_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ush_risks: {
+        Row: {
+          category: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          impact: number
+          likelihood: number
+          mitigation: string | null
+          owner_name: string | null
+          review_date: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          impact?: number
+          likelihood?: number
+          mitigation?: string | null
+          owner_name?: string | null
+          review_date?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          impact?: number
+          likelihood?: number
+          mitigation?: string | null
+          owner_name?: string | null
+          review_date?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ush_roster: {
+        Row: {
+          checked_in_at: string | null
+          created_at: string
+          created_by: string | null
+          duty: string
+          id: string
+          is_backup: boolean
+          leave_reason: string | null
+          notes: string | null
+          reminder_sent: boolean
+          section: string | null
+          service_id: string | null
+          status: string
+          swap_with: string | null
+          updated_at: string
+          volunteer_id: string | null
+          volunteer_name: string | null
+        }
+        Insert: {
+          checked_in_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          duty?: string
+          id?: string
+          is_backup?: boolean
+          leave_reason?: string | null
+          notes?: string | null
+          reminder_sent?: boolean
+          section?: string | null
+          service_id?: string | null
+          status?: string
+          swap_with?: string | null
+          updated_at?: string
+          volunteer_id?: string | null
+          volunteer_name?: string | null
+        }
+        Update: {
+          checked_in_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          duty?: string
+          id?: string
+          is_backup?: boolean
+          leave_reason?: string | null
+          notes?: string | null
+          reminder_sent?: boolean
+          section?: string | null
+          service_id?: string | null
+          status?: string
+          swap_with?: string | null
+          updated_at?: string
+          volunteer_id?: string | null
+          volunteer_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ush_roster_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "ush_services"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ush_roster_volunteer_id_fkey"
+            columns: ["volunteer_id"]
+            isOneToOne: false
+            referencedRelation: "ush_volunteers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ush_seating: {
+        Row: {
+          capacity: number
+          created_at: string
+          created_by: string | null
+          id: string
+          notes: string | null
+          occupied: number
+          reserved: number
+          section: string
+          service_id: string | null
+          updated_at: string
+          usher_name: string | null
+          zone_type: string
+        }
+        Insert: {
+          capacity?: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          notes?: string | null
+          occupied?: number
+          reserved?: number
+          section: string
+          service_id?: string | null
+          updated_at?: string
+          usher_name?: string | null
+          zone_type?: string
+        }
+        Update: {
+          capacity?: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          notes?: string | null
+          occupied?: number
+          reserved?: number
+          section?: string
+          service_id?: string | null
+          updated_at?: string
+          usher_name?: string | null
+          zone_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ush_seating_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "ush_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ush_services: {
+        Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
+          checklist: Json
+          created_at: string
+          created_by: string | null
+          ends_at: string | null
+          expected_attendance: number
+          id: string
+          notes: string | null
+          seating_capacity: number
+          service_date: string
+          service_lead: string | null
+          service_type: string
+          starts_at: string | null
+          status: string
+          title: string
+          updated_at: string
+          venue: string | null
+        }
+        Insert: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          checklist?: Json
+          created_at?: string
+          created_by?: string | null
+          ends_at?: string | null
+          expected_attendance?: number
+          id?: string
+          notes?: string | null
+          seating_capacity?: number
+          service_date?: string
+          service_lead?: string | null
+          service_type?: string
+          starts_at?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          venue?: string | null
+        }
+        Update: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          checklist?: Json
+          created_at?: string
+          created_by?: string | null
+          ends_at?: string | null
+          expected_attendance?: number
+          id?: string
+          notes?: string | null
+          seating_capacity?: number
+          service_date?: string
+          service_lead?: string | null
+          service_type?: string
+          starts_at?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          venue?: string | null
+        }
+        Relationships: []
+      }
+      ush_training_records: {
+        Row: {
+          certificate_url: string | null
+          completed_at: string | null
+          course_id: string
+          created_at: string
+          expires_on: string | null
+          id: string
+          member_name: string | null
+          progress_pct: number
+          score: number | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          certificate_url?: string | null
+          completed_at?: string | null
+          course_id: string
+          created_at?: string
+          expires_on?: string | null
+          id?: string
+          member_name?: string | null
+          progress_pct?: number
+          score?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          certificate_url?: string | null
+          completed_at?: string | null
+          course_id?: string
+          created_at?: string
+          expires_on?: string | null
+          id?: string
+          member_name?: string | null
+          progress_pct?: number
+          score?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ush_training_records_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "ush_courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ush_visitors: {
+        Row: {
+          assigned_pathway: string | null
+          badge_code: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          children: number
+          created_at: string
+          created_by: string | null
+          email: string | null
+          family_members: number
+          followup_owner: string | null
+          followup_status: string
+          full_name: string
+          id: string
+          interests: string | null
+          invited_by: string | null
+          notes: string | null
+          phone: string | null
+          prayer_request: string | null
+          satisfaction: number | null
+          service_id: string | null
+          updated_at: string
+          visitor_type: string
+          welcome_email_sent: boolean
+          welcome_sms_sent: boolean
+        }
+        Insert: {
+          assigned_pathway?: string | null
+          badge_code?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          children?: number
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          family_members?: number
+          followup_owner?: string | null
+          followup_status?: string
+          full_name: string
+          id?: string
+          interests?: string | null
+          invited_by?: string | null
+          notes?: string | null
+          phone?: string | null
+          prayer_request?: string | null
+          satisfaction?: number | null
+          service_id?: string | null
+          updated_at?: string
+          visitor_type?: string
+          welcome_email_sent?: boolean
+          welcome_sms_sent?: boolean
+        }
+        Update: {
+          assigned_pathway?: string | null
+          badge_code?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          children?: number
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          family_members?: number
+          followup_owner?: string | null
+          followup_status?: string
+          full_name?: string
+          id?: string
+          interests?: string | null
+          invited_by?: string | null
+          notes?: string | null
+          phone?: string | null
+          prayer_request?: string | null
+          satisfaction?: number | null
+          service_id?: string | null
+          updated_at?: string
+          visitor_type?: string
+          welcome_email_sent?: boolean
+          welcome_sms_sent?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ush_visitors_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "ush_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ush_volunteers: {
+        Row: {
+          active: boolean
+          availability: string
+          branch: Database["public"]["Enums"]["branch"] | null
+          certifications: Json
+          created_at: string
+          created_by: string | null
+          email: string | null
+          emergency_contact: string | null
+          emergency_phone: string | null
+          full_name: string
+          id: string
+          mentor_name: string | null
+          ministry_experience: string | null
+          notes: string | null
+          performance_rating: number
+          phone: string | null
+          photo_url: string | null
+          role: string
+          section: string | null
+          services_served: number
+          team: string
+          training_status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          active?: boolean
+          availability?: string
+          branch?: Database["public"]["Enums"]["branch"] | null
+          certifications?: Json
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          emergency_contact?: string | null
+          emergency_phone?: string | null
+          full_name: string
+          id?: string
+          mentor_name?: string | null
+          ministry_experience?: string | null
+          notes?: string | null
+          performance_rating?: number
+          phone?: string | null
+          photo_url?: string | null
+          role?: string
+          section?: string | null
+          services_served?: number
+          team?: string
+          training_status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          active?: boolean
+          availability?: string
+          branch?: Database["public"]["Enums"]["branch"] | null
+          certifications?: Json
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          emergency_contact?: string | null
+          emergency_phone?: string | null
+          full_name?: string
+          id?: string
+          mentor_name?: string | null
+          ministry_experience?: string | null
+          notes?: string | null
+          performance_rating?: number
+          phone?: string | null
+          photo_url?: string | null
+          role?: string
+          section?: string | null
+          services_served?: number
+          team?: string
+          training_status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       volunteer_profiles: {
         Row: {
           availability: string | null
@@ -11213,12 +12498,14 @@ export type Database = {
       is_hospitality_team: { Args: { _user_id: string }; Returns: boolean }
       is_intercession_team: { Args: { _user_id: string }; Returns: boolean }
       is_kids_team: { Args: { _user_id: string }; Returns: boolean }
+      is_media_team: { Args: { _user_id: string }; Returns: boolean }
       is_pastoral_team: { Args: { _user_id: string }; Returns: boolean }
       is_prayer_leadership: { Args: { _user_id: string }; Returns: boolean }
       is_resource_team: { Args: { _user_id: string }; Returns: boolean }
       is_secretariat: { Args: { _user_id: string }; Returns: boolean }
       is_strategy_team: { Args: { _user_id: string }; Returns: boolean }
       is_tech_team: { Args: { _user_id: string }; Returns: boolean }
+      is_ushering_team: { Args: { _user_id: string }; Returns: boolean }
       is_worship_team: { Args: { _user_id: string }; Returns: boolean }
       list_conversations: {
         Args: never
