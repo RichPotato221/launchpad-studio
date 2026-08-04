@@ -14,6 +14,8 @@ const TeamTasksModule = lazy(() => import("@/components/teams/TeamTasksModule"))
 const TeamRiskTrainingModule = lazy(() => import("@/components/teams/TeamRiskTrainingModule"));
 const TeamReportsModule = lazy(() => import("@/components/teams/TeamReportsModule"));
 const TeamAssistant = lazy(() => import("@/components/teams/TeamAssistant"));
+const OutreachWorkspace = lazy(() => import("@/components/workspaces/OutreachWorkspace"));
+
 
 const sb = supabase as any;
 
