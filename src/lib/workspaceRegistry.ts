@@ -122,9 +122,30 @@ export const workspaceRegistry: Record<string, Entry> = {
     component: lazy(() => import("@/components/kids/ChildrensMinistryCenter")),
   },
   "youth-ministry": {
-    label: "Children's Ministry Management System",
-    component: lazy(() => import("@/components/kids/ChildrensMinistryCenter")),
+    label: "Youth Discipleship & Leadership Development Centre",
+    component: lazy(() => import("@/components/teams/MinistryTeamCenter")),
   },
+  youth: {
+    label: "Youth Discipleship & Leadership Development Centre",
+    component: lazy(() => import("@/components/teams/MinistryTeamCenter")),
+  },
+  "womens-ministry": {
+    label: "Women's Ministry Digital Operations Centre",
+    component: lazy(() => import("@/components/teams/MinistryTeamCenter")),
+  },
+  women: {
+    label: "Women's Ministry Digital Operations Centre",
+    component: lazy(() => import("@/components/teams/MinistryTeamCenter")),
+  },
+  "mens-ministry": {
+    label: "Men's Ministry Digital Operations Centre",
+    component: lazy(() => import("@/components/teams/MinistryTeamCenter")),
+  },
+  men: {
+    label: "Men's Ministry Digital Operations Centre",
+    component: lazy(() => import("@/components/teams/MinistryTeamCenter")),
+  },
+
   secretary: {
     label: "Secretarial Office",
     component: lazy(() => import("@/components/secretariat/SecretariatCenter")),
