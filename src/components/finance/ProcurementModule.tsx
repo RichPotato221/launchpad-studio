@@ -33,9 +33,9 @@ const STATUSES = [
 
 const PRIORITIES = ["low", "normal", "high", "urgent"] as const;
 
-type Props = { canManage: boolean; currentUserId: string; departmentSlug?: string };
+type Props = { canManage: boolean; currentUserId: string; departmentSlug?: string; scoped?: boolean };
 
-export default function ProcurementModule({ canManage, currentUserId, departmentSlug = "finance" }: Props) {
+export default function ProcurementModule({ canManage, currentUserId, departmentSlug = "finance", scoped = false }: Props) {
   const [rows, setRows] = useState<any[]>([]);
   const [suppliers, setSuppliers] = useState<any[]>([]);
   const [budgets, setBudgets] = useState<any[]>([]);
