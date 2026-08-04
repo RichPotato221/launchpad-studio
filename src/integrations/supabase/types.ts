@@ -3340,6 +3340,582 @@ export type Database = {
           },
         ]
       }
+      hos_courses: {
+        Row: {
+          created_at: string
+          description: string | null
+          document_url: string | null
+          duration_hours: number | null
+          id: string
+          required: boolean
+          title: string
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          document_url?: string | null
+          duration_hours?: number | null
+          id?: string
+          required?: boolean
+          title: string
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          document_url?: string | null
+          duration_hours?: number | null
+          id?: string
+          required?: boolean
+          title?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
+      hos_events: {
+        Row: {
+          actual_spend: number
+          branch: Database["public"]["Enums"]["branch"] | null
+          budget_amount: number
+          catering_notes: string | null
+          checklist: Json
+          created_at: string
+          created_by: string | null
+          ends_at: string | null
+          equipment_needed: string | null
+          event_type: string
+          expected_attendance: number
+          id: string
+          readiness_pct: number
+          risk_notes: string | null
+          seating_notes: string | null
+          starts_at: string
+          status: string
+          title: string
+          updated_at: string
+          venue: string | null
+          vip_guests: string | null
+          volunteers_assigned: string | null
+        }
+        Insert: {
+          actual_spend?: number
+          branch?: Database["public"]["Enums"]["branch"] | null
+          budget_amount?: number
+          catering_notes?: string | null
+          checklist?: Json
+          created_at?: string
+          created_by?: string | null
+          ends_at?: string | null
+          equipment_needed?: string | null
+          event_type?: string
+          expected_attendance?: number
+          id?: string
+          readiness_pct?: number
+          risk_notes?: string | null
+          seating_notes?: string | null
+          starts_at: string
+          status?: string
+          title: string
+          updated_at?: string
+          venue?: string | null
+          vip_guests?: string | null
+          volunteers_assigned?: string | null
+        }
+        Update: {
+          actual_spend?: number
+          branch?: Database["public"]["Enums"]["branch"] | null
+          budget_amount?: number
+          catering_notes?: string | null
+          checklist?: Json
+          created_at?: string
+          created_by?: string | null
+          ends_at?: string | null
+          equipment_needed?: string | null
+          event_type?: string
+          expected_attendance?: number
+          id?: string
+          readiness_pct?: number
+          risk_notes?: string | null
+          seating_notes?: string | null
+          starts_at?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          venue?: string | null
+          vip_guests?: string | null
+          volunteers_assigned?: string | null
+        }
+        Relationships: []
+      }
+      hos_guests: {
+        Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
+          created_at: string
+          created_by: string | null
+          dietary_requirements: string | null
+          email: string | null
+          family_name: string | null
+          feedback: string | null
+          first_visit_date: string | null
+          follow_up_owner_id: string | null
+          follow_up_status: string
+          full_name: string
+          id: string
+          interests: string | null
+          invited_by: string | null
+          notes: string | null
+          phone: string | null
+          satisfaction_score: number | null
+          special_needs: string | null
+          updated_at: string
+          vip: boolean
+          visits: number
+        }
+        Insert: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          created_by?: string | null
+          dietary_requirements?: string | null
+          email?: string | null
+          family_name?: string | null
+          feedback?: string | null
+          first_visit_date?: string | null
+          follow_up_owner_id?: string | null
+          follow_up_status?: string
+          full_name: string
+          id?: string
+          interests?: string | null
+          invited_by?: string | null
+          notes?: string | null
+          phone?: string | null
+          satisfaction_score?: number | null
+          special_needs?: string | null
+          updated_at?: string
+          vip?: boolean
+          visits?: number
+        }
+        Update: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          created_by?: string | null
+          dietary_requirements?: string | null
+          email?: string | null
+          family_name?: string | null
+          feedback?: string | null
+          first_visit_date?: string | null
+          follow_up_owner_id?: string | null
+          follow_up_status?: string
+          full_name?: string
+          id?: string
+          interests?: string | null
+          invited_by?: string | null
+          notes?: string | null
+          phone?: string | null
+          satisfaction_score?: number | null
+          special_needs?: string | null
+          updated_at?: string
+          vip?: boolean
+          visits?: number
+        }
+        Relationships: []
+      }
+      hos_inventory: {
+        Row: {
+          assigned_to: string | null
+          category: string
+          condition: string | null
+          created_at: string
+          expiry_date: string | null
+          id: string
+          item_code: string | null
+          max_stock: number | null
+          min_stock: number
+          name: string
+          purchase_date: string | null
+          quantity: number
+          storage_location: string | null
+          supplier: string | null
+          unit: string | null
+          unit_value: number
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          category?: string
+          condition?: string | null
+          created_at?: string
+          expiry_date?: string | null
+          id?: string
+          item_code?: string | null
+          max_stock?: number | null
+          min_stock?: number
+          name: string
+          purchase_date?: string | null
+          quantity?: number
+          storage_location?: string | null
+          supplier?: string | null
+          unit?: string | null
+          unit_value?: number
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          category?: string
+          condition?: string | null
+          created_at?: string
+          expiry_date?: string | null
+          id?: string
+          item_code?: string | null
+          max_stock?: number | null
+          min_stock?: number
+          name?: string
+          purchase_date?: string | null
+          quantity?: number
+          storage_location?: string | null
+          supplier?: string | null
+          unit?: string | null
+          unit_value?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      hos_inventory_movements: {
+        Row: {
+          created_at: string
+          id: string
+          item_id: string
+          moved_by: string | null
+          movement_type: string
+          quantity: number
+          reason: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          item_id: string
+          moved_by?: string | null
+          movement_type?: string
+          quantity?: number
+          reason?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          item_id?: string
+          moved_by?: string | null
+          movement_type?: string
+          quantity?: number
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hos_inventory_movements_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "hos_inventory"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hos_menus: {
+        Row: {
+          cleaning_checklist: Json
+          created_at: string
+          created_by: string | null
+          dietary_options: string | null
+          estimated_servings: number
+          food_cost: number
+          hygiene_checked: boolean
+          id: string
+          kitchen_team: string | null
+          menu_items: string | null
+          name: string
+          notes: string | null
+          service_date: string
+          serving_time: string | null
+          updated_at: string
+          waste_note: string | null
+        }
+        Insert: {
+          cleaning_checklist?: Json
+          created_at?: string
+          created_by?: string | null
+          dietary_options?: string | null
+          estimated_servings?: number
+          food_cost?: number
+          hygiene_checked?: boolean
+          id?: string
+          kitchen_team?: string | null
+          menu_items?: string | null
+          name: string
+          notes?: string | null
+          service_date?: string
+          serving_time?: string | null
+          updated_at?: string
+          waste_note?: string | null
+        }
+        Update: {
+          cleaning_checklist?: Json
+          created_at?: string
+          created_by?: string | null
+          dietary_options?: string | null
+          estimated_servings?: number
+          food_cost?: number
+          hygiene_checked?: boolean
+          id?: string
+          kitchen_team?: string | null
+          menu_items?: string | null
+          name?: string
+          notes?: string | null
+          service_date?: string
+          serving_time?: string | null
+          updated_at?: string
+          waste_note?: string | null
+        }
+        Relationships: []
+      }
+      hos_risks: {
+        Row: {
+          category: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          impact: number
+          likelihood: number
+          mitigation: string | null
+          owner_name: string | null
+          review_date: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          impact?: number
+          likelihood?: number
+          mitigation?: string | null
+          owner_name?: string | null
+          review_date?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          impact?: number
+          likelihood?: number
+          mitigation?: string | null
+          owner_name?: string | null
+          review_date?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      hos_tasks: {
+        Row: {
+          assigned_to: string | null
+          assignee_name: string | null
+          checklist: Json
+          comments: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          due_date: string | null
+          event_id: string | null
+          evidence_url: string | null
+          id: string
+          priority: string
+          progress_pct: number
+          recurring: string | null
+          status: string
+          task_type: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          assignee_name?: string | null
+          checklist?: Json
+          comments?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          due_date?: string | null
+          event_id?: string | null
+          evidence_url?: string | null
+          id?: string
+          priority?: string
+          progress_pct?: number
+          recurring?: string | null
+          status?: string
+          task_type?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          assignee_name?: string | null
+          checklist?: Json
+          comments?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          due_date?: string | null
+          event_id?: string | null
+          evidence_url?: string | null
+          id?: string
+          priority?: string
+          progress_pct?: number
+          recurring?: string | null
+          status?: string
+          task_type?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hos_tasks_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "hos_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hos_training_records: {
+        Row: {
+          certificate_url: string | null
+          completed_at: string | null
+          course_id: string
+          created_at: string
+          id: string
+          member_name: string | null
+          progress_pct: number
+          score: number | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          certificate_url?: string | null
+          completed_at?: string | null
+          course_id: string
+          created_at?: string
+          id?: string
+          member_name?: string | null
+          progress_pct?: number
+          score?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          certificate_url?: string | null
+          completed_at?: string | null
+          course_id?: string
+          created_at?: string
+          id?: string
+          member_name?: string | null
+          progress_pct?: number
+          score?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hos_training_records_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "hos_courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hos_volunteers: {
+        Row: {
+          active: boolean
+          attendance_pct: number
+          availability: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          created_at: string
+          current_assignment: string | null
+          email: string | null
+          emergency_contact: string | null
+          food_handling_certificate: boolean
+          full_name: string
+          id: string
+          medical_notes: string | null
+          performance_note: string | null
+          phone: string | null
+          recognition_points: number
+          reliability_score: number
+          role: string
+          serving_since: string | null
+          skills: string | null
+          training_completed: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          active?: boolean
+          attendance_pct?: number
+          availability?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          current_assignment?: string | null
+          email?: string | null
+          emergency_contact?: string | null
+          food_handling_certificate?: boolean
+          full_name: string
+          id?: string
+          medical_notes?: string | null
+          performance_note?: string | null
+          phone?: string | null
+          recognition_points?: number
+          reliability_score?: number
+          role?: string
+          serving_since?: string | null
+          skills?: string | null
+          training_completed?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          active?: boolean
+          attendance_pct?: number
+          availability?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          current_assignment?: string | null
+          email?: string | null
+          emergency_contact?: string | null
+          food_handling_certificate?: boolean
+          full_name?: string
+          id?: string
+          medical_notes?: string | null
+          performance_note?: string | null
+          phone?: string | null
+          recognition_points?: number
+          reliability_score?: number
+          role?: string
+          serving_since?: string | null
+          skills?: string | null
+          training_completed?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       hospitality_checkups: {
         Row: {
           attendance_id: string | null
@@ -3389,6 +3965,612 @@ export type Database = {
             columns: ["attendance_id"]
             isOneToOne: false
             referencedRelation: "attendance"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      int_chain_slots: {
+        Row: {
+          chain_id: string
+          covered: boolean
+          created_at: string
+          id: string
+          intercessor_id: string | null
+          intercessor_name: string | null
+          missed: boolean
+          notes: string | null
+          slot_end: string
+          slot_start: string
+        }
+        Insert: {
+          chain_id: string
+          covered?: boolean
+          created_at?: string
+          id?: string
+          intercessor_id?: string | null
+          intercessor_name?: string | null
+          missed?: boolean
+          notes?: string | null
+          slot_end: string
+          slot_start: string
+        }
+        Update: {
+          chain_id?: string
+          covered?: boolean
+          created_at?: string
+          id?: string
+          intercessor_id?: string | null
+          intercessor_name?: string | null
+          missed?: boolean
+          notes?: string | null
+          slot_end?: string
+          slot_start?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "int_chain_slots_chain_id_fkey"
+            columns: ["chain_id"]
+            isOneToOne: false
+            referencedRelation: "int_chains"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      int_chains: {
+        Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
+          created_at: string
+          created_by: string | null
+          ends_at: string | null
+          focus: string | null
+          id: string
+          leader_id: string | null
+          name: string
+          notes: string | null
+          slot_minutes: number
+          starts_at: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          created_by?: string | null
+          ends_at?: string | null
+          focus?: string | null
+          id?: string
+          leader_id?: string | null
+          name: string
+          notes?: string | null
+          slot_minutes?: number
+          starts_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          created_by?: string | null
+          ends_at?: string | null
+          focus?: string | null
+          id?: string
+          leader_id?: string | null
+          name?: string
+          notes?: string | null
+          slot_minutes?: number
+          starts_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      int_courses: {
+        Row: {
+          created_at: string
+          description: string | null
+          document_url: string | null
+          duration_hours: number | null
+          id: string
+          required: boolean
+          title: string
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          document_url?: string | null
+          duration_hours?: number | null
+          id?: string
+          required?: boolean
+          title: string
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          document_url?: string | null
+          duration_hours?: number | null
+          id?: string
+          required?: boolean
+          title?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
+      int_fast_participants: {
+        Row: {
+          created_at: string
+          days_completed: number
+          fast_id: string
+          id: string
+          participant_name: string | null
+          reflections: string | null
+          spiritual_goal: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          days_completed?: number
+          fast_id: string
+          id?: string
+          participant_name?: string | null
+          reflections?: string | null
+          spiritual_goal?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          days_completed?: number
+          fast_id?: string
+          id?: string
+          participant_name?: string | null
+          reflections?: string | null
+          spiritual_goal?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "int_fast_participants_fast_id_fkey"
+            columns: ["fast_id"]
+            isOneToOne: false
+            referencedRelation: "int_fasts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      int_fasts: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          daily_scriptures: string | null
+          end_date: string
+          fast_type: string
+          id: string
+          name: string
+          prayer_points: string | null
+          purpose: string | null
+          start_date: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          daily_scriptures?: string | null
+          end_date: string
+          fast_type?: string
+          id?: string
+          name: string
+          prayer_points?: string | null
+          purpose?: string | null
+          start_date: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          daily_scriptures?: string | null
+          end_date?: string
+          fast_type?: string
+          id?: string
+          name?: string
+          prayer_points?: string | null
+          purpose?: string | null
+          start_date?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      int_journal: {
+        Row: {
+          attachment_url: string | null
+          body: string | null
+          created_at: string
+          entry_date: string
+          entry_type: string
+          id: string
+          mood: string | null
+          scriptures: string | null
+          shared_with_leadership: boolean
+          tags: string[] | null
+          title: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          attachment_url?: string | null
+          body?: string | null
+          created_at?: string
+          entry_date?: string
+          entry_type?: string
+          id?: string
+          mood?: string | null
+          scriptures?: string | null
+          shared_with_leadership?: boolean
+          tags?: string[] | null
+          title?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          attachment_url?: string | null
+          body?: string | null
+          created_at?: string
+          entry_date?: string
+          entry_type?: string
+          id?: string
+          mood?: string | null
+          scriptures?: string | null
+          shared_with_leadership?: boolean
+          tags?: string[] | null
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      int_meetings: {
+        Row: {
+          action_items: string | null
+          attendance_count: number
+          branch: Database["public"]["Enums"]["branch"] | null
+          created_at: string
+          created_by: string | null
+          declarations: string | null
+          ends_at: string | null
+          expected_count: number
+          host: string | null
+          id: string
+          leader_id: string | null
+          meeting_type: string
+          minutes: string | null
+          prayer_focus: string | null
+          prayer_hours: number
+          recording_url: string | null
+          recurrence: string | null
+          scriptures: string | null
+          starts_at: string
+          status: string
+          testimonies: string | null
+          title: string
+          topics: string | null
+          updated_at: string
+          venue: string | null
+        }
+        Insert: {
+          action_items?: string | null
+          attendance_count?: number
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          created_by?: string | null
+          declarations?: string | null
+          ends_at?: string | null
+          expected_count?: number
+          host?: string | null
+          id?: string
+          leader_id?: string | null
+          meeting_type?: string
+          minutes?: string | null
+          prayer_focus?: string | null
+          prayer_hours?: number
+          recording_url?: string | null
+          recurrence?: string | null
+          scriptures?: string | null
+          starts_at: string
+          status?: string
+          testimonies?: string | null
+          title: string
+          topics?: string | null
+          updated_at?: string
+          venue?: string | null
+        }
+        Update: {
+          action_items?: string | null
+          attendance_count?: number
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          created_by?: string | null
+          declarations?: string | null
+          ends_at?: string | null
+          expected_count?: number
+          host?: string | null
+          id?: string
+          leader_id?: string | null
+          meeting_type?: string
+          minutes?: string | null
+          prayer_focus?: string | null
+          prayer_hours?: number
+          recording_url?: string | null
+          recurrence?: string | null
+          scriptures?: string | null
+          starts_at?: string
+          status?: string
+          testimonies?: string | null
+          title?: string
+          topics?: string | null
+          updated_at?: string
+          venue?: string | null
+        }
+        Relationships: []
+      }
+      int_requests: {
+        Row: {
+          answer_note: string | null
+          answered_at: string | null
+          archived: boolean
+          assigned_department: string | null
+          assigned_to: string | null
+          attachment_url: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          category: string
+          confidential: boolean
+          created_at: string
+          description: string | null
+          email: string | null
+          escalated: boolean
+          follow_up_date: string | null
+          follow_up_required: boolean
+          id: string
+          is_anonymous: boolean
+          leadership_only: boolean
+          phone: string | null
+          prayer_duration_days: number | null
+          prayer_no: string | null
+          priority: string
+          requester_id: string | null
+          requester_name: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          answer_note?: string | null
+          answered_at?: string | null
+          archived?: boolean
+          assigned_department?: string | null
+          assigned_to?: string | null
+          attachment_url?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          category?: string
+          confidential?: boolean
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          escalated?: boolean
+          follow_up_date?: string | null
+          follow_up_required?: boolean
+          id?: string
+          is_anonymous?: boolean
+          leadership_only?: boolean
+          phone?: string | null
+          prayer_duration_days?: number | null
+          prayer_no?: string | null
+          priority?: string
+          requester_id?: string | null
+          requester_name?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          answer_note?: string | null
+          answered_at?: string | null
+          archived?: boolean
+          assigned_department?: string | null
+          assigned_to?: string | null
+          attachment_url?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          category?: string
+          confidential?: boolean
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          escalated?: boolean
+          follow_up_date?: string | null
+          follow_up_required?: boolean
+          id?: string
+          is_anonymous?: boolean
+          leadership_only?: boolean
+          phone?: string | null
+          prayer_duration_days?: number | null
+          prayer_no?: string | null
+          priority?: string
+          requester_id?: string | null
+          requester_name?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      int_risks: {
+        Row: {
+          category: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          impact: number
+          likelihood: number
+          mitigation: string | null
+          owner_id: string | null
+          owner_name: string | null
+          review_date: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          impact?: number
+          likelihood?: number
+          mitigation?: string | null
+          owner_id?: string | null
+          owner_name?: string | null
+          review_date?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          impact?: number
+          likelihood?: number
+          mitigation?: string | null
+          owner_id?: string | null
+          owner_name?: string | null
+          review_date?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      int_team_members: {
+        Row: {
+          active: boolean
+          attendance_pct: number
+          availability: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          certificates: string | null
+          created_at: string
+          email: string | null
+          emergency_contact: string | null
+          full_name: string
+          id: string
+          performance_note: string | null
+          phone: string | null
+          prayer_watch: string | null
+          role: string
+          safeguarding_cleared: boolean
+          skills: string | null
+          spiritual_gifts: string | null
+          training_status: string | null
+          updated_at: string
+          user_id: string | null
+          years_serving: number | null
+        }
+        Insert: {
+          active?: boolean
+          attendance_pct?: number
+          availability?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          certificates?: string | null
+          created_at?: string
+          email?: string | null
+          emergency_contact?: string | null
+          full_name: string
+          id?: string
+          performance_note?: string | null
+          phone?: string | null
+          prayer_watch?: string | null
+          role?: string
+          safeguarding_cleared?: boolean
+          skills?: string | null
+          spiritual_gifts?: string | null
+          training_status?: string | null
+          updated_at?: string
+          user_id?: string | null
+          years_serving?: number | null
+        }
+        Update: {
+          active?: boolean
+          attendance_pct?: number
+          availability?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          certificates?: string | null
+          created_at?: string
+          email?: string | null
+          emergency_contact?: string | null
+          full_name?: string
+          id?: string
+          performance_note?: string | null
+          phone?: string | null
+          prayer_watch?: string | null
+          role?: string
+          safeguarding_cleared?: boolean
+          skills?: string | null
+          spiritual_gifts?: string | null
+          training_status?: string | null
+          updated_at?: string
+          user_id?: string | null
+          years_serving?: number | null
+        }
+        Relationships: []
+      }
+      int_training_records: {
+        Row: {
+          certificate_url: string | null
+          completed_at: string | null
+          course_id: string
+          created_at: string
+          id: string
+          member_name: string | null
+          progress_pct: number
+          score: number | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          certificate_url?: string | null
+          completed_at?: string | null
+          course_id: string
+          created_at?: string
+          id?: string
+          member_name?: string | null
+          progress_pct?: number
+          score?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          certificate_url?: string | null
+          completed_at?: string | null
+          course_id?: string
+          created_at?: string
+          id?: string
+          member_name?: string | null
+          progress_pct?: number
+          score?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "int_training_records_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "int_courses"
             referencedColumns: ["id"]
           },
         ]
@@ -10028,8 +11210,11 @@ export type Database = {
       is_dept_member_or_admin: { Args: { _slug: string }; Returns: boolean }
       is_finance_officer: { Args: { _user_id: string }; Returns: boolean }
       is_head_office: { Args: { _user_id: string }; Returns: boolean }
+      is_hospitality_team: { Args: { _user_id: string }; Returns: boolean }
+      is_intercession_team: { Args: { _user_id: string }; Returns: boolean }
       is_kids_team: { Args: { _user_id: string }; Returns: boolean }
       is_pastoral_team: { Args: { _user_id: string }; Returns: boolean }
+      is_prayer_leadership: { Args: { _user_id: string }; Returns: boolean }
       is_resource_team: { Args: { _user_id: string }; Returns: boolean }
       is_secretariat: { Args: { _user_id: string }; Returns: boolean }
       is_strategy_team: { Args: { _user_id: string }; Returns: boolean }

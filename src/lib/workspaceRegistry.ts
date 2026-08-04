@@ -11,6 +11,22 @@ type Entry = {
 };
 
 export const workspaceRegistry: Record<string, Entry> = {
+  hospitality: {
+    label: "Hospitality Digital Operations Centre",
+    component: lazy(() => import("@/components/hospitality/HospitalityCenter")),
+  },
+  "prayer-intercession": {
+    label: "Intercession Digital Operations Centre",
+    component: lazy(() => import("@/components/prayer/PrayerCenter")),
+  },
+  intercession: {
+    label: "Intercession Digital Operations Centre",
+    component: lazy(() => import("@/components/prayer/PrayerCenter")),
+  },
+  prayer: {
+    label: "Intercession Digital Operations Centre",
+    component: lazy(() => import("@/components/prayer/PrayerCenter")),
+  },
   worship: {
     label: "Worship Operations Platform",
     component: lazy(() => import("@/components/worship/WorshipCenter")),
