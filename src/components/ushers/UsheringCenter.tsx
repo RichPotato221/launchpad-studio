@@ -10,16 +10,16 @@ import UshCareModule from "@/components/ushers/UshCareModule";
 import UsheringAssistant from "@/components/ushers/UsheringAssistant";
 import RiskRegisterModule from "@/components/common/RiskRegisterModule";
 import TrainingModule from "@/components/common/TrainingModule";
-import { useCurrentRole } from "@/lib/useCurrentRole";
+import { useIsDepartmentMember } from "@/lib/useIsDepartmentMember";
 import { USH_COURSES, USH_RISK_CATEGORIES } from "@/lib/ushering";
 
-const LEADERS = ["senior_apostle", "chairperson", "secretary", "lead_pastor", "associate_pastor"];
-
 /** Ushering Ministry — Church Operations, Hospitality & Congregational Care Management System. */
-export default function UsheringCenter({ currentUserId }: { departmentSlug?: string; currentUserId: string }) {
-  const role = useCurrentRole();
-  const roles = role.data?.roles ?? [];
-  const canManage = roles.some((r) => LEADERS.includes(r)) || role.data?.branch !== undefined;
+export default function UsheringCenter({
+  departmentSlug = "ushers",
+  currentUserId,
+}: { departmentSlug?: string; currentUserId: string }) {
+  const membership = useIsDepartmentMember(departmentSlug);
+  const canManage = membership.data?.isMember === true;
 
   return (
     <div className="space-y-6">
