@@ -103,6 +103,31 @@ export default function ProcurementModule({ canManage, currentUserId, department
     }
   };
 
+  const notifyFinanceTeam = async (title: string, branch: string | null) => {
+    const financeSlugs = ["finance", "finance-administration"];
+    const [{ data: byProfile }, { data: byRole }] = await Promise.all([
+      sb.from("profiles").select("id").in("primary_department", financeSlugs),
+      sb.from("user_roles").select("user_id").in("department_slug", financeSlugs),
+    ]);
+    const ids = Array.from(
+      new Set([
+        ...((byProfile ?? []) as any[]).map((p) => p.id),
+        ...((byRole ?? []) as any[]).map((r) => r.user_id),
+      ]),
+    ).filter(Boolean);
+    if (ids.length === 0) return;
+    await sb.from("notifications").insert(
+      ids.map((id) => ({
+        user_id: id,
+        title: `New purchase request — ${titleCase(departmentSlug)}`,
+        message: title,
+        link: "/departments/finance",
+        type: "procurement",
+        branch: branch ?? null,
+      })),
+    );
+  };
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.title.trim()) return toast.error("A title is required.");
@@ -123,10 +148,12 @@ export default function ProcurementModule({ canManage, currentUserId, department
       status: "submitted",
     });
     if (error) return toast.error(error.message);
-    toast.success("Purchase request raised");
+    await notifyFinanceTeam(form.title.trim(), form.branch || null);
+    toast.success("Purchase request sent to the Finance Department");
     setForm(emptyForm);
     load();
   };
+
 
   const advance = async (row: any, status: string) => {
     const patch: any = { status };
@@ -182,7 +209,7 @@ export default function ProcurementModule({ canManage, currentUserId, department
         if (filterBranch !== "all" && r.branch !== filterBranch) return false;
         if (search.trim()) {
           const t = search.toLowerCase();
-          const hay = `${r.pr_number ?? ""} ${r.title ?? ""} ${r.supplier?.name ?? ""} ${r.category ?? ""}`.toLowerCase();
+          const hay = `${r.pr_number ?? ""} ${r.title ?? ""} ${r.supplier?.name ?? ""} ${r.category ?? ""} ${r.department_slug ?? ""}`.toLowerCase();
           if (!hay.includes(t)) return false;
         }
         return true;
@@ -204,10 +231,11 @@ export default function ProcurementModule({ canManage, currentUserId, department
   const exportCsv = () =>
     exportRows(
       "procurement-register",
-      ["PR number", "Date", "Title", "Category", "Supplier", "Branch", "Estimated", "Priority", "Needed by", "Status", "PO number"],
+      ["PR number", "Date", "Department", "Title", "Category", "Supplier", "Branch", "Estimated", "Priority", "Needed by", "Status", "PO number"],
       filtered.map((r) => [
         r.pr_number,
         fmtDate(r.created_at),
+        r.department_slug ?? "",
         r.title,
         r.category ?? "",
         r.supplier?.name ?? "",
@@ -347,6 +375,7 @@ export default function ProcurementModule({ canManage, currentUserId, department
                 <p className="text-xs uppercase tracking-widest text-muted-foreground">
                   {r.pr_number}
                   {r.po_number && <> · {r.po_number}</>}
+                  {!scoped && r.department_slug && <> · {titleCase(r.department_slug.replace(/-/g, " "))}</>}
                 </p>
                 <p className="font-serif text-lg">{r.title}</p>
                 <p className="text-xs text-muted-foreground">

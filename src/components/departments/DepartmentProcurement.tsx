@@ -24,13 +24,31 @@ const FINANCE_ROLES = [
 export function DepartmentProcurement({ slug }: { slug: string }) {
   const { data: role } = useCurrentRole();
   const [userId, setUserId] = useState<string | null>(null);
+  const [isFinanceMember, setIsFinanceMember] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
+    (async () => {
+      const { data } = await supabase.auth.getUser();
+      const uid = data.user?.id ?? null;
+      setUserId(uid);
+      if (!uid) return;
+      const [{ data: profile }, { data: deptRoles }] = await Promise.all([
+        supabase.from("profiles").select("primary_department").eq("id", uid).maybeSingle(),
+        supabase.from("user_roles").select("department_slug").eq("user_id", uid),
+      ]);
+      const finance = ["finance", "finance-administration"];
+      setIsFinanceMember(
+        finance.includes((profile as any)?.primary_department ?? "") ||
+          (deptRoles ?? []).some((r: any) => finance.includes(r.department_slug ?? "")),
+      );
+    })();
   }, []);
 
   const roles = role?.roles ?? [];
-  const canManage = slug === "finance" || roles.some((r) => FINANCE_ROLES.includes(r));
+  // Only the Finance team and executive leadership may approve/decline requests.
+  const canManage = isFinanceMember || roles.some((r) => FINANCE_ROLES.includes(r));
+  // The Finance department register receives purchase requests from every department.
+  const isFinanceRegister = slug === "finance" || slug === "finance-administration";
 
   return (
     <div className="space-y-6">
@@ -38,10 +56,9 @@ export function DepartmentProcurement({ slug }: { slug: string }) {
         <p className="text-xs uppercase tracking-widest text-muted-foreground">Financial Command Centre</p>
         <h3 className="mt-2 font-serif text-2xl">Procurement</h3>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          For any item that needs to be purchased — equipment, cables, instruments, hospitality items or any other
-          ministry requirement — raise a Purchase Request below and attach the relevant quotation or supporting
-          documents. The Finance Team will review the request, assess it against the available budget and ministry
-          priorities, and either approve it or, where necessary, decline it and recommend a suitable alternative.
+          {isFinanceRegister
+            ? "This is the central procurement register. Every Purchase Request raised by any department lands here for the Finance Team to review against the available budget and ministry priorities, and to approve or decline with a recommended alternative. All records are retained for audit."
+            : "For any item that needs to be purchased — equipment, cables, instruments, hospitality items or any other ministry requirement — raise a Purchase Request below and attach the relevant quotation or supporting documents. Your request is sent to the Finance Department, who will review it against the available budget and ministry priorities, and either approve it or, where necessary, decline it and recommend a suitable alternative."}
         </p>
       </Card>
 
@@ -52,7 +69,12 @@ export function DepartmentProcurement({ slug }: { slug: string }) {
         <TabsContent value="procurement" className="mt-6">
           <Suspense fallback={<p className="p-6 text-sm text-muted-foreground">Loading…</p>}>
             {userId ? (
-              <ProcurementModule canManage={canManage} currentUserId={userId} departmentSlug={slug} scoped />
+              <ProcurementModule
+                canManage={canManage}
+                currentUserId={userId}
+                departmentSlug={slug}
+                scoped={!isFinanceRegister}
+              />
             ) : (
               <p className="p-6 text-sm text-muted-foreground">Loading…</p>
             )}
@@ -62,3 +84,4 @@ export function DepartmentProcurement({ slug }: { slug: string }) {
     </div>
   );
 }
+
