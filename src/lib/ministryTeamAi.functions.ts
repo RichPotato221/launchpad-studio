@@ -87,7 +87,9 @@ export const askMinistryTeamAssistant = createServerFn({ method: "POST" })
               "pipeline gaps and succession readiness, event and retreat planning with checklists and budgets, outreach " +
               "planning and impact summaries, volunteer shortages and burnout risk, training and certification gaps, KPI " +
               "commentary, monthly report drafts, meeting agendas and Bible study or devotional outlines aligned to " +
+              (TEAM_FOCUS[t] ? `Team-specific focus: ${TEAM_FOCUS[t]} ` : "") +
               "scripture. Never invent people, numbers or events that are not in the snapshot. Treat anything marked " +
+
               "confidential or pastoral as protected. Reply with short headings and bullets in a pastoral but practical tone.",
           },
           { role: "user", content: `Ministry snapshot:\n${JSON.stringify(snapshot)}\n\nQuestion: ${data.question}` },
