@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { RiskDashboard } from "@/components/RiskDashboard";
+import { ApostolicCenter } from "@/components/apostolic/ApostolicCenter";
 
 export const Route = createFileRoute("/_authenticated/senior-pastor-cockpit")({
   head: () => ({ meta: [{ title: "Senior Pastor Cockpit — TRoGKC Portal" }] }),
