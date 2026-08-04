@@ -141,6 +141,12 @@ function DepartmentPortal() {
           <DepartmentResources slug={slug} />
         </TabsContent>
 
+        <TabsContent value="finance" className="mt-6">
+          <DepartmentProcurement slug={slug} />
+        </TabsContent>
+
+
+
 
         {workspace && WorkspaceComponent && membership.data?.userId && (
           <TabsContent value="workspace" className="mt-6">
