@@ -172,11 +172,11 @@ export const workspaceRegistry: Record<string, Entry> = {
     component: lazy(() => import("@/components/chairperson/ChairpersonCenter")),
   },
   "associate-pastor": {
-    label: "Ministry Operations & Shepherding Command Centre",
+    label: "Ministry Operations & Shepherding Centre",
     component: lazy(() => import("@/components/pastoral/PastoralCenter")),
   },
   "lead-pastor": {
-    label: "Ministry Operations & Shepherding Command Centre",
+    label: "Executive Ministry Command Centre",
     component: lazy(() => import("@/components/pastoral/PastoralCenter")),
   },
 
