@@ -12,8 +12,12 @@ import { HOS_COURSES, HOS_RISK_CATEGORIES } from "@/lib/hospitality";
 
 const LEADERS = ["senior_apostle", "chairperson", "secretary", "lead_pastor", "associate_pastor"];
 
+const asStrings = (list: readonly any[]): string[] =>
+  list.map((c) => (typeof c === "string" ? c : (c?.label ?? c?.key ?? String(c))));
+
 export default function HospitalityCenter({ currentUserId }: { departmentSlug?: string; currentUserId: string }) {
   const role = useCurrentRole();
+  const members: { id: string; full_name: string }[] = [];
   const canManage =
     (role.data?.roles ?? []).some((r) => LEADERS.includes(r)) || role.data?.canViewCheckupWatch === true;
 
