@@ -1,8 +1,8 @@
 import type { Rag } from "@/lib/finance";
 
-/** Shared vocabulary, configuration and scoring for the Youth, Women's and Men's team workspaces. */
+/** Shared vocabulary, configuration and scoring for the ministry team workspaces. */
 
-export type TeamKey = "youth" | "women" | "men";
+export type TeamKey = "youth" | "women" | "men" | "care" | "life_groups" | "outreach";
 
 export const TEAM_BY_SLUG: Record<string, TeamKey> = {
   "youth-ministry": "youth",
@@ -11,7 +11,17 @@ export const TEAM_BY_SLUG: Record<string, TeamKey> = {
   women: "women",
   "mens-ministry": "men",
   men: "men",
+  "hand-of-christ": "care",
+  "hand-of-christ-social-relationships": "care",
+  benevolence: "care",
+  "life-groups": "life_groups",
+  "life-group": "life_groups",
+  cells: "life_groups",
+  "outreach-evangelism": "outreach",
+  outreach: "outreach",
+  evangelism: "outreach",
 };
+
 
 export const DISCIPLESHIP_STAGES = [
   { key: "first_time_visitor", label: "First-time visitor" },
