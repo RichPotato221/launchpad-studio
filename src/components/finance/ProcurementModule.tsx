@@ -209,7 +209,7 @@ export default function ProcurementModule({ canManage, currentUserId, department
         if (filterBranch !== "all" && r.branch !== filterBranch) return false;
         if (search.trim()) {
           const t = search.toLowerCase();
-          const hay = `${r.pr_number ?? ""} ${r.title ?? ""} ${r.supplier?.name ?? ""} ${r.category ?? ""}`.toLowerCase();
+          const hay = `${r.pr_number ?? ""} ${r.title ?? ""} ${r.supplier?.name ?? ""} ${r.category ?? ""} ${r.department_slug ?? ""}`.toLowerCase();
           if (!hay.includes(t)) return false;
         }
         return true;
