@@ -33,9 +33,9 @@ const STATUSES = [
 
 const PRIORITIES = ["low", "normal", "high", "urgent"] as const;
 
-type Props = { canManage: boolean; currentUserId: string; departmentSlug?: string };
+type Props = { canManage: boolean; currentUserId: string; departmentSlug?: string; scoped?: boolean };
 
-export default function ProcurementModule({ canManage, currentUserId, departmentSlug = "finance" }: Props) {
+export default function ProcurementModule({ canManage, currentUserId, departmentSlug = "finance", scoped = false }: Props) {
   const [rows, setRows] = useState<any[]>([]);
   const [suppliers, setSuppliers] = useState<any[]>([]);
   const [budgets, setBudgets] = useState<any[]>([]);
@@ -62,12 +62,13 @@ export default function ProcurementModule({ canManage, currentUserId, department
 
   const load = async () => {
     setLoading(true);
+    let prq = sb
+      .from("purchase_requests")
+      .select("*, supplier:suppliers(id, name), requester:profiles!purchase_requests_requester_id_fkey(id, full_name, email)")
+      .is("archived_at", null);
+    if (scoped) prq = prq.eq("department_slug", departmentSlug);
     const [{ data: prs }, { data: sup }, { data: bud }] = await Promise.all([
-      sb
-        .from("purchase_requests")
-        .select("*, supplier:suppliers(id, name), requester:profiles!purchase_requests_requester_id_fkey(id, full_name, email)")
-        .is("archived_at", null)
-        .order("created_at", { ascending: false }),
+      prq.order("created_at", { ascending: false }),
       sb.from("suppliers").select("id, name").order("name"),
       sb.from("budgets").select("id, name, fiscal_year").is("archived_at", null).order("fiscal_year", { ascending: false }),
     ]);
@@ -76,6 +77,7 @@ export default function ProcurementModule({ canManage, currentUserId, department
     setBudgets(bud ?? []);
     setLoading(false);
   };
+
 
   useEffect(() => {
     load();

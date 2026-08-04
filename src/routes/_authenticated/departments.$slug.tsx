@@ -4,6 +4,7 @@ import { Suspense, useState } from "react";
 import { getWorkspaceFor } from "@/lib/workspaceRegistry";
 import { TeamChat } from "@/components/departments/TeamChat";
 import { DepartmentResources } from "@/components/departments/DepartmentResources";
+import { DepartmentProcurement } from "@/components/departments/DepartmentProcurement";
 import { useIsDepartmentMember } from "@/lib/useIsDepartmentMember";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -73,6 +74,7 @@ function DepartmentPortal() {
               <SelectItem value="kpis">KPI Dashboard</SelectItem>
               <SelectItem value="reports">Reports</SelectItem>
               <SelectItem value="resources">Resources</SelectItem>
+              <SelectItem value="finance">Financial Command Centre</SelectItem>
               {workspace && <SelectItem value="workspace">{workspace.label}</SelectItem>}
             </SelectContent>
           </Select>
@@ -85,6 +87,7 @@ function DepartmentPortal() {
           <TabsTrigger value="kpis">KPI Dashboard</TabsTrigger>
           <TabsTrigger value="reports">Reports</TabsTrigger>
           <TabsTrigger value="resources">Resources</TabsTrigger>
+          <TabsTrigger value="finance">Financial Command Centre</TabsTrigger>
           {workspace && <TabsTrigger value="workspace">{workspace.label}</TabsTrigger>}
         </TabsList>
 
@@ -137,6 +140,12 @@ function DepartmentPortal() {
         <TabsContent value="resources" className="mt-6">
           <DepartmentResources slug={slug} />
         </TabsContent>
+
+        <TabsContent value="finance" className="mt-6">
+          <DepartmentProcurement slug={slug} />
+        </TabsContent>
+
+
 
 
         {workspace && WorkspaceComponent && membership.data?.userId && (
