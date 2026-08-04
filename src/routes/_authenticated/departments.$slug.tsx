@@ -4,6 +4,7 @@ import { Suspense, useState } from "react";
 import { getWorkspaceFor } from "@/lib/workspaceRegistry";
 import { TeamChat } from "@/components/departments/TeamChat";
 import { DepartmentResources } from "@/components/departments/DepartmentResources";
+import { DepartmentProcurement } from "@/components/departments/DepartmentProcurement";
 import { useIsDepartmentMember } from "@/lib/useIsDepartmentMember";
 import { supabase } from "@/integrations/supabase/client";
 import {
