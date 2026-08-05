@@ -294,7 +294,12 @@ function RedFlagKpis() {
       if (!existing || row.period_date > existing.period_date) latest.set(key, row);
     }
     return Array.from(latest.values())
-      .filter((r) => r.target != null && (r.actual == null || Number(r.actual) < Number(r.target)))
+      // Red only: below 70% of target (0% counts as red when nothing has been reported).
+      .filter((r) => {
+        if (r.target == null || Number(r.target) <= 0) return false;
+        const ratio = r.actual == null ? 0 : Number(r.actual) / Number(r.target);
+        return ratio < 0.7;
+      })
       .sort((a, b) => {
         const pctA = a.actual == null ? -1 : Number(a.actual) / Number(a.target);
         const pctB = b.actual == null ? -1 : Number(b.actual) / Number(b.target);
@@ -306,7 +311,7 @@ function RedFlagKpis() {
     <Card className="p-6">
       <p className="text-xs uppercase tracking-widest text-muted-foreground">Red-Flag KPIs</p>
       <p className="mt-1 text-xs text-muted-foreground">
-        Most recent period per KPI, below target or not yet reported.
+        Most recent period per KPI — only KPIs in the red band (under 70% of target).
       </p>
       <div className="mt-4 space-y-3">
         {flags.map((r) => {
