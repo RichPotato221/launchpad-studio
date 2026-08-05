@@ -199,11 +199,11 @@ function FlowConnector() {
  
 function FlowSubList({ items }: { items: string[] }) {
   return (
-    <ul className="mt-2 space-y-1 text-center text-xs text-muted-foreground">
+    <div className="mt-3 space-y-2">
       {items.map((item, i) => (
-        <li key={i}>{item}</li>
+        <FlowBox key={i} title={item} compact />
       ))}
-    </ul>
+    </div>
   );
 }
  

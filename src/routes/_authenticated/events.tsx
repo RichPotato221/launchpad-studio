@@ -16,7 +16,11 @@ export const Route = createFileRoute("/_authenticated/events")({
 });
 
 const TYPES = ["service", "rehearsal", "meeting", "outreach", "training", "youth", "childrens", "other"] as const;
-const BRANCHES = ["Twatwa", "Joburg North", "Joburg South"] as const;
+const BRANCHES = [
+  { value: "etwatwa", label: "Etwatwa" },
+  { value: "joburg_north", label: "Joburg North" },
+  { value: "joburg_south", label: "Joburg South" },
+] as const;
 const ROSTER_STATUSES = ["invited", "confirmed", "declined", "tentative"] as const;
 
 function EventsPage() {
@@ -137,7 +141,7 @@ function EventsPage() {
               <Label>Branch</Label>
               <Select value={form.branch} onValueChange={(v) => setForm({ ...form, branch: v })}>
                 <SelectTrigger><SelectValue placeholder="Any" /></SelectTrigger>
-                <SelectContent>{BRANCHES.map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}</SelectContent>
+                <SelectContent>{BRANCHES.map((b) => <SelectItem key={b.value} value={b.value}>{b.label}</SelectItem>)}</SelectContent>
               </Select>
             </div>
             <div>

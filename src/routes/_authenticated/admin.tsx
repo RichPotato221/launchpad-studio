@@ -81,10 +81,23 @@ function AdminPage() {
     qc.invalidateQueries({ queryKey: ["setting"] });
   };
  
-  const assignRole = async (userId: string, role: AppRole, department_slug: string | null) => {
+  const assignRole = async (userId: string, role: AppRole, department_slug: string | null, existing: any[]) => {
+    // Guard against the duplicate chips we were seeing: same role + same department.
+    if (existing.some((r) => r.role === role && (r.department_slug ?? null) === department_slug)) {
+      return toast.error("That role is already assigned for this department.");
+    }
     const { error } = await supabase.from("user_roles").insert({ user_id: userId, role, department_slug });
     if (error) return toast.error(error.message);
     toast.success("Role assigned");
+    qc.invalidateQueries({ queryKey: ["all-profiles"] });
+    qc.invalidateQueries({ queryKey: ["dept-team"] });
+  };
+
+  /** Chairperson may move a member between registered churches (branches). */
+  const moveBranch = async (userId: string, branch: string) => {
+    const { error } = await supabase.from("profiles").update({ branch: branch as any }).eq("id", userId);
+    if (error) return toast.error(error.message);
+    toast.success("Member moved");
     qc.invalidateQueries({ queryKey: ["all-profiles"] });
   };
   const removeRole = async (id: string) => {
@@ -204,8 +217,9 @@ function AdminPage() {
                   key={p.id}
                   profile={p}
                   departments={depts.data ?? []}
-                  onAssign={(role, dept) => assignRole(p.id, role, dept)}
+                  onAssign={(role, dept) => assignRole(p.id, role, dept, p.roles ?? [])}
                   onRemove={removeRole}
+                  onMoveBranch={(b) => moveBranch(p.id, b)}
                 />
               ))}
               {group.members.length === 0 && (
@@ -227,8 +241,9 @@ function AdminPage() {
                 key={p.id}
                 profile={p}
                 departments={depts.data ?? []}
-                onAssign={(role, dept) => assignRole(p.id, role, dept)}
+                onAssign={(role, dept) => assignRole(p.id, role, dept, p.roles ?? [])}
                 onRemove={removeRole}
+                onMoveBranch={(b) => moveBranch(p.id, b)}
               />
             ))}
           </div>
@@ -243,25 +258,57 @@ function UserRow({
   departments,
   onAssign,
   onRemove,
+  onMoveBranch,
 }: {
   profile: any;
   departments: { slug: string; name: string }[];
   onAssign: (role: AppRole, department: string | null) => void;
   onRemove: (id: string) => void;
+  onMoveBranch: (branch: string) => void;
 }) {
   const [role, setRole] = useState<AppRole>("team_member");
   const [dept, setDept] = useState<string>("");
 
-  const needsDept = role === "department_chair" || role === "team_member";
+  const deptName = (slug: string) => departments.find((d) => d.slug === slug)?.name ?? slug;
+
+  // Every department this member belongs to: their registered department plus
+  // each department they have been assigned a role in.
+  const memberships: string[] = Array.from(
+    new Set(
+      [profile.primary_department, ...(profile.roles ?? []).map((r: any) => r.department_slug)].filter(
+        Boolean,
+      ) as string[],
+    ),
+  );
 
   return (
     <div className="rounded-md border border-border/60 p-3">
       <p className="text-sm font-medium">{profile.full_name ?? "(no name)"}</p>
       <p className="text-xs text-muted-foreground">{profile.email}</p>
 
+      {memberships.length > 0 && (
+        <p className="mt-1 text-xs text-muted-foreground">
+          Departments: {memberships.map(deptName).join(", ")}
+        </p>
+      )}
+
+      <div className="mt-2 flex items-center gap-2">
+        <Select value={profile.branch ?? ""} onValueChange={onMoveBranch}>
+          <SelectTrigger className="h-8 w-40">
+            <SelectValue placeholder="Branch" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="etwatwa">Etwatwa</SelectItem>
+            <SelectItem value="joburg_north">Joburg North</SelectItem>
+            <SelectItem value="joburg_south">Joburg South</SelectItem>
+          </SelectContent>
+        </Select>
+        <span className="text-[0.65rem] uppercase tracking-widest text-muted-foreground">Move church</span>
+      </div>
+
       {profile.roles?.length > 0 && (
         <div className="mt-2 flex flex-wrap gap-1">
-          {profile.roles.map((r: any) => (
+          {dedupeRoles(profile.roles).map((r: any) => (
             <span
               key={r.id}
               className="flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground"
@@ -295,20 +342,18 @@ function UserRow({
           </SelectContent>
         </Select>
 
-        {needsDept && (
-          <Select value={dept} onValueChange={setDept}>
-            <SelectTrigger className="h-8 w-40">
-              <SelectValue placeholder="Department" />
-            </SelectTrigger>
-            <SelectContent>
-              {departments.map((d) => (
-                <SelectItem key={d.slug} value={d.slug}>
-                  {d.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )}
+        <Select value={dept} onValueChange={setDept}>
+          <SelectTrigger className="h-8 w-40">
+            <SelectValue placeholder="Department" />
+          </SelectTrigger>
+          <SelectContent>
+            {departments.map((d) => (
+              <SelectItem key={d.slug} value={d.slug}>
+                {d.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
         <Button size="sm" onClick={() => onAssign(role, dept || null)}>
           Assign
@@ -316,4 +361,16 @@ function UserRow({
       </div>
     </div>
   );
+}
+
+
+/** Collapse duplicate role rows (same role + department) so chips show once. */
+function dedupeRoles(roles: any[]) {
+  const seen = new Set<string>();
+  return roles.filter((r) => {
+    const key = `${r.role}::${r.department_slug ?? ""}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }

@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { useCurrentRole } from "@/lib/useCurrentRole";
 import { Download, Printer } from "lucide-react";
 import {
   BRANCHES,
@@ -35,7 +36,21 @@ const PRIORITIES = ["low", "normal", "high", "urgent"] as const;
 
 type Props = { canManage: boolean; currentUserId: string; departmentSlug?: string; scoped?: boolean };
 
+/** Offices that may sign off a purchase request. Any two of them close it. */
+const APPROVER_ROLES = new Set([
+  "chairperson",
+  "senior_apostle",
+  "lead_pastor",
+  "associate_pastor",
+  "finance_officer",
+  "department_chair",
+]);
+
 export default function ProcurementModule({ canManage, currentUserId, departmentSlug = "finance", scoped = false }: Props) {
+  const role = useCurrentRole();
+  const myRoles = role.data?.roles ?? [];
+  const isApprover = myRoles.some((r) => APPROVER_ROLES.has(r));
+
   const [rows, setRows] = useState<any[]>([]);
   const [suppliers, setSuppliers] = useState<any[]>([]);
   const [budgets, setBudgets] = useState<any[]>([]);
@@ -174,6 +189,9 @@ export default function ProcurementModule({ canManage, currentUserId, department
       patch.chair_approved_at = now;
     }
     if (status === "senior_pastor_approved") {
+      if (row.approved_by_chair && row.approved_by_chair === currentUserId) {
+        return toast.error("Two different authorities must approve a purchase request.");
+      }
       patch.approved_by_senior = currentUserId;
       patch.senior_approved_at = now;
     }
@@ -408,12 +426,31 @@ export default function ProcurementModule({ canManage, currentUserId, department
 
               <div className="flex flex-col items-end gap-2">
                 <span className={`rounded-full border px-3 py-1 text-[0.7rem] uppercase tracking-widest ${STATUS_CLASS[r.status] ?? ""}`}>
-                  {titleCase(r.status)}
+                  {r.status === "chair_approved"
+                    ? "Approved 1 of 2"
+                    : r.status === "senior_pastor_approved"
+                      ? "Approved & closed"
+                      : titleCase(r.status)}
                 </span>
                 {canManage && (
                   <div className="flex flex-wrap justify-end gap-2 print:hidden">
-                    {r.status === "submitted" && <Button size="sm" onClick={() => advance(r, "chair_approved")}>Chair approve</Button>}
-                    {r.status === "chair_approved" && <Button size="sm" onClick={() => advance(r, "senior_pastor_approved")}>Senior Pastor approve</Button>}
+                    {r.status === "submitted" && isApprover && (
+                      <Button size="sm" onClick={() => advance(r, "chair_approved")}>Approve (1 of 2)</Button>
+                    )}
+                    {r.status === "chair_approved" && isApprover && (
+                      <Button
+                        size="sm"
+                        disabled={r.approved_by_chair === currentUserId}
+                        title={
+                          r.approved_by_chair === currentUserId
+                            ? "A second, different authority must give the final approval"
+                            : undefined
+                        }
+                        onClick={() => advance(r, "senior_pastor_approved")}
+                      >
+                        Approve (2 of 2) &amp; close
+                      </Button>
+                    )}
                     {r.status === "senior_pastor_approved" && <Button size="sm" onClick={() => advance(r, "ordered")}>Raise order</Button>}
                     {r.status === "ordered" && <Button size="sm" onClick={() => advance(r, "received")}>Mark received</Button>}
                     {!["rejected", "cancelled", "received"].includes(r.status) && (
@@ -428,8 +465,8 @@ export default function ProcurementModule({ canManage, currentUserId, department
             </div>
 
             <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 border-t border-border/60 pt-2 text-[0.7rem] uppercase tracking-widest text-muted-foreground">
-              <span>Chair: {r.chair_approved_at ? fmtDate(r.chair_approved_at) : "—"}</span>
-              <span>Senior Pastor: {r.senior_approved_at ? fmtDate(r.senior_approved_at) : "—"}</span>
+              <span>1st approval: {r.chair_approved_at ? fmtDate(r.chair_approved_at) : "—"}</span>
+              <span>2nd approval: {r.senior_approved_at ? fmtDate(r.senior_approved_at) : "—"}</span>
               <span>Ordered: {r.ordered_at ? fmtDate(r.ordered_at) : "—"}</span>
               <span>Received: {r.received_at ? fmtDate(r.received_at) : "—"}</span>
             </div>
