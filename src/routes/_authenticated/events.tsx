@@ -141,7 +141,7 @@ function EventsPage() {
               <Label>Branch</Label>
               <Select value={form.branch} onValueChange={(v) => setForm({ ...form, branch: v })}>
                 <SelectTrigger><SelectValue placeholder="Any" /></SelectTrigger>
-                <SelectContent>{BRANCHES.map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}</SelectContent>
+                <SelectContent>{BRANCHES.map((b) => <SelectItem key={b.value} value={b.value}>{b.label}</SelectItem>)}</SelectContent>
               </Select>
             </div>
             <div>
