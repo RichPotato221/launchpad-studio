@@ -57,6 +57,7 @@ export const BRANCHES = ["etwatwa", "joburg_north", "joburg_south"] as const;
 
 export function branchLabel(b?: string | null) {
   if (!b) return "All branches";
+  if (b === "twatwa" || b === "etwatwa") return "Etwatwa";
   return b
     .split("_")
     .map((p) => p.charAt(0).toUpperCase() + p.slice(1))

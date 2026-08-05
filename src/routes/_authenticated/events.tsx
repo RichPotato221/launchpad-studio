@@ -16,7 +16,11 @@ export const Route = createFileRoute("/_authenticated/events")({
 });
 
 const TYPES = ["service", "rehearsal", "meeting", "outreach", "training", "youth", "childrens", "other"] as const;
-const BRANCHES = ["Twatwa", "Joburg North", "Joburg South"] as const;
+const BRANCHES = [
+  { value: "etwatwa", label: "Etwatwa" },
+  { value: "joburg_north", label: "Joburg North" },
+  { value: "joburg_south", label: "Joburg South" },
+] as const;
 const ROSTER_STATUSES = ["invited", "confirmed", "declined", "tentative"] as const;
 
 function EventsPage() {

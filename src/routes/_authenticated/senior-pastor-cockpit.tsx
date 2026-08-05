@@ -129,7 +129,7 @@ function CockpitComposer() {
               className="h-9 rounded-md border border-input bg-background px-2 text-sm"
             >
               <option value="all">All Branches</option>
-              <option value="twatwa">Twatwa</option>
+              <option value="twatwa">Etwatwa</option>
               <option value="joburg_north">Joburg North</option>
               <option value="joburg_south">Joburg South</option>
             </select>

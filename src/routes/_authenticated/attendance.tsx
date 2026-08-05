@@ -15,7 +15,7 @@ export const Route = createFileRoute("/_authenticated/attendance")({
 });
 
 const BRANCHES = [
-  { value: "twatwa", label: "Twatwa" },
+  { value: "etwatwa", label: "Etwatwa" },
   { value: "joburg_north", label: "Joburg North" },
   { value: "joburg_south", label: "Joburg South" },
 ] as const;

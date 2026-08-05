@@ -21,7 +21,7 @@ export const Route = createFileRoute("/_authenticated/feed")({
 
 const BRANCH_OPTIONS = [
   { value: "all", label: "All Branches" },
-  { value: "twatwa", label: "Twatwa" },
+  { value: "twatwa", label: "Etwatwa" },
   { value: "joburg_north", label: "Joburg North" },
   { value: "joburg_south", label: "Joburg South" },
 ];
