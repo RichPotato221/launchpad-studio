@@ -6,6 +6,7 @@ import { TeamChat } from "@/components/departments/TeamChat";
 import { DepartmentResources } from "@/components/departments/DepartmentResources";
 import { DepartmentProcurement } from "@/components/departments/DepartmentProcurement";
 import { useIsDepartmentMember } from "@/lib/useIsDepartmentMember";
+import { useCurrentRole } from "@/lib/useCurrentRole";
 import { supabase } from "@/integrations/supabase/client";
 import {
   fetchDepartment,
@@ -281,6 +282,36 @@ function statusColor(actual: number | null, target: number | null) {
 
 function KpiDashboard({ slug, kpis, onChange }: { slug: string; kpis: any[]; onChange: () => void }) {
   const [adding, setAdding] = useState(false);
+  const role = useCurrentRole();
+  const isChair = (role.data?.roles ?? []).includes("chairperson");
+  const [busy, setBusy] = useState(false);
+
+  /** Chairperson: wipe reported actuals so every KPI restarts at 0%. */
+  const resetActuals = async () => {
+    if (kpis.length === 0) return;
+    if (!window.confirm("Reset every KPI in this department back to 0%? Targets are kept, reported actuals are cleared.")) return;
+    setBusy(true);
+    const { error } = await supabase
+      .from("kpis")
+      .update({ actual: null })
+      .in("id", kpis.map((k) => k.id));
+    setBusy(false);
+    if (error) return toast.error(error.message);
+    toast.success("All KPIs reset to 0%");
+    onChange();
+  };
+
+  /** Chairperson: remove the loaded KPI set entirely. */
+  const clearAll = async () => {
+    if (kpis.length === 0) return;
+    if (!window.confirm("Delete every KPI in this department? This cannot be undone.")) return;
+    setBusy(true);
+    const { error } = await supabase.from("kpis").delete().in("id", kpis.map((k) => k.id));
+    setBusy(false);
+    if (error) return toast.error(error.message);
+    toast.success("KPIs cleared");
+    onChange();
+  };
   const [form, setForm] = useState({
     kpi_name: "",
     category: "spiritual_impact" as KpiCategory,
@@ -352,6 +383,22 @@ function KpiDashboard({ slug, kpis, onChange }: { slug: string; kpis: any[]; onC
           </div>
         </form>
       </Card>
+
+      {isChair && kpis.length > 0 && (
+        <Card className="flex flex-wrap items-center justify-between gap-3 p-4">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">
+            Chairperson controls · {kpis.length} KPI{kpis.length === 1 ? "" : "s"} loaded
+          </p>
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" disabled={busy} onClick={resetActuals}>
+              Reset all to 0%
+            </Button>
+            <Button size="sm" variant="outline" disabled={busy} onClick={clearAll}>
+              Clear all KPIs
+            </Button>
+          </div>
+        </Card>
+      )}
 
       {kpis.length === 0 ? (
         <Card className="p-8 text-center text-sm text-muted-foreground">No KPIs logged yet.</Card>
