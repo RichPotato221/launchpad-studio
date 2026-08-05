@@ -86,8 +86,17 @@ export type DepartmentOversightRow = {
  * reporting compliance, risk exposure and outstanding compliance items.
  */
 export function departmentHealth(r: DepartmentOversightRow): number {
-  const kpi = r.kpi_count > 0 ? Math.min(100, Number(r.kpi_avg_pct ?? 0)) : 60;
-  const taskBase = r.open_tasks > 0 ? (1 - r.overdue_tasks / r.open_tasks) * 100 : 85;
+  // Until real entries exist anywhere for the department, health is 0% — no
+  // optimistic defaults, so an empty system reads as 0 rather than a fake score.
+  const hasData =
+    (r.kpi_count ?? 0) > 0 ||
+    (r.open_tasks ?? 0) > 0 ||
+    (r.reports_90d ?? 0) > 0 ||
+    (r.open_risks ?? 0) > 0 ||
+    (r.open_compliance ?? 0) > 0;
+  if (!hasData) return 0;
+  const kpi = r.kpi_count > 0 ? Math.min(100, Number(r.kpi_avg_pct ?? 0)) : 0;
+  const taskBase = r.open_tasks > 0 ? (1 - r.overdue_tasks / r.open_tasks) * 100 : 0;
   const reporting = Math.min(100, r.reports_90d * 34);
   const riskPenalty = Math.min(40, r.critical_risks * 15 + r.open_risks * 3);
   const compliancePenalty = Math.min(25, r.open_compliance * 6);
