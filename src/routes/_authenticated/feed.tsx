@@ -290,31 +290,36 @@ function PostCard({ post, likes, currentUserId, onChange }: {
   }, [currentUserId, post.id]);
 
   const refreshCounts = async () => {
-    const [{ count: v }, { count: s }] = await Promise.all([
-      (supabase as any).from("announcement_views").select("*", { count: "exact", head: true }).eq("announcement_id", post.id),
+    // Views are stored per day, so count DISTINCT viewers — one record per member.
+    const [{ data: vRows }, { count: s }] = await Promise.all([
+      (supabase as any).from("announcement_views").select("user_id").eq("announcement_id", post.id),
       (supabase as any).from("announcement_shares").select("*", { count: "exact", head: true }).eq("announcement_id", post.id),
     ]);
-    setViewCount(v ?? 0);
+    setViewCount(new Set((vRows ?? []).map((r: any) => r.user_id)).size);
     setShareCount(s ?? 0);
   };
 
   useEffect(() => { refreshCounts(); }, [post.id]);
 
-  const canSeeViewers = currentUserId === post.author_id || isTopLeader;
+  // Every member may see who viewed a post.
+  const canSeeViewers = true;
 
   const openViewers = async () => {
-    if (!canSeeViewers) return;
     const { data } = await (supabase as any)
       .from("announcement_views")
       .select("user_id, first_viewed_at")
       .eq("announcement_id", post.id)
       .order("first_viewed_at", { ascending: false });
-    const ids: string[] = Array.from(new Set((data ?? []).map((v: any) => v.user_id as string)));
+    // Collapse repeat/daily records so each viewer appears exactly once.
+    const unique = new Map<string, any>();
+    for (const v of data ?? []) if (!unique.has(v.user_id)) unique.set(v.user_id, v);
+    const rows = Array.from(unique.values());
+    const ids: string[] = rows.map((v: any) => v.user_id as string);
     const { data: profs } = ids.length
       ? await supabase.from("profiles").select("id, full_name").in("id", ids as string[])
       : { data: [] as any[] };
     const nameMap = new Map((profs ?? []).map((p: any) => [p.id, p.full_name]));
-    setViewers((data ?? []).map((v: any) => ({ ...v, name: nameMap.get(v.user_id) ?? "Member" })));
+    setViewers(rows.map((v: any) => ({ ...v, name: nameMap.get(v.user_id) ?? "Member" })));
     setViewersOpen(true);
   };
 
@@ -454,9 +459,8 @@ function PostCard({ post, likes, currentUserId, onChange }: {
         </button>
         <button
           onClick={openViewers}
-          disabled={!canSeeViewers}
-          className={`ml-auto inline-flex items-center gap-1 ${canSeeViewers ? "hover:text-foreground" : "cursor-default"}`}
-          title={canSeeViewers ? "See who viewed" : "Views today"}
+          className="ml-auto inline-flex items-center gap-1 hover:text-foreground"
+          title="See who viewed" 
         >
           <Eye className="h-4 w-4" /> {viewCount}
         </button>
@@ -496,7 +500,7 @@ function PostCard({ post, likes, currentUserId, onChange }: {
           <div className="max-h-80 space-y-2 overflow-y-auto text-sm">
             {viewers.length === 0 && <p className="text-muted-foreground">No views yet.</p>}
             {viewers.map((v) => (
-              <div key={v.user_id + v.first_viewed_at} className="flex items-center justify-between border-b border-border/60 pb-2 last:border-0">
+              <div key={v.user_id} className="flex items-center justify-between border-b border-border/60 pb-2 last:border-0">
                 <span>{v.name}</span>
                 <span className="text-xs text-muted-foreground">{new Date(v.first_viewed_at).toLocaleString()}</span>
               </div>
