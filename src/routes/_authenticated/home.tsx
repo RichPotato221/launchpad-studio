@@ -22,6 +22,8 @@ function HomePage() {
  
   const functional = depts.data?.filter((d) => d.kind === "functional") ?? [];
   const developmental = depts.data?.filter((d) => d.kind === "developmental") ?? [];
+  const governmental = depts.data?.filter((d) => d.kind === "governmental") ?? [];
+  const supportServices = depts.data?.filter((d) => d.kind === "support_services") ?? [];
   
  
   return (
@@ -161,6 +163,8 @@ function HomePage() {
       </section>
  
       {/* Department tiles */}
+      <DeptGroup title="Governmental Structure" items={governmental} />
+      <DeptGroup title="Support Services" items={supportServices} />
       <DeptGroup title="Functional Structure" items={functional} />
       <DeptGroup title="Developmental Structure" items={developmental} />
       

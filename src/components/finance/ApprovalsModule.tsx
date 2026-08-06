@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { Download, RefreshCw } from "lucide-react";
 import { branchLabel, exportRows, fmtDate, money, STATUS_CLASS, titleCase } from "@/lib/finance";
+import FinanceApprovalsTable from "@/components/finance/FinanceApprovalsTable";
+
 
 const sb = supabase as any;
 
@@ -92,13 +94,16 @@ export default function ApprovalsModule({
 
   return (
     <div className="space-y-4">
+      <FinanceApprovalsTable financeView title="Approvals & payments — purchase requests" />
+
       <Card className="p-5">
-        <p className="text-xs uppercase tracking-widest text-muted-foreground">Approval workflow</p>
+        <p className="text-xs uppercase tracking-widest text-muted-foreground">Expense claim workflow</p>
         <p className="mt-2 text-sm text-muted-foreground">
           Department submits → Finance reviews → Chairperson approves → Senior Pastor authorises → Payment processed.
           Every step is written to the audit trail and notifies the claimant.
         </p>
       </Card>
+
 
       <div className="flex flex-wrap items-center gap-2 print:hidden">
         <Input
