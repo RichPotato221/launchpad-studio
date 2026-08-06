@@ -7,6 +7,7 @@ import { AppointmentsModule } from "./AppointmentsModule";
 import { DecisionCentre, ProjectsModule, ExecutiveRiskModule, CommunicationsModule, ExecutiveReports } from "./ExecutiveModules";
 import ExecutiveCockpit from "@/components/chairperson/ExecutiveCockpit";
 import GovernanceAssistant from "@/components/chairperson/GovernanceAssistant";
+import FinanceApprovalsTable from "@/components/finance/FinanceApprovalsTable";
 
 const TABS = [
   { key: "dashboard", label: "Executive dashboard" },
@@ -15,6 +16,7 @@ const TABS = [
   { key: "fivefold", label: "Fivefold ministry" },
   { key: "appointments", label: "Appointments" },
   { key: "decisions", label: "Decision centre" },
+  { key: "financial", label: "Financial command" },
   { key: "projects", label: "Development projects" },
   { key: "governance", label: "Governance & finance" },
   { key: "risks", label: "Risk & crisis" },
@@ -22,6 +24,7 @@ const TABS = [
   { key: "reports", label: "Executive reporting" },
   { key: "ai", label: "AI apostolic insights" },
 ];
+
 
 export function ApostolicCenter() {
   return (
