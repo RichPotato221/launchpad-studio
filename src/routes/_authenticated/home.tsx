@@ -22,6 +22,8 @@ function HomePage() {
  
   const functional = depts.data?.filter((d) => d.kind === "functional") ?? [];
   const developmental = depts.data?.filter((d) => d.kind === "developmental") ?? [];
+  const governmental = depts.data?.filter((d) => d.kind === "governmental") ?? [];
+  const supportServices = depts.data?.filter((d) => d.kind === "support_services") ?? [];
   
  
   return (
