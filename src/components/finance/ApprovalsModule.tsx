@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { Download, RefreshCw } from "lucide-react";
 import { branchLabel, exportRows, fmtDate, money, STATUS_CLASS, titleCase } from "@/lib/finance";
+import FinanceApprovalsTable from "@/components/finance/FinanceApprovalsTable";
+
 
 const sb = supabase as any;
 
