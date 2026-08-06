@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -371,8 +371,8 @@ export default function FinanceApprovalsTable({ financeView = true, title = "Pur
               const trail = decisions[r.id] ?? [];
               const expanded = openRow === r.id;
               return (
-                <>
-                  <tr key={r.id} className="border-b border-border/60 align-top">
+                <Fragment key={r.id}>
+                  <tr className="border-b border-border/60 align-top">
                     <td className="py-3 pr-3 font-mono text-xs">{r.pr_number ?? String(r.id).slice(0, 8)}</td>
                     <td className="py-3 pr-3">
                       <button className="text-left font-medium hover:underline" onClick={() => setOpenRow(expanded ? null : r.id)}>
@@ -421,7 +421,7 @@ export default function FinanceApprovalsTable({ financeView = true, title = "Pur
                     </td>
                   </tr>
                   {expanded && (
-                    <tr key={`${r.id}-detail`} className="border-b border-border/60 bg-muted/40">
+                    <tr className="border-b border-border/60 bg-muted/40">
                       <td colSpan={9} className="p-4">
                         <div className="grid gap-4 md:grid-cols-2">
                           <div>
@@ -460,7 +460,7 @@ export default function FinanceApprovalsTable({ financeView = true, title = "Pur
                       </td>
                     </tr>
                   )}
-                </>
+                </Fragment>
               );
             })}
           </tbody>
