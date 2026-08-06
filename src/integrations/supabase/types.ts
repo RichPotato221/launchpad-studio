@@ -3414,6 +3414,51 @@ export type Database = {
         }
         Relationships: []
       }
+      finance_approval_decisions: {
+        Row: {
+          comment: string | null
+          created_at: string
+          decided_by: string
+          decider_name: string | null
+          decider_role: string | null
+          decision: string
+          id: string
+          reason: string | null
+          request_id: string
+          request_ref: string | null
+          request_type: string
+          stage: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          decided_by: string
+          decider_name?: string | null
+          decider_role?: string | null
+          decision: string
+          id?: string
+          reason?: string | null
+          request_id: string
+          request_ref?: string | null
+          request_type?: string
+          stage?: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          decided_by?: string
+          decider_name?: string | null
+          decider_role?: string | null
+          decision?: string
+          id?: string
+          reason?: string | null
+          request_id?: string
+          request_ref?: string | null
+          request_type?: string
+          stage?: string
+        }
+        Relationships: []
+      }
       finance_entries: {
         Row: {
           amount: number | null
@@ -8493,9 +8538,14 @@ export type Database = {
           created_by: string | null
           department_slug: string
           description: string | null
+          finance_approved_at: string | null
+          finance_approved_by: string | null
+          finance_comment: string | null
           id: string
           needed_by: string | null
           ordered_at: string | null
+          paid_at: string | null
+          payment_status: string
           po_number: string | null
           pr_number: string | null
           priority: string
@@ -8526,9 +8576,14 @@ export type Database = {
           created_by?: string | null
           department_slug: string
           description?: string | null
+          finance_approved_at?: string | null
+          finance_approved_by?: string | null
+          finance_comment?: string | null
           id?: string
           needed_by?: string | null
           ordered_at?: string | null
+          paid_at?: string | null
+          payment_status?: string
           po_number?: string | null
           pr_number?: string | null
           priority?: string
@@ -8559,9 +8614,14 @@ export type Database = {
           created_by?: string | null
           department_slug?: string
           description?: string | null
+          finance_approved_at?: string | null
+          finance_approved_by?: string | null
+          finance_comment?: string | null
           id?: string
           needed_by?: string | null
           ordered_at?: string | null
+          paid_at?: string | null
+          payment_status?: string
           po_number?: string | null
           pr_number?: string | null
           priority?: string
