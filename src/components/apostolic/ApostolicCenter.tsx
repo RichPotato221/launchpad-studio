@@ -43,6 +43,10 @@ export function ApostolicCenter() {
       <TabsContent value="fivefold" className="mt-6"><FivefoldModule /></TabsContent>
       <TabsContent value="appointments" className="mt-6"><AppointmentsModule /></TabsContent>
       <TabsContent value="decisions" className="mt-6"><DecisionCentre /></TabsContent>
+      <TabsContent value="financial" className="mt-6">
+        <FinanceApprovalsTable financeView={false} title="Financial command — purchase request approvals" />
+      </TabsContent>
+
       <TabsContent value="projects" className="mt-6"><ProjectsModule /></TabsContent>
       <TabsContent value="governance" className="mt-6"><ExecutiveCockpit /></TabsContent>
       <TabsContent value="risks" className="mt-6"><ExecutiveRiskModule /></TabsContent>
