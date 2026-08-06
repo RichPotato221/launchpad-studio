@@ -163,6 +163,8 @@ function HomePage() {
       </section>
  
       {/* Department tiles */}
+      <DeptGroup title="Governmental Structure" items={governmental} />
+      <DeptGroup title="Support Services" items={supportServices} />
       <DeptGroup title="Functional Structure" items={functional} />
       <DeptGroup title="Developmental Structure" items={developmental} />
       
