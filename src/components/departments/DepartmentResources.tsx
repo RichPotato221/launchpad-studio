@@ -6,22 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import assistantPastorsManual from "@/assets/manuals/assistant-pastors.pdf.asset.json";
-import associatePastorsManual from "@/assets/manuals/associate-pastors.pdf.asset.json";
-import chairpersonManual from "@/assets/manuals/chairperson.pdf.asset.json";
-
-/** Department-specific Ministry Operations Manual overrides (slug → file url). */
-const OPERATIONS_MANUAL_BY_DEPT: Record<string, string> = {
-  "lead-pastor": assistantPastorsManual.url,
-  "associate-pastor": associatePastorsManual.url,
-  chairperson: chairpersonManual.url,
-};
-
-const CONSTITUTION = { title: "Apostolic Constitution", href: "/manuals/1_Apostolic_Constitution.docx", note: "Download" };
 
 export function DepartmentResources({ slug }: { slug: string }) {
-  const operationsHref = OPERATIONS_MANUAL_BY_DEPT[slug] ?? "/manuals/3_Ministry_Operations_Manual.docx";
-  const isPdf = operationsHref.endsWith(".pdf");
+
 
   const access = useQuery({
     queryKey: ["is-chairperson"],
@@ -82,6 +69,7 @@ export function DepartmentResources({ slug }: { slug: string }) {
   };
 
   const remove = async (d: any) => {
+    if (!window.confirm(`Delete "${d.title}"? This cannot be undone.`)) return;
     if (d.storage_path) await supabase.storage.from("department-resources").remove([d.storage_path]);
     const { error } = await supabase.from("department_resources").delete().eq("id", d.id);
     if (error) return toast.error(error.message);
@@ -90,23 +78,8 @@ export function DepartmentResources({ slug }: { slug: string }) {
 
   return (
     <div className="space-y-6">
-      <Card className="p-6">
-        <p className="text-xs uppercase tracking-widest text-muted-foreground">Manuals &amp; SOPs</p>
-        <ul className="mt-4 grid gap-3 md:grid-cols-2">
-          <li>
-            <a href={CONSTITUTION.href} className="block rounded border border-border p-4 transition hover:border-foreground">
-              <p className="font-serif text-lg">{CONSTITUTION.title}</p>
-              <p className="mt-1 text-xs text-muted-foreground">Download .docx</p>
-            </a>
-          </li>
-          <li>
-            <a href={operationsHref} target="_blank" rel="noreferrer" className="block rounded border border-border p-4 transition hover:border-foreground">
-              <p className="font-serif text-lg">Ministry Operations Manual</p>
-              <p className="mt-1 text-xs text-muted-foreground">Download {isPdf ? ".pdf" : ".docx"}</p>
-            </a>
-          </li>
-        </ul>
-      </Card>
+
+
 
       <Card className="p-6">
         <p className="text-xs uppercase tracking-widest text-muted-foreground">Department documents</p>

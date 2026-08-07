@@ -4,6 +4,7 @@ import { Suspense, useState } from "react";
 import { getWorkspaceFor } from "@/lib/workspaceRegistry";
 import { TeamChat } from "@/components/departments/TeamChat";
 import { DepartmentResources } from "@/components/departments/DepartmentResources";
+import { DepartmentAssistant } from "@/components/departments/DepartmentAssistant";
 import { DepartmentProcurement } from "@/components/departments/DepartmentProcurement";
 import { useIsDepartmentMember } from "@/lib/useIsDepartmentMember";
 import { useCurrentRole } from "@/lib/useCurrentRole";
@@ -47,6 +48,22 @@ function DepartmentPortal() {
   // The Finance department already has a full Financial Command Centre in its workspace.
   const showFinanceTab = slug !== "finance" && slug !== "finance-administration";
   const WorkspaceComponent = workspace?.component;
+  // Departments whose operations centre already ships a specialised AI assistant.
+  const BUILT_IN_ASSISTANT = new Set([
+    "hospitality", "prayer-intercession", "intercession", "prayer",
+    "worship", "worship-music", "music", "praise-worship",
+    "resource-administrator", "resources", "assets", "facilities",
+    "media", "media-communications", "media-and-communications",
+    "ushers", "ushering", "protocol", "ushering-protocol",
+    "childrens-ministry", "children", "kids",
+    "youth-ministry", "youth", "womens-ministry", "women", "mens-ministry", "men",
+    "outreach-evangelism", "outreach", "evangelism",
+    "hand-of-christ", "benevolence", "life-groups", "cells",
+    "sound-technical", "sound-and-technical", "sound", "technical", "av",
+    "strategic-adviser", "strategic-adviser-planner", "strategy", "strategic-planning", "planning",
+    "chairperson", "associate-pastor", "lead-pastor",
+  ]);
+  const showAssistantTab = !BUILT_IN_ASSISTANT.has(slug);
 
   
   return (
@@ -78,6 +95,7 @@ function DepartmentPortal() {
               <SelectItem value="reports">Reports</SelectItem>
               <SelectItem value="resources">Resources</SelectItem>
               {showFinanceTab && <SelectItem value="finance">Financial Command Centre</SelectItem>}
+              {showAssistantTab && <SelectItem value="assistant">AI Assistant</SelectItem>}
               {workspace && <SelectItem value="workspace">{workspace.label}</SelectItem>}
             </SelectContent>
           </Select>
@@ -91,6 +109,7 @@ function DepartmentPortal() {
           <TabsTrigger value="reports">Reports</TabsTrigger>
           <TabsTrigger value="resources">Resources</TabsTrigger>
           {showFinanceTab && <TabsTrigger value="finance">Financial Command Centre</TabsTrigger>}
+          {showAssistantTab && <TabsTrigger value="assistant">AI Assistant</TabsTrigger>}
           {workspace && <TabsTrigger value="workspace">{workspace.label}</TabsTrigger>}
         </TabsList>
 
@@ -152,6 +171,12 @@ function DepartmentPortal() {
 
 
 
+
+        {showAssistantTab && (
+          <TabsContent value="assistant" className="mt-6">
+            <DepartmentAssistant slug={slug} name={d.name} />
+          </TabsContent>
+        )}
 
         {workspace && WorkspaceComponent && membership.data?.userId && (
           <TabsContent value="workspace" className="mt-6">
