@@ -6,22 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import assistantPastorsManual from "@/assets/manuals/assistant-pastors.pdf.asset.json";
-import associatePastorsManual from "@/assets/manuals/associate-pastors.pdf.asset.json";
-import chairpersonManual from "@/assets/manuals/chairperson.pdf.asset.json";
-
-/** Department-specific Ministry Operations Manual overrides (slug → file url). */
-const OPERATIONS_MANUAL_BY_DEPT: Record<string, string> = {
-  "lead-pastor": assistantPastorsManual.url,
-  "associate-pastor": associatePastorsManual.url,
-  chairperson: chairpersonManual.url,
-};
-
-const CONSTITUTION = { title: "Apostolic Constitution", href: "/manuals/1_Apostolic_Constitution.docx", note: "Download" };
 
 export function DepartmentResources({ slug }: { slug: string }) {
-  const operationsHref = OPERATIONS_MANUAL_BY_DEPT[slug] ?? "/manuals/3_Ministry_Operations_Manual.docx";
-  const isPdf = operationsHref.endsWith(".pdf");
+
 
   const access = useQuery({
     queryKey: ["is-chairperson"],
