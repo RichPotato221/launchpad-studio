@@ -69,6 +69,7 @@ export function DepartmentResources({ slug }: { slug: string }) {
   };
 
   const remove = async (d: any) => {
+    if (!window.confirm(`Delete "${d.title}"? This cannot be undone.`)) return;
     if (d.storage_path) await supabase.storage.from("department-resources").remove([d.storage_path]);
     const { error } = await supabase.from("department_resources").delete().eq("id", d.id);
     if (error) return toast.error(error.message);
