@@ -77,23 +77,8 @@ export function DepartmentResources({ slug }: { slug: string }) {
 
   return (
     <div className="space-y-6">
-      <Card className="p-6">
-        <p className="text-xs uppercase tracking-widest text-muted-foreground">Manuals &amp; SOPs</p>
-        <ul className="mt-4 grid gap-3 md:grid-cols-2">
-          <li>
-            <a href={CONSTITUTION.href} className="block rounded border border-border p-4 transition hover:border-foreground">
-              <p className="font-serif text-lg">{CONSTITUTION.title}</p>
-              <p className="mt-1 text-xs text-muted-foreground">Download .docx</p>
-            </a>
-          </li>
-          <li>
-            <a href={operationsHref} target="_blank" rel="noreferrer" className="block rounded border border-border p-4 transition hover:border-foreground">
-              <p className="font-serif text-lg">Ministry Operations Manual</p>
-              <p className="mt-1 text-xs text-muted-foreground">Download {isPdf ? ".pdf" : ".docx"}</p>
-            </a>
-          </li>
-        </ul>
-      </Card>
+
+
 
       <Card className="p-6">
         <p className="text-xs uppercase tracking-widest text-muted-foreground">Department documents</p>
