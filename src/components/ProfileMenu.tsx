@@ -64,7 +64,7 @@ export function ProfileMenu() {
               <p className="truncate text-xs text-muted-foreground">{profile?.email}</p>
             </div>
             <Link
-              to="/profile"
+              to="/Profile"
               onClick={() => setOpen(false)}
               className="block rounded-md px-3 py-2 text-sm hover:bg-accent"
             >

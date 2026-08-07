@@ -227,7 +227,7 @@ function DeptGroup({ title, items, basePath = "/departments" }: {
         {items.map((d) => {
           const hero = DEPARTMENT_HERO[d.slug];
           return (
-            <Link key={d.slug} to={`${basePath}/$slug`} params={{ slug: d.slug }}>
+            <Link key={d.slug} to="/departments/$slug" params={{ slug: d.slug }}>
               <Card className="overflow-hidden p-0 transition hover:border-foreground">
                 {hero ? (
                   <div className="flex h-56 w-full items-center justify-center bg-muted">
