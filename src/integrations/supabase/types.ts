@@ -13618,6 +13618,19 @@ export type Database = {
           connector_id: string
         }[]
       }
+      get_my_profile: {
+        Args: never
+        Returns: {
+          approval_status: string
+          avatar_url: string
+          branch: Database["public"]["Enums"]["branch"]
+          email: string
+          full_name: string
+          id: string
+          phone: string
+          primary_department: string
+        }[]
+      }
       get_sunday_rsvp_status: {
         Args: { _service_date: string }
         Returns: {
