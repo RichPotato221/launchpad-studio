@@ -35,11 +35,9 @@ function ProfilePage() {
     if (!uid) return;
     setUserId(uid);
  
-    const { data } = await supabase
-      .from("profiles")
-      .select("full_name, phone, email, avatar_url, primary_department")
-      .eq("id", uid)
-      .maybeSingle();
+    const { data: rows } = await supabase.rpc("get_my_profile");
+    const data = rows?.[0] ?? null;
+
  
     if (data) {
       setForm({
