@@ -14,6 +14,7 @@ import { notifyPendingApproval } from "@/lib/notifyApproval.functions";
 import { lovable } from "@/integrations/lovable";
 
 export const Route = createFileRoute("/auth")({
+  ssr: false,
   head: () => ({
     meta: [
       { title: "Sign in — TRoGKC Portal" },
