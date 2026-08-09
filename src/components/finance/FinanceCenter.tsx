@@ -13,6 +13,7 @@ import ApprovalsModule from "@/components/finance/ApprovalsModule";
 import ProcurementModule from "@/components/finance/ProcurementModule";
 import PayrollModule from "@/components/finance/PayrollModule";
 import ReconciliationModule from "@/components/finance/ReconciliationModule";
+import MonthlyWorkbook from "@/components/finance/MonthlyWorkbook";
 import { useCurrentRole } from "@/lib/useCurrentRole";
 import { exportRows, fmtDate, titleCase } from "@/lib/finance";
 
@@ -56,6 +57,7 @@ export default function FinanceCenter({ currentUserId }: { departmentSlug?: stri
           <TabsTrigger value="dashboard">Executive dashboard</TabsTrigger>
           <TabsTrigger value="ledger">General ledger</TabsTrigger>
           <TabsTrigger value="giving">Member giving</TabsTrigger>
+          <TabsTrigger value="workbook">Monthly workbook</TabsTrigger>
           <TabsTrigger value="budgets">Budgets</TabsTrigger>
           <TabsTrigger value="approvals">Approvals & payments</TabsTrigger>
           <TabsTrigger value="procurement">Procurement</TabsTrigger>
@@ -70,6 +72,9 @@ export default function FinanceCenter({ currentUserId }: { departmentSlug?: stri
         </TabsContent>
         <TabsContent value="giving" className="mt-6">
           <GivingModule canManage={canManage} currentUserId={currentUserId} />
+        </TabsContent>
+        <TabsContent value="workbook" className="mt-6">
+          <MonthlyWorkbook canManage={canManage} currentUserId={currentUserId} />
         </TabsContent>
         <TabsContent value="budgets" className="mt-6">
           <BudgetsModule canManage={canManage} currentUserId={currentUserId} />
