@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { useBranchScope, filterByBranch } from "@/lib/useBranchScope";
+
 
 export const Route = createFileRoute("/_authenticated/attendance")({
   head: () => ({ meta: [{ title: "Attendance — TRoGKC Portal" }] }),
@@ -21,6 +23,7 @@ const BRANCHES = [
 ] as const;
 
 function AttendancePage() {
+  const scope = useBranchScope();
   const [rows, setRows] = useState<any[]>([]);
   const [depts, setDepts] = useState<any[]>([]);
   const [events, setEvents] = useState<any[]>([]);
@@ -92,16 +95,19 @@ function AttendancePage() {
     load();
   };
 
+  const visibleRows = filterByBranch(rows, scope.data);
+
   const stats = useMemo(() => {
     const byDate: Record<string, { total: number; visitors: number }> = {};
-    rows.forEach((r) => {
+    visibleRows.forEach((r) => {
       if (!r.present) return;
       byDate[r.service_date] ||= { total: 0, visitors: 0 };
       byDate[r.service_date].total += 1;
       if (r.visitor) byDate[r.service_date].visitors += 1;
     });
     return Object.entries(byDate).sort((a, b) => b[0].localeCompare(a[0])).slice(0, 12);
-  }, [rows]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rows, scope.data]);
 
   return (
       <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
@@ -201,7 +207,7 @@ function AttendancePage() {
                 </tr>
               </thead>
               <tbody>
-                {rows.slice(0, 50).map((r) => (
+                {visibleRows.slice(0, 50).map((r) => (
                   <tr key={r.id} className="border-b border-border/50">
                     <td className="p-3">{r.service_date}</td>
                     <td className="p-3">{r.full_name}</td>
@@ -211,7 +217,7 @@ function AttendancePage() {
                     <td className="p-3">{r.present ? "✓" : "✗"}</td>
                   </tr>
                 ))}
-                {rows.length === 0 && <tr><td colSpan={6} className="p-6 text-center text-muted-foreground">Nothing yet.</td></tr>}
+                {visibleRows.length === 0 && <tr><td colSpan={6} className="p-6 text-center text-muted-foreground">Nothing yet.</td></tr>}
               </tbody>
             </table>
           </Card>

@@ -3414,6 +3414,89 @@ export type Database = {
         }
         Relationships: []
       }
+      fin_month_lines: {
+        Row: {
+          actual: number
+          category: string
+          created_at: string
+          id: string
+          notes: string | null
+          period_id: string
+          section: string
+          sort_order: number
+          target: number
+          updated_at: string
+        }
+        Insert: {
+          actual?: number
+          category: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          period_id: string
+          section: string
+          sort_order?: number
+          target?: number
+          updated_at?: string
+        }
+        Update: {
+          actual?: number
+          category?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          period_id?: string
+          section?: string
+          sort_order?: number
+          target?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fin_month_lines_period_id_fkey"
+            columns: ["period_id"]
+            isOneToOne: false
+            referencedRelation: "fin_month_periods"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fin_month_periods: {
+        Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
+          created_at: string
+          created_by: string | null
+          id: string
+          notes: string | null
+          opening_balance: number
+          period_month: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          notes?: string | null
+          opening_balance?: number
+          period_month: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          notes?: string | null
+          opening_balance?: number
+          period_month?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       finance_approval_decisions: {
         Row: {
           comment: string | null

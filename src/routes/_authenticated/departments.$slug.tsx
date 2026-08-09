@@ -8,6 +8,7 @@ import { DepartmentAssistant } from "@/components/departments/DepartmentAssistan
 import { DepartmentProcurement } from "@/components/departments/DepartmentProcurement";
 import { useIsDepartmentMember } from "@/lib/useIsDepartmentMember";
 import { useCurrentRole } from "@/lib/useCurrentRole";
+import { useBranchScope, filterByBranch } from "@/lib/useBranchScope";
 import { supabase } from "@/integrations/supabase/client";
 import {
   fetchDepartment,
@@ -220,6 +221,7 @@ function FiveFoldHub() {
 }
 
 function DepartmentTeam({ slug, currentUserId }: { slug: string; currentUserId: string | null }) {
+  const scope = useBranchScope();
   const members = useQuery({
     queryKey: ["dept-team", slug],
     queryFn: async () => {
@@ -268,8 +270,8 @@ function DepartmentTeam({ slug, currentUserId }: { slug: string; currentUserId: 
   });
 
   if (members.isLoading) return <Card className="p-6 text-sm text-muted-foreground">Loading team…</Card>;
-  const rows = members.data ?? [];
-  if (rows.length === 0) return <Card className="p-6 text-sm text-muted-foreground">No approved members yet in this department.</Card>;
+  const rows = filterByBranch((members.data ?? []) as any[], scope.data);
+  if (rows.length === 0) return <Card className="p-6 text-sm text-muted-foreground">No approved members yet in this department for your branch.</Card>;
 
   return (
     <div>

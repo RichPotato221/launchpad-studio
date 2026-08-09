@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { useBranchScope, filterByBranch } from "@/lib/useBranchScope";
+
 import { Copy } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/events")({
@@ -24,6 +26,7 @@ const BRANCHES = [
 const ROSTER_STATUSES = ["invited", "confirmed", "declined", "tentative"] as const;
 
 function EventsPage() {
+  const scope = useBranchScope();
   const [events, setEvents] = useState<any[]>([]);
   const [rosters, setRosters] = useState<Record<string, any[]>>({});
   const [depts, setDepts] = useState<any[]>([]);
@@ -53,6 +56,8 @@ function EventsPage() {
     setFeedUrl(`${window.location.origin}/api/public/calendar.ics`);
     load();
   }, []);
+
+  const visibleEvents = filterByBranch(events, scope.data);
 
   const copyFeedUrl = async () => {
     if (!feedUrl) return;
@@ -158,7 +163,7 @@ function EventsPage() {
         </Card>
 
         <div className="mt-8 space-y-3">
-          {events.map((ev) => (
+          {visibleEvents.map((ev) => (
             <Card key={ev.id} className="p-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
@@ -188,7 +193,7 @@ function EventsPage() {
               )}
             </Card>
           ))}
-          {events.length === 0 && <Card className="p-8 text-center text-sm text-muted-foreground">No events yet.</Card>}
+          {visibleEvents.length === 0 && <Card className="p-8 text-center text-sm text-muted-foreground">No events yet.</Card>}
         </div>
       </div>
   );
