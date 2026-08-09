@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { useBranchScope, filterByBranch } from "@/lib/useBranchScope";
 
 export const Route = createFileRoute("/_authenticated/reports")({
   head: () => ({ meta: [{ title: "Reports — TRoGKC Portal" }] }),
@@ -34,13 +35,14 @@ async function fetchReportEntries() {
 }
 
 function ReportsPage() {
+  const scope = useBranchScope();
   const kpis = useQuery({ queryKey: ["all-kpis"], queryFn: fetchAllKpis });
   const depts = useQuery({ queryKey: ["departments"], queryFn: fetchDepartments });
   const entries = useQuery({ queryKey: ["report-entries"], queryFn: fetchReportEntries });
   const [category, setCategory] = useState<KpiCategory | "all">("all");
   const [dept, setDept] = useState<string>("all");
 
-  const filtered = (kpis.data ?? []).filter((k) => {
+  const filtered = filterByBranch((kpis.data ?? []) as any[], scope.data).filter((k: any) => {
     if (category !== "all" && k.category !== category) return false;
     if (dept !== "all" && k.department_slug !== dept) return false;
     return true;
@@ -157,7 +159,7 @@ function ReportsPage() {
         <AddReportEntry departments={depts.data ?? []} onCreated={() => entries.refetch()} />
 
         <div className="mt-8 space-y-4">
-          {(entries.data ?? []).map((e) => {
+          {filterByBranch((entries.data ?? []) as any[], scope.data).map((e: any) => {
             const deptName = depts.data?.find((d) => d.slug === e.department_slug)?.name ?? e.department_slug;
             return (
               <Card key={e.id} className="p-5">
@@ -177,7 +179,7 @@ function ReportsPage() {
               </Card>
             );
           })}
-          {(entries.data ?? []).length === 0 && (
+          {filterByBranch((entries.data ?? []) as any[], scope.data).length === 0 && (
             <Card className="p-8 text-center text-sm text-muted-foreground">No entries yet. Be the first to post.</Card>
           )}
         </div>
