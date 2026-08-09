@@ -23,6 +23,7 @@ const BRANCHES = [
 ] as const;
 
 function AttendancePage() {
+  const scope = useBranchScope();
   const [rows, setRows] = useState<any[]>([]);
   const [depts, setDepts] = useState<any[]>([]);
   const [events, setEvents] = useState<any[]>([]);
