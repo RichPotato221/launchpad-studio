@@ -310,7 +310,7 @@ function statusColor(actual: number | null, target: number | null) {
 function KpiDashboard({ slug, kpis, onChange }: { slug: string; kpis: any[]; onChange: () => void }) {
   const [adding, setAdding] = useState(false);
   const role = useCurrentRole();
-  const isChair = (role.data?.roles ?? []).includes("chairperson");
+  const isChair = (role.data?.roles ?? []).some((r) => r === "chairperson" || r === "senior_apostle");
   const [busy, setBusy] = useState(false);
 
   /** Chairperson: wipe reported actuals so every KPI restarts at 0%. */
