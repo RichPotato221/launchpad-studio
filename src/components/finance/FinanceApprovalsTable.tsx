@@ -31,6 +31,7 @@ const approvalLabel = (status: string) => {
   switch (status) {
     case "submitted":
       return "Awaiting Finance review";
+    case "chair_approved":
     case "finance_approved":
       return "Awaiting leadership approval";
     case "senior_pastor_approved":
@@ -274,6 +275,8 @@ export default function FinanceApprovalsTable({ financeView = true, title = "Pur
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
     return rows.filter((r) => {
+      // Requests raised before the two-step workflow used "chair_approved".
+      if (r.status === "chair_approved") r = { ...r, status: "finance_approved" };
       if (filter === "open" && !["submitted", "finance_approved", "returned"].includes(r.status)) return false;
       if (filter === "finance" && r.status !== "submitted") return false;
       if (filter === "leadership" && r.status !== "finance_approved") return false;
