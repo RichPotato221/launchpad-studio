@@ -30,7 +30,11 @@ function AdminPage() {
       const uid = userRes.user?.id;
       if (!uid) return { isChair: false, userId: null as string | null };
       const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", uid);
-      return { isChair: (roles ?? []).some((r: any) => r.role === "chairperson"), userId: uid };
+      // Senior Pastors oversee every branch and department alongside the Chairpersons.
+      return {
+        isChair: (roles ?? []).some((r: any) => r.role === "chairperson" || r.role === "senior_apostle"),
+        userId: uid,
+      };
     },
   });
   const depts = useQuery({ queryKey: ["departments"], queryFn: fetchDepartments });
