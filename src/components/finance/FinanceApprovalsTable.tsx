@@ -31,6 +31,7 @@ const approvalLabel = (status: string) => {
   switch (status) {
     case "submitted":
       return "Awaiting Finance review";
+    case "chair_approved":
     case "finance_approved":
       return "Awaiting leadership approval";
     case "senior_pastor_approved":
@@ -106,7 +107,19 @@ export default function FinanceApprovalsTable({ financeView = true, title = "Pur
       .order("created_at", { ascending: false })
       .limit(300);
     if (error) toast.error(error.message ?? "Could not load requests");
-    const list = (prs ?? []) as any[];
+    // Requests raised before the two-step workflow used the old "chair_approved"
+    // stage — treat them as Finance-approved so they join the leadership queue.
+    const list = ((prs ?? []) as any[]).map((r) =>
+      r.status === "chair_approved"
+        ? {
+            ...r,
+            status: "finance_approved",
+            finance_approved_by: r.finance_approved_by ?? r.approved_by_chair,
+            finance_approved_at: r.finance_approved_at ?? r.chair_approved_at,
+            payment_status: r.payment_status ?? "waiting_leadership_approval",
+          }
+        : r,
+    );
 
     const ids = Array.from(
       new Set(list.flatMap((r) => [r.requester_id, r.finance_approved_by, r.approved_by_senior]).filter(Boolean)),
@@ -274,6 +287,7 @@ export default function FinanceApprovalsTable({ financeView = true, title = "Pur
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
     return rows.filter((r) => {
+      // Requests raised before the two-step workflow used "chair_approved".
       if (filter === "open" && !["submitted", "finance_approved", "returned"].includes(r.status)) return false;
       if (filter === "finance" && r.status !== "submitted") return false;
       if (filter === "leadership" && r.status !== "finance_approved") return false;

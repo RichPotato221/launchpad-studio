@@ -24,7 +24,8 @@ const sb = supabase as any;
 
 const STATUSES = [
   "submitted",
-  "chair_approved",
+  "finance_approved",
+  "returned",
   "senior_pastor_approved",
   "ordered",
   "received",
@@ -184,16 +185,21 @@ export default function ProcurementModule({ canManage, currentUserId, department
   const advance = async (row: any, status: string) => {
     const patch: any = { status };
     const now = new Date().toISOString();
-    if (status === "chair_approved") {
+    if (status === "finance_approved") {
       patch.approved_by_chair = currentUserId;
       patch.chair_approved_at = now;
+      patch.finance_approved_by = currentUserId;
+      patch.finance_approved_at = now;
+      patch.payment_status = "waiting_leadership_approval";
     }
     if (status === "senior_pastor_approved") {
-      if (row.approved_by_chair && row.approved_by_chair === currentUserId) {
+      const firstApprover = row.finance_approved_by ?? row.approved_by_chair;
+      if (firstApprover && firstApprover === currentUserId) {
         return toast.error("Two different authorities must approve a purchase request.");
       }
       patch.approved_by_senior = currentUserId;
       patch.senior_approved_at = now;
+      patch.payment_status = "approved";
     }
     if (status === "ordered") {
       patch.ordered_at = now;
@@ -201,6 +207,7 @@ export default function ProcurementModule({ canManage, currentUserId, department
     }
     if (status === "received") patch.received_at = now;
     if (status === "rejected") {
+      patch.payment_status = "not_paid";
       const reason = window.prompt("Reason for rejection?") ?? "";
       patch.rejection_reason = reason || null;
     }
@@ -247,7 +254,9 @@ export default function ProcurementModule({ canManage, currentUserId, department
   );
 
   const stats = useMemo(() => {
-    const open = rows.filter((r) => ["submitted", "chair_approved", "senior_pastor_approved"].includes(r.status));
+    const open = rows.filter((r) =>
+      ["submitted", "returned", "chair_approved", "finance_approved", "senior_pastor_approved"].includes(r.status),
+    );
     const committed = rows.filter((r) => ["ordered", "received"].includes(r.status));
     return {
       awaiting: open.length,
@@ -426,7 +435,7 @@ export default function ProcurementModule({ canManage, currentUserId, department
 
               <div className="flex flex-col items-end gap-2">
                 <span className={`rounded-full border px-3 py-1 text-[0.7rem] uppercase tracking-widest ${STATUS_CLASS[r.status] ?? ""}`}>
-                  {r.status === "chair_approved"
+                  {r.status === "chair_approved" || r.status === "finance_approved"
                     ? "Approved 1 of 2"
                     : r.status === "senior_pastor_approved"
                       ? "Approved & closed"
@@ -434,15 +443,15 @@ export default function ProcurementModule({ canManage, currentUserId, department
                 </span>
                 {canManage && (
                   <div className="flex flex-wrap justify-end gap-2 print:hidden">
-                    {r.status === "submitted" && isApprover && (
-                      <Button size="sm" onClick={() => advance(r, "chair_approved")}>Approve (1 of 2)</Button>
+                    {(r.status === "submitted" || r.status === "returned") && isApprover && (
+                      <Button size="sm" onClick={() => advance(r, "finance_approved")}>Approve (1 of 2)</Button>
                     )}
-                    {r.status === "chair_approved" && isApprover && (
+                    {(r.status === "chair_approved" || r.status === "finance_approved") && isApprover && (
                       <Button
                         size="sm"
-                        disabled={r.approved_by_chair === currentUserId}
+                        disabled={(r.finance_approved_by ?? r.approved_by_chair) === currentUserId}
                         title={
-                          r.approved_by_chair === currentUserId
+                          (r.finance_approved_by ?? r.approved_by_chair) === currentUserId
                             ? "A second, different authority must give the final approval"
                             : undefined
                         }
@@ -465,7 +474,7 @@ export default function ProcurementModule({ canManage, currentUserId, department
             </div>
 
             <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 border-t border-border/60 pt-2 text-[0.7rem] uppercase tracking-widest text-muted-foreground">
-              <span>1st approval: {r.chair_approved_at ? fmtDate(r.chair_approved_at) : "—"}</span>
+              <span>1st approval: {r.finance_approved_at || r.chair_approved_at ? fmtDate(r.finance_approved_at ?? r.chair_approved_at) : "—"}</span>
               <span>2nd approval: {r.senior_approved_at ? fmtDate(r.senior_approved_at) : "—"}</span>
               <span>Ordered: {r.ordered_at ? fmtDate(r.ordered_at) : "—"}</span>
               <span>Received: {r.received_at ? fmtDate(r.received_at) : "—"}</span>

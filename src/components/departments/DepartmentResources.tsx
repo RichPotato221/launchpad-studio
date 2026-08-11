@@ -17,7 +17,11 @@ export function DepartmentResources({ slug }: { slug: string }) {
       const uid = userRes.user?.id;
       if (!uid) return { isChair: false, userId: null as string | null };
       const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", uid);
-      return { isChair: (roles ?? []).some((r: any) => r.role === "chairperson"), userId: uid };
+      // Chairpersons and Senior Pastors both have church-wide oversight.
+      return {
+        isChair: (roles ?? []).some((r: any) => r.role === "chairperson" || r.role === "senior_apostle"),
+        userId: uid,
+      };
     },
   });
 
