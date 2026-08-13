@@ -1,0 +1,142 @@
+{
+  "version": 1,
+  "sdk_version": "0.26.2",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://quzeraevecsxayrvymxd.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "trog-leadershipdomain",
+      "version": "0.1.0",
+      "title": "TRoGKC Leadership Portal"
+    },
+    "tools": [
+      {
+        "name": "list_events",
+        "title": "List events",
+        "description": "List upcoming TRoGKC events (services, meetings, outreaches) visible to the signed-in member.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "from": {
+              "description": "ISO date (YYYY-MM-DD) to list events from. Defaults to today.",
+              "type": "string"
+            },
+            "limit": {
+              "description": "Maximum events to return (default 25).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_process_orders",
+        "title": "List process orders",
+        "description": "List event Process Orders with their status and readiness, optionally filtered by status.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "status": {
+              "description": "Filter by status, e.g. RUNNING, READY, OVERDUE, CLOSED.",
+              "type": "string"
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_process_order",
+        "title": "Get process order",
+        "description": "Get one Process Order by PO number, including its ministry activities and open exceptions.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "po_number": {
+              "type": "string",
+              "minLength": 1,
+              "description": "e.g. TROG-PO-2026-SUN-0001"
+            }
+          },
+          "required": [
+            "po_number"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "update_activity_status",
+        "title": "Update ministry activity status",
+        "description": "Update the status of a single Process Order ministry activity and record it in the audit trail.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "activity_id": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The activity id returned by get_process_order."
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "NOT_STARTED",
+                "READY",
+                "IN_PROGRESS",
+                "COMPLETED",
+                "BLOCKED",
+                "OVERDUE",
+                "WAIVED",
+                "CANCELLED"
+              ]
+            },
+            "notes": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "activity_id",
+            "status"
+          ]
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}

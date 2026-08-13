@@ -8516,6 +8516,540 @@ export type Database = {
           },
         ]
       }
+      process_order_activities: {
+        Row: {
+          activity_code: string | null
+          approval_required: boolean
+          completed_at: string | null
+          completed_by: string | null
+          completion_pct: number
+          created_at: string
+          criticality: string
+          department_slug: string | null
+          depends_on: string | null
+          description: string | null
+          due_at: string | null
+          evidence_required: boolean
+          exception_note: string | null
+          id: string
+          name: string
+          notes: string | null
+          priority: string
+          process_order_id: string
+          required_resource: string | null
+          responsible_id: string | null
+          sort_order: number
+          starts_at: string | null
+          status: string
+          supporting_team: string | null
+          updated_at: string
+        }
+        Insert: {
+          activity_code?: string | null
+          approval_required?: boolean
+          completed_at?: string | null
+          completed_by?: string | null
+          completion_pct?: number
+          created_at?: string
+          criticality?: string
+          department_slug?: string | null
+          depends_on?: string | null
+          description?: string | null
+          due_at?: string | null
+          evidence_required?: boolean
+          exception_note?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          priority?: string
+          process_order_id: string
+          required_resource?: string | null
+          responsible_id?: string | null
+          sort_order?: number
+          starts_at?: string | null
+          status?: string
+          supporting_team?: string | null
+          updated_at?: string
+        }
+        Update: {
+          activity_code?: string | null
+          approval_required?: boolean
+          completed_at?: string | null
+          completed_by?: string | null
+          completion_pct?: number
+          created_at?: string
+          criticality?: string
+          department_slug?: string | null
+          depends_on?: string | null
+          description?: string | null
+          due_at?: string | null
+          evidence_required?: boolean
+          exception_note?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          priority?: string
+          process_order_id?: string
+          required_resource?: string | null
+          responsible_id?: string | null
+          sort_order?: number
+          starts_at?: string | null
+          status?: string
+          supporting_team?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "process_order_activities_depends_on_fkey"
+            columns: ["depends_on"]
+            isOneToOne: false
+            referencedRelation: "process_order_activities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "process_order_activities_process_order_id_fkey"
+            columns: ["process_order_id"]
+            isOneToOne: false
+            referencedRelation: "process_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      process_order_audit: {
+        Row: {
+          action: string
+          actor_id: string | null
+          actor_name: string | null
+          comments: string | null
+          created_at: string
+          entity: string | null
+          entity_id: string | null
+          id: string
+          new_status: string | null
+          previous_status: string | null
+          process_order_id: string
+          reason: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          actor_name?: string | null
+          comments?: string | null
+          created_at?: string
+          entity?: string | null
+          entity_id?: string | null
+          id?: string
+          new_status?: string | null
+          previous_status?: string | null
+          process_order_id: string
+          reason?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          actor_name?: string | null
+          comments?: string | null
+          created_at?: string
+          entity?: string | null
+          entity_id?: string | null
+          id?: string
+          new_status?: string | null
+          previous_status?: string | null
+          process_order_id?: string
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "process_order_audit_process_order_id_fkey"
+            columns: ["process_order_id"]
+            isOneToOne: false
+            referencedRelation: "process_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      process_order_closure_checks: {
+        Row: {
+          category: string
+          checked_at: string | null
+          checked_by: string | null
+          created_at: string
+          id: string
+          is_done: boolean
+          label: string
+          notes: string | null
+          process_order_id: string
+          sort_order: number
+        }
+        Insert: {
+          category: string
+          checked_at?: string | null
+          checked_by?: string | null
+          created_at?: string
+          id?: string
+          is_done?: boolean
+          label: string
+          notes?: string | null
+          process_order_id: string
+          sort_order?: number
+        }
+        Update: {
+          category?: string
+          checked_at?: string | null
+          checked_by?: string | null
+          created_at?: string
+          id?: string
+          is_done?: boolean
+          label?: string
+          notes?: string | null
+          process_order_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "process_order_closure_checks_process_order_id_fkey"
+            columns: ["process_order_id"]
+            isOneToOne: false
+            referencedRelation: "process_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      process_order_departments: {
+        Row: {
+          created_at: string
+          department_slug: string
+          id: string
+          lead_id: string | null
+          process_order_id: string
+          readiness_pct: number
+          status: string
+          updated_at: string
+          workstream_code: string | null
+        }
+        Insert: {
+          created_at?: string
+          department_slug: string
+          id?: string
+          lead_id?: string | null
+          process_order_id: string
+          readiness_pct?: number
+          status?: string
+          updated_at?: string
+          workstream_code?: string | null
+        }
+        Update: {
+          created_at?: string
+          department_slug?: string
+          id?: string
+          lead_id?: string | null
+          process_order_id?: string
+          readiness_pct?: number
+          status?: string
+          updated_at?: string
+          workstream_code?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "process_order_departments_process_order_id_fkey"
+            columns: ["process_order_id"]
+            isOneToOne: false
+            referencedRelation: "process_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      process_order_documents: {
+        Row: {
+          created_at: string
+          doc_type: string | null
+          file_name: string | null
+          file_url: string
+          id: string
+          process_order_id: string
+          title: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          doc_type?: string | null
+          file_name?: string | null
+          file_url: string
+          id?: string
+          process_order_id: string
+          title: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          doc_type?: string | null
+          file_name?: string | null
+          file_url?: string
+          id?: string
+          process_order_id?: string
+          title?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "process_order_documents_process_order_id_fkey"
+            columns: ["process_order_id"]
+            isOneToOne: false
+            referencedRelation: "process_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      process_order_exceptions: {
+        Row: {
+          activity_id: string | null
+          created_at: string
+          department_slug: string | null
+          description: string
+          escalated_to: string | null
+          id: string
+          immediate_action: string | null
+          impact: string | null
+          process_order_id: string
+          raised_by: string | null
+          resolution: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          responsible_id: string | null
+          severity: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          activity_id?: string | null
+          created_at?: string
+          department_slug?: string | null
+          description: string
+          escalated_to?: string | null
+          id?: string
+          immediate_action?: string | null
+          impact?: string | null
+          process_order_id: string
+          raised_by?: string | null
+          resolution?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          responsible_id?: string | null
+          severity?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          activity_id?: string | null
+          created_at?: string
+          department_slug?: string | null
+          description?: string
+          escalated_to?: string | null
+          id?: string
+          immediate_action?: string | null
+          impact?: string | null
+          process_order_id?: string
+          raised_by?: string | null
+          resolution?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          responsible_id?: string | null
+          severity?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "process_order_exceptions_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "process_order_activities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "process_order_exceptions_process_order_id_fkey"
+            columns: ["process_order_id"]
+            isOneToOne: false
+            referencedRelation: "process_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      process_order_template_activities: {
+        Row: {
+          criticality: string
+          department_slug: string
+          id: string
+          name: string
+          offset_hours: number
+          sort_order: number
+          template_id: string
+        }
+        Insert: {
+          criticality?: string
+          department_slug: string
+          id?: string
+          name: string
+          offset_hours?: number
+          sort_order?: number
+          template_id: string
+        }
+        Update: {
+          criticality?: string
+          department_slug?: string
+          id?: string
+          name?: string
+          offset_hours?: number
+          sort_order?: number
+          template_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "process_order_template_activities_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "process_order_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      process_order_templates: {
+        Row: {
+          code: string
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          po_type: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          po_type?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          po_type?: string
+        }
+        Relationships: []
+      }
+      process_orders: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          associate_pastor_id: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          closed_at: string | null
+          closed_by: string | null
+          closure_notes: string | null
+          coordinator_id: string | null
+          created_at: string
+          created_by: string | null
+          ends_at: string | null
+          event_id: string
+          expected_attendance: number | null
+          id: string
+          lead_pastor_id: string | null
+          owner_id: string | null
+          po_number: string | null
+          po_type: string
+          preacher: string | null
+          priority: string
+          readiness_pct: number
+          released_at: string | null
+          released_by: string | null
+          running_at: string | null
+          starts_at: string | null
+          status: string
+          theme: string | null
+          title: string
+          updated_at: string
+          venue: string | null
+          worship_leader: string | null
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          associate_pastor_id?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          closed_at?: string | null
+          closed_by?: string | null
+          closure_notes?: string | null
+          coordinator_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          ends_at?: string | null
+          event_id: string
+          expected_attendance?: number | null
+          id?: string
+          lead_pastor_id?: string | null
+          owner_id?: string | null
+          po_number?: string | null
+          po_type?: string
+          preacher?: string | null
+          priority?: string
+          readiness_pct?: number
+          released_at?: string | null
+          released_by?: string | null
+          running_at?: string | null
+          starts_at?: string | null
+          status?: string
+          theme?: string | null
+          title: string
+          updated_at?: string
+          venue?: string | null
+          worship_leader?: string | null
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          associate_pastor_id?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          closed_at?: string | null
+          closed_by?: string | null
+          closure_notes?: string | null
+          coordinator_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          ends_at?: string | null
+          event_id?: string
+          expected_attendance?: number | null
+          id?: string
+          lead_pastor_id?: string | null
+          owner_id?: string | null
+          po_number?: string | null
+          po_type?: string
+          preacher?: string | null
+          priority?: string
+          readiness_pct?: number
+          released_at?: string | null
+          released_by?: string | null
+          running_at?: string | null
+          starts_at?: string | null
+          status?: string
+          theme?: string | null
+          title?: string
+          updated_at?: string
+          venue?: string | null
+          worship_leader?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "process_orders_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           approval_status: Database["public"]["Enums"]["approval_status"]
