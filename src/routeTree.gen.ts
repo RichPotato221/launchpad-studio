@@ -38,6 +38,7 @@ import { Route as AuthenticatedMessagesUserIdRouteImport } from './routes/_authe
 import { Route as AuthenticatedMembersIdRouteImport } from './routes/_authenticated/members.$id'
 import { Route as AuthenticatedDepartmentsSlugRouteImport } from './routes/_authenticated/departments.$slug'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as ApiPublicHooksSendAnnouncementEmailsRouteImport } from './routes/api/public/hooks/send-announcement-emails'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -192,6 +193,11 @@ const Char91DotmcpChar93InvokeToolToolRoute =
     path: '/.mcp/invoke-tool/$tool',
     getParentRoute: () => rootRouteImport,
   } as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicHooksSendAnnouncementEmailsRoute =
   ApiPublicHooksSendAnnouncementEmailsRouteImport.update({
     id: '/api/public/hooks/send-announcement-emails',
@@ -223,6 +229,7 @@ export interface FileRoutesByFullPath {
   '/senior-pastor-cockpit': typeof AuthenticatedSeniorPastorCockpitRoute
   '/tasks': typeof AuthenticatedTasksRoute
   '/vault': typeof AuthenticatedVaultRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/departments/$slug': typeof AuthenticatedDepartmentsSlugRoute
   '/members/$id': typeof AuthenticatedMembersIdRoute
@@ -254,6 +261,7 @@ export interface FileRoutesByTo {
   '/senior-pastor-cockpit': typeof AuthenticatedSeniorPastorCockpitRoute
   '/tasks': typeof AuthenticatedTasksRoute
   '/vault': typeof AuthenticatedVaultRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/departments/$slug': typeof AuthenticatedDepartmentsSlugRoute
   '/members/$id': typeof AuthenticatedMembersIdRoute
@@ -287,6 +295,7 @@ export interface FileRoutesById {
   '/_authenticated/senior-pastor-cockpit': typeof AuthenticatedSeniorPastorCockpitRoute
   '/_authenticated/tasks': typeof AuthenticatedTasksRoute
   '/_authenticated/vault': typeof AuthenticatedVaultRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/departments/$slug': typeof AuthenticatedDepartmentsSlugRoute
   '/_authenticated/members/$id': typeof AuthenticatedMembersIdRoute
@@ -320,6 +329,7 @@ export interface FileRouteTypes {
     | '/senior-pastor-cockpit'
     | '/tasks'
     | '/vault'
+    | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/departments/$slug'
     | '/members/$id'
@@ -351,6 +361,7 @@ export interface FileRouteTypes {
     | '/senior-pastor-cockpit'
     | '/tasks'
     | '/vault'
+    | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/departments/$slug'
     | '/members/$id'
@@ -383,6 +394,7 @@ export interface FileRouteTypes {
     | '/_authenticated/senior-pastor-cockpit'
     | '/_authenticated/tasks'
     | '/_authenticated/vault'
+    | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/departments/$slug'
     | '/_authenticated/members/$id'
@@ -399,6 +411,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicCalendarDoticsRoute: typeof ApiPublicCalendarDoticsRoute
   ApiPublicHooksSendAnnouncementEmailsRoute: typeof ApiPublicHooksSendAnnouncementEmailsRoute
@@ -609,6 +622,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/send-announcement-emails': {
       id: '/api/public/hooks/send-announcement-emails'
       path: '/api/public/hooks/send-announcement-emails'
@@ -700,6 +720,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicCalendarDoticsRoute: ApiPublicCalendarDoticsRoute,
   ApiPublicHooksSendAnnouncementEmailsRoute:
