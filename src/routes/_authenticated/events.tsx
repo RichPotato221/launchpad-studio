@@ -31,6 +31,11 @@ const ROSTER_STATUSES = ["invited", "confirmed", "declined", "tentative"] as con
 
 function EventsPage() {
   const scope = useBranchScope();
+  const role = useCurrentRole();
+  const canManage = (role.data?.roles ?? []).some((r) =>
+    ["senior_apostle", "chairperson", "secretary", "lead_pastor", "associate_pastor"].includes(r),
+  );
+
   const [events, setEvents] = useState<any[]>([]);
   const [rosters, setRosters] = useState<Record<string, any[]>>({});
   const [depts, setDepts] = useState<any[]>([]);
@@ -102,7 +107,15 @@ function EventsPage() {
           </p>
         </div>
 
+        <Tabs defaultValue="calendar">
+        <TabsList>
+          <TabsTrigger value="calendar">Event calendar</TabsTrigger>
+          <TabsTrigger value="process-orders">Process orders</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="calendar">
         <Card className="p-6">
+
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div className="min-w-0">
               <p className="text-xs uppercase tracking-widest text-muted-foreground">Subscribe to calendar</p>
