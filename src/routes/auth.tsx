@@ -40,6 +40,14 @@ const BRANCHES = [
   { value: "joburg_south", label: "Joburg South" },
 ] as const;
 
+/** Only same-origin relative paths may be used as a post-sign-in destination. */
+function safeNextPath(): string | null {
+  if (typeof window === "undefined") return null;
+  const raw = new URLSearchParams(window.location.search).get("next");
+  if (!raw || !raw.startsWith("/") || raw.startsWith("//")) return null;
+  return raw;
+}
+
 function AuthPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -52,10 +60,20 @@ function AuthPage() {
   const [pendingMsg, setPendingMsg] = useState(false);
   const depts = useQuery({ queryKey: ["departments"], queryFn: fetchDepartments });
 
+  const goAfterAuth = () => {
+    const next = safeNextPath();
+    if (next) {
+      window.location.replace(next);
+      return;
+    }
+    navigate({ to: "/home", replace: true });
+  };
+
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
-      if (data.user) navigate({ to: "/home", replace: true });
+      if (data.user) goAfterAuth();
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate]);
 
   const signIn = async (e: React.FormEvent) => {
@@ -69,13 +87,14 @@ function AuthPage() {
         : error.message;
       return toast.error(msg);
     }
-    navigate({ to: "/home", replace: true });
+    goAfterAuth();
   };
 
   const signInWithGoogle = async () => {
     setLoading(true);
+    const next = safeNextPath();
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+      redirect_uri: next ? `${window.location.origin}${next}` : window.location.origin,
       extraParams: { prompt: "select_account" },
     });
     setLoading(false);
@@ -84,8 +103,9 @@ function AuthPage() {
       const message = result.error instanceof Error ? result.error.message : String(result.error);
       return toast.error(message || "Google sign-in could not start.");
     }
-    navigate({ to: "/home", replace: true });
+    goAfterAuth();
   };
+
 
   const signUp = async (e: React.FormEvent) => {
     e.preventDefault();
