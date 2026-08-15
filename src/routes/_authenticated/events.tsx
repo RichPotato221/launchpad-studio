@@ -7,8 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { useBranchScope, filterByBranch } from "@/lib/useBranchScope";
+import { useCurrentRole } from "@/lib/useCurrentRole";
+import { ProcessOrdersModule } from "@/components/events/ProcessOrdersModule";
 
 import { Copy } from "lucide-react";
 
@@ -16,6 +19,7 @@ export const Route = createFileRoute("/_authenticated/events")({
   head: () => ({ meta: [{ title: "Events & Roster — TRoGKC Portal" }] }),
   component: EventsPage,
 });
+
 
 const TYPES = ["service", "rehearsal", "meeting", "outreach", "training", "youth", "childrens", "other"] as const;
 const BRANCHES = [
