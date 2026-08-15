@@ -80,20 +80,31 @@ function EventsPage() {
   const create = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userId) return;
-    const { error } = await supabase.from("events").insert({
-      title: form.title,
-      description: form.description || null,
-      event_type: form.event_type,
-      event_date: form.event_date,
-      start_time: form.start_time || null,
-      end_time: form.end_time || null,
-      location: form.location || null,
-      branch: (form.branch || null) as any,
-      department_slug: form.department_slug || null,
-      created_by: userId,
-    });
+    const { data: inserted, error } = await supabase
+      .from("events")
+      .insert({
+        title: form.title,
+        description: form.description || null,
+        event_type: form.event_type,
+        event_date: form.event_date,
+        start_time: form.start_time || null,
+        end_time: form.end_time || null,
+        location: form.location || null,
+        branch: (form.branch || null) as any,
+        department_slug: form.department_slug || null,
+        created_by: userId,
+      })
+      .select("id")
+      .single();
     if (error) return toast.error(error.message);
-    toast.success("Event scheduled");
+    toast.success("Event scheduled — calendar invites are being sent");
+    if (inserted?.id) {
+      sendEventInvites({ data: { eventId: inserted.id, action: "create" } })
+        .then((r: any) => {
+          if (r?.sent) toast.success(`Calendar invite sent to ${r.sent} member${r.sent === 1 ? "" : "s"}`);
+        })
+        .catch((err) => console.error("Calendar invite failed", err));
+    }
     setForm({ title: "", description: "", event_type: "meeting", event_date: "", start_time: "", end_time: "", location: "", branch: "", department_slug: "" });
     load();
   };
