@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { runAgentTurn, type TableSpec } from "@/lib/aiAgent";
 
 type Ask = { question: string; team: string };
 
@@ -21,7 +22,7 @@ const TEAM_FOCUS: Record<string, string> = {
     "Track gospel contacts, salvations and discipleship handoffs, flag overdue follow-ups, plan campaigns with checklists, budgets and prayer points, draft evangelism scripts and follow-up messages, analyse community reach and volunteer participation, and produce Kingdom impact reports.",
 };
 
-/** Data-grounded AI assistant for the ministry team workspaces. */
+/** Data-grounded, tool-calling AI assistant for the ministry team workspaces. */
 export const askMinistryTeamAssistant = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: Ask) => {
@@ -29,9 +30,8 @@ export const askMinistryTeamAssistant = createServerFn({ method: "POST" })
     const team = Object.keys(TEAM_LABEL).includes(input?.team) ? input.team : "youth";
     return { question: input.question.trim().slice(0, 800), team };
   })
-
   .handler(async ({ data, context }) => {
-    const { supabase } = context;
+    const { supabase, userId } = context;
     const apiKey = process.env["LOVABLE_API_KEY"];
     if (!apiKey) throw new Error("AI is not configured for this workspace.");
 
@@ -72,35 +72,230 @@ export const askMinistryTeamAssistant = createServerFn({ method: "POST" })
       training: training.data ?? [],
     };
 
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "openai/gpt-5.6-sol",
-        messages: [
-          {
-            role: "system",
-            content:
-              `You are the TRoGKC ${TEAM_LABEL[t]} Assistant inside a Christian church management system. ` +
-              "Ground every answer strictly in the JSON ministry snapshot supplied. Help with: discipleship pathway progress " +
-              "and next steps, members needing follow-up, mentorship matching and overdue mentoring sessions, leadership " +
-              "pipeline gaps and succession readiness, event and retreat planning with checklists and budgets, outreach " +
-              "planning and impact summaries, volunteer shortages and burnout risk, training and certification gaps, KPI " +
-              "commentary, monthly report drafts, meeting agendas and Bible study or devotional outlines aligned to " +
-              (TEAM_FOCUS[t] ? `Team-specific focus: ${TEAM_FOCUS[t]} ` : "") +
-              "scripture. Never invent people, numbers or events that are not in the snapshot. Treat anything marked " +
+    const scope = { column: "team", value: t };
 
-              "confidential or pastoral as protected. Reply with short headings and bullets in a pastoral but practical tone.",
-          },
-          { role: "user", content: `Ministry snapshot:\n${JSON.stringify(snapshot)}\n\nQuestion: ${data.question}` },
-        ],
-      }),
+    const specs: TableSpec[] = [
+      {
+        entity: "member",
+        table: "mt_members",
+        describe: `${TEAM_LABEL[t]} member profile`,
+        scope,
+        columns: {
+          full_name: { kind: "string", requiredOnCreate: true },
+          photo_url: { kind: "string" },
+          gender: { kind: "string" },
+          date_of_birth: { kind: "date" },
+          phone: { kind: "string" },
+          email: { kind: "string" },
+          address: { kind: "string" },
+          marital_status: { kind: "string" },
+          occupation: { kind: "string" },
+          school: { kind: "string" },
+          branch: { kind: "string", enum: ["twatwa", "joburg_north", "joburg_south"] },
+          guardian_name: { kind: "string" },
+          guardian_phone: { kind: "string" },
+          emergency_contact: { kind: "string" },
+          emergency_phone: { kind: "string" },
+          small_group_id: { kind: "uuid" },
+          mentor_name: { kind: "string" },
+          ministry_involvement: { kind: "string" },
+          spiritual_gifts: { kind: "string" },
+          talents: { kind: "string" },
+          baptism_status: { kind: "string" },
+          salvation_date: { kind: "date" },
+          membership_status: { kind: "string" },
+          stage: { kind: "string" },
+          leadership_level: { kind: "string" },
+          safeguarding_status: { kind: "string" },
+          training_completed: { kind: "string" },
+          notes: { kind: "string", description: "Pastoral note — handle with care." },
+        },
+      },
+      {
+        entity: "small_group",
+        table: "mt_groups",
+        describe: `${TEAM_LABEL[t]} small/life group`,
+        scope,
+        columns: {
+          name: { kind: "string", requiredOnCreate: true },
+          leader_name: { kind: "string" },
+          assistant_name: { kind: "string" },
+          mentor_name: { kind: "string" },
+          venue: { kind: "string" },
+          meeting_day: { kind: "string" },
+          meeting_time: { kind: "string" },
+          capacity: { kind: "number" },
+          focus: { kind: "string" },
+          notes: { kind: "string" },
+          status: { kind: "string" },
+        },
+      },
+      {
+        entity: "mentorship",
+        table: "mt_mentorships",
+        describe: `${TEAM_LABEL[t]} mentorship pairing`,
+        scope,
+        columns: {
+          mentor_name: { kind: "string", requiredOnCreate: true },
+          mentee_name: { kind: "string", requiredOnCreate: true },
+          member_id: { kind: "uuid" },
+          goals: { kind: "string" },
+          cadence: { kind: "string" },
+          last_session_date: { kind: "date" },
+          next_session_date: { kind: "date" },
+          sessions_completed: { kind: "number" },
+          progress_pct: { kind: "number" },
+          prayer_notes: { kind: "string" },
+          progress_notes: { kind: "string" },
+          status: { kind: "string" },
+        },
+      },
+      {
+        entity: "event",
+        table: "mt_events",
+        describe: `${TEAM_LABEL[t]} event/retreat/gathering`,
+        scope,
+        columns: {
+          title: { kind: "string", requiredOnCreate: true },
+          event_type: { kind: "string" },
+          event_date: { kind: "date", requiredOnCreate: true },
+          start_time: { kind: "string" },
+          venue: { kind: "string" },
+          speaker: { kind: "string" },
+          theme: { kind: "string" },
+          capacity: { kind: "number" },
+          budget: { kind: "number" },
+          actual_cost: { kind: "number" },
+          resources: { kind: "string" },
+          checklist: { kind: "string" },
+          risk_notes: { kind: "string" },
+          registrations: { kind: "number" },
+          attendance_count: { kind: "number" },
+          feedback: { kind: "string" },
+          follow_up: { kind: "string" },
+          status: { kind: "string" },
+        },
+      },
+      {
+        entity: "attendance_record",
+        table: "mt_attendance",
+        describe: `${TEAM_LABEL[t]} attendance record`,
+        scope,
+        columns: {
+          event_id: { kind: "uuid" },
+          member_id: { kind: "uuid" },
+          member_name: { kind: "string" },
+          attended_on: { kind: "date" },
+          present: { kind: "boolean" },
+          context: { kind: "string" },
+          notes: { kind: "string" },
+        },
+      },
+      {
+        entity: "outreach_activity",
+        table: "mt_outreach",
+        describe: `${TEAM_LABEL[t]} outreach/evangelism activity`,
+        scope,
+        columns: {
+          title: { kind: "string", requiredOnCreate: true },
+          category: { kind: "string" },
+          location: { kind: "string" },
+          leader_name: { kind: "string" },
+          start_date: { kind: "date" },
+          end_date: { kind: "date" },
+          budget: { kind: "number" },
+          volunteers: { kind: "number" },
+          volunteer_hours: { kind: "number" },
+          people_reached: { kind: "number" },
+          salvations: { kind: "number" },
+          follow_ups: { kind: "number" },
+          beneficiaries: { kind: "string" },
+          impact: { kind: "string" },
+          status: { kind: "string" },
+        },
+      },
+      {
+        entity: "prayer_request",
+        table: "mt_prayer",
+        describe: `${TEAM_LABEL[t]} prayer request`,
+        scope,
+        columns: {
+          requester_name: { kind: "string" },
+          category: { kind: "string" },
+          request: { kind: "string", requiredOnCreate: true },
+          confidential: { kind: "boolean" },
+          assigned_to: { kind: "string" },
+          follow_up_date: { kind: "date" },
+          answered_note: { kind: "string" },
+          status: { kind: "string" },
+        },
+      },
+      {
+        entity: "task",
+        table: "mt_tasks",
+        describe: `${TEAM_LABEL[t]} task/action item`,
+        scope,
+        columns: {
+          title: { kind: "string", requiredOnCreate: true },
+          description: { kind: "string" },
+          assignee_name: { kind: "string" },
+          priority: { kind: "string" },
+          due_date: { kind: "date" },
+          progress_pct: { kind: "number" },
+          status: { kind: "string" },
+        },
+      },
+      {
+        entity: "risk",
+        table: "mt_risks",
+        describe: `identified ${TEAM_LABEL[t]} risk`,
+        scope,
+        columns: {
+          title: { kind: "string", requiredOnCreate: true },
+          category: { kind: "string" },
+          description: { kind: "string" },
+          likelihood: { kind: "number", description: "1–5" },
+          impact: { kind: "number", description: "1–5" },
+          owner_id: { kind: "uuid" },
+          owner_name: { kind: "string" },
+          mitigation: { kind: "string" },
+          review_date: { kind: "date" },
+          status: { kind: "string", enum: ["open", "mitigated", "closed"] },
+        },
+      },
+      {
+        entity: "training_record",
+        table: "mt_training_records",
+        describe: "team member's training/course completion record",
+        scope,
+        columns: {
+          course_id: { kind: "uuid", requiredOnCreate: true },
+          member_name: { kind: "string" },
+          progress_pct: { kind: "number" },
+          score: { kind: "number" },
+          certificate_url: { kind: "string" },
+          completed_at: { kind: "date" },
+        },
+      },
+    ];
+
+    const { answer, actions } = await runAgentTurn({
+      apiKey,
+      systemPrompt:
+        `You are the TRoGKC ${TEAM_LABEL[t]} Assistant inside a Christian church management system. ` +
+        "Ground every answer strictly in the JSON ministry snapshot supplied. Help with: discipleship pathway progress " +
+        "and next steps, members needing follow-up, mentorship matching and overdue mentoring sessions, leadership " +
+        "pipeline gaps and succession readiness, event and retreat planning with checklists and budgets, outreach " +
+        "planning and impact summaries, volunteer shortages and burnout risk, training and certification gaps, KPI " +
+        "commentary, monthly report drafts, meeting agendas and Bible study or devotional outlines aligned to " +
+        (TEAM_FOCUS[t] ? `Team-specific focus: ${TEAM_FOCUS[t]} ` : "") +
+        "scripture. Never invent people, numbers or events that are not in the snapshot. Treat anything marked " +
+        "confidential or pastoral as protected. Reply with short headings and bullets in a pastoral but practical tone.",
+      snapshot,
+      question: data.question,
+      specs,
+      ctx: { supabase: sb, userId, actorLabel: "ministry team assistant" },
     });
 
-    if (res.status === 429) throw new Error("The assistant is busy right now — please try again shortly.");
-    if (res.status === 402) throw new Error("AI credits are exhausted for this workspace.");
-    if (!res.ok) throw new Error(`Assistant failed [${res.status}]: ${await res.text()}`);
-
-    const json = (await res.json()) as any;
-    return { answer: json?.choices?.[0]?.message?.content ?? "No answer produced." };
+    return { answer, actions };
   });

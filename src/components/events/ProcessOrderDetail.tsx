@@ -128,7 +128,7 @@ export function ProcessOrderDetail({ poId, canManage, onBack, onChanged }: Props
     if (next === "RELEASED") Object.assign(patch, { released_at: stamp, released_by: u.user?.id });
     if (next === "RUNNING") patch.running_at = stamp;
     if (next === "CLOSED") Object.assign(patch, { closed_at: stamp, closed_by: u.user?.id });
-    const { error } = await supabase.from("process_orders").update(patch).eq("id", po.id);
+    const { error } = await supabase.from("process_orders").update(patch as never).eq("id", po.id);
     if (error) return toast.error(error.message);
     await logPoAudit({
       processOrderId: po.id,

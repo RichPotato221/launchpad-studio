@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Sparkles } from "lucide-react";
+import { CheckCircle2, Sparkles, XCircle } from "lucide-react";
 import { fmtDate } from "@/lib/finance";
 import { askTechnicalAssistant } from "@/lib/technicalAi.functions";
 
@@ -17,7 +17,9 @@ const PROMPTS = [
   "What spares and consumables should we reorder now?",
 ];
 
-type Turn = { question: string; answer: string; at: string };
+type AgentAction = { entity: string; action: string; ok: boolean; id?: string | number; error?: string };
+
+type Turn = { question: string; answer: string; at: string; actions: AgentAction[] };
 
 /** MODULE 13 — AI Technical Assistant grounded in live technical data. */
 export default function TechnicalAssistant() {
@@ -34,7 +36,7 @@ export default function TechnicalAssistant() {
     setQuestion("");
     try {
       const res = await ask({ data: { question: text } });
-      setTurns((t) => [...t, { question: text, answer: (res as any).answer, at: new Date().toISOString() }]);
+      setTurns((t) => [...t, { question: text, answer: (res as any).answer, actions: (res as any).actions ?? [], at: new Date().toISOString() }]);
     } catch (err: any) {
       toast.error(err?.message ?? "The assistant could not answer.");
       setQuestion(text);
@@ -72,6 +74,22 @@ export default function TechnicalAssistant() {
           <p className="text-xs uppercase tracking-widest text-muted-foreground">{fmtDate(t.at)}</p>
           <p className="mt-1 font-medium">{t.question}</p>
           <div className="mt-3 whitespace-pre-wrap text-sm leading-relaxed">{t.answer}</div>
+          {t.actions.length > 0 && (
+            <ul className="mt-3 space-y-1 border-t pt-3">
+              {t.actions.map((a, i) => (
+                <li key={i} className="flex items-center gap-2 text-xs">
+                  {a.ok ? (
+                    <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-600" />
+                  ) : (
+                    <XCircle className="h-3.5 w-3.5 shrink-0 text-destructive" />
+                  )}
+                  <span className="capitalize">{a.action}d</span> <span className="text-muted-foreground">{a.entity}</span>
+                  {a.id ? <span className="text-muted-foreground">#{String(a.id).slice(0, 8)}</span> : null}
+                  {!a.ok && a.error ? <span className="text-destructive">— {a.error}</span> : null}
+                </li>
+              ))}
+            </ul>
+          )}
         </Card>
       ))}
     </div>

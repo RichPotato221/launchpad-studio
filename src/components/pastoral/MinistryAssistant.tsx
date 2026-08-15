@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Sparkles } from "lucide-react";
+import { CheckCircle2, Sparkles, XCircle } from "lucide-react";
 import { fmtDate } from "@/lib/finance";
 import { askMinistryAssistant } from "@/lib/ministryAi.functions";
 
@@ -17,7 +17,9 @@ const PROMPTS = [
   "Where are the gaps in our succession pipeline?",
 ];
 
-type Turn = { question: string; answer: string; at: string };
+type AgentAction = { entity: string; action: string; ok: boolean; id?: string | number; error?: string };
+
+type Turn = { question: string; answer: string; at: string; actions: AgentAction[] };
 
 /** MODULE 17 — AI Ministry Assistant. */
 export default function MinistryAssistant() {
@@ -34,7 +36,7 @@ export default function MinistryAssistant() {
     setQuestion("");
     try {
       const res = await ask({ data: { question: text } });
-      setTurns((t) => [...t, { question: text, answer: res.answer, at: new Date().toISOString() }]);
+      setTurns((t) => [...t, { question: text, answer: res.answer, actions: (res as any).actions ?? [], at: new Date().toISOString() }]);
     } catch (err: any) {
       toast.error(err?.message ?? "The assistant could not answer.");
       setQuestion(text);
@@ -73,6 +75,22 @@ export default function MinistryAssistant() {
             </Card>
             <Card className="max-w-4xl p-5">
               <p className="whitespace-pre-wrap text-sm leading-relaxed">{t.answer}</p>
+              {t.actions.length > 0 && (
+                <ul className="mt-3 space-y-1 border-t pt-3">
+                  {t.actions.map((a, i) => (
+                    <li key={i} className="flex items-center gap-2 text-xs">
+                      {a.ok ? (
+                        <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-600" />
+                      ) : (
+                        <XCircle className="h-3.5 w-3.5 shrink-0 text-destructive" />
+                      )}
+                      <span className="capitalize">{a.action}d</span> <span className="text-muted-foreground">{a.entity}</span>
+                      {a.id ? <span className="text-muted-foreground">#{String(a.id).slice(0, 8)}</span> : null}
+                      {!a.ok && a.error ? <span className="text-destructive">— {a.error}</span> : null}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </Card>
           </div>
         ))}
