@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { useBranchScope, filterByBranch } from "@/lib/useBranchScope";
 import { useCurrentRole } from "@/lib/useCurrentRole";
 import { ProcessOrdersModule } from "@/components/events/ProcessOrdersModule";
+import { sendEventInvites } from "@/lib/eventInvites.functions";
 
 import { Copy } from "lucide-react";
 
