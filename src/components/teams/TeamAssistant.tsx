@@ -5,8 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { CheckCircle2, XCircle } from "lucide-react";
 import { askMinistryTeamAssistant } from "@/lib/ministryTeamAi.functions";
 import { TEAM_CONFIG, type TeamKey } from "@/lib/ministryTeams";
+
+type AgentAction = { entity: string; action: string; ok: boolean; id?: string | number; error?: string };
 
 const PROMPTS = [
   "Who needs pastoral follow-up this week and why?",
@@ -22,15 +25,18 @@ export default function TeamAssistant({ team }: { team: TeamKey }) {
   const ask = useServerFn(askMinistryTeamAssistant);
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
+  const [actions, setActions] = useState<AgentAction[]>([]);
   const [busy, setBusy] = useState(false);
 
   const run = async (q: string) => {
     if (!q.trim()) return;
     setBusy(true);
     setAnswer("");
+    setActions([]);
     try {
       const res = await ask({ data: { question: q, team } });
       setAnswer(res.answer);
+      setActions((res as any).actions ?? []);
     } catch (e: any) {
       toast.error(e?.message ?? "The assistant could not answer right now.");
     } finally {
@@ -63,6 +69,26 @@ export default function TeamAssistant({ team }: { team: TeamKey }) {
           {busy ? "Thinking…" : "Ask the assistant"}
         </Button>
       </Card>
+
+      {actions.length > 0 && (
+        <Card className="p-4">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">Changes made</p>
+          <ul className="mt-2 space-y-1">
+            {actions.map((a, i) => (
+              <li key={i} className="flex items-center gap-2 text-sm">
+                {a.ok ? (
+                  <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-600" />
+                ) : (
+                  <XCircle className="h-3.5 w-3.5 shrink-0 text-destructive" />
+                )}
+                <span className="capitalize">{a.action}d</span> <span className="text-muted-foreground">{a.entity}</span>
+                {a.id ? <span className="text-muted-foreground">#{String(a.id).slice(0, 8)}</span> : null}
+                {!a.ok && a.error ? <span className="text-destructive">— {a.error}</span> : null}
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
 
       {answer && (
         <Card className="p-5">

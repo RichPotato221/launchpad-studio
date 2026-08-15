@@ -1,9 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { runAgentTurn, type TableSpec } from "@/lib/aiAgent";
 
 type Ask = { question: string };
 
-/** AI Strategy Assistant for the Strategy Management Office (data-grounded). */
+/** AI Strategy Assistant for the Strategy Management Office (data-grounded, tool-calling). */
 export const askStrategyAssistant = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: Ask) => {
@@ -11,7 +12,7 @@ export const askStrategyAssistant = createServerFn({ method: "POST" })
     return { question: input.question.trim().slice(0, 800) };
   })
   .handler(async ({ data, context }) => {
-    const { supabase } = context;
+    const { supabase, userId } = context;
     const apiKey = process.env["LOVABLE_API_KEY"];
     if (!apiKey) throw new Error("AI is not configured for this workspace.");
 
@@ -42,31 +43,197 @@ export const askStrategyAssistant = createServerFn({ method: "POST" })
       department_requests: requests.data ?? [],
     };
 
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "openai/gpt-5.6-sol",
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are the TRoGKC Strategy Assistant, advising the Office of the Strategic Adviser & Planner of a Christian church. " +
-              "Ground every answer strictly in the JSON strategy snapshot supplied. Help with: vision completion tracking, strategic " +
-              "objectives and OKRs, project portfolio prioritisation and appraisal, balanced-scorecard analysis, resource allocation, " +
-              "risk mitigation, scenario thinking, and executive briefing notes for the Senior Pastors and Chairperson. Never invent " +
-              "numbers, projects or people that are not in the snapshot. Keep answers concise, structured with short headings and " +
-              "bullets, and always tie recommendations back to the church's vision and kingdom impact.",
-          },
-          { role: "user", content: `Strategy snapshot:\n${JSON.stringify(snapshot)}\n\nQuestion: ${data.question}` },
-        ],
-      }),
+    const specs: TableSpec[] = [
+      {
+        entity: "strategic_plan",
+        table: "smo_plans",
+        describe: "top-level strategic plan/vision cycle",
+        columns: {
+          title: { kind: "string", requiredOnCreate: true },
+          plan_type: { kind: "string" },
+          vision_statement: { kind: "string" },
+          mission_statement: { kind: "string" },
+          themes: { kind: "json" },
+          horizon_start: { kind: "date" },
+          horizon_end: { kind: "date" },
+          status: { kind: "string" },
+          progress_pct: { kind: "number" },
+          owner: { kind: "string" },
+        },
+      },
+      {
+        entity: "objective",
+        table: "smo_objectives",
+        describe: "strategic objective/OKR",
+        columns: {
+          plan_id: { kind: "uuid" },
+          title: { kind: "string", requiredOnCreate: true },
+          theme: { kind: "string" },
+          perspective: { kind: "string" },
+          description: { kind: "string" },
+          key_results: { kind: "json" },
+          owner: { kind: "string" },
+          department_slug: { kind: "string" },
+          branch: { kind: "string", enum: ["twatwa", "joburg_north", "joburg_south"] },
+          period: { kind: "string" },
+          start_date: { kind: "date" },
+          due_date: { kind: "date" },
+          budget: { kind: "number" },
+          progress_pct: { kind: "number" },
+          status: { kind: "string" },
+          dependencies: { kind: "string" },
+          risks: { kind: "string" },
+        },
+      },
+      {
+        entity: "strategic_project",
+        table: "smo_projects",
+        describe: "strategic portfolio project",
+        columns: {
+          objective_id: { kind: "uuid" },
+          name: { kind: "string", requiredOnCreate: true },
+          project_type: { kind: "string" },
+          scope: { kind: "string" },
+          business_case: { kind: "string" },
+          objectives: { kind: "string" },
+          department_slug: { kind: "string" },
+          branch: { kind: "string", enum: ["twatwa", "joburg_north", "joburg_south"] },
+          sponsor: { kind: "string" },
+          manager: { kind: "string" },
+          stakeholders: { kind: "string" },
+          budget_requested: { kind: "number" },
+          budget_approved: { kind: "number" },
+          spent: { kind: "number" },
+          funding_source: { kind: "string" },
+          start_date: { kind: "date" },
+          end_date: { kind: "date" },
+          progress_pct: { kind: "number" },
+          stage: { kind: "string" },
+          status: { kind: "string" },
+          risks: { kind: "string" },
+          approval_status: { kind: "string" },
+          photo_url: { kind: "string" },
+          document_url: { kind: "string" },
+        },
+      },
+      {
+        entity: "milestone",
+        table: "smo_milestones",
+        describe: "project milestone",
+        columns: {
+          project_id: { kind: "uuid", requiredOnCreate: true },
+          title: { kind: "string", requiredOnCreate: true },
+          due_date: { kind: "date" },
+          completed_on: { kind: "date" },
+          status: { kind: "string" },
+          deliverable: { kind: "string" },
+          owner: { kind: "string" },
+        },
+      },
+      {
+        entity: "strategic_kpi",
+        table: "smo_kpis",
+        describe: "balanced-scorecard strategic KPI",
+        columns: {
+          objective_id: { kind: "uuid" },
+          name: { kind: "string", requiredOnCreate: true },
+          kpi_group: { kind: "string" },
+          department_slug: { kind: "string" },
+          branch: { kind: "string", enum: ["twatwa", "joburg_north", "joburg_south"] },
+          period: { kind: "string" },
+          period_label: { kind: "string" },
+          target: { kind: "number" },
+          actual: { kind: "number" },
+          forecast: { kind: "number" },
+          unit: { kind: "string" },
+        },
+      },
+      {
+        entity: "executive_decision",
+        table: "smo_decisions",
+        describe: "executive/strategic decision record",
+        columns: {
+          title: { kind: "string", requiredOnCreate: true },
+          decision_type: { kind: "string" },
+          decision_date: { kind: "date" },
+          owner: { kind: "string" },
+          impact: { kind: "string" },
+          affected_departments: { kind: "string" },
+          action_items: { kind: "string" },
+          deadline: { kind: "date" },
+          vote_outcome: { kind: "string" },
+          implementation_status: { kind: "string" },
+          notes: { kind: "string" },
+        },
+      },
+      {
+        entity: "strategic_risk",
+        table: "smo_risks",
+        describe: "identified strategic risk",
+        columns: {
+          title: { kind: "string", requiredOnCreate: true },
+          category: { kind: "string" },
+          description: { kind: "string" },
+          likelihood: { kind: "number", description: "1–5" },
+          impact: { kind: "number", description: "1–5" },
+          mitigation: { kind: "string" },
+          owner: { kind: "string" },
+          review_date: { kind: "date" },
+          status: { kind: "string", enum: ["open", "mitigated", "closed"] },
+          escalation_level: { kind: "string", enum: ["department", "leadership", "senior_apostle"] },
+        },
+      },
+      {
+        entity: "innovation_idea",
+        table: "smo_ideas",
+        describe: "submitted innovation/improvement idea",
+        columns: {
+          title: { kind: "string", requiredOnCreate: true },
+          idea_type: { kind: "string" },
+          description: { kind: "string" },
+          submitted_by: { kind: "uuid" },
+          submitter_name: { kind: "string" },
+          department_slug: { kind: "string" },
+          branch: { kind: "string", enum: ["twatwa", "joburg_north", "joburg_south"] },
+          stage: { kind: "string" },
+          review_notes: { kind: "string" },
+        },
+      },
+      {
+        entity: "department_request",
+        table: "smo_requests",
+        describe: "department request routed to the Strategy office",
+        columns: {
+          title: { kind: "string", requiredOnCreate: true },
+          request_type: { kind: "string" },
+          description: { kind: "string" },
+          department_slug: { kind: "string" },
+          branch: { kind: "string", enum: ["twatwa", "joburg_north", "joburg_south"] },
+          amount: { kind: "number" },
+          requested_by: { kind: "uuid" },
+          requester_name: { kind: "string" },
+          route_to: { kind: "string" },
+          status: { kind: "string" },
+          decision_notes: { kind: "string" },
+        },
+      },
+      // department_kpis is read-only reference here — owned by each department's own assistant.
+    ];
+
+    const { answer, actions } = await runAgentTurn({
+      apiKey,
+      systemPrompt:
+        "You are the TRoGKC Strategy Assistant, advising the Office of the Strategic Adviser & Planner of a Christian church. " +
+        "Ground every answer strictly in the JSON strategy snapshot supplied. Help with: vision completion tracking, strategic " +
+        "objectives and OKRs, project portfolio prioritisation and appraisal, balanced-scorecard analysis, resource allocation, " +
+        "risk mitigation, scenario thinking, and executive briefing notes for the Senior Pastors and Chairperson. Never invent " +
+        "numbers, projects or people that are not in the snapshot. Keep answers concise, structured with short headings and " +
+        "bullets, and always tie recommendations back to the church's vision and kingdom impact.",
+      snapshot,
+      question: data.question,
+      specs,
+      ctx: { supabase: sb, userId, actorLabel: "strategy assistant" },
     });
 
-    if (res.status === 429) throw new Error("The AI assistant is rate limited right now. Please try again shortly.");
-    if (res.status === 402) throw new Error("AI credits are exhausted. Please top up the workspace to continue.");
-    if (!res.ok) throw new Error(`AI request failed [${res.status}]: ${await res.text()}`);
-
-    const json = await res.json();
-    return { answer: json.choices?.[0]?.message?.content ?? "No answer returned." };
+    return { answer, actions };
   });
