@@ -113,6 +113,22 @@ function MeetingList({
     qc.invalidateQueries({ queryKey: ["secretariat-cockpit"] });
   };
 
+  /** Secretariat / chairperson deletion of a scheduled meeting and its calendar entry. */
+  const remove = async (m: any) => {
+    const title = m.events?.title ?? "this meeting";
+    if (!window.confirm(`Delete “${title}”? The agenda, minutes and calendar entry will be removed.`)) return;
+    const { error } = await supabase.from("meetings").delete().eq("id", m.id);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    if (m.event_id) await supabase.from("events").delete().eq("id", m.event_id);
+    await logAudit("delete", "meeting", m.id, { title });
+    toast.success("Meeting deleted.");
+    qc.invalidateQueries({ queryKey: ["secretariat-meetings"] });
+    qc.invalidateQueries({ queryKey: ["secretariat-cockpit"] });
+  };
+
   const rows = meetings.data ?? [];
 
   return (
