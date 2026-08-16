@@ -288,7 +288,10 @@ export async function runAgentTurn(opts: {
       method: "POST",
       headers: { Authorization: `Bearer ${opts.apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "openai/gpt-5.6-sol",
+        // gemini-2.5-flash supports function/tool calling on the gateway; the
+        // previous gpt-5.6-sol model rejects tool definitions with a 400
+        // ("Function tools with reasoning_effort are not supported").
+        model: "google/gemini-2.5-flash",
         messages,
         tools: tools.length ? tools : undefined,
       }),
