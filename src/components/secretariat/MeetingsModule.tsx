@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { ArrowLeft, Download, Plus, Printer } from "lucide-react";
+import { ArrowLeft, Download, Plus, Printer, Trash2 } from "lucide-react";
 import {
   MEETING_TYPES,
   BRANCHES,
@@ -109,6 +109,22 @@ function MeetingList({
     toast.success("Meeting created — calendar, agenda and register are live.");
     setCreating(false);
     setForm({ title: "", meeting_type: "Leadership Meeting", event_date: "", start_time: "", end_time: "", location: "", meeting_link: "", branch: "", description: "" });
+    qc.invalidateQueries({ queryKey: ["secretariat-meetings"] });
+    qc.invalidateQueries({ queryKey: ["secretariat-cockpit"] });
+  };
+
+  /** Secretariat / chairperson deletion of a scheduled meeting and its calendar entry. */
+  const remove = async (m: any) => {
+    const title = m.events?.title ?? "this meeting";
+    if (!window.confirm(`Delete “${title}”? The agenda, minutes and calendar entry will be removed.`)) return;
+    const { error } = await supabase.from("meetings").delete().eq("id", m.id);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    if (m.event_id) await supabase.from("events").delete().eq("id", m.event_id);
+    await logAudit("delete", "meeting", m.id, { title });
+    toast.success("Meeting deleted.");
     qc.invalidateQueries({ queryKey: ["secretariat-meetings"] });
     qc.invalidateQueries({ queryKey: ["secretariat-cockpit"] });
   };
@@ -229,6 +245,16 @@ function MeetingList({
             <div className="flex items-center gap-2">
               <Badge variant="outline" className="capitalize">{m.status}</Badge>
               <Button size="sm" variant="secondary" onClick={() => onOpen(m.id)}>Open workspace</Button>
+              {canManage && (
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="text-destructive hover:text-destructive"
+                  onClick={() => remove(m)}
+                >
+                  <Trash2 className="mr-1.5 h-4 w-4" /> Delete
+                </Button>
+              )}
             </div>
           </Card>
         ))}
