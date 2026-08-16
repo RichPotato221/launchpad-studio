@@ -229,6 +229,16 @@ function MeetingList({
             <div className="flex items-center gap-2">
               <Badge variant="outline" className="capitalize">{m.status}</Badge>
               <Button size="sm" variant="secondary" onClick={() => onOpen(m.id)}>Open workspace</Button>
+              {canManage && (
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="text-destructive hover:text-destructive"
+                  onClick={() => remove(m)}
+                >
+                  <Trash2 className="mr-1.5 h-4 w-4" /> Delete
+                </Button>
+              )}
             </div>
           </Card>
         ))}
