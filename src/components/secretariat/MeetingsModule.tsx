@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { ArrowLeft, Download, Plus, Printer } from "lucide-react";
+import { ArrowLeft, Download, Plus, Printer, Trash2 } from "lucide-react";
 import {
   MEETING_TYPES,
   BRANCHES,
