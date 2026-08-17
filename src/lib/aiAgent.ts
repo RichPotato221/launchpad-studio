@@ -251,11 +251,43 @@ export async function executeTool(
 
 export type AgentTurnResult = { answer: string; actions: AgentAction[] };
 
+/** A prior turn of the conversation, replayed so the agent keeps context. */
+export type AgentMessage = { role: "user" | "assistant"; content: string };
+
 /**
- * Run a full tool-calling turn: send the snapshot + question + tools to the
- * gateway, execute any tool calls the model makes against Supabase, feed the
- * results back, and repeat until the model gives a plain-text final answer
- * (or the iteration cap is hit).
+ * Trim and normalise conversation history coming from the browser: only the
+ * last turns are replayed, each message is capped, and anything malformed is
+ * dropped. This is the short-term memory of the agent — enough for pronouns
+ * and follow-ups ("now do that for Finance") without blowing the context.
+ */
+export function sanitizeHistory(history: unknown, maxTurns = 12): AgentMessage[] {
+  if (!Array.isArray(history)) return [];
+  return history
+    .filter((m: any) => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string" && m.content.trim())
+    .slice(-maxTurns)
+    .map((m: any) => ({ role: m.role as "user" | "assistant", content: String(m.content).slice(0, 4000) }));
+}
+
+/** Behavioural contract shared by every department agent. */
+const AGENT_CONTRACT = `
+Operating contract — behave as an intelligent collaborator, not a form-filling chatbot:
+1. Understand intent first (question, research, planning, analysis, writing, workflow execution, follow-up, clarification), then decide whether to answer directly, ask ONE clarifying question, or use tools.
+2. Use the conversation so far to resolve references ("that", "the same for next month", "now from Finance's view").
+3. Do not ask unnecessary questions. Make sensible defaults and state important assumptions in one line. Only ask when missing information would materially change the result.
+4. For complex requests, work through the steps internally and present the result — never expose internal reasoning or chain-of-thought.
+5. Match the shape of the answer to the request: short answers for simple questions; headings, tables and bullets for complex ones; executive summary + analysis + risks + recommendations for business questions; data models and implementation detail for technical ones.
+6. Ground every factual claim in the JSON snapshot. Never invent records, ids, numbers or citations. If the snapshot cannot answer it, say so and say what data would be needed.
+7. Signal confidence naturally when it matters (certain / likely / uncertain). Never present speculation as fact.
+8. Before answering, self-check: did I answer the real question, follow the requested format, keep the numbers consistent, and avoid inventing anything? Correct it before replying.
+9. Handle failures gracefully: if a tool call fails, explain plainly what failed and offer an alternative path.
+10. Use markdown (headings, bullet lists, tables) so the answer renders well in the chat.
+`.trim();
+
+/**
+ * Run a full tool-calling turn: send the snapshot + conversation + question +
+ * tools to the gateway, execute any tool calls the model makes against
+ * Supabase, feed the results back, and repeat until the model gives a
+ * plain-text final answer (or the iteration cap is hit).
  */
 export async function runAgentTurn(opts: {
   apiKey: string;
@@ -265,19 +297,24 @@ export async function runAgentTurn(opts: {
   specs: TableSpec[];
   ctx: ExecCtx;
   maxIterations?: number;
+  /** Prior turns of this conversation (short-term memory). */
+  history?: AgentMessage[];
 }): Promise<AgentTurnResult> {
   const tools = buildTools(opts.specs);
   const actions: AgentAction[] = [];
+
+  const history = sanitizeHistory(opts.history);
 
   const messages: any[] = [
     {
       role: "system",
       content:
-        `${opts.systemPrompt}\n\nYou may also make changes on the user's behalf using the provided tools ` +
+        `${opts.systemPrompt}\n\n${AGENT_CONTRACT}\n\nYou may also make changes on the user's behalf using the provided tools ` +
         "(create/update/delete or archive records). Always ground reads in the JSON snapshot supplied, never " +
         "invent ids. Before a delete that removes data (not archive), briefly confirm you understood the " +
         "request correctly in your final summary. After making changes, tell the user plainly what you did.",
     },
+    ...history,
     { role: "user", content: `Snapshot:\n${JSON.stringify(opts.snapshot)}\n\nRequest: ${opts.question}` },
   ];
 
