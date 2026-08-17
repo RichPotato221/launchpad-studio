@@ -246,6 +246,16 @@ export function ProcessOrdersModule({ canManage }: Props) {
                 <Badge className={statusTone(r.status)}>{PO_STATUS_LABEL[r.status] ?? r.status}</Badge>
                 <Progress value={Number(r.readiness_pct ?? 0)} className="mt-2" />
                 <p className="mt-1 text-xs text-muted-foreground">{Number(r.readiness_pct ?? 0)}% ready</p>
+                {canDelete && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="mt-2 h-8 px-2 text-destructive hover:text-destructive"
+                    onClick={(e) => { e.stopPropagation(); removePo(r); }}
+                  >
+                    <Trash2 className="mr-1.5 h-4 w-4" /> Delete
+                  </Button>
+                )}
               </div>
             </div>
           </Card>
