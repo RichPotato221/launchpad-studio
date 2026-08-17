@@ -1,8 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { runAgentTurn, type TableSpec } from "@/lib/aiAgent";
+import { sanitizeHistory, type AgentMessage } from "@/lib/aiAgent";
 
-type Ask = { question: string };
+type Ask = { question: string ; history?: AgentMessage[] };
 
 /**
  * AI Resource Assistant (data-grounded, tool-calling) — Office of the Resource Administrator.
@@ -13,7 +14,7 @@ export const askResourceAssistant = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: Ask) => {
     if (!input?.question || input.question.trim().length < 3) throw new Error("Please ask a fuller question.");
-    return { question: input.question.trim().slice(0, 800) };
+    return { question: input.question.trim().slice(0, 800), history: sanitizeHistory(input.history) };
   })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
@@ -289,6 +290,7 @@ export const askResourceAssistant = createServerFn({ method: "POST" })
         "headings and bullets.",
       snapshot,
       question: data.question,
+      history: data.history,
       specs,
       ctx: { supabase: sb, userId, actorLabel: "resources assistant" },
     });

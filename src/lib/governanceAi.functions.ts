@@ -1,8 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { runAgentTurn, type TableSpec } from "@/lib/aiAgent";
+import { sanitizeHistory, type AgentMessage } from "@/lib/aiAgent";
 
-type Ask = { question: string };
+type Ask = { question: string ; history?: AgentMessage[] };
 
 const SYSTEM = `You are the AI Governance Assistant for the Throne Room of God Kingdom Center (TRoGKC) Leadership Portal,
 serving the Office of the Chairperson. You advise on church governance, board and council practice, statutory and NPO
@@ -25,7 +26,7 @@ export const askGovernanceAssistant = createServerFn({ method: "POST" })
     if (!d?.question || typeof d.question !== "string" || d.question.trim().length < 3) {
       throw new Error("Please enter a question.");
     }
-    return { question: d.question.trim().slice(0, 2000) };
+    return { question: d.question.trim().slice(0, 2000), history: sanitizeHistory(d.history) };
   })
   .handler(async ({ data, context }) => {
     const key = process.env["LOVABLE_API_KEY"];
@@ -106,6 +107,7 @@ export const askGovernanceAssistant = createServerFn({ method: "POST" })
       systemPrompt: SYSTEM,
       snapshot,
       question: data.question,
+      history: data.history,
       specs,
       ctx: { supabase: sb, userId, actorLabel: "governance assistant" },
     });

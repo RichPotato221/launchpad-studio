@@ -1,8 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { runAgentTurn, type TableSpec } from "@/lib/aiAgent";
+import { sanitizeHistory, type AgentMessage } from "@/lib/aiAgent";
 
-type Ask = { question: string; slug: string };
+type Ask = { question: string; slug: string ; history?: AgentMessage[] };
 
 /**
  * Generic, data-grounded AI assistant for any department that does not already
@@ -20,7 +21,7 @@ export const askDepartmentAssistant = createServerFn({ method: "POST" })
   .inputValidator((input: Ask) => {
     if (!input?.question || input.question.trim().length < 3) throw new Error("Please ask a fuller question.");
     if (!input?.slug) throw new Error("Missing department.");
-    return { question: input.question.trim().slice(0, 800), slug: input.slug };
+    return { question: input.question.trim().slice(0, 800), slug: input.slug, history: sanitizeHistory(input.history) };
   })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
@@ -200,6 +201,7 @@ export const askDepartmentAssistant = createServerFn({ method: "POST" })
         "when data is missing. Keep answers concise with short headings and bullets.",
       snapshot,
       question: data.question,
+      history: data.history,
       specs,
       ctx: { supabase: sb, userId, actorLabel: "department assistant" },
     });

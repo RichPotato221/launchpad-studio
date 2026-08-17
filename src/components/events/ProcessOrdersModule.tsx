@@ -10,10 +10,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { PO_STATUS_LABEL, fmtDateTime, logPoAudit, statusTone } from "@/lib/processOrders";
 import { ProcessOrderDetail } from "./ProcessOrderDetail";
+import { Trash2 } from "lucide-react";
+import { useCurrentRole } from "@/lib/useCurrentRole";
 
 type Props = { canManage: boolean; branch?: string | null };
 
+/** Only the Secretariat, Chairpersons and Senior Pastors may delete a process order. */
+const PO_DELETE_ROLES = ["secretary", "chairperson", "senior_apostle"];
+
 export function ProcessOrdersModule({ canManage }: Props) {
+  const roleInfo = useCurrentRole();
+  const canDelete = (roleInfo.data?.roles ?? []).some((r) => PO_DELETE_ROLES.includes(r));
   const [rows, setRows] = useState<any[]>([]);
   const [events, setEvents] = useState<any[]>([]);
   const [templates, setTemplates] = useState<any[]>([]);
@@ -138,6 +145,16 @@ export function ProcessOrdersModule({ canManage }: Props) {
     setSelected(po.id);
   };
 
+  /** Secretariat / chairperson deletion of a process order and everything attached to it. */
+  const removePo = async (r: any) => {
+    if (!window.confirm(`Delete ${r.po_number ?? "this process order"} — “${r.title}”? Its activities, exceptions, documents and closure checks will be removed.`)) return;
+    const { error } = await supabase.from("process_orders").delete().eq("id", r.id);
+    if (error) return toast.error(error.message);
+    toast.success(`${r.po_number ?? "Process order"} deleted`);
+    if (selected === r.id) setSelected(null);
+    await load();
+  };
+
   if (selected) {
     return (
       <ProcessOrderDetail
@@ -229,6 +246,16 @@ export function ProcessOrdersModule({ canManage }: Props) {
                 <Badge className={statusTone(r.status)}>{PO_STATUS_LABEL[r.status] ?? r.status}</Badge>
                 <Progress value={Number(r.readiness_pct ?? 0)} className="mt-2" />
                 <p className="mt-1 text-xs text-muted-foreground">{Number(r.readiness_pct ?? 0)}% ready</p>
+                {canDelete && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="mt-2 h-8 px-2 text-destructive hover:text-destructive"
+                    onClick={(e) => { e.stopPropagation(); removePo(r); }}
+                  >
+                    <Trash2 className="mr-1.5 h-4 w-4" /> Delete
+                  </Button>
+                )}
               </div>
             </div>
           </Card>
