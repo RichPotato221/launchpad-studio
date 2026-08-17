@@ -145,6 +145,16 @@ export function ProcessOrdersModule({ canManage }: Props) {
     setSelected(po.id);
   };
 
+  /** Secretariat / chairperson deletion of a process order and everything attached to it. */
+  const removePo = async (r: any) => {
+    if (!window.confirm(`Delete ${r.po_number ?? "this process order"} — “${r.title}”? Its activities, exceptions, documents and closure checks will be removed.`)) return;
+    const { error } = await supabase.from("process_orders").delete().eq("id", r.id);
+    if (error) return toast.error(error.message);
+    toast.success(`${r.po_number ?? "Process order"} deleted`);
+    if (selected === r.id) setSelected(null);
+    await load();
+  };
+
   if (selected) {
     return (
       <ProcessOrderDetail
