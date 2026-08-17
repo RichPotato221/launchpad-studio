@@ -10,10 +10,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { PO_STATUS_LABEL, fmtDateTime, logPoAudit, statusTone } from "@/lib/processOrders";
 import { ProcessOrderDetail } from "./ProcessOrderDetail";
+import { Trash2 } from "lucide-react";
+import { useCurrentRole } from "@/lib/useCurrentRole";
 
 type Props = { canManage: boolean; branch?: string | null };
 
+/** Only the Secretariat, Chairpersons and Senior Pastors may delete a process order. */
+const PO_DELETE_ROLES = ["secretary", "chairperson", "senior_apostle"];
+
 export function ProcessOrdersModule({ canManage }: Props) {
+  const roleInfo = useCurrentRole();
+  const canDelete = (roleInfo.data?.roles ?? []).some((r) => PO_DELETE_ROLES.includes(r));
   const [rows, setRows] = useState<any[]>([]);
   const [events, setEvents] = useState<any[]>([]);
   const [templates, setTemplates] = useState<any[]>([]);
