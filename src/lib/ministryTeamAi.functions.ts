@@ -1,8 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { runAgentTurn, type TableSpec } from "@/lib/aiAgent";
+import { sanitizeHistory, type AgentMessage } from "@/lib/aiAgent";
 
-type Ask = { question: string; team: string };
+type Ask = { question: string; team: string ; history?: AgentMessage[] };
 
 const TEAM_LABEL: Record<string, string> = {
   youth: "Youth Team",
@@ -28,7 +29,7 @@ export const askMinistryTeamAssistant = createServerFn({ method: "POST" })
   .inputValidator((input: Ask) => {
     if (!input?.question || input.question.trim().length < 3) throw new Error("Please ask a fuller question.");
     const team = Object.keys(TEAM_LABEL).includes(input?.team) ? input.team : "youth";
-    return { question: input.question.trim().slice(0, 800), team };
+    return { question: input.question.trim().slice(0, 800), team, history: sanitizeHistory(input.history) };
   })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
@@ -293,6 +294,7 @@ export const askMinistryTeamAssistant = createServerFn({ method: "POST" })
         "confidential or pastoral as protected. Reply with short headings and bullets in a pastoral but practical tone.",
       snapshot,
       question: data.question,
+      history: data.history,
       specs,
       ctx: { supabase: sb, userId, actorLabel: "ministry team assistant" },
     });

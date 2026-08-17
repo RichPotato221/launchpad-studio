@@ -1,15 +1,16 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { runAgentTurn, type TableSpec } from "@/lib/aiAgent";
+import { sanitizeHistory, type AgentMessage } from "@/lib/aiAgent";
 
-type Ask = { question: string };
+type Ask = { question: string ; history?: AgentMessage[] };
 
 /** AI Strategy Assistant for the Strategy Management Office (data-grounded, tool-calling). */
 export const askStrategyAssistant = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: Ask) => {
     if (!input?.question || input.question.trim().length < 3) throw new Error("Please ask a fuller question.");
-    return { question: input.question.trim().slice(0, 800) };
+    return { question: input.question.trim().slice(0, 800), history: sanitizeHistory(input.history) };
   })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
@@ -231,6 +232,7 @@ export const askStrategyAssistant = createServerFn({ method: "POST" })
         "bullets, and always tie recommendations back to the church's vision and kingdom impact.",
       snapshot,
       question: data.question,
+      history: data.history,
       specs,
       ctx: { supabase: sb, userId, actorLabel: "strategy assistant" },
     });
