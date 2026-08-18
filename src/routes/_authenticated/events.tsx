@@ -207,9 +207,17 @@ function EventsPage() {
                   </div>
                   {ev.description && <p className="mt-2 text-sm text-muted-foreground">{ev.description}</p>}
                 </div>
-                <Button size="sm" variant="outline" onClick={() => setExpanded(expanded === ev.id ? null : ev.id)}>
-                  Roster ({(rosters[ev.id] ?? []).length})
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button size="sm" variant="outline" onClick={() => setExpanded(expanded === ev.id ? null : ev.id)}>
+                    Roster ({(rosters[ev.id] ?? []).length})
+                  </Button>
+                  {canManage && (
+                    <Button size="sm" variant="ghost" className="text-destructive" onClick={() => removeEvent(ev)}>
+                      Delete
+                    </Button>
+                  )}
+                </div>
+
               </div>
 
               {expanded === ev.id && (
