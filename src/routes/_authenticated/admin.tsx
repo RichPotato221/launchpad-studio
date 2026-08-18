@@ -20,6 +20,21 @@ const ROLES: AppRole[] = [
   "senior_apostle", "chairperson", "secretary", "lead_pastor",
   "associate_pastor", "department_chair", "team_member",
 ];
+
+/**
+ * Office departments carry a church-wide role. Attaching a member to one of
+ * these departments must give them the access of that office, not just a
+ * department chip.
+ */
+const OFFICE_ROLES: Record<string, AppRole> = {
+  chairperson: "chairperson",
+  secretary: "secretary",
+  "lead-pastor": "lead_pastor",
+  "associate-pastor": "associate_pastor",
+  "strategic-adviser": "strategic_adviser",
+  apostolic: "senior_apostle",
+};
+
  
 function AdminPage() {
   const qc = useQueryClient();
