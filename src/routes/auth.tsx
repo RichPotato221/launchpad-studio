@@ -196,11 +196,8 @@ function AuthPage() {
         </div>
         <div>
           <p className="text-xs uppercase tracking-[0.22em] opacity-70">Leadership &amp; Serving-Members Portal</p>
-          <h1 className="mt-4 font-serif text-5xl leading-tight">Intimacy · Identity · Purpose</h1>
-          <p className="mt-6 max-w-md text-sm leading-relaxed opacity-80">
-            Restricted access. New accounts require approval by the Senior Apostle before sign-in is unlocked.
-          </p>
         </div>
+
         <p className="text-xs opacity-60">© {new Date().getFullYear()} TRoGKC · Under the headship of Jesus Christ</p>
       </div>
 
