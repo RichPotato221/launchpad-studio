@@ -56,7 +56,7 @@ export function PortalShell({ children }: { children: ReactNode }) {
     },
   });
   const email = session.data?.email ?? "";
-  const roles = session.data?.roles ?? [];
+  const roles: string[] = session.data?.roles ?? [];
 
   const filteredNav = nav.filter((item) => {
     if (item.to === "/senior-pastor-cockpit") return roles.some((r) => COCKPIT_ROLES.has(r));
