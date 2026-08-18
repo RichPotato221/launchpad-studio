@@ -109,6 +109,21 @@ function EventsPage() {
     load();
   };
 
+  /**
+   * The Secretarial office, Chairpersons and Senior Pastors may remove any
+   * event or meeting anywhere in the platform. Rosters, attendance, invites,
+   * meeting records and process orders attached to it are removed with it.
+   */
+  const removeEvent = async (ev: any) => {
+    if (!window.confirm(`Delete "${ev.title}"? Its roster, attendance, meeting record and process order will also be removed.`)) return;
+    const { error } = await supabase.from("events").delete().eq("id", ev.id);
+    if (error) return toast.error(error.message);
+    toast.success("Event deleted");
+    load();
+  };
+
+
+
   return (
       <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
         <div className="mb-6">
