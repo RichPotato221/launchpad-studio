@@ -20,6 +20,21 @@ const ROLES: AppRole[] = [
   "senior_apostle", "chairperson", "secretary", "lead_pastor",
   "associate_pastor", "department_chair", "team_member",
 ];
+
+/**
+ * Office departments carry a church-wide role. Attaching a member to one of
+ * these departments must give them the access of that office, not just a
+ * department chip.
+ */
+const OFFICE_ROLES: Record<string, AppRole> = {
+  chairperson: "chairperson",
+  secretary: "secretary",
+  "lead-pastor": "lead_pastor",
+  "associate-pastor": "associate_pastor",
+  "strategic-adviser": "strategic_adviser",
+  apostolic: "senior_apostle",
+};
+
  
 function AdminPage() {
   const qc = useQueryClient();
@@ -92,9 +107,30 @@ function AdminPage() {
     }
     const { error } = await supabase.from("user_roles").insert({ user_id: userId, role, department_slug });
     if (error) return toast.error(error.message);
+
+    /**
+     * An assignment must give the member the *actual* access of that office.
+     * Two things follow every grant:
+     *  1. Attaching a member to an office department (Chairperson, Secretary,
+     *     Lead / Associate Pastor, Strategic Adviser) grants the matching
+     *     church role, so navigation and permissions match the office.
+     *  2. The department they are assigned to becomes their primary department
+     *     so their workspaces, KPIs and team views resolve to it.
+     */
+    const officeRole = department_slug ? OFFICE_ROLES[department_slug] : undefined;
+    if (officeRole && officeRole !== role && !existing.some((r) => r.role === officeRole && !r.department_slug)) {
+      await supabase.from("user_roles").insert({ user_id: userId, role: officeRole, department_slug: null });
+    }
+    if (department_slug) {
+      await supabase.from("profiles").update({ primary_department: department_slug }).eq("id", userId);
+    }
+
     toast.success("Role assigned");
     qc.invalidateQueries({ queryKey: ["all-profiles"] });
     qc.invalidateQueries({ queryKey: ["dept-team"] });
+    qc.invalidateQueries({ queryKey: ["current-role"] });
+    qc.invalidateQueries({ queryKey: ["leadership-access"] });
+    qc.invalidateQueries({ queryKey: ["branch-scope"] });
   };
 
   /** Chairperson may move a member between registered churches (branches). */
@@ -103,12 +139,17 @@ function AdminPage() {
     if (error) return toast.error(error.message);
     toast.success("Member moved");
     qc.invalidateQueries({ queryKey: ["all-profiles"] });
+    qc.invalidateQueries({ queryKey: ["branch-scope"] });
   };
   const removeRole = async (id: string) => {
     const { error } = await supabase.from("user_roles").delete().eq("id", id);
     if (error) return toast.error(error.message);
     qc.invalidateQueries({ queryKey: ["all-profiles"] });
+    qc.invalidateQueries({ queryKey: ["current-role"] });
+    qc.invalidateQueries({ queryKey: ["leadership-access"] });
   };
+
+
  
   const approve = async (userId: string, ok: boolean) => {
     const { error } = await supabase.rpc("approve_member", { _user_id: userId, _approve: ok });
