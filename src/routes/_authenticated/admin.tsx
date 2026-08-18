@@ -134,11 +134,7 @@ function AdminPage() {
     qc.invalidateQueries({ queryKey: ["leadership-access"] });
   };
 
-  const removeRole = async (id: string) => {
-    const { error } = await supabase.from("user_roles").delete().eq("id", id);
-    if (error) return toast.error(error.message);
-    qc.invalidateQueries({ queryKey: ["all-profiles"] });
-  };
+
  
   const approve = async (userId: string, ok: boolean) => {
     const { error } = await supabase.rpc("approve_member", { _user_id: userId, _approve: ok });
