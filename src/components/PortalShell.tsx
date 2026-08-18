@@ -37,29 +37,34 @@ export function PortalShell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
-  const [email, setEmail] = useState<string>("");
-  const [roles, setRoles] = useState<string[]>([]);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
- 
-  useEffect(() => {
-    supabase.auth.getUser().then(async ({ data }) => {
-      setEmail(data.user?.email ?? "");
-      if (data.user?.id) {
-        const { data: roleRows } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", data.user.id);
-        setRoles((roleRows ?? []).map((r: any) => r.role));
-      }
-    });
-  }, []);
- 
+
+  /**
+   * Identity and roles come from one cached query shared with the rest of the
+   * portal, so moving between pages no longer re-hits auth + user_roles on
+   * every navigation.
+   */
+  const session = useQuery({
+    queryKey: ["portal-identity"],
+    staleTime: 5 * 60_000,
+    queryFn: async () => {
+      const { data } = await supabase.auth.getUser();
+      const uid = data.user?.id;
+      if (!uid) return { email: "", roles: [] as string[] };
+      const { data: roleRows } = await supabase.from("user_roles").select("role").eq("user_id", uid);
+      return { email: data.user?.email ?? "", roles: (roleRows ?? []).map((r: any) => r.role as string) };
+    },
+  });
+  const email = session.data?.email ?? "";
+  const roles = session.data?.roles ?? [];
+
   const filteredNav = nav.filter((item) => {
     if (item.to === "/senior-pastor-cockpit") return roles.some((r) => COCKPIT_ROLES.has(r));
     if (item.to === "/vault") return roles.some((r) => COCKPIT_ROLES.has(r));
-    if (item.to === "/admin") return roles.includes("chairperson");
+    if (item.to === "/admin") return roles.includes("chairperson") || roles.includes("senior_apostle");
     return true;
   });
+
   
   useEffect(() => setOpen(false), [pathname]);
 
