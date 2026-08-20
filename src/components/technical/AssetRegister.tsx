@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { RAG_CLASS, exportRows, fmtDate, money } from "@/lib/finance";
 import {
+import PhotoField from "@/components/common/PhotoField";
   ASSET_CATEGORIES, ASSET_CONDITIONS, ASSET_STATUSES, FAULT_PRIORITIES, FAULT_STATUSES, FAULT_TYPES,
   MAINTENANCE_FREQUENCIES, MAINTENANCE_TYPES, TECH_INVENTORY_CATEGORIES,
   daysUntil, labelFor, ragForCount, titleish, today,
@@ -187,7 +188,7 @@ export default function AssetRegister({ canManage, currentUserId }: { canManage:
             </div>
             <div><Label>Location</Label><Input value={asset.location} onChange={(e) => setAsset({ ...asset, location: e.target.value })} /></div>
             <div><Label>Assigned to</Label><Input value={asset.assigned_to} onChange={(e) => setAsset({ ...asset, assigned_to: e.target.value })} /></div>
-            <div><Label>Photo URL</Label><Input value={asset.photo_url} onChange={(e) => setAsset({ ...asset, photo_url: e.target.value })} /></div>
+            <div><PhotoField label="Photo" folder="assets" value={asset.photo_url} onChange={(url) => setAsset({ ...asset, photo_url: url })} /></div>
             <div><Label>Manual URL</Label><Input value={asset.manual_url} onChange={(e) => setAsset({ ...asset, manual_url: e.target.value })} /></div>
             <div className="md:col-span-4"><Label>Notes</Label><Textarea rows={2} value={asset.notes} onChange={(e) => setAsset({ ...asset, notes: e.target.value })} /></div>
             <div className="flex items-end gap-2 md:col-span-4">

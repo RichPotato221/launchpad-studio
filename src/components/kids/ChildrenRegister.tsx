@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { Download, Printer } from "lucide-react";
 import { BRANCHES, branchLabel, exportRows, fmtDate, titleCase } from "@/lib/finance";
 import {
+import PhotoField from "@/components/common/PhotoField";
   AGE_GROUPS, CHILD_STATUSES, GENDERS, MILESTONE_TYPES, ageFrom, childQrValue, labelFor, qrImageUrl, suggestAgeGroup,
 } from "@/lib/kids";
 
