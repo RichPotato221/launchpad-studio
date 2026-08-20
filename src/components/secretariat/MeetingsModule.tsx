@@ -116,6 +116,13 @@ function MeetingList({
       created_by: currentUserId,
     });
     await logAudit("create", "meeting", mtg.id, { title: form.title });
+    // Email every approved member a real calendar invite (.ics) so the meeting
+    // lands on their personal Google / Outlook / Apple calendar.
+    sendEventInvites({ data: { eventId: evt.id, action: "create" } })
+      .then((r: any) => {
+        if (r?.sent) toast.success(`Calendar invite sent to ${r.sent} member${r.sent === 1 ? "" : "s"}.`);
+      })
+      .catch(() => toast.message("Meeting saved — calendar invites could not be emailed."));
     toast.success("Meeting created — calendar, agenda and register are live.");
     setCreating(false);
     setForm({ title: "", meeting_type: "Leadership Meeting", event_date: "", start_time: "", end_time: "", location: "", meeting_link: "", branch: "", description: "" });
