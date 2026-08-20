@@ -89,7 +89,7 @@ function MeetingList({
         start_time: form.start_time || null,
         end_time: form.end_time || null,
         location: [form.location, form.meeting_link].filter(Boolean).join(" · ") || null,
-        branch: (form.branch || null) as never,
+        branch: branch as never,
         description: form.description || null,
         department_slug: "secretary",
         created_by: currentUserId,
