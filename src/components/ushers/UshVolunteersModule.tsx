@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import PhotoField from "@/components/common/PhotoField";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -121,7 +122,7 @@ export default function UshVolunteersModule({ canManage, currentUserId }: Props)
                 <SelectContent>{USH_TRAINING_STATUSES.map((t) => <SelectItem key={t} value={t}>{ushLabel(t)}</SelectItem>)}</SelectContent>
               </Select>
             </div>
-            <div><Label>Photo URL</Label><Input value={form.photo_url} onChange={(e) => setForm({ ...form, photo_url: e.target.value })} /></div>
+            <div><PhotoField label="Photo" folder="volunteers" value={form.photo_url} onChange={(url) => setForm({ ...form, photo_url: url })} /></div>
             <div><Label>Emergency contact</Label><Input value={form.emergency_contact} onChange={(e) => setForm({ ...form, emergency_contact: e.target.value })} /></div>
             <div><Label>Emergency phone</Label><Input value={form.emergency_phone} onChange={(e) => setForm({ ...form, emergency_phone: e.target.value })} /></div>
             <div><Label>Mentor</Label><Input value={form.mentor_name} onChange={(e) => setForm({ ...form, mentor_name: e.target.value })} /></div>

@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import { sendEventInvites } from "@/lib/eventInvites.functions";
 import { ArrowLeft, Download, Plus, Printer, Trash2 } from "lucide-react";
 import {
   MEETING_TYPES,
@@ -70,6 +71,16 @@ function MeetingList({
       toast.error("A title and a date are required.");
       return;
     }
+    // A blank branch means "church-wide". Only cross-branch offices may post that,
+    // so fall back to the organiser's own branch when they may not.
+    let branch: string | null = form.branch || null;
+    if (!branch) {
+      const { data: me } = await supabase.rpc("can_post_cross_branch", { _user_id: currentUserId });
+      if (!me) {
+        const { data: prof } = await supabase.from("profiles").select("branch").eq("id", currentUserId).maybeSingle();
+        branch = (prof as any)?.branch ?? null;
+      }
+    }
     const { data: evt, error: evtErr } = await supabase
       .from("events")
       .insert({
@@ -79,7 +90,7 @@ function MeetingList({
         start_time: form.start_time || null,
         end_time: form.end_time || null,
         location: [form.location, form.meeting_link].filter(Boolean).join(" · ") || null,
-        branch: (form.branch || null) as never,
+        branch: branch as never,
         description: form.description || null,
         department_slug: "secretary",
         created_by: currentUserId,
@@ -106,6 +117,13 @@ function MeetingList({
       created_by: currentUserId,
     });
     await logAudit("create", "meeting", mtg.id, { title: form.title });
+    // Email every approved member a real calendar invite (.ics) so the meeting
+    // lands on their personal Google / Outlook / Apple calendar.
+    sendEventInvites({ data: { eventId: evt.id, action: "create" } })
+      .then((r: any) => {
+        if (r?.sent) toast.success(`Calendar invite sent to ${r.sent} member${r.sent === 1 ? "" : "s"}.`);
+      })
+      .catch(() => toast.message("Meeting saved — calendar invites could not be emailed."));
     toast.success("Meeting created — calendar, agenda and register are live.");
     setCreating(false);
     setForm({ title: "", meeting_type: "Leadership Meeting", event_date: "", start_time: "", end_time: "", location: "", meeting_link: "", branch: "", description: "" });
@@ -122,7 +140,11 @@ function MeetingList({
       toast.error(error.message);
       return;
     }
-    if (m.event_id) await supabase.from("events").delete().eq("id", m.event_id);
+    if (m.event_id) {
+      // Send the cancellation notice while the event row still exists.
+      await sendEventInvites({ data: { eventId: m.event_id, action: "cancel" } }).catch(() => undefined);
+      await supabase.from("events").delete().eq("id", m.event_id);
+    }
     await logAudit("delete", "meeting", m.id, { title });
     toast.success("Meeting deleted.");
     qc.invalidateQueries({ queryKey: ["secretariat-meetings"] });

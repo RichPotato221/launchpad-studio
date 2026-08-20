@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import PhotoField from "@/components/common/PhotoField";
  
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin — TRoGKC Portal" }] }),
@@ -237,7 +238,7 @@ function AdminPage() {
           <p className="text-xs uppercase tracking-widest text-muted-foreground">Senior Apostle / Pastor</p>
           <div className="mt-4 space-y-3">
             <div><Label>Name</Label><Input placeholder={apostleV.name ?? ""} onChange={(e) => setApostleForm({ ...apostleForm, name: e.target.value })} /></div>
-            <div><Label>Photo URL</Label><Input placeholder={apostleV.photo_url ?? ""} onChange={(e) => setApostleForm({ ...apostleForm, photo_url: e.target.value })} /></div>
+            <div><PhotoField label="Photo" folder="leaders" value={apostleForm.photo_url ?? apostleV.photo_url ?? ""} onChange={(url) => setApostleForm({ ...apostleForm, photo_url: url })} /></div>
             <div><Label>Bio</Label><Textarea placeholder={apostleV.bio ?? ""} onChange={(e) => setApostleForm({ ...apostleForm, bio: e.target.value })} /></div>
             <Button onClick={saveApostle}>Save</Button>
           </div>
