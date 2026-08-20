@@ -145,7 +145,7 @@ export default function ChildrenRegister({ canManage, currentUserId }: Props) {
               </Select>
             </div>
             <div><Label>Secure PIN (check-out)</Label><Input value={form.pin ?? ""} onChange={(e) => setForm({ ...form, pin: e.target.value })} placeholder="4–6 digits" /></div>
-            <div className="md:col-span-3"><Label>Photo URL</Label><Input value={form.photo_url ?? ""} onChange={(e) => setForm({ ...form, photo_url: e.target.value })} /></div>
+            <div className="md:col-span-3"><PhotoField label="Photo" folder="children" value={form.photo_url ?? ""} onChange={(url) => setForm({ ...form, photo_url: url })} /></div>
             <div className="md:col-span-3"><Label>Address</Label><Input value={form.address ?? ""} onChange={(e) => setForm({ ...form, address: e.target.value })} /></div>
             <div><Label>Medical conditions</Label><Textarea rows={2} value={form.medical_conditions ?? ""} onChange={(e) => setForm({ ...form, medical_conditions: e.target.value })} /></div>
             <div><Label>Allergies</Label><Textarea rows={2} value={form.allergies ?? ""} onChange={(e) => setForm({ ...form, allergies: e.target.value })} /></div>
