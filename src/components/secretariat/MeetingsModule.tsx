@@ -70,6 +70,16 @@ function MeetingList({
       toast.error("A title and a date are required.");
       return;
     }
+    // A blank branch means "church-wide". Only cross-branch offices may post that,
+    // so fall back to the organiser's own branch when they may not.
+    let branch: string | null = form.branch || null;
+    if (!branch) {
+      const { data: me } = await supabase.rpc("can_post_cross_branch", { _user_id: currentUserId });
+      if (!me) {
+        const { data: prof } = await supabase.from("profiles").select("branch").eq("id", currentUserId).maybeSingle();
+        branch = (prof as any)?.branch ?? null;
+      }
+    }
     const { data: evt, error: evtErr } = await supabase
       .from("events")
       .insert({
