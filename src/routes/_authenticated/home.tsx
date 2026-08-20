@@ -135,12 +135,15 @@ function HomePage() {
             </div>
             <div>
               <FlowBox title="Functional Structure" compact />
+              <FlowSubList items={functional.map((d) => d.name)} />
             </div>
             <div>
               <FlowBox title="Developmental Structure" compact />
+              <FlowSubList items={developmental.map((d) => d.name)} />
             </div>
             <div>
               <FlowBox title="Support Services" compact />
+              <FlowSubList items={supportServices.map((d) => d.name)} />
             </div>
             <div>
               <FlowBox title="TSOM" subtitle="7 Mountains" compact />
