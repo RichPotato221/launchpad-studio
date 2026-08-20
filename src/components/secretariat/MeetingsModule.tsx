@@ -140,7 +140,11 @@ function MeetingList({
       toast.error(error.message);
       return;
     }
-    if (m.event_id) await supabase.from("events").delete().eq("id", m.event_id);
+    if (m.event_id) {
+      // Send the cancellation notice while the event row still exists.
+      await sendEventInvites({ data: { eventId: m.event_id, action: "cancel" } }).catch(() => undefined);
+      await supabase.from("events").delete().eq("id", m.event_id);
+    }
     await logAudit("delete", "meeting", m.id, { title });
     toast.success("Meeting deleted.");
     qc.invalidateQueries({ queryKey: ["secretariat-meetings"] });
