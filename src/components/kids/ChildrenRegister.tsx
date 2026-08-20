@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import PhotoField from "@/components/common/PhotoField";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,6 @@ import { toast } from "sonner";
 import { Download, Printer } from "lucide-react";
 import { BRANCHES, branchLabel, exportRows, fmtDate, titleCase } from "@/lib/finance";
 import {
-import PhotoField from "@/components/common/PhotoField";
   AGE_GROUPS, CHILD_STATUSES, GENDERS, MILESTONE_TYPES, ageFrom, childQrValue, labelFor, qrImageUrl, suggestAgeGroup,
 } from "@/lib/kids";
 

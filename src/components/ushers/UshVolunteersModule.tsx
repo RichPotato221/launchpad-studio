@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import PhotoField from "@/components/common/PhotoField";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,7 +12,6 @@ import { toast } from "sonner";
 import { Download } from "lucide-react";
 import { RAG_CLASS, exportRows } from "@/lib/finance";
 import {
-import PhotoField from "@/components/common/PhotoField";
   USH_AVAILABILITY,
   USH_ROLES,
   USH_TEAMS,

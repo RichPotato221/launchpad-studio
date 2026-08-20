@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import PhotoField from "@/components/common/PhotoField";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,6 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { RAG_CLASS, exportRows, fmtDate, money } from "@/lib/finance";
 import {
-import PhotoField from "@/components/common/PhotoField";
   ASSET_CATEGORIES, ASSET_CONDITIONS, ASSET_STATUSES, FAULT_PRIORITIES, FAULT_STATUSES, FAULT_TYPES,
   MAINTENANCE_FREQUENCIES, MAINTENANCE_TYPES, TECH_INVENTORY_CATEGORIES,
   daysUntil, labelFor, ragForCount, titleish, today,
