@@ -1,4 +1,4 @@
-name: Send announcement emails
+name: Send notification emails
 
 on:
   schedule:
@@ -9,8 +9,19 @@ jobs:
   trigger:
     runs-on: ubuntu-latest
     steps:
-      - name: Call send-announcement-emails
+      - name: Run the portal notification worker
+        env:
+          PORTAL_URL: ${{ vars.PORTAL_URL || 'https://trog-leadershipdomain.lovable.app' }}
         run: |
-          curl -X POST "https://quzeraevecsxayrvymxd.supabase.co/functions/v1/send-announcement-emails" \
-            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
-            -H "Content-Type: application/json"
+          set -euo pipefail
+          echo "Calling ${PORTAL_URL}/api/public/hooks/process-notifications"
+          http_code=$(curl -sS -o /tmp/worker.json -w "%{http_code}" \
+            -X POST "${PORTAL_URL}/api/public/hooks/process-notifications" \
+            -H "Content-Type: application/json; charset=UTF-8" \
+            --retry 3 --retry-delay 10 --retry-all-errors --max-time 120)
+          cat /tmp/worker.json
+          echo
+          if [ "$http_code" -ge 400 ]; then
+            echo "Worker returned HTTP ${http_code}"
+            exit 1
+          fi

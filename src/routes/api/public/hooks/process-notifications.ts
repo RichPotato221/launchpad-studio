@@ -1,24 +1,26 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 /**
- * Legacy endpoint kept for the scheduled GitHub Action.
- * Announcements now flow through the central notification pipeline, so this
- * simply runs the shared worker.
+ * Notification worker.
+ *
+ * Drains any legacy notify_queue rows into the central notification_log, then
+ * sends everything pending (with retry). Safe to call every few minutes.
  */
 async function run() {
-  const { getAdmin, enqueueNotification, processPendingNotifications } = await import(
-    "@/lib/notifications/service.server"
-  );
+  const { getAdmin, processPendingNotifications } = await import("@/lib/notifications/service.server");
+  const { enqueueNotification } = await import("@/lib/notifications/service.server");
   const admin = await getAdmin();
 
-  const { data: queue } = await admin
+  // Legacy queue → central pipeline
+  let migrated = 0;
+  const { data: legacy } = await admin
     .from("notify_queue")
     .select("*")
     .eq("processed", false)
     .order("created_at", { ascending: true })
     .limit(25);
 
-  for (const item of (queue ?? []) as any[]) {
+  for (const item of (legacy ?? []) as any[]) {
     const payload = item.payload ?? {};
     const target = String(payload.target_branch ?? "all");
     await enqueueNotification({
@@ -30,22 +32,24 @@ async function run() {
       metadata: { body: payload.body, priority: !!payload.priority, author_name: payload.author_name },
     });
     await admin.from("notify_queue").update({ processed: true }).eq("id", item.id);
+    migrated++;
   }
 
   const result = await processPendingNotifications(80);
-  return { queued: queue?.length ?? 0, ...result };
+  return { migrated, ...result };
 }
 
-export const Route = createFileRoute("/api/public/hooks/send-announcement-emails")({
+export const Route = createFileRoute("/api/public/hooks/process-notifications")({
   server: {
     handlers: {
       POST: async () => {
         try {
-          return new Response(JSON.stringify(await run()), {
+          const result = await run();
+          return new Response(JSON.stringify(result), {
             headers: { "Content-Type": "application/json; charset=UTF-8" },
           });
         } catch (err: unknown) {
-          console.error("announcement worker failed:", (err as Error)?.message);
+          console.error("notification worker failed:", (err as Error)?.message);
           return new Response(JSON.stringify({ error: (err as Error)?.message ?? "worker_failed" }), {
             status: 500,
             headers: { "Content-Type": "application/json; charset=UTF-8" },
@@ -53,7 +57,7 @@ export const Route = createFileRoute("/api/public/hooks/send-announcement-emails
         }
       },
       GET: async () =>
-        new Response(JSON.stringify({ status: "ok" }), {
+        new Response(JSON.stringify({ status: "ok", worker: "notifications" }), {
           headers: { "Content-Type": "application/json; charset=UTF-8" },
         }),
     },
