@@ -41,6 +41,7 @@ import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as ApiPublicHooksSendAnnouncementEmailsRouteImport } from './routes/api/public/hooks/send-announcement-emails'
 import { Route as ApiPublicHooksProcessNotificationsRouteImport } from './routes/api/public/hooks/process-notifications'
+import { Route as ApiPublicEmailActionsRespondRouteImport } from './routes/api/public/email-actions/respond'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -211,6 +212,12 @@ const ApiPublicHooksProcessNotificationsRoute =
     path: '/api/public/hooks/process-notifications',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicEmailActionsRespondRoute =
+  ApiPublicEmailActionsRespondRouteImport.update({
+    id: '/api/public/email-actions/respond',
+    path: '/api/public/email-actions/respond',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -242,6 +249,7 @@ export interface FileRoutesByFullPath {
   '/members/$id': typeof AuthenticatedMembersIdRoute
   '/messages/$userId': typeof AuthenticatedMessagesUserIdRoute
   '/api/public/calendar.ics': typeof ApiPublicCalendarDoticsRoute
+  '/api/public/email-actions/respond': typeof ApiPublicEmailActionsRespondRoute
   '/api/public/hooks/process-notifications': typeof ApiPublicHooksProcessNotificationsRoute
   '/api/public/hooks/send-announcement-emails': typeof ApiPublicHooksSendAnnouncementEmailsRoute
 }
@@ -275,6 +283,7 @@ export interface FileRoutesByTo {
   '/members/$id': typeof AuthenticatedMembersIdRoute
   '/messages/$userId': typeof AuthenticatedMessagesUserIdRoute
   '/api/public/calendar.ics': typeof ApiPublicCalendarDoticsRoute
+  '/api/public/email-actions/respond': typeof ApiPublicEmailActionsRespondRoute
   '/api/public/hooks/process-notifications': typeof ApiPublicHooksProcessNotificationsRoute
   '/api/public/hooks/send-announcement-emails': typeof ApiPublicHooksSendAnnouncementEmailsRoute
 }
@@ -310,6 +319,7 @@ export interface FileRoutesById {
   '/_authenticated/members/$id': typeof AuthenticatedMembersIdRoute
   '/_authenticated/messages/$userId': typeof AuthenticatedMessagesUserIdRoute
   '/api/public/calendar.ics': typeof ApiPublicCalendarDoticsRoute
+  '/api/public/email-actions/respond': typeof ApiPublicEmailActionsRespondRoute
   '/api/public/hooks/process-notifications': typeof ApiPublicHooksProcessNotificationsRoute
   '/api/public/hooks/send-announcement-emails': typeof ApiPublicHooksSendAnnouncementEmailsRoute
 }
@@ -345,6 +355,7 @@ export interface FileRouteTypes {
     | '/members/$id'
     | '/messages/$userId'
     | '/api/public/calendar.ics'
+    | '/api/public/email-actions/respond'
     | '/api/public/hooks/process-notifications'
     | '/api/public/hooks/send-announcement-emails'
   fileRoutesByTo: FileRoutesByTo
@@ -378,6 +389,7 @@ export interface FileRouteTypes {
     | '/members/$id'
     | '/messages/$userId'
     | '/api/public/calendar.ics'
+    | '/api/public/email-actions/respond'
     | '/api/public/hooks/process-notifications'
     | '/api/public/hooks/send-announcement-emails'
   id:
@@ -412,6 +424,7 @@ export interface FileRouteTypes {
     | '/_authenticated/members/$id'
     | '/_authenticated/messages/$userId'
     | '/api/public/calendar.ics'
+    | '/api/public/email-actions/respond'
     | '/api/public/hooks/process-notifications'
     | '/api/public/hooks/send-announcement-emails'
   fileRoutesById: FileRoutesById
@@ -427,6 +440,7 @@ export interface RootRouteChildren {
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicCalendarDoticsRoute: typeof ApiPublicCalendarDoticsRoute
+  ApiPublicEmailActionsRespondRoute: typeof ApiPublicEmailActionsRespondRoute
   ApiPublicHooksProcessNotificationsRoute: typeof ApiPublicHooksProcessNotificationsRoute
   ApiPublicHooksSendAnnouncementEmailsRoute: typeof ApiPublicHooksSendAnnouncementEmailsRoute
 }
@@ -657,6 +671,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksProcessNotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/email-actions/respond': {
+      id: '/api/public/email-actions/respond'
+      path: '/api/public/email-actions/respond'
+      fullPath: '/api/public/email-actions/respond'
+      preLoaderRoute: typeof ApiPublicEmailActionsRespondRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -744,6 +765,7 @@ const rootRouteChildren: RootRouteChildren = {
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicCalendarDoticsRoute: ApiPublicCalendarDoticsRoute,
+  ApiPublicEmailActionsRespondRoute: ApiPublicEmailActionsRespondRoute,
   ApiPublicHooksProcessNotificationsRoute:
     ApiPublicHooksProcessNotificationsRoute,
   ApiPublicHooksSendAnnouncementEmailsRoute:
