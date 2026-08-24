@@ -96,12 +96,25 @@ export function AnnouncementComposer({ onPosted }: Props) {
       }
     }
 
+    const target = canPickBranch ? targetBranch : "all";
+    notify({
+      data: {
+        type: "ANNOUNCEMENT_CREATED",
+        entityType: "announcement",
+        entityId: inserted.id,
+        entityVersion: inserted.id,
+        audience: target === "all" ? {} : { branch: target },
+        metadata: { body: body.trim(), priority },
+      },
+    }).catch((err) => console.error("announcement notification failed", err));
+
     setBody("");
     setPriority(false);
     setFiles(null);
     setPosting(false);
     onPosted();
   }
+
 
   return (
     <div className="space-y-3 rounded-xl border p-4">
