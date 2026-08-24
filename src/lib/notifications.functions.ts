@@ -23,13 +23,12 @@ export const notify = createServerFn({ method: "POST" })
 export const getNotificationPreferences = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data } = await context.supabase
+    const { data } = await (context.supabase as any)
       .from("notification_preferences")
       .select("*")
       .eq("user_id", context.userId)
       .maybeSingle();
-    return (
-      data ?? {
+    return ((data as any) ?? {
         user_id: context.userId,
         events: true,
         meetings: true,
@@ -38,8 +37,7 @@ export const getNotificationPreferences = createServerFn({ method: "POST" })
         feed: false,
         leadership: true,
         channel: "both",
-      }
-    );
+      }) as Record<string, unknown>;
   });
 
 export const saveNotificationPreferences = createServerFn({ method: "POST" })
@@ -56,7 +54,7 @@ export const saveNotificationPreferences = createServerFn({ method: "POST" })
     }) => d,
   )
   .handler(async ({ data, context }) => {
-    const { error } = await context.supabase
+    const { error } = await (context.supabase as any)
       .from("notification_preferences")
       .upsert({ ...data, user_id: context.userId, updated_at: new Date().toISOString() }, { onConflict: "user_id" });
     if (error) throw new Error(error.message);
