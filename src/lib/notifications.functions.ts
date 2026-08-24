@@ -19,28 +19,39 @@ export const notify = createServerFn({ method: "POST" })
     }
   });
 
-/** Read the signed-in member's notification preferences (creating defaults). */
+export interface NotificationPrefs {
+  user_id: string;
+  events: boolean;
+  meetings: boolean;
+  announcements: boolean;
+  messages: boolean;
+  feed: boolean;
+  leadership: boolean;
+  channel: string;
+}
+
+/** Read the signed-in member's notification preferences (defaults when unset). */
 export const getNotificationPreferences = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    const { data } = await context.supabase
+  .handler(async ({ context }): Promise<NotificationPrefs> => {
+    const { data } = await (context.supabase as any)
       .from("notification_preferences")
       .select("*")
       .eq("user_id", context.userId)
       .maybeSingle();
-    return (
-      data ?? {
-        user_id: context.userId,
-        events: true,
-        meetings: true,
-        announcements: true,
-        messages: true,
-        feed: false,
-        leadership: true,
-        channel: "both",
-      }
-    );
+    const row = (data ?? {}) as Partial<NotificationPrefs>;
+    return {
+      user_id: context.userId,
+      events: row.events ?? true,
+      meetings: row.meetings ?? true,
+      announcements: row.announcements ?? true,
+      messages: row.messages ?? true,
+      feed: row.feed ?? false,
+      leadership: row.leadership ?? true,
+      channel: row.channel ?? "both",
+    };
   });
+
 
 export const saveNotificationPreferences = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -56,7 +67,7 @@ export const saveNotificationPreferences = createServerFn({ method: "POST" })
     }) => d,
   )
   .handler(async ({ data, context }) => {
-    const { error } = await context.supabase
+    const { error } = await (context.supabase as any)
       .from("notification_preferences")
       .upsert({ ...data, user_id: context.userId, updated_at: new Date().toISOString() }, { onConflict: "user_id" });
     if (error) throw new Error(error.message);
