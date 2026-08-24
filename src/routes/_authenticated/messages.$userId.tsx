@@ -67,17 +67,36 @@ function ChatPage() {
   const send = async () => {
     if (!body.trim() || !me || sending) return;
     setSending(true);
-    const { error } = await supabase.from("direct_messages").insert({
-      sender_id: me,
-      recipient_id: userId,
-      body: body.trim(),
-    });
+    const text = body.trim();
+    const { data: inserted, error } = await supabase
+      .from("direct_messages")
+      .insert({ sender_id: me, recipient_id: userId, body: text })
+      .select("id")
+      .single();
     setSending(false);
     if (error) return toast.error(error.message);
     setBody("");
     qc.invalidateQueries({ queryKey: ["dm-thread", me, userId] });
     qc.invalidateQueries({ queryKey: ["conversations"] });
+
+    // Email the recipient (honours their notification preferences).
+    const { data: meProfile } = await supabase.from("profiles").select("full_name").eq("id", me).maybeSingle();
+    notify({
+      data: {
+        type: "MESSAGE_RECEIVED",
+        entityType: "message",
+        entityId: inserted?.id ?? null,
+        entityVersion: inserted?.id ?? Date.now(),
+        audience: { userIds: [userId] },
+        metadata: {
+          sender_id: me,
+          sender_name: (meProfile as any)?.full_name ?? "A member",
+          preview: text.slice(0, 300),
+        },
+      },
+    }).catch((err) => console.error("message notification failed", err));
   };
+
 
   const initial = (partner.data?.full_name || "?").charAt(0).toUpperCase();
 
