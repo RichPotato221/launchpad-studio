@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { notify } from "@/lib/notifications.functions";
+
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
