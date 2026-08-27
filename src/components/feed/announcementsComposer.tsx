@@ -35,7 +35,9 @@ export function AnnouncementComposer({ onPosted }: Props) {
   const [priority, setPriority] = useState(false);
   const [targetBranch, setTargetBranch] = useState("all");
   const [canPickBranch, setCanPickBranch] = useState(false);
+  const [authorId, setAuthorId] = useState<string | null>(null);
   const [files, setFiles] = useState<FileList | null>(null);
+
   const [posting, setPosting] = useState(false);
 
   useEffect(() => {
@@ -46,6 +48,7 @@ export function AnnouncementComposer({ onPosted }: Props) {
     const { data: userData } = await getAuthUserResult();
     const uid = userData.user?.id;
     if (!uid) return;
+    setAuthorId(uid);
     const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", uid);
     setCanPickBranch((roles ?? []).some((r) => CROSS_BRANCH_ROLES.has(r.role as string)));
   }
@@ -106,7 +109,10 @@ export function AnnouncementComposer({ onPosted }: Props) {
         entityType: "announcement",
         entityId: inserted.id,
         entityVersion: inserted.id,
-        audience: target === "all" ? {} : { branch: target },
+        audience: {
+          ...(target === "all" ? {} : { branch: target }),
+          ...(authorId ? { excludeUserIds: [authorId] } : {}),
+        },
         metadata: { body: body.trim(), priority },
       },
     }).catch((err) => console.error("announcement notification failed", err));
