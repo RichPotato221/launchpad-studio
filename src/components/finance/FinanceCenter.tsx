@@ -11,6 +11,8 @@ import GivingModule from "@/components/finance/GivingModule";
 import BudgetsModule from "@/components/finance/BudgetsModule";
 import ApprovalsModule from "@/components/finance/ApprovalsModule";
 import ProcurementModule from "@/components/finance/ProcurementModule";
+import FinancialControlRoom from "@/components/finance/FinancialControlRoom";
+import BudgetApprovalsModule from "@/components/finance/BudgetApprovalsModule";
 import PayrollModule from "@/components/finance/PayrollModule";
 import ReconciliationModule from "@/components/finance/ReconciliationModule";
 import MonthlyWorkbook from "@/components/finance/MonthlyWorkbook";
@@ -55,10 +57,12 @@ export default function FinanceCenter({ currentUserId }: { departmentSlug?: stri
       <Tabs defaultValue="dashboard">
         <TabsList className="flex h-auto w-full flex-wrap justify-start print:hidden">
           <TabsTrigger value="dashboard">Executive dashboard</TabsTrigger>
+          <TabsTrigger value="control">Control room</TabsTrigger>
           <TabsTrigger value="ledger">General ledger</TabsTrigger>
           <TabsTrigger value="giving">Member giving</TabsTrigger>
           <TabsTrigger value="workbook">Monthly workbook</TabsTrigger>
           <TabsTrigger value="budgets">Budgets</TabsTrigger>
+          <TabsTrigger value="budget-approvals">Budget approvals</TabsTrigger>
           <TabsTrigger value="approvals">Approvals & payments</TabsTrigger>
           <TabsTrigger value="procurement">Procurement</TabsTrigger>
           <TabsTrigger value="payroll">Payroll</TabsTrigger>
@@ -67,6 +71,10 @@ export default function FinanceCenter({ currentUserId }: { departmentSlug?: stri
         </TabsList>
 
         <TabsContent value="dashboard" className="mt-6"><FinanceDashboard /></TabsContent>
+        <TabsContent value="control" className="mt-6"><FinancialControlRoom canManage={canManage} /></TabsContent>
+        <TabsContent value="budget-approvals" className="mt-6">
+          <BudgetApprovalsModule canManage={canManage} currentUserId={currentUserId} />
+        </TabsContent>
         <TabsContent value="ledger" className="mt-6">
           <LedgerModule canManage={canManage} currentUserId={currentUserId} />
         </TabsContent>
