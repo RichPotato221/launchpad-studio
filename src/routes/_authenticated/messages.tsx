@@ -15,10 +15,11 @@ export const Route = createFileRoute("/_authenticated/messages")({
 
 function MessagesLayout() {
   const matches = useMatches();
-  const hasChatThread = matches.some((m) => m.routeId === "/_authenticated/messages/$userId");
+  const hasChatThread = matches.some((m) => m.routeId.startsWith("/_authenticated/messages/"));
   if (hasChatThread) return <Outlet />;
   return <MessagesIndex />;
 }
+
 
 function MessagesIndex() {
   const navigate = useNavigate();
