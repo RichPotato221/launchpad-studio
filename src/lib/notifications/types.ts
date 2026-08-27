@@ -68,7 +68,11 @@ export interface NotificationAudience {
   departmentSlug?: string | null;
   userIds?: string[];
   emails?: string[];
+  /** People who must never receive this one (e.g. the author/sender). */
+  excludeUserIds?: string[];
+  excludeEmails?: string[];
 }
+
 
 export interface NotificationRequest {
   type: NotificationType;
