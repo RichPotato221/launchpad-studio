@@ -152,12 +152,28 @@ function MessagesIndex() {
 
       <div className="mt-6 divide-y divide-border rounded-xl border bg-card">
         {convos.isLoading && <p className="p-6 text-sm text-muted-foreground">Loading…</p>}
-        {!convos.isLoading && (convos.data ?? []).length === 0 && (
+        {!convos.isLoading && (convos.data ?? []).length === 0 && (groups.data ?? []).length === 0 && (
           <div className="flex flex-col items-center gap-2 p-10 text-center text-sm text-muted-foreground">
             <MessageCircle className="h-6 w-6" />
             No conversations yet. Tap <b>+ New</b> above to start one.
           </div>
         )}
+        {(groups.data ?? []).map((g: any) => (
+          <button
+            key={g.id}
+            onClick={() => navigate({ to: "/messages/group/$groupId", params: { groupId: g.id } })}
+            className="flex w-full items-center gap-3 p-4 text-left hover:bg-accent"
+          >
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
+              <Users className="h-4 w-4" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <span className="truncate text-sm font-medium">{g.title}</span>
+              <p className="truncate text-xs text-muted-foreground">Group chat</p>
+            </div>
+          </button>
+        ))}
+
         {(convos.data ?? []).map((c: any) => (
           <button
             key={c.partner_id}
