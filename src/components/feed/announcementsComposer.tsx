@@ -35,7 +35,9 @@ export function AnnouncementComposer({ onPosted }: Props) {
   const [priority, setPriority] = useState(false);
   const [targetBranch, setTargetBranch] = useState("all");
   const [canPickBranch, setCanPickBranch] = useState(false);
+  const [authorId, setAuthorId] = useState<string | null>(null);
   const [files, setFiles] = useState<FileList | null>(null);
+
   const [posting, setPosting] = useState(false);
 
   useEffect(() => {
