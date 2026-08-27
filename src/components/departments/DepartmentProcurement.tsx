@@ -6,6 +6,7 @@ import { getAuthUserResult } from "@/lib/authUser";
 import { useCurrentRole } from "@/lib/useCurrentRole";
 
 const ProcurementModule = lazy(() => import("@/components/finance/ProcurementModule"));
+const DepartmentBudgetCommand = lazy(() => import("@/components/finance/DepartmentBudgetCommand"));
 
 const FINANCE_ROLES = [
   "senior_apostle",
