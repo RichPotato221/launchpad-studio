@@ -385,15 +385,30 @@ function PostCard({ post, likes, currentUserId, onChange }: {
 
   const addComment = async () => {
     if (!comment.trim() || !currentUserId) return;
-    const { error } = await supabase.from("announcement_comments").insert({
+    const text = comment.trim();
+    const { data: insertedComment, error } = await supabase.from("announcement_comments").insert({
       announcement_id: post.id,
       author_id: currentUserId,
-      body: comment.trim(),
-    });
+      body: text,
+    }).select("id").maybeSingle();
     if (error) return toast.error(error.message);
+    // Only the post's author is affected by a comment on their post.
+    if (post.author_id && post.author_id !== currentUserId) {
+      notify({
+        data: {
+          type: "FEED_COMMENT",
+          entityType: "announcement",
+          entityId: post.id,
+          entityVersion: insertedComment?.id ?? Date.now(),
+          audience: { userIds: [post.author_id], excludeUserIds: [currentUserId] },
+          metadata: { body: text },
+        },
+      }).catch((err) => console.error("comment notification failed", err));
+    }
     setComment("");
     loadComments();
   };
+
 
   const openComments = () => {
     setShowComments((s) => {
