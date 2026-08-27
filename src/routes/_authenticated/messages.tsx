@@ -91,15 +91,42 @@ function MessagesIndex() {
     resetPicker();
   };
 
-  const startGroup = () => {
+  const startGroup = async () => {
     const ids = Object.keys(selected);
     if (ids.length < 2) {
       toast.error("Pick at least 2 members for a group chat.");
       return;
     }
-    toast.info("Group chats are coming soon — starting a direct chat with the first member.");
-    startDirect(ids[0]);
+    const { data: auth } = await supabase.auth.getUser();
+    const me = auth.user?.id;
+    if (!me) return toast.error("You need to be signed in.");
+
+    const title =
+      groupName.trim() ||
+      Object.values(selected)
+        .map((s) => s.full_name.split(" ")[0])
+        .join(", ");
+
+    const { data: conv, error } = await (supabase as any)
+      .from("group_conversations")
+      .insert({ title, created_by: me })
+      .select("id")
+      .single();
+    if (error || !conv) return toast.error(error?.message ?? "Could not create the group.");
+
+    const rows = Array.from(new Set([me, ...ids])).map((user_id) => ({
+      conversation_id: conv.id,
+      user_id,
+    }));
+    const { error: memberErr } = await (supabase as any).from("group_conversation_members").insert(rows);
+    if (memberErr) return toast.error(memberErr.message);
+
+    setOpen(false);
+    resetPicker();
+    groups.refetch();
+    navigate({ to: "/messages/group/$groupId", params: { groupId: conv.id } });
   };
+
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 md:px-8">
