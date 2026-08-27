@@ -63,10 +63,20 @@ export function DepartmentProcurement({ slug }: { slug: string }) {
         </p>
       </Card>
 
-      <Tabs defaultValue="procurement">
+      <Tabs defaultValue="budgets">
         <TabsList className="flex h-auto flex-wrap justify-start gap-1">
+          <TabsTrigger value="budgets">Budgets & funds</TabsTrigger>
           <TabsTrigger value="procurement">Procurement</TabsTrigger>
         </TabsList>
+        <TabsContent value="budgets" className="mt-6">
+          <Suspense fallback={<p className="p-6 text-sm text-muted-foreground">Loading…</p>}>
+            {userId ? (
+              <DepartmentBudgetCommand slug={slug} currentUserId={userId} canManage={canManage} />
+            ) : (
+              <p className="p-6 text-sm text-muted-foreground">Loading…</p>
+            )}
+          </Suspense>
+        </TabsContent>
         <TabsContent value="procurement" className="mt-6">
           <Suspense fallback={<p className="p-6 text-sm text-muted-foreground">Loading…</p>}>
             {userId ? (
