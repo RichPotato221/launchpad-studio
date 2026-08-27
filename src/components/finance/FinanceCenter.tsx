@@ -71,6 +71,10 @@ export default function FinanceCenter({ currentUserId }: { departmentSlug?: stri
         </TabsList>
 
         <TabsContent value="dashboard" className="mt-6"><FinanceDashboard /></TabsContent>
+        <TabsContent value="control" className="mt-6"><FinancialControlRoom canManage={canManage} /></TabsContent>
+        <TabsContent value="budget-approvals" className="mt-6">
+          <BudgetApprovalsModule canManage={canManage} currentUserId={currentUserId} />
+        </TabsContent>
         <TabsContent value="ledger" className="mt-6">
           <LedgerModule canManage={canManage} currentUserId={currentUserId} />
         </TabsContent>
