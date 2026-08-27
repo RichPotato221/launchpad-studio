@@ -74,7 +74,9 @@ function MessagesIndex() {
     setTerm("");
     setSelected({});
     setMode("direct");
+    setGroupName("");
   };
+
 
   const toggleSelect = (m: { id: string; full_name: string }) => {
     setSelected((prev) => {
