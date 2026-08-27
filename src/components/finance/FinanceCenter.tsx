@@ -57,10 +57,12 @@ export default function FinanceCenter({ currentUserId }: { departmentSlug?: stri
       <Tabs defaultValue="dashboard">
         <TabsList className="flex h-auto w-full flex-wrap justify-start print:hidden">
           <TabsTrigger value="dashboard">Executive dashboard</TabsTrigger>
+          <TabsTrigger value="control">Control room</TabsTrigger>
           <TabsTrigger value="ledger">General ledger</TabsTrigger>
           <TabsTrigger value="giving">Member giving</TabsTrigger>
           <TabsTrigger value="workbook">Monthly workbook</TabsTrigger>
           <TabsTrigger value="budgets">Budgets</TabsTrigger>
+          <TabsTrigger value="budget-approvals">Budget approvals</TabsTrigger>
           <TabsTrigger value="approvals">Approvals & payments</TabsTrigger>
           <TabsTrigger value="procurement">Procurement</TabsTrigger>
           <TabsTrigger value="payroll">Payroll</TabsTrigger>
