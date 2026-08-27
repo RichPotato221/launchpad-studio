@@ -17,12 +17,15 @@ export const Route = createFileRoute("/_authenticated")({
 });
 
 function Gate() {
-  const [state, setState] = useState<"loading" | "ok" | "pending" | "rejected">("loading");
-
-  useEffect(() => {
-    (async () => {
+  // Cached for the whole session: the access check used to re-run (and block
+  // the screen) on every remount of the portal shell.
+  const access = useQuery({
+    queryKey: ["portal-access"],
+    staleTime: 10 * 60_000,
+    gcTime: 30 * 60_000,
+    queryFn: async (): Promise<"ok" | "pending" | "rejected"> => {
       const { data: u } = await getAuthUserResult();
-      if (!u.user) return setState("pending");
+      if (!u.user) return "pending";
       const [{ data: profile }, { data: roles }] = await Promise.all([
         supabase.from("profiles").select("approval_status").eq("id", u.user.id).maybeSingle(),
         supabase.from("user_roles").select("role").eq("user_id", u.user.id),
@@ -30,16 +33,19 @@ function Gate() {
       const isAdmin = (roles ?? []).some((r) =>
         ["senior_apostle", "secretary", "chairperson", "lead_pastor", "associate_pastor"].includes(r.role),
       );
-      if (isAdmin) return setState("ok");
-      if (!profile || profile.approval_status === "pending") return setState("pending");
-      if (profile.approval_status === "rejected") return setState("rejected");
-      setState("ok");
-    })();
-  }, []);
+      if (isAdmin) return "ok";
+      if (!profile || profile.approval_status === "pending") return "pending";
+      if (profile.approval_status === "rejected") return "rejected";
+      return "ok";
+    },
+  });
+
+  const state = access.data ?? "loading";
 
   if (state === "loading") {
     return <div className="grid min-h-screen place-items-center text-muted-foreground">Checking access…</div>;
   }
+
   if (state === "pending" || state === "rejected") {
     return (
       <div className="grid min-h-screen place-items-center bg-background p-6">
