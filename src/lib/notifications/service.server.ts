@@ -45,25 +45,57 @@ async function resolveRecipients(admin: Admin, audience: NotificationAudience = 
     }
   }
 
-  const needsProfiles = !!audience.userIds?.length || (!audience.emails?.length && !audience.userIds?.length);
-  if (needsProfiles || audience.branch || audience.departmentSlug) {
-    let q = admin
-      .from("profiles")
-      .select("id, email, full_name, branch, primary_department, approval_status")
-      .eq("approval_status", "approved");
-    if (audience.userIds?.length) q = q.in("id", audience.userIds);
-    if (audience.branch) q = q.eq("branch", audience.branch);
-    if (audience.departmentSlug) q = q.eq("primary_department", audience.departmentSlug);
-    const { data } = await q;
-    for (const p of (data ?? []) as any[]) {
-      if (typeof p.email === "string" && p.email.includes("@")) {
-        out.set(p.email.toLowerCase(), { id: p.id, email: p.email, name: p.full_name });
+  // Explicit people (private messages, approval chains) win: nobody else is emailed.
+  const explicit = !!audience.userIds?.length || !!audience.emails?.length;
+
+  if (audience.userIds?.length || !explicit) {
+    // Department audiences include people serving in the department through a
+    // role assignment, not only those whose primary department matches.
+    let deptUserIds: string[] | null = null;
+    if (!audience.userIds?.length && audience.departmentSlug) {
+      const { data: roleRows } = await admin
+        .from("user_roles")
+        .select("user_id")
+        .eq("department_slug", audience.departmentSlug);
+      deptUserIds = Array.from(new Set(((roleRows ?? []) as any[]).map((r) => r.user_id)));
+    }
+
+    const baseQuery = () => {
+      let q = admin
+        .from("profiles")
+        .select("id, email, full_name, branch, primary_department, approval_status")
+        .eq("approval_status", "approved");
+      if (audience.branch) q = q.eq("branch", audience.branch);
+      return q;
+    };
+
+    const queries: any[] = [];
+    if (audience.userIds?.length) {
+      queries.push(baseQuery().in("id", audience.userIds));
+    } else if (audience.departmentSlug) {
+      queries.push(baseQuery().eq("primary_department", audience.departmentSlug));
+      if (deptUserIds?.length) queries.push(baseQuery().in("id", deptUserIds));
+    } else {
+      queries.push(baseQuery());
+    }
+
+    for (const q of queries) {
+      const { data } = await q;
+      for (const p of (data ?? []) as any[]) {
+        if (typeof p.email === "string" && p.email.includes("@")) {
+          out.set(p.email.toLowerCase(), { id: p.id, email: p.email, name: p.full_name });
+        }
       }
     }
   }
 
-  return [...out.values()];
+  const excludeIds = new Set(audience.excludeUserIds ?? []);
+  const excludeEmails = new Set((audience.excludeEmails ?? []).map((e) => e.toLowerCase()));
+  return [...out.values()].filter(
+    (r) => !(r.id && excludeIds.has(r.id)) && !excludeEmails.has(r.email.toLowerCase()),
+  );
 }
+
 
 async function filterByPreferences(
   admin: Admin,
