@@ -117,11 +117,17 @@ function EventsPage() {
    */
   const removeEvent = async (ev: any) => {
     if (!window.confirm(`Delete "${ev.title}"? Its roster, attendance, meeting record and process order will also be removed.`)) return;
+    // Notify attendees BEFORE the row disappears — the cancellation email and
+    // the .ics CANCEL are built from the live event record.
+    await sendEventInvites({ data: { eventId: ev.id, action: "cancel" } }).catch((err) =>
+      console.error("Cancellation notice failed", err),
+    );
     const { error } = await supabase.from("events").delete().eq("id", ev.id);
     if (error) return toast.error(error.message);
-    toast.success("Event deleted");
+    toast.success("Event deleted — cancellation notices sent");
     load();
   };
+
 
 
 
