@@ -25,7 +25,7 @@ export const getRouter = () => {
     // Warm the next page as soon as the user hovers/taps a link.
     defaultPreload: "intent",
     defaultPreloadDelay: 40,
-    defaultPreloadStaleTime: 0,
+    defaultPreloadStaleTime: 60_000,
   });
 
   return router;

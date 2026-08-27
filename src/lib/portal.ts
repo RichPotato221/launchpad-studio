@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 import type { Database } from "@/integrations/supabase/types";
 
 export type Department = Database["public"]["Tables"]["departments"]["Row"];
@@ -59,7 +60,7 @@ export async function fetchAllKpis() {
 }
 
 export async function fetchMyRoles() {
-  const { data: user } = await supabase.auth.getUser();
+  const { data: user } = await getAuthUserResult();
   if (!user.user) return [];
   const { data, error } = await supabase.from("user_roles").select("*").eq("user_id", user.user.id);
   if (error) throw error;

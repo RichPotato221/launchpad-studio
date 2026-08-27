@@ -2,6 +2,7 @@ import { Suspense, lazy, useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 import { useCurrentRole } from "@/lib/useCurrentRole";
 
 const ProcurementModule = lazy(() => import("@/components/finance/ProcurementModule"));
@@ -28,7 +29,7 @@ export function DepartmentProcurement({ slug }: { slug: string }) {
 
   useEffect(() => {
     (async () => {
-      const { data } = await supabase.auth.getUser();
+      const { data } = await getAuthUserResult();
       const uid = data.user?.id ?? null;
       setUserId(uid);
       if (!uid) return;

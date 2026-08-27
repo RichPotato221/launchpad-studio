@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 
 /**
  * Returns whether the current signed-in user should see the extra
@@ -11,7 +12,7 @@ export function useIsDepartmentMember(slug: string) {
   return useQuery({
     queryKey: ["is-dept-member", slug],
     queryFn: async () => {
-      const { data: userRes } = await supabase.auth.getUser();
+      const { data: userRes } = await getAuthUserResult();
       const uid = userRes.user?.id;
       if (!uid) return { isMember: false, isAdmin: false, userId: null as string | null };
 

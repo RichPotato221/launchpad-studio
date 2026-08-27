@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 import { fetchAllKpis, fetchDepartments, KPI_CATEGORIES, type KpiCategory } from "@/lib/portal";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -206,7 +207,7 @@ function AddReportEntry({
     if (!slug || !title.trim()) return toast.error("Department and title are required.");
     setSaving(true);
     try {
-      const { data: userRes } = await supabase.auth.getUser();
+      const { data: userRes } = await getAuthUserResult();
       if (!userRes.user) throw new Error("Not signed in");
 
       let file_url: string | null = null;

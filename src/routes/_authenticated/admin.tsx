@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 import { fetchDepartments, ROLE_LABELS, type AppRole } from "@/lib/portal";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -42,7 +43,7 @@ function AdminPage() {
   const access = useQuery({
     queryKey: ["is-chairperson"],
     queryFn: async () => {
-      const { data: userRes } = await supabase.auth.getUser();
+      const { data: userRes } = await getAuthUserResult();
       const uid = userRes.user?.id;
       if (!uid) return { isChair: false, userId: null as string | null };
       const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", uid);

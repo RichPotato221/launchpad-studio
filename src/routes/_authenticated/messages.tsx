@@ -2,6 +2,7 @@ import { createFileRoute, Link, Outlet, useMatches, useNavigate } from "@tanstac
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -101,7 +102,7 @@ function MessagesIndex() {
       toast.error("Pick at least 2 members for a group chat.");
       return;
     }
-    const { data: auth } = await supabase.auth.getUser();
+    const { data: auth } = await getAuthUserResult();
     const me = auth.user?.id;
     if (!me) return toast.error("You need to be signed in.");
 

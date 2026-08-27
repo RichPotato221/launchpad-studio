@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,7 +31,7 @@ function ProfilePage() {
   const [saving, setSaving] = useState(false);
  
   const load = async () => {
-    const { data: userRes } = await supabase.auth.getUser();
+    const { data: userRes } = await getAuthUserResult();
     const uid = userRes.user?.id;
     if (!uid) return;
     setUserId(uid);

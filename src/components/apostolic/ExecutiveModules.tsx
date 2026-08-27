@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,7 +40,7 @@ export function DecisionCentre() {
 
   const add = useMutation({
     mutationFn: async () => {
-      const { data: userRes } = await supabase.auth.getUser();
+      const { data: userRes } = await getAuthUserResult();
       const { error } = await sb.from("apo_approvals").insert({
         category: f.category,
         title: f.title,
@@ -63,7 +64,7 @@ export function DecisionCentre() {
     mutationFn: async ({ row, status }: { row: any; status: string }) => {
       const signature = sig[row.id]?.trim();
       if (status === "approved" && !signature) throw new Error("Type your name to sign this approval.");
-      const { data: userRes } = await supabase.auth.getUser();
+      const { data: userRes } = await getAuthUserResult();
       const audit = [
         ...(row.audit ?? []),
         { at: new Date().toISOString(), action: status, by: userRes.user?.id ?? null, signature: signature ?? null },
@@ -166,7 +167,7 @@ export function ProjectsModule() {
 
   const add = useMutation({
     mutationFn: async () => {
-      const { data: userRes } = await supabase.auth.getUser();
+      const { data: userRes } = await getAuthUserResult();
       const { error } = await sb.from("apo_projects").insert({
         ...f,
         budget: Number(f.budget) || 0,
@@ -259,7 +260,7 @@ export function ExecutiveRiskModule() {
 
   const add = useMutation({
     mutationFn: async () => {
-      const { data: userRes } = await supabase.auth.getUser();
+      const { data: userRes } = await getAuthUserResult();
       const { error } = await sb.from("apo_risks").insert({
         ...f,
         likelihood: Number(f.likelihood),
@@ -347,7 +348,7 @@ export function CommunicationsModule() {
 
   const send = useMutation({
     mutationFn: async (status: string) => {
-      const { data: userRes } = await supabase.auth.getUser();
+      const { data: userRes } = await getAuthUserResult();
       const { error } = await sb.from("apo_communications").insert({
         kind: f.kind,
         subject: f.subject,

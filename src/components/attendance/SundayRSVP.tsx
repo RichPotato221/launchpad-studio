@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -33,7 +34,7 @@ export function SundayRsvp({ serviceDate }: Props) {
 
   async function loadData() {
     setLoading(true);
-    const { data: userData } = await supabase.auth.getUser();
+    const { data: userData } = await getAuthUserResult();
     const uid = userData.user?.id ?? null;
     setUserId(uid);
 

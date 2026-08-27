@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 
 export type CurrentRoleInfo = {
   userId: string | null;
@@ -32,7 +33,7 @@ export function useCurrentRole() {
   return useQuery<CurrentRoleInfo>({
     queryKey: ["current-role"],
     queryFn: async () => {
-      const { data: userRes } = await supabase.auth.getUser();
+      const { data: userRes } = await getAuthUserResult();
       const uid = userRes.user?.id ?? null;
       if (!uid) {
         return {
@@ -45,11 +46,11 @@ export function useCurrentRole() {
           canSeeDeclineReasons: false,
         };
       }
-      const [{ data: roles }, { data: profile }, { data: hospDept }] = await Promise.all([
-        supabase.from("user_roles").select("role").eq("user_id", uid),
+      const [{ data: roles }, { data: profile }] = await Promise.all([
+        supabase.from("user_roles").select("role, department_slug").eq("user_id", uid),
         supabase.from("profiles").select("branch, primary_department").eq("id", uid).maybeSingle(),
-        supabase.from("user_roles").select("department_slug").eq("user_id", uid).eq("department_slug", "hospitality"),
       ]);
+      const hospDept = (roles ?? []).filter((r: any) => r.department_slug === "hospitality");
       const roleNames = (roles ?? []).map((r: any) => r.role as string);
       const isHospitality =
         profile?.primary_department === "hospitality" || (hospDept ?? []).length > 0;

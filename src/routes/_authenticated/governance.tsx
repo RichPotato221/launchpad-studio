@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 import { fetchDepartments } from "@/lib/portal";
 import { useLeadershipAccess } from "@/lib/useLeadershipAccess";
 import { PORTAL_IMAGES } from "@/lib/portalImages";
@@ -99,7 +100,7 @@ function MembershipLifecycle() {
 
   const submit = async () => {
     if (!selected || !stage) return toast.error("Choose a member and a stage.");
-    const { data: userRes } = await supabase.auth.getUser();
+    const { data: userRes } = await getAuthUserResult();
     const { error } = await supabase.from("membership_lifecycle").insert({
       profile_id: selected,
       stage: stage as any,

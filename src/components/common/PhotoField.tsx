@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -34,7 +35,7 @@ export default function PhotoField({
     }
     setBusy(true);
     try {
-      const { data: auth } = await supabase.auth.getUser();
+      const { data: auth } = await getAuthUserResult();
       const uid = auth.user?.id ?? "anon";
       const ext = file.name.split(".").pop() ?? "jpg";
       const path = `${folder}/${uid}/${crypto.randomUUID()}.${ext}`;

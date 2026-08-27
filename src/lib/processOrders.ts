@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 
 export type PoStatus =
   | "DRAFT"
@@ -155,7 +156,7 @@ export async function logPoAudit(input: {
   reason?: string | null;
   actorName?: string | null;
 }) {
-  const { data: userRes } = await supabase.auth.getUser();
+  const { data: userRes } = await getAuthUserResult();
   await supabase.from("process_order_audit").insert({
     process_order_id: input.processOrderId,
     actor_id: userRes.user?.id ?? null,

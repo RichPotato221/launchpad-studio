@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,7 +46,7 @@ export function VisionModule() {
 
   const createVision = useMutation({
     mutationFn: async () => {
-      const { data: userRes } = await supabase.auth.getUser();
+      const { data: userRes } = await getAuthUserResult();
       const { error } = await sb.from("apo_vision").insert({
         year: Number(form.year),
         theme: form.theme,
@@ -104,7 +105,7 @@ export function VisionModule() {
 
   const addDirective = useMutation({
     mutationFn: async () => {
-      const { data: userRes } = await supabase.auth.getUser();
+      const { data: userRes } = await getAuthUserResult();
       const { error } = await sb.from("apo_directives").insert({
         vision_id: current?.id ?? null,
         title: directive.title,

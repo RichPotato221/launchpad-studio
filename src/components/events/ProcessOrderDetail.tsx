@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -123,7 +124,7 @@ export function ProcessOrderDetail({ poId, canManage, onBack, onChanged }: Props
     }
     const patch: Record<string, any> = { status: next, readiness_pct: readiness.pct };
     const stamp = new Date().toISOString();
-    const { data: u } = await supabase.auth.getUser();
+    const { data: u } = await getAuthUserResult();
     if (next === "APPROVED") Object.assign(patch, { approved_at: stamp, approved_by: u.user?.id });
     if (next === "RELEASED") Object.assign(patch, { released_at: stamp, released_by: u.user?.id });
     if (next === "RUNNING") patch.running_at = stamp;
@@ -145,7 +146,7 @@ export function ProcessOrderDetail({ poId, canManage, onBack, onChanged }: Props
 
   const updateActivity = async (a: Activity, patch: Record<string, any>, note?: string) => {
     const done = patch.status === "COMPLETED";
-    const { data: u } = await supabase.auth.getUser();
+    const { data: u } = await getAuthUserResult();
     const { error } = await supabase
       .from("process_order_activities")
       .update({
@@ -466,7 +467,7 @@ function ExceptionsTab({ poId, rows, onReload }: { poId: string; rows: any[]; on
 
   const raise = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { data: u } = await supabase.auth.getUser();
+    const { data: u } = await getAuthUserResult();
     const { error } = await supabase.from("process_order_exceptions").insert({
       process_order_id: poId,
       description: form.description,
@@ -487,7 +488,7 @@ function ExceptionsTab({ poId, rows, onReload }: { poId: string; rows: any[]; on
   };
 
   const setStatus = async (row: any, status: string) => {
-    const { data: u } = await supabase.auth.getUser();
+    const { data: u } = await getAuthUserResult();
     const { error } = await supabase
       .from("process_order_exceptions")
       .update({
@@ -551,7 +552,7 @@ function DocumentsTab({ poId, rows, onReload }: { poId: string; rows: any[]; onR
 
   const add = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { data: u } = await supabase.auth.getUser();
+    const { data: u } = await getAuthUserResult();
     const { error } = await supabase.from("process_order_documents").insert({
       process_order_id: poId,
       title: form.title,
@@ -616,7 +617,7 @@ function ClosureTab({
   };
 
   const toggle = async (row: any) => {
-    const { data: u } = await supabase.auth.getUser();
+    const { data: u } = await getAuthUserResult();
     const { error } = await supabase
       .from("process_order_closure_checks")
       .update({ is_done: !row.is_done, checked_by: u.user?.id, checked_at: new Date().toISOString() })
