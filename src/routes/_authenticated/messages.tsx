@@ -27,6 +27,8 @@ function MessagesIndex() {
   const [mode, setMode] = useState<"direct" | "group">("direct");
   const [term, setTerm] = useState("");
   const [selected, setSelected] = useState<Record<string, { id: string; full_name: string }>>({});
+  const [groupName, setGroupName] = useState("");
+
 
   const convos = useQuery({
     queryKey: ["conversations"],
