@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 
 interface MediaItem {
   id: string;
@@ -35,7 +36,7 @@ export function AnnouncementFeed() {
   async function load() {
     setLoading(true);
 
-    const { data: userData } = await supabase.auth.getUser();
+    const { data: userData } = await getAuthUserResult();
     const uid = userData.user?.id ?? null;
     setCurrentUserId(uid);
 

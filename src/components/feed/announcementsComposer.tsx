@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 import { notify } from "@/lib/notifications.functions";
 
 import { Button } from "@/components/ui/button";
@@ -42,7 +43,7 @@ export function AnnouncementComposer({ onPosted }: Props) {
   }, []);
 
   async function checkRole() {
-    const { data: userData } = await supabase.auth.getUser();
+    const { data: userData } = await getAuthUserResult();
     const uid = userData.user?.id;
     if (!uid) return;
     const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", uid);

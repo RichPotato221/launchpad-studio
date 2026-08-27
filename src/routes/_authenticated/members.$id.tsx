@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -25,7 +26,7 @@ function MemberProfilePage() {
   };
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setCurrentUserId(data.user?.id ?? null));
+    getAuthUserResult().then(({ data }) => setCurrentUserId(data.user?.id ?? null));
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);

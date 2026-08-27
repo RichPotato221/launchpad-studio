@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 import { useQueryClient } from "@tanstack/react-query";
 import { LogOut, User } from "lucide-react";
 
@@ -11,7 +12,7 @@ export function ProfileMenu() {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    supabase.auth.getUser().then(async ({ data }) => {
+    getAuthUserResult().then(async ({ data }) => {
       const uid = data.user?.id;
       if (!uid) return;
       const { data: p } = await supabase

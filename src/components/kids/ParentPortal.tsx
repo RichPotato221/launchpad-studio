@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,7 @@ export default function ParentPortal() {
 
   useEffect(() => {
     (async () => {
-      const { data: auth } = await supabase.auth.getUser();
+      const { data: auth } = await getAuthUserResult();
       const uid = auth.user?.id;
       if (!uid) { setLoading(false); return; }
       const { data: links } = await sb.from("child_guardians").select("child_id").eq("profile_id", uid);

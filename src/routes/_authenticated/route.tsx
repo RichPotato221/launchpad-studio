@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 import { PortalShell } from "@/components/PortalShell";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/trog-logo.png";
@@ -8,7 +9,7 @@ import logo from "@/assets/trog-logo.png";
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   beforeLoad: async () => {
-    const { data, error } = await supabase.auth.getUser();
+    const { data, error } = await getAuthUserResult();
     if (error || !data.user) throw redirect({ to: "/auth" });
     return { user: data.user };
   },
@@ -20,7 +21,7 @@ function Gate() {
 
   useEffect(() => {
     (async () => {
-      const { data: u } = await supabase.auth.getUser();
+      const { data: u } = await getAuthUserResult();
       if (!u.user) return setState("pending");
       const [{ data: profile }, { data: roles }] = await Promise.all([
         supabase.from("profiles").select("approval_status").eq("id", u.user.id).maybeSingle(),

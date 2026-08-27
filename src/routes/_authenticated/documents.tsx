@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -105,7 +106,7 @@ function DocumentsPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getUser().then(async ({ data }) => {
+    getAuthUserResult().then(async ({ data }) => {
       setUserId(data.user?.id ?? "");
       if (data.user?.id) {
         const { data: rows } = await supabase.from("user_roles").select("role").eq("user_id", data.user.id);
@@ -401,7 +402,7 @@ function UploadForm({
     if (!docNumber.trim()) return toast.error("Please set a tracking number (or click Auto-generate).");
 
     setUploading(true);
-    const { data: userData } = await supabase.auth.getUser();
+    const { data: userData } = await getAuthUserResult();
     if (!userData.user) {
       toast.error("You must be signed in to upload.");
       setUploading(false);

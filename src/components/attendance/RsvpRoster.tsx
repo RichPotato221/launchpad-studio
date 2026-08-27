@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 
 interface RosterRow {
   user_id: string;
@@ -32,7 +33,7 @@ export function RsvpRoster({ serviceDate }: { serviceDate: string }) {
     }
     setRows((data ?? []) as RosterRow[]);
 
-    const { data: userData } = await supabase.auth.getUser();
+    const { data: userData } = await getAuthUserResult();
     const uid = userData.user?.id;
     if (uid) {
       const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", uid);

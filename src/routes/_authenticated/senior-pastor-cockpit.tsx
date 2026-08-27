@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 import { fetchAllKpis, fetchDepartments, KPI_CATEGORIES, type KpiCategory } from "@/lib/portal";
 import { useLeadershipAccess } from "@/lib/useLeadershipAccess";
 import { Card } from "@/components/ui/card";
@@ -79,7 +80,7 @@ function CockpitComposer() {
     e.preventDefault();
     if (!body.trim()) return;
     setPosting(true);
-    const { data: userRes } = await supabase.auth.getUser();
+    const { data: userRes } = await getAuthUserResult();
     let attachment_url: string | null = null;
     let attachment_name: string | null = null;
     if (file && userRes.user) {
@@ -206,7 +207,7 @@ function CockpitPostItem({ post, onChange }: { post: any; onChange: () => void }
 
   const addComment = async () => {
     if (!comment.trim()) return;
-    const { data: userRes } = await supabase.auth.getUser();
+    const { data: userRes } = await getAuthUserResult();
     const { error } = await supabase.from("cockpit_post_comments").insert({
       post_id: post.id,
       author_id: userRes.user!.id,
@@ -424,7 +425,7 @@ function PendingApprovals() {
   const deptName = (slug: string) => depts.data?.find((d) => d.slug === slug)?.name ?? slug;
 
   const advance = async (id: string, status: "senior_pastor_approved" | "rejected") => {
-    const { data: userRes } = await supabase.auth.getUser();
+    const { data: userRes } = await getAuthUserResult();
     const { error } = await supabase
       .from("expense_claims")
       .update(status === "senior_pastor_approved" ? { status, approved_by_senior: userRes.user?.id } : { status })

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -25,7 +26,7 @@ export function AppointmentsModule() {
 
   const add = useMutation({
     mutationFn: async () => {
-      const { data: userRes } = await supabase.auth.getUser();
+      const { data: userRes } = await getAuthUserResult();
       const { error } = await sb.from("apo_appointments").insert({
         ...f,
         effective_date: f.effective_date || null,
@@ -44,7 +45,7 @@ export function AppointmentsModule() {
 
   const decide = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const { data: userRes } = await supabase.auth.getUser();
+      const { data: userRes } = await getAuthUserResult();
       const { error } = await sb
         .from("apo_appointments")
         .update({ status, approved_by: userRes.user?.id ?? null, approved_at: new Date().toISOString() })

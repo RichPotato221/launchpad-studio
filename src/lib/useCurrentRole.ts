@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 
 export type CurrentRoleInfo = {
   userId: string | null;
@@ -32,7 +33,7 @@ export function useCurrentRole() {
   return useQuery<CurrentRoleInfo>({
     queryKey: ["current-role"],
     queryFn: async () => {
-      const { data: userRes } = await supabase.auth.getUser();
+      const { data: userRes } = await getAuthUserResult();
       const uid = userRes.user?.id ?? null;
       if (!uid) {
         return {

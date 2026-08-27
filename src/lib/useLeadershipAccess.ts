@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 
 /**
  * Gates pages meant only for church-wide leadership oversight
@@ -13,7 +14,7 @@ export function useLeadershipAccess() {
   return useQuery({
     queryKey: ["leadership-access"],
     queryFn: async () => {
-      const { data: userRes } = await supabase.auth.getUser();
+      const { data: userRes } = await getAuthUserResult();
       const uid = userRes.user?.id;
       if (!uid) return { hasAccess: false, isSeniorApostle: false, userId: null as string | null };
 

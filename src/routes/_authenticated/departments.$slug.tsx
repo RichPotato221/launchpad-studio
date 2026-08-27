@@ -10,6 +10,7 @@ import { useIsDepartmentMember } from "@/lib/useIsDepartmentMember";
 import { useCurrentRole } from "@/lib/useCurrentRole";
 import { useBranchScope, filterByBranch } from "@/lib/useBranchScope";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 import {
   fetchDepartment,
   fetchDepartmentKpis,
@@ -352,7 +353,7 @@ function KpiDashboard({ slug, kpis, onChange }: { slug: string; kpis: any[]; onC
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setAdding(true);
-    const { data: user } = await supabase.auth.getUser();
+    const { data: user } = await getAuthUserResult();
     const { error } = await supabase.from("kpis").insert({
       department_slug: slug,
       kpi_name: form.kpi_name,
@@ -529,7 +530,7 @@ function DepartmentReports({ slug, deptName }: { slug: string; deptName: string 
     if (!title.trim()) return toast.error("Title is required.");
     setSaving(true);
     try {
-      const { data: userRes } = await supabase.auth.getUser();
+      const { data: userRes } = await getAuthUserResult();
       if (!userRes.user) throw new Error("Not signed in");
 
       let file_url: string | null = null;

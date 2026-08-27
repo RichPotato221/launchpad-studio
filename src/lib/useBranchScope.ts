@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 
 /**
  * Branch visibility rule for the whole portal.
@@ -19,7 +20,7 @@ export function useBranchScope() {
   return useQuery<BranchScope>({
     queryKey: ["branch-scope"],
     queryFn: async () => {
-      const { data: userRes } = await supabase.auth.getUser();
+      const { data: userRes } = await getAuthUserResult();
       const uid = userRes.user?.id;
       if (!uid) return { branch: null, seesAllBranches: false };
 

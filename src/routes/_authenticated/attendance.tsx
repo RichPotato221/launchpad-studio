@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,7 +48,7 @@ function AttendancePage() {
   };
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? ""));
+    getAuthUserResult().then(({ data }) => setUserId(data.user?.id ?? ""));
     supabase.from("departments").select("slug, name").order("name").then(({ data }) => setDepts(data ?? []));
     supabase.from("events").select("id, title, event_date").order("event_date", { ascending: false }).limit(50).then(({ data }) => setEvents(data ?? []));
     load();
@@ -243,7 +244,7 @@ function SundayRsvpWidget() {
   const date = nextSunday();
 
   const load = async () => {
-    const { data: userRes } = await supabase.auth.getUser();
+    const { data: userRes } = await getAuthUserResult();
     const u = userRes.user?.id ?? "";
     setUid(u);
     if (!u) return;
@@ -310,7 +311,7 @@ function HospitalityWatch() {
   useEffect(() => { load(); }, []);
 
   const mark = async (id: string, feedback: string) => {
-    const { data: userRes } = await supabase.auth.getUser();
+    const { data: userRes } = await getAuthUserResult();
     const { error } = await supabase.from("hospitality_checkups").update({
       checked: true, checked_by: userRes.user?.id, checked_at: new Date().toISOString(),
       feedback: feedback || null,
@@ -376,7 +377,7 @@ function RsvpRoster() {
     if (error) return toast.error(error.message);
     setRows(data ?? []);
 
-    const { data: userRes } = await supabase.auth.getUser();
+    const { data: userRes } = await getAuthUserResult();
     const uid = userRes.user?.id;
     if (uid) {
       const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", uid);

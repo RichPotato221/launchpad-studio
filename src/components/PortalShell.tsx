@@ -1,6 +1,7 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Menu, X, LogOut } from "lucide-react";
@@ -48,7 +49,7 @@ export function PortalShell({ children }: { children: ReactNode }) {
     queryKey: ["portal-identity"],
     staleTime: 5 * 60_000,
     queryFn: async () => {
-      const { data } = await supabase.auth.getUser();
+      const { data } = await getAuthUserResult();
       const uid = data.user?.id;
       if (!uid) return { email: "", roles: [] as string[] };
       const { data: roleRows } = await supabase.from("user_roles").select("role").eq("user_id", uid);

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUserResult } from "@/lib/authUser";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -79,7 +80,7 @@ export function ProcessOrdersModule({ canManage }: Props) {
     const ev = events.find((x) => x.id === form.event_id);
     if (!ev) return toast.error("Select an event.");
     setCreating(true);
-    const { data: u } = await supabase.auth.getUser();
+    const { data: u } = await getAuthUserResult();
     const startsAt = new Date(`${ev.event_date}T${ev.start_time ?? "09:00"}`).toISOString();
     const endsAt = ev.end_time ? new Date(`${ev.event_date}T${ev.end_time}`).toISOString() : null;
     const template = templates.find((t) => t.id === form.template_id);
