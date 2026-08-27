@@ -11,6 +11,8 @@ import GivingModule from "@/components/finance/GivingModule";
 import BudgetsModule from "@/components/finance/BudgetsModule";
 import ApprovalsModule from "@/components/finance/ApprovalsModule";
 import ProcurementModule from "@/components/finance/ProcurementModule";
+import FinancialControlRoom from "@/components/finance/FinancialControlRoom";
+import BudgetApprovalsModule from "@/components/finance/BudgetApprovalsModule";
 import PayrollModule from "@/components/finance/PayrollModule";
 import ReconciliationModule from "@/components/finance/ReconciliationModule";
 import MonthlyWorkbook from "@/components/finance/MonthlyWorkbook";
