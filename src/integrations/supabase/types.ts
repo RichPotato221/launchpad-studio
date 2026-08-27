@@ -3230,6 +3230,42 @@ export type Database = {
           },
         ]
       }
+      event_responses: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          recipient_email: string
+          responded_at: string
+          response: string
+          source: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          recipient_email: string
+          responded_at?: string
+          response: string
+          source?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          recipient_email?: string
+          responded_at?: string
+          response?: string
+          source?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       event_rosters: {
         Row: {
           created_at: string
@@ -7981,6 +8017,141 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notification_action_tokens: {
+        Row: {
+          created_at: string
+          entity_id: string
+          entity_type: string
+          expires_at: string
+          id: string
+          recipient_email: string
+          token: string
+          used_action: string | null
+          used_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          entity_id: string
+          entity_type?: string
+          expires_at?: string
+          id?: string
+          recipient_email: string
+          token: string
+          used_action?: string | null
+          used_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          expires_at?: string
+          id?: string
+          recipient_email?: string
+          token?: string
+          used_action?: string | null
+          used_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      notification_log: {
+        Row: {
+          created_at: string
+          entity_id: string | null
+          entity_type: string | null
+          error_message: string | null
+          failed_at: string | null
+          id: string
+          idempotency_key: string
+          notification_type: string
+          payload: Json
+          recipient_email: string
+          recipient_id: string | null
+          retry_count: number
+          sent_at: string | null
+          status: string
+          subject: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          error_message?: string | null
+          failed_at?: string | null
+          id?: string
+          idempotency_key: string
+          notification_type: string
+          payload?: Json
+          recipient_email: string
+          recipient_id?: string | null
+          retry_count?: number
+          sent_at?: string | null
+          status?: string
+          subject?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          error_message?: string | null
+          failed_at?: string | null
+          id?: string
+          idempotency_key?: string
+          notification_type?: string
+          payload?: Json
+          recipient_email?: string
+          recipient_id?: string | null
+          retry_count?: number
+          sent_at?: string | null
+          status?: string
+          subject?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      notification_preferences: {
+        Row: {
+          announcements: boolean
+          channel: string
+          created_at: string
+          events: boolean
+          feed: boolean
+          leadership: boolean
+          meetings: boolean
+          messages: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          announcements?: boolean
+          channel?: string
+          created_at?: string
+          events?: boolean
+          feed?: boolean
+          leadership?: boolean
+          meetings?: boolean
+          messages?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          announcements?: boolean
+          channel?: string
+          created_at?: string
+          events?: boolean
+          feed?: boolean
+          leadership?: boolean
+          meetings?: boolean
+          messages?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       notifications: {
         Row: {
