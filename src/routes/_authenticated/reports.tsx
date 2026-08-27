@@ -35,6 +35,22 @@ async function fetchReportEntries() {
   return data as ReportEntry[];
 }
 
+/** Green at 90%+ of target, amber from 60%, red below — unrated when there is no target or actual yet. */
+function ragFor(actual: number | null, target: number | null): "green" | "amber" | "red" | "unrated" {
+  if (actual == null || target == null || target === 0) return "unrated";
+  const pct = actual / target;
+  if (pct >= 0.9) return "green";
+  if (pct >= 0.6) return "amber";
+  return "red";
+}
+
+const RAG_LABEL: Record<string, string> = {
+  green: "Green — on track",
+  amber: "Amber — needs attention",
+  red: "Red — off track",
+  unrated: "Not yet rated",
+};
+
 function ReportsPage() {
   const scope = useBranchScope();
   const kpis = useQuery({ queryKey: ["all-kpis"], queryFn: fetchAllKpis });
@@ -42,10 +58,12 @@ function ReportsPage() {
   const entries = useQuery({ queryKey: ["report-entries"], queryFn: fetchReportEntries });
   const [category, setCategory] = useState<KpiCategory | "all">("all");
   const [dept, setDept] = useState<string>("all");
+  const [rag, setRag] = useState<"all" | "green" | "amber" | "red" | "unrated">("all");
 
   const filtered = filterByBranch((kpis.data ?? []) as any[], scope.data).filter((k: any) => {
     if (category !== "all" && k.category !== category) return false;
     if (dept !== "all" && k.department_slug !== dept) return false;
+    if (rag !== "all" && ragFor(k.actual, k.target) !== rag) return false;
     return true;
   });
 
@@ -105,6 +123,21 @@ function ReportsPage() {
             </SelectContent>
           </Select>
         </div>
+        <div>
+          <p className="mb-1 text-xs uppercase tracking-widest text-muted-foreground">Status (RAG)</p>
+          <Select value={rag} onValueChange={(v) => setRag(v as any)}>
+            <SelectTrigger className="w-56">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All statuses</SelectItem>
+              <SelectItem value="green">{RAG_LABEL.green}</SelectItem>
+              <SelectItem value="amber">{RAG_LABEL.amber}</SelectItem>
+              <SelectItem value="red">{RAG_LABEL.red}</SelectItem>
+              <SelectItem value="unrated">{RAG_LABEL.unrated}</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       <Card className="mt-6 overflow-x-auto">
@@ -118,6 +151,7 @@ function ReportsPage() {
               <th className="p-3">Baseline</th>
               <th className="p-3">Target</th>
               <th className="p-3">Actual</th>
+              <th className="p-3">Status</th>
             </tr>
           </thead>
           <tbody>
@@ -136,11 +170,25 @@ function ReportsPage() {
                 >
                   {k.actual ?? "-"}
                 </td>
+                <td className="p-3 text-xs">
+                  {(() => {
+                    const r = ragFor(k.actual, k.target);
+                    const cls =
+                      r === "green"
+                        ? "bg-green-100 text-green-800"
+                        : r === "amber"
+                          ? "bg-orange-100 text-orange-800"
+                          : r === "red"
+                            ? "bg-red-100 text-red-800"
+                            : "bg-muted text-muted-foreground";
+                    return <span className={`rounded-full px-2 py-0.5 ${cls}`}>{RAG_LABEL[r]}</span>;
+                  })()}
+                </td>
               </tr>
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={7} className="p-8 text-center text-muted-foreground">
+                <td colSpan={8} className="p-8 text-center text-muted-foreground">
                   No KPI entries for this filter.
                 </td>
               </tr>
