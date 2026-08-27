@@ -1398,6 +1398,54 @@ export type Database = {
         }
         Relationships: []
       }
+      bank_accounts: {
+        Row: {
+          account_type: string
+          archived_at: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          created_at: string
+          created_by: string | null
+          current_balance: number
+          id: string
+          is_active: boolean
+          name: string
+          notes: string | null
+          opening_balance: number
+          reserved_balance: number
+          updated_at: string
+        }
+        Insert: {
+          account_type?: string
+          archived_at?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          created_by?: string | null
+          current_balance?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          notes?: string | null
+          opening_balance?: number
+          reserved_balance?: number
+          updated_at?: string
+        }
+        Update: {
+          account_type?: string
+          archived_at?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          created_by?: string | null
+          current_balance?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          notes?: string | null
+          opening_balance?: number
+          reserved_balance?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       bank_statements: {
         Row: {
           account_name: string
@@ -1601,6 +1649,62 @@ export type Database = {
           },
         ]
       }
+      budget_adjustments: {
+        Row: {
+          approved_amount: number | null
+          budget_id: string
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          decision_reason: string | null
+          department_slug: string
+          id: string
+          reason: string
+          requested_amount: number
+          requested_by: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          approved_amount?: number | null
+          budget_id: string
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decision_reason?: string | null
+          department_slug: string
+          id?: string
+          reason: string
+          requested_amount?: number
+          requested_by?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          approved_amount?: number | null
+          budget_id?: string
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decision_reason?: string | null
+          department_slug?: string
+          id?: string
+          reason?: string
+          requested_amount?: number
+          requested_by?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budget_adjustments_budget_id_fkey"
+            columns: ["budget_id"]
+            isOneToOne: false
+            referencedRelation: "budgets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       budget_lines: {
         Row: {
           budget_id: string
@@ -1691,11 +1795,13 @@ export type Database = {
       }
       budgets: {
         Row: {
+          approved_amount: number | null
           approved_at: string | null
           approved_by: string | null
           archived_at: string | null
           branch: Database["public"]["Enums"]["branch"] | null
           budget_type: string
+          category: string | null
           created_at: string
           created_by: string | null
           department_slug: string | null
@@ -1704,17 +1810,32 @@ export type Database = {
           locked_at: string | null
           name: string
           notes: string | null
+          period_end: string | null
+          period_label: string
+          period_start: string | null
+          priority: string
+          purpose: string | null
+          reference_number: string | null
+          rejected_at: string | null
+          rejected_by: string | null
+          rejection_reason: string | null
+          requested_amount: number
+          responsible_user_id: string | null
           status: string
+          submitted_at: string | null
+          submitted_by: string | null
           total_amount: number
           updated_at: string
           version: number
         }
         Insert: {
+          approved_amount?: number | null
           approved_at?: string | null
           approved_by?: string | null
           archived_at?: string | null
           branch?: Database["public"]["Enums"]["branch"] | null
           budget_type?: string
+          category?: string | null
           created_at?: string
           created_by?: string | null
           department_slug?: string | null
@@ -1723,17 +1844,32 @@ export type Database = {
           locked_at?: string | null
           name: string
           notes?: string | null
+          period_end?: string | null
+          period_label?: string
+          period_start?: string | null
+          priority?: string
+          purpose?: string | null
+          reference_number?: string | null
+          rejected_at?: string | null
+          rejected_by?: string | null
+          rejection_reason?: string | null
+          requested_amount?: number
+          responsible_user_id?: string | null
           status?: string
+          submitted_at?: string | null
+          submitted_by?: string | null
           total_amount?: number
           updated_at?: string
           version?: number
         }
         Update: {
+          approved_amount?: number | null
           approved_at?: string | null
           approved_by?: string | null
           archived_at?: string | null
           branch?: Database["public"]["Enums"]["branch"] | null
           budget_type?: string
+          category?: string | null
           created_at?: string
           created_by?: string | null
           department_slug?: string | null
@@ -1742,7 +1878,20 @@ export type Database = {
           locked_at?: string | null
           name?: string
           notes?: string | null
+          period_end?: string | null
+          period_label?: string
+          period_start?: string | null
+          priority?: string
+          purpose?: string | null
+          reference_number?: string | null
+          rejected_at?: string | null
+          rejected_by?: string | null
+          rejection_reason?: string | null
+          requested_amount?: number
+          responsible_user_id?: string | null
           status?: string
+          submitted_at?: string | null
+          submitted_by?: string | null
           total_amount?: number
           updated_at?: string
           version?: number
@@ -9402,6 +9551,7 @@ export type Database = {
           approved_by_chair: string | null
           approved_by_senior: string | null
           archived_at: string | null
+          bank_account_id: string | null
           branch: Database["public"]["Enums"]["branch"] | null
           budget_id: string | null
           category: string | null
@@ -9415,9 +9565,12 @@ export type Database = {
           finance_approved_by: string | null
           finance_comment: string | null
           id: string
+          ledger_entry_id: string | null
           needed_by: string | null
           ordered_at: string | null
+          override_reason: string | null
           paid_at: string | null
+          paid_by: string | null
           payment_status: string
           po_number: string | null
           pr_number: string | null
@@ -9440,6 +9593,7 @@ export type Database = {
           approved_by_chair?: string | null
           approved_by_senior?: string | null
           archived_at?: string | null
+          bank_account_id?: string | null
           branch?: Database["public"]["Enums"]["branch"] | null
           budget_id?: string | null
           category?: string | null
@@ -9453,9 +9607,12 @@ export type Database = {
           finance_approved_by?: string | null
           finance_comment?: string | null
           id?: string
+          ledger_entry_id?: string | null
           needed_by?: string | null
           ordered_at?: string | null
+          override_reason?: string | null
           paid_at?: string | null
+          paid_by?: string | null
           payment_status?: string
           po_number?: string | null
           pr_number?: string | null
@@ -9478,6 +9635,7 @@ export type Database = {
           approved_by_chair?: string | null
           approved_by_senior?: string | null
           archived_at?: string | null
+          bank_account_id?: string | null
           branch?: Database["public"]["Enums"]["branch"] | null
           budget_id?: string | null
           category?: string | null
@@ -9491,9 +9649,12 @@ export type Database = {
           finance_approved_by?: string | null
           finance_comment?: string | null
           id?: string
+          ledger_entry_id?: string | null
           needed_by?: string | null
           ordered_at?: string | null
+          override_reason?: string | null
           paid_at?: string | null
+          paid_by?: string | null
           payment_status?: string
           po_number?: string | null
           pr_number?: string | null
@@ -9511,6 +9672,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "purchase_requests_bank_account_id_fkey"
+            columns: ["bank_account_id"]
+            isOneToOne: false
+            referencedRelation: "bank_accounts"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "purchase_requests_budget_id_fkey"
             columns: ["budget_id"]
@@ -14392,6 +14560,29 @@ export type Database = {
           total_present: number
         }[]
       }
+      get_budget_positions: {
+        Args: never
+        Returns: {
+          allocated: number
+          available: number
+          branch: Database["public"]["Enums"]["branch"]
+          budget_id: string
+          budget_type: string
+          category: string
+          committed: number
+          department_slug: string
+          fiscal_year: number
+          name: string
+          pending: number
+          period_end: string
+          period_label: string
+          period_start: string
+          reference_number: string
+          spent: number
+          status: string
+          utilisation_pct: number
+        }[]
+      }
       get_budget_utilisation: {
         Args: { _fiscal_year?: number }
         Returns: {
@@ -14408,6 +14599,19 @@ export type Database = {
           status: string
           utilisation_pct: number
           variance: number
+        }[]
+      }
+      get_church_finance_position: {
+        Args: never
+        Returns: {
+          allocated: number
+          available: number
+          committed: number
+          pending: number
+          reserved: number
+          spent: number
+          total_cash: number
+          unallocated: number
         }[]
       }
       get_department_oversight: {
