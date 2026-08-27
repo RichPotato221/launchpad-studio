@@ -37,6 +37,24 @@ function MessagesIndex() {
     },
   });
 
+  const groups = useQuery({
+    queryKey: ["group-conversations"],
+    queryFn: async () => {
+      const { data: mine } = await (supabase as any)
+        .from("group_conversation_members")
+        .select("conversation_id");
+      const ids = (mine ?? []).map((r: any) => r.conversation_id);
+      if (!ids.length) return [] as any[];
+      const { data } = await (supabase as any)
+        .from("group_conversations")
+        .select("id, title, updated_at")
+        .in("id", ids)
+        .order("updated_at", { ascending: false });
+      return data ?? [];
+    },
+  });
+
+
   const members = useQuery({
     queryKey: ["member-search", term],
     enabled: open && term.trim().length >= 2,
