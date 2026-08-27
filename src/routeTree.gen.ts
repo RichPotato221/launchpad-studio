@@ -42,6 +42,7 @@ import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.
 import { Route as ApiPublicHooksSendAnnouncementEmailsRouteImport } from './routes/api/public/hooks/send-announcement-emails'
 import { Route as ApiPublicHooksProcessNotificationsRouteImport } from './routes/api/public/hooks/process-notifications'
 import { Route as ApiPublicEmailActionsRespondRouteImport } from './routes/api/public/email-actions/respond'
+import { Route as AuthenticatedMessagesGroupGroupIdRouteImport } from './routes/_authenticated/messages.group.$groupId'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -218,6 +219,12 @@ const ApiPublicEmailActionsRespondRoute =
     path: '/api/public/email-actions/respond',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthenticatedMessagesGroupGroupIdRoute =
+  AuthenticatedMessagesGroupGroupIdRouteImport.update({
+    id: '/group/$groupId',
+    path: '/group/$groupId',
+    getParentRoute: () => AuthenticatedMessagesRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -249,6 +256,7 @@ export interface FileRoutesByFullPath {
   '/members/$id': typeof AuthenticatedMembersIdRoute
   '/messages/$userId': typeof AuthenticatedMessagesUserIdRoute
   '/api/public/calendar.ics': typeof ApiPublicCalendarDoticsRoute
+  '/messages/group/$groupId': typeof AuthenticatedMessagesGroupGroupIdRoute
   '/api/public/email-actions/respond': typeof ApiPublicEmailActionsRespondRoute
   '/api/public/hooks/process-notifications': typeof ApiPublicHooksProcessNotificationsRoute
   '/api/public/hooks/send-announcement-emails': typeof ApiPublicHooksSendAnnouncementEmailsRoute
@@ -283,6 +291,7 @@ export interface FileRoutesByTo {
   '/members/$id': typeof AuthenticatedMembersIdRoute
   '/messages/$userId': typeof AuthenticatedMessagesUserIdRoute
   '/api/public/calendar.ics': typeof ApiPublicCalendarDoticsRoute
+  '/messages/group/$groupId': typeof AuthenticatedMessagesGroupGroupIdRoute
   '/api/public/email-actions/respond': typeof ApiPublicEmailActionsRespondRoute
   '/api/public/hooks/process-notifications': typeof ApiPublicHooksProcessNotificationsRoute
   '/api/public/hooks/send-announcement-emails': typeof ApiPublicHooksSendAnnouncementEmailsRoute
@@ -319,6 +328,7 @@ export interface FileRoutesById {
   '/_authenticated/members/$id': typeof AuthenticatedMembersIdRoute
   '/_authenticated/messages/$userId': typeof AuthenticatedMessagesUserIdRoute
   '/api/public/calendar.ics': typeof ApiPublicCalendarDoticsRoute
+  '/_authenticated/messages/group/$groupId': typeof AuthenticatedMessagesGroupGroupIdRoute
   '/api/public/email-actions/respond': typeof ApiPublicEmailActionsRespondRoute
   '/api/public/hooks/process-notifications': typeof ApiPublicHooksProcessNotificationsRoute
   '/api/public/hooks/send-announcement-emails': typeof ApiPublicHooksSendAnnouncementEmailsRoute
@@ -355,6 +365,7 @@ export interface FileRouteTypes {
     | '/members/$id'
     | '/messages/$userId'
     | '/api/public/calendar.ics'
+    | '/messages/group/$groupId'
     | '/api/public/email-actions/respond'
     | '/api/public/hooks/process-notifications'
     | '/api/public/hooks/send-announcement-emails'
@@ -389,6 +400,7 @@ export interface FileRouteTypes {
     | '/members/$id'
     | '/messages/$userId'
     | '/api/public/calendar.ics'
+    | '/messages/group/$groupId'
     | '/api/public/email-actions/respond'
     | '/api/public/hooks/process-notifications'
     | '/api/public/hooks/send-announcement-emails'
@@ -424,6 +436,7 @@ export interface FileRouteTypes {
     | '/_authenticated/members/$id'
     | '/_authenticated/messages/$userId'
     | '/api/public/calendar.ics'
+    | '/_authenticated/messages/group/$groupId'
     | '/api/public/email-actions/respond'
     | '/api/public/hooks/process-notifications'
     | '/api/public/hooks/send-announcement-emails'
@@ -678,6 +691,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicEmailActionsRespondRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/messages/group/$groupId': {
+      id: '/_authenticated/messages/group/$groupId'
+      path: '/group/$groupId'
+      fullPath: '/messages/group/$groupId'
+      preLoaderRoute: typeof AuthenticatedMessagesGroupGroupIdRouteImport
+      parentRoute: typeof AuthenticatedMessagesRoute
+    }
   }
 }
 
@@ -697,10 +717,13 @@ const AuthenticatedDepartmentsRouteWithChildren =
 
 interface AuthenticatedMessagesRouteChildren {
   AuthenticatedMessagesUserIdRoute: typeof AuthenticatedMessagesUserIdRoute
+  AuthenticatedMessagesGroupGroupIdRoute: typeof AuthenticatedMessagesGroupGroupIdRoute
 }
 
 const AuthenticatedMessagesRouteChildren: AuthenticatedMessagesRouteChildren = {
   AuthenticatedMessagesUserIdRoute: AuthenticatedMessagesUserIdRoute,
+  AuthenticatedMessagesGroupGroupIdRoute:
+    AuthenticatedMessagesGroupGroupIdRoute,
 }
 
 const AuthenticatedMessagesRouteWithChildren =
