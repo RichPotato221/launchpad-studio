@@ -49,14 +49,11 @@ export default function FinancialControlRoom({ canManage }: { canManage: boolean
   });
 
   const byDepartment = useMemo(() => {
-    const map = new Map<string, ReturnType<typeof sumPositions>>();
     const active = (positions.data ?? []).filter((p) => ["approved", "active", "locked"].includes(p.status));
-    for (const p of active) {
-      const key = p.department_slug ?? "church-wide";
-      const existing = map.get(key);
-      map.set(key, sumPositions(existing ? [] : []) && sumPositions(active.filter((r) => (r.department_slug ?? "church-wide") === key)));
-    }
-    return Array.from(map.entries()).sort((a, b) => b[1].allocated - a[1].allocated);
+    const slugs = Array.from(new Set(active.map((p) => p.department_slug ?? "church-wide")));
+    return slugs
+      .map((slug) => [slug, sumPositions(active.filter((r) => (r.department_slug ?? "church-wide") === slug))] as const)
+      .sort((a, b) => b[1].allocated - a[1].allocated);
   }, [positions.data]);
 
   const pos = church.data;
