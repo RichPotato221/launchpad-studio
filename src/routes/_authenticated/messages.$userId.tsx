@@ -9,7 +9,7 @@ import { notify } from "@/lib/notifications.functions";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { ArrowLeft, Send } from "lucide-react";
+import { ArrowLeft, Send, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/messages/$userId")({
   head: () => ({ meta: [{ title: "Chat — TRoGKC Portal" }] }),
@@ -101,6 +101,29 @@ function ChatPage() {
   };
 
 
+  const deleteMessage = async (id: string) => {
+    if (!window.confirm("Delete this message?")) return;
+    const { error } = await supabase.from("direct_messages").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    qc.invalidateQueries({ queryKey: ["dm-thread", me, userId] });
+    qc.invalidateQueries({ queryKey: ["conversations"] });
+  };
+
+  const deleteChat = async () => {
+    if (!me) return;
+    if (!window.confirm("Delete this entire conversation? This cannot be undone.")) return;
+    const { error } = await supabase
+      .from("direct_messages")
+      .delete()
+      .or(
+        `and(sender_id.eq.${me},recipient_id.eq.${userId}),and(sender_id.eq.${userId},recipient_id.eq.${me})`,
+      );
+    if (error) return toast.error(error.message);
+    toast.success("Conversation deleted");
+    qc.invalidateQueries({ queryKey: ["conversations"] });
+    window.history.back();
+  };
+
   const initial = (partner.data?.full_name || "?").charAt(0).toUpperCase();
 
   return (
@@ -127,6 +150,15 @@ function ChatPage() {
               </p>
             </div>
           </Link>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="ml-auto text-muted-foreground hover:text-destructive"
+            onClick={deleteChat}
+          >
+            <Trash2 className="h-4 w-4" />
+            <span className="sr-only">Delete conversation</span>
+          </Button>
         </div>
 
         <div className="flex-1 space-y-2 overflow-y-auto py-4">
@@ -139,7 +171,17 @@ function ChatPage() {
           {(messages.data ?? []).map((m) => {
             const mine = m.sender_id === me;
             return (
-              <div key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
+              <div key={m.id} className={`group flex items-center gap-1 ${mine ? "justify-end" : "justify-start"}`}>
+                {mine && (
+                  <button
+                    type="button"
+                    aria-label="Delete message"
+                    onClick={() => deleteMessage(m.id)}
+                    className="rounded p-1 text-muted-foreground opacity-60 hover:text-destructive md:opacity-0 md:group-hover:opacity-100"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                )}
                 <div
                   className={`max-w-[75%] rounded-2xl px-3 py-2 text-sm ${
                     mine

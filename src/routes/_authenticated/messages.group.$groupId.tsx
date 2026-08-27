@@ -7,7 +7,7 @@ import { notify } from "@/lib/notifications.functions";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { ArrowLeft, Send, Users } from "lucide-react";
+import { ArrowLeft, Send, Trash2, Users } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/messages/group/$groupId")({
   head: () => ({ meta: [{ title: "Group chat — TRoGKC Portal" }] }),
@@ -109,6 +109,40 @@ function GroupChatPage() {
     }
   };
 
+  const isOwner = !!me && group.data?.created_by === me;
+
+  const deleteMessage = async (id: string) => {
+    if (!window.confirm("Delete this message?")) return;
+    const { error } = await (supabase as any).from("group_messages").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    qc.invalidateQueries({ queryKey: ["group-thread", groupId] });
+  };
+
+  const deleteGroup = async () => {
+    if (!window.confirm("Delete this group chat and all its messages?")) return;
+    await (supabase as any).from("group_messages").delete().eq("conversation_id", groupId);
+    await (supabase as any).from("group_conversation_members").delete().eq("conversation_id", groupId);
+    const { error } = await (supabase as any).from("group_conversations").delete().eq("id", groupId);
+    if (error) return toast.error(error.message);
+    toast.success("Group chat deleted");
+    qc.invalidateQueries({ queryKey: ["group-conversations"] });
+    window.history.back();
+  };
+
+  const leaveGroup = async () => {
+    if (!me) return;
+    if (!window.confirm("Leave this group chat?")) return;
+    const { error } = await (supabase as any)
+      .from("group_conversation_members")
+      .delete()
+      .eq("conversation_id", groupId)
+      .eq("user_id", me);
+    if (error) return toast.error(error.message);
+    toast.success("You left the group");
+    qc.invalidateQueries({ queryKey: ["group-conversations"] });
+    window.history.back();
+  };
+
   return (
     <div className="mx-auto flex h-[calc(100vh-9rem)] max-w-2xl flex-col px-4 py-4 md:px-8">
       <div className="flex items-center gap-3 border-b border-border pb-3">
@@ -124,6 +158,15 @@ function GroupChatPage() {
             {(members.data ?? []).map((p: any) => p.full_name).join(", ")}
           </p>
         </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="ml-auto shrink-0 text-muted-foreground hover:text-destructive"
+          onClick={isOwner ? deleteGroup : leaveGroup}
+        >
+          <Trash2 className="h-4 w-4" />
+          <span className="ml-1 text-xs">{isOwner ? "Delete" : "Leave"}</span>
+        </Button>
       </div>
 
       <div className="flex-1 space-y-2 overflow-y-auto py-4">
@@ -136,7 +179,17 @@ function GroupChatPage() {
         {(messages.data ?? []).map((m) => {
           const mine = m.sender_id === me;
           return (
-            <div key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
+            <div key={m.id} className={`group flex items-center gap-1 ${mine ? "justify-end" : "justify-start"}`}>
+              {(mine || isOwner) && (
+                <button
+                  type="button"
+                  aria-label="Delete message"
+                  onClick={() => deleteMessage(m.id)}
+                  className="rounded p-1 text-muted-foreground opacity-60 hover:text-destructive md:opacity-0 md:group-hover:opacity-100"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              )}
               <div
                 className={`max-w-[75%] rounded-2xl px-3 py-2 text-sm ${
                   mine ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"
