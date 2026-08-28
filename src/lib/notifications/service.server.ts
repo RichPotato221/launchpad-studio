@@ -349,6 +349,38 @@ function compose(type: NotificationType, payload: any): Composed {
       };
     }
 
+    case "MEMBER_REGISTERED":
+    case "MEMBER_APPROVED":
+    case "MEMBER_REJECTED":
+    case "ROLE_ASSIGNED":
+    case "ROLE_REMOVED":
+    case "REQUEST_SUBMITTED":
+    case "REQUEST_APPROVED":
+    case "REQUEST_REJECTED":
+    case "APPROVAL_REQUIRED":
+    case "APPROVAL_GRANTED":
+    case "APPROVAL_REJECTED":
+    case "TASK_ASSIGNED":
+    case "TASK_COMPLETED":
+    case "TASK_OVERDUE":
+    case "DOCUMENT_UPLOADED":
+    case "DOCUMENT_UPDATED":
+    case "DOCUMENT_REVIEW_REQUIRED": {
+      const heading = String(payload.heading ?? titleFromType(type));
+      return {
+        subject: String(payload.subject ?? `${heading} — ${ORGANISATION_NAME}`),
+        body: {
+          heading,
+          intro: payload.intro ? String(payload.intro) : undefined,
+          paragraphs: payload.body ? [String(payload.body)] : [],
+          details: (payload.details as any) ?? undefined,
+          buttons: [
+            { label: String(payload.action_label ?? "Open the portal"), url: appUrl(String(payload.path ?? "/home")) },
+          ],
+        },
+      };
+    }
+
     case "LEADERSHIP_NOTICE":
     case "SYSTEM_NOTIFICATION":
     default: {
