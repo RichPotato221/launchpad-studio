@@ -14,11 +14,12 @@ import { useBranchScope, filterByBranch } from "@/lib/useBranchScope";
 import { useCurrentRole } from "@/lib/useCurrentRole";
 import { ProcessOrdersModule } from "@/components/events/ProcessOrdersModule";
 import { sendEventInvites } from "@/lib/eventInvites.functions";
+import { getEventRsvps, type RsvpRow } from "@/lib/eventRsvp.functions";
 
 import { Copy } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/events")({
-  head: () => ({ meta: [{ title: "Events & Roster — TRoGKC Portal" }] }),
+  head: () => ({ meta: [{ title: "Events & RSVPs — TRoGKC Portal" }] }),
   component: EventsPage,
 });
 
@@ -29,7 +30,6 @@ const BRANCHES = [
   { value: "joburg_north", label: "Joburg North" },
   { value: "joburg_south", label: "Joburg South" },
 ] as const;
-const ROSTER_STATUSES = ["invited", "confirmed", "declined", "tentative"] as const;
 
 function EventsPage() {
   const scope = useBranchScope();
@@ -39,7 +39,6 @@ function EventsPage() {
   );
 
   const [events, setEvents] = useState<any[]>([]);
-  const [rosters, setRosters] = useState<Record<string, any[]>>({});
   const [depts, setDepts] = useState<any[]>([]);
   const [userId, setUserId] = useState<string>("");
   const [expanded, setExpanded] = useState<string | null>(null);
@@ -53,12 +52,6 @@ function EventsPage() {
   const load = async () => {
     const { data: ev } = await supabase.from("events").select("*").order("event_date", { ascending: true });
     setEvents(ev ?? []);
-    if (ev && ev.length) {
-      const { data: rs } = await supabase.from("event_rosters").select("*").in("event_id", ev.map((e) => e.id));
-      const grouped: Record<string, any[]> = {};
-      (rs ?? []).forEach((r) => { (grouped[r.event_id] ||= []).push(r); });
-      setRosters(grouped);
-    }
   };
 
   useEffect(() => {
@@ -112,11 +105,11 @@ function EventsPage() {
 
   /**
    * The Secretarial office, Chairpersons and Senior Pastors may remove any
-   * event or meeting anywhere in the platform. Rosters, attendance, invites,
+   * event or meeting anywhere in the platform. Attendance, invites,
    * meeting records and process orders attached to it are removed with it.
    */
   const removeEvent = async (ev: any) => {
-    if (!window.confirm(`Delete "${ev.title}"? Its roster, attendance, meeting record and process order will also be removed.`)) return;
+    if (!window.confirm(`Delete "${ev.title}"? Its attendance, meeting record and process order will also be removed.`)) return;
     // Notify attendees BEFORE the row disappears — the cancellation email and
     // the .ics CANCEL are built from the live event record.
     await sendEventInvites({ data: { eventId: ev.id, action: "cancel" } }).catch((err) =>
@@ -135,9 +128,9 @@ function EventsPage() {
       <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
         <div className="mb-6">
           <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Foundation module</p>
-          <h1 className="mt-2 font-serif text-3xl md:text-4xl">Events &amp; Roster</h1>
+          <h1 className="mt-2 font-serif text-3xl md:text-4xl">Events &amp; RSVPs</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Schedule services, rehearsals, meetings, and outreach. Build rosters — vocals, tech, ushers, teachers — and track who's confirmed.
+            Schedule services, rehearsals, meetings, and outreach. Everyone invited gets an email — organisers can see who replied and who has not.
           </p>
         </div>
 
@@ -231,7 +224,7 @@ function EventsPage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <Button size="sm" variant="outline" onClick={() => setExpanded(expanded === ev.id ? null : ev.id)}>
-                    Roster ({(rosters[ev.id] ?? []).length})
+                    {expanded === ev.id ? "Hide RSVPs" : "RSVPs"}
                   </Button>
                   {canManage && (
                     <Button size="sm" variant="ghost" className="text-destructive" onClick={() => removeEvent(ev)}>
@@ -243,12 +236,7 @@ function EventsPage() {
               </div>
 
               {expanded === ev.id && (
-                <RosterPanel
-                  eventId={ev.id}
-                  userId={userId}
-                  rows={rosters[ev.id] ?? []}
-                  onChange={load}
-                />
+                <RsvpPanel eventId={ev.id} />
               )}
             </Card>
           ))}
@@ -265,61 +253,61 @@ function EventsPage() {
   );
 }
 
-function RosterPanel({ eventId, userId, rows, onChange }: { eventId: string; userId: string; rows: any[]; onChange: () => void }) {
-  const [form, setForm] = useState({ full_name: "", role: "", notes: "" });
+/** RSVP standing for the organiser: who accepted, declined, or has not replied. */
+function RsvpPanel({ eventId }: { eventId: string }) {
+  const [rows, setRows] = useState<RsvpRow[] | null>(null);
+  const [allowed, setAllowed] = useState(true);
 
-  const add = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const { error } = await supabase.from("event_rosters").insert({
-      event_id: eventId,
-      full_name: form.full_name,
-      role: form.role,
-      notes: form.notes || null,
-      created_by: userId,
-    });
-    if (error) return toast.error(error.message);
-    setForm({ full_name: "", role: "", notes: "" });
-    onChange();
-  };
+  useEffect(() => {
+    let live = true;
+    getEventRsvps({ data: { eventId } })
+      .then((r: any) => {
+        if (!live) return;
+        setAllowed(r.allowed);
+        setRows(r.rows ?? []);
+      })
+      .catch(() => live && setRows([]));
+    return () => {
+      live = false;
+    };
+  }, [eventId]);
 
-  const setStatus = async (id: string, status: string) => {
-    const { error } = await supabase.from("event_rosters").update({ status }).eq("id", id);
-    if (error) return toast.error(error.message);
-    onChange();
-  };
+  if (rows === null) return <p className="mt-4 border-t border-border pt-4 text-xs text-muted-foreground">Loading RSVPs…</p>;
+  if (!allowed)
+    return (
+      <p className="mt-4 border-t border-border pt-4 text-xs text-muted-foreground">
+        Only the person who scheduled this event can see the RSVP list.
+      </p>
+    );
 
-  const remove = async (id: string) => {
-    const { error } = await supabase.from("event_rosters").delete().eq("id", id);
-    if (error) return toast.error(error.message);
-    onChange();
+  const count = (s: string) => rows.filter((r) => r.response === s).length;
+  const tone: Record<string, string> = {
+    accepted: "text-emerald-600",
+    declined: "text-destructive",
+    pending: "text-muted-foreground",
   };
 
   return (
     <div className="mt-4 border-t border-border pt-4">
-      <form onSubmit={add} className="grid gap-3 md:grid-cols-4">
-        <Input placeholder="Name" required value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} />
-        <Input placeholder="Role (e.g. vocalist, usher)" required value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} />
-        <Input placeholder="Notes" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
-        <Button type="submit" size="sm">Add to roster</Button>
-      </form>
+      <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs uppercase tracking-widest">
+        <span className="text-emerald-600">Accepted {count("accepted")}</span>
+        <span className="text-destructive">Declined {count("declined")}</span>
+        <span className="text-muted-foreground">No reply {count("pending")}</span>
+      </div>
       <div className="mt-3 space-y-2">
         {rows.map((r) => (
-          <div key={r.id} className="flex flex-wrap items-center justify-between gap-2 rounded border border-border px-3 py-2 text-sm">
-            <div>
-              <span className="font-medium">{r.full_name}</span>
-              <span className="ml-2 text-xs uppercase tracking-widest text-muted-foreground">{r.role}</span>
-              {r.notes && <span className="ml-2 text-xs text-muted-foreground">— {r.notes}</span>}
+          <div key={r.email} className="flex flex-wrap items-center justify-between gap-2 rounded border border-border px-3 py-2 text-sm">
+            <div className="min-w-0">
+              <span className="font-medium">{r.name ?? r.email}</span>
+              {r.name && <span className="ml-2 text-xs text-muted-foreground">{r.email}</span>}
             </div>
-            <div className="flex items-center gap-2">
-              <Select value={r.status} onValueChange={(v) => setStatus(r.id, v)}>
-                <SelectTrigger className="h-8 w-32"><SelectValue /></SelectTrigger>
-                <SelectContent>{ROSTER_STATUSES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
-              </Select>
-              <Button size="sm" variant="ghost" onClick={() => remove(r.id)}>Remove</Button>
-            </div>
+            <span className={`text-xs uppercase tracking-widest ${tone[r.response]}`}>
+              {r.response === "pending" ? "No reply yet" : r.response}
+              {r.responded_at && <span className="ml-2 normal-case tracking-normal text-muted-foreground">{new Date(r.responded_at).toLocaleDateString()}</span>}
+            </span>
           </div>
         ))}
-        {rows.length === 0 && <p className="text-center text-xs text-muted-foreground">No one on the roster yet.</p>}
+        {rows.length === 0 && <p className="text-center text-xs text-muted-foreground">No invitations recorded for this event yet.</p>}
       </div>
     </div>
   );

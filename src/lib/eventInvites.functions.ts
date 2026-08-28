@@ -35,19 +35,10 @@ export const sendEventInvites = createServerFn({ method: "POST" })
             ? "MEETING_INVITATION"
             : "EVENT_INVITATION";
 
-    // Audience:
-    //   named roster → that roster only
-    //   otherwise    → every approved member of the church (all branches),
-    //                  so nobody misses a gathering because of their branch.
-    const { data: roster } = await admin
-      .from("event_rosters")
-      .select("user_id")
-      .eq("event_id", data.eventId);
-    const rosterIds = Array.from(
-      new Set(((roster ?? []) as any[]).map((r) => r.user_id).filter(Boolean)),
-    ) as string[];
-
-    const audience = rosterIds.length ? { userIds: rosterIds } : {};
+    // Audience: every approved member of the church (all branches), so nobody
+    // misses a gathering. Each recipient can accept or decline from the email
+    // and the organiser sees the RSVP standing in the portal.
+    const audience = {};
 
 
     const result = await dispatchNotification({
