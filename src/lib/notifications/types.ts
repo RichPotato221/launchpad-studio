@@ -29,6 +29,31 @@ export const NOTIFICATION_TYPES = [
 
   "LEADERSHIP_NOTICE",
   "SYSTEM_NOTIFICATION",
+
+  // Membership & access
+  "MEMBER_REGISTERED",
+  "MEMBER_APPROVED",
+  "MEMBER_REJECTED",
+  "ROLE_ASSIGNED",
+  "ROLE_REMOVED",
+
+  // Requests, approvals & procurement
+  "REQUEST_SUBMITTED",
+  "REQUEST_APPROVED",
+  "REQUEST_REJECTED",
+  "APPROVAL_REQUIRED",
+  "APPROVAL_GRANTED",
+  "APPROVAL_REJECTED",
+
+  // Tasks
+  "TASK_ASSIGNED",
+  "TASK_COMPLETED",
+  "TASK_OVERDUE",
+
+  // Documents
+  "DOCUMENT_UPLOADED",
+  "DOCUMENT_UPDATED",
+  "DOCUMENT_REVIEW_REQUIRED",
 ] as const;
 
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
