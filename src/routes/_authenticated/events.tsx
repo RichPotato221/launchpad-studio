@@ -14,11 +14,12 @@ import { useBranchScope, filterByBranch } from "@/lib/useBranchScope";
 import { useCurrentRole } from "@/lib/useCurrentRole";
 import { ProcessOrdersModule } from "@/components/events/ProcessOrdersModule";
 import { sendEventInvites } from "@/lib/eventInvites.functions";
+import { getEventRsvps, type RsvpRow } from "@/lib/eventRsvp.functions";
 
 import { Copy } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/events")({
-  head: () => ({ meta: [{ title: "Events & Roster — TRoGKC Portal" }] }),
+  head: () => ({ meta: [{ title: "Events & RSVPs — TRoGKC Portal" }] }),
   component: EventsPage,
 });
 
@@ -29,7 +30,6 @@ const BRANCHES = [
   { value: "joburg_north", label: "Joburg North" },
   { value: "joburg_south", label: "Joburg South" },
 ] as const;
-const ROSTER_STATUSES = ["invited", "confirmed", "declined", "tentative"] as const;
 
 function EventsPage() {
   const scope = useBranchScope();
@@ -39,7 +39,6 @@ function EventsPage() {
   );
 
   const [events, setEvents] = useState<any[]>([]);
-  const [rosters, setRosters] = useState<Record<string, any[]>>({});
   const [depts, setDepts] = useState<any[]>([]);
   const [userId, setUserId] = useState<string>("");
   const [expanded, setExpanded] = useState<string | null>(null);
@@ -53,12 +52,6 @@ function EventsPage() {
   const load = async () => {
     const { data: ev } = await supabase.from("events").select("*").order("event_date", { ascending: true });
     setEvents(ev ?? []);
-    if (ev && ev.length) {
-      const { data: rs } = await supabase.from("event_rosters").select("*").in("event_id", ev.map((e) => e.id));
-      const grouped: Record<string, any[]> = {};
-      (rs ?? []).forEach((r) => { (grouped[r.event_id] ||= []).push(r); });
-      setRosters(grouped);
-    }
   };
 
   useEffect(() => {
@@ -112,11 +105,11 @@ function EventsPage() {
 
   /**
    * The Secretarial office, Chairpersons and Senior Pastors may remove any
-   * event or meeting anywhere in the platform. Rosters, attendance, invites,
+   * event or meeting anywhere in the platform. Attendance, invites,
    * meeting records and process orders attached to it are removed with it.
    */
   const removeEvent = async (ev: any) => {
-    if (!window.confirm(`Delete "${ev.title}"? Its roster, attendance, meeting record and process order will also be removed.`)) return;
+    if (!window.confirm(`Delete "${ev.title}"? Its attendance, meeting record and process order will also be removed.`)) return;
     // Notify attendees BEFORE the row disappears — the cancellation email and
     // the .ics CANCEL are built from the live event record.
     await sendEventInvites({ data: { eventId: ev.id, action: "cancel" } }).catch((err) =>
@@ -135,9 +128,9 @@ function EventsPage() {
       <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
         <div className="mb-6">
           <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Foundation module</p>
-          <h1 className="mt-2 font-serif text-3xl md:text-4xl">Events &amp; Roster</h1>
+          <h1 className="mt-2 font-serif text-3xl md:text-4xl">Events &amp; RSVPs</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Schedule services, rehearsals, meetings, and outreach. Build rosters — vocals, tech, ushers, teachers — and track who's confirmed.
+            Schedule services, rehearsals, meetings, and outreach. Everyone invited gets an email — organisers can see who replied and who has not.
           </p>
         </div>
 
@@ -231,7 +224,7 @@ function EventsPage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <Button size="sm" variant="outline" onClick={() => setExpanded(expanded === ev.id ? null : ev.id)}>
-                    Roster ({(rosters[ev.id] ?? []).length})
+                    {expanded === ev.id ? "Hide RSVPs" : "RSVPs"}
                   </Button>
                   {canManage && (
                     <Button size="sm" variant="ghost" className="text-destructive" onClick={() => removeEvent(ev)}>
@@ -243,12 +236,7 @@ function EventsPage() {
               </div>
 
               {expanded === ev.id && (
-                <RosterPanel
-                  eventId={ev.id}
-                  userId={userId}
-                  rows={rosters[ev.id] ?? []}
-                  onChange={load}
-                />
+                <RsvpPanel eventId={ev.id} />
               )}
             </Card>
           ))}
