@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
+import { notifyTaskActivity } from "@/lib/activity.functions";
 
 export const Route = createFileRoute("/_authenticated/tasks")({
   head: () => ({ meta: [{ title: "Tasks & Approvals — TRoGKC Portal" }] }),
@@ -60,8 +61,15 @@ function TasksPage() {
       created_by: userId,
     };
     if (form.requires_approval) payload.approval_status = "pending";
-    const { error } = await supabase.from("tasks").insert(payload);
+    const { data: created, error } = await supabase.from("tasks").insert(payload).select("id, assigned_to").maybeSingle();
     if (error) return toast.error(error.message);
+    if (created?.id && created.assigned_to) {
+      try {
+        await notifyTaskActivity({ data: { taskId: created.id, stage: "assigned" } });
+      } catch (err) {
+        console.error("task notification failed", err);
+      }
+    }
     toast.success("Task created");
     setForm({ title: "", description: "", department_slug: "", due_date: "", priority: "normal", requires_approval: false });
     load();
@@ -70,6 +78,13 @@ function TasksPage() {
   const setStatus = async (id: string, status: string) => {
     const { error } = await supabase.from("tasks").update({ status }).eq("id", id);
     if (error) return toast.error(error.message);
+    if (status === "done") {
+      try {
+        await notifyTaskActivity({ data: { taskId: id, stage: "completed" } });
+      } catch (err) {
+        console.error("task notification failed", err);
+      }
+    }
     load();
   };
 
