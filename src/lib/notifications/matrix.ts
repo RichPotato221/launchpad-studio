@@ -55,7 +55,7 @@ export const NOTIFICATION_MATRIX: MatrixEntry[] = [
   { event: "DOCUMENT_REVIEW_REQUIRED", affected: "Secretariat / oversight office holders", email: true, inApp: true },
 
   // Events & meetings
-  { event: "EVENT_INVITATION", affected: "Named roster; otherwise the department and/or branch it belongs to", email: true, inApp: true },
+  { event: "EVENT_INVITATION", affected: "Named roster; otherwise every approved member church-wide", email: true, inApp: true },
   { event: "EVENT_UPDATED", affected: "Same audience as the invitation", email: true, inApp: true },
   { event: "EVENT_CANCELLED", affected: "Same audience as the invitation (critical — always sent)", email: true, inApp: true },
   { event: "MEETING_INVITATION", affected: "Invited attendees / department / branch", email: true, inApp: true },
