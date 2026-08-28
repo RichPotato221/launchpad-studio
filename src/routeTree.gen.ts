@@ -27,6 +27,7 @@ import { Route as AuthenticatedFeedRouteImport } from './routes/_authenticated/f
 import { Route as AuthenticatedEventsRouteImport } from './routes/_authenticated/events'
 import { Route as AuthenticatedDocumentsRouteImport } from './routes/_authenticated/documents'
 import { Route as AuthenticatedDepartmentsRouteImport } from './routes/_authenticated/departments'
+import { Route as AuthenticatedConnectRouteImport } from './routes/_authenticated/connect'
 import { Route as AuthenticatedAttendanceRouteImport } from './routes/_authenticated/attendance'
 import { Route as AuthenticatedAssetsRouteImport } from './routes/_authenticated/assets'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -136,6 +137,11 @@ const AuthenticatedDepartmentsRoute =
     path: '/departments',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedConnectRoute = AuthenticatedConnectRouteImport.update({
+  id: '/connect',
+  path: '/connect',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAttendanceRoute = AuthenticatedAttendanceRouteImport.update({
   id: '/attendance',
   path: '/attendance',
@@ -237,6 +243,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRoute
   '/assets': typeof AuthenticatedAssetsRoute
   '/attendance': typeof AuthenticatedAttendanceRoute
+  '/connect': typeof AuthenticatedConnectRoute
   '/departments': typeof AuthenticatedDepartmentsRouteWithChildren
   '/documents': typeof AuthenticatedDocumentsRoute
   '/events': typeof AuthenticatedEventsRoute
@@ -272,6 +279,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminRoute
   '/assets': typeof AuthenticatedAssetsRoute
   '/attendance': typeof AuthenticatedAttendanceRoute
+  '/connect': typeof AuthenticatedConnectRoute
   '/departments': typeof AuthenticatedDepartmentsRouteWithChildren
   '/documents': typeof AuthenticatedDocumentsRoute
   '/events': typeof AuthenticatedEventsRoute
@@ -309,6 +317,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/assets': typeof AuthenticatedAssetsRoute
   '/_authenticated/attendance': typeof AuthenticatedAttendanceRoute
+  '/_authenticated/connect': typeof AuthenticatedConnectRoute
   '/_authenticated/departments': typeof AuthenticatedDepartmentsRouteWithChildren
   '/_authenticated/documents': typeof AuthenticatedDocumentsRoute
   '/_authenticated/events': typeof AuthenticatedEventsRoute
@@ -346,6 +355,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/assets'
     | '/attendance'
+    | '/connect'
     | '/departments'
     | '/documents'
     | '/events'
@@ -381,6 +391,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/assets'
     | '/attendance'
+    | '/connect'
     | '/departments'
     | '/documents'
     | '/events'
@@ -417,6 +428,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/assets'
     | '/_authenticated/attendance'
+    | '/_authenticated/connect'
     | '/_authenticated/departments'
     | '/_authenticated/documents'
     | '/_authenticated/events'
@@ -586,6 +598,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDepartmentsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/connect': {
+      id: '/_authenticated/connect'
+      path: '/connect'
+      fullPath: '/connect'
+      preLoaderRoute: typeof AuthenticatedConnectRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/attendance': {
       id: '/_authenticated/attendance'
       path: '/attendance'
@@ -736,6 +755,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedAssetsRoute: typeof AuthenticatedAssetsRoute
   AuthenticatedAttendanceRoute: typeof AuthenticatedAttendanceRoute
+  AuthenticatedConnectRoute: typeof AuthenticatedConnectRoute
   AuthenticatedDepartmentsRoute: typeof AuthenticatedDepartmentsRouteWithChildren
   AuthenticatedDocumentsRoute: typeof AuthenticatedDocumentsRoute
   AuthenticatedEventsRoute: typeof AuthenticatedEventsRoute
@@ -757,6 +777,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedAssetsRoute: AuthenticatedAssetsRoute,
   AuthenticatedAttendanceRoute: AuthenticatedAttendanceRoute,
+  AuthenticatedConnectRoute: AuthenticatedConnectRoute,
   AuthenticatedDepartmentsRoute: AuthenticatedDepartmentsRouteWithChildren,
   AuthenticatedDocumentsRoute: AuthenticatedDocumentsRoute,
   AuthenticatedEventsRoute: AuthenticatedEventsRoute,

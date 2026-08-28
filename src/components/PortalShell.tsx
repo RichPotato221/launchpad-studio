@@ -21,6 +21,7 @@ const nav = [
   { to: "/vault", label: "Central Vault" },
   { to: "/reports", label: "Reports" },
   { to: "/admin", label: "Admin" },
+  { to: "/connect", label: "Connect AI" },
 ] as const;
  
 // Only these roles ever see the Cockpit in the nav at all.
