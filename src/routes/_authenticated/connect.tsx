@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Check, Copy, ExternalLink, Plug } from "lucide-react";
+import { getAuthUserResult } from "@/lib/authUser";
 
 export const Route = createFileRoute("/_authenticated/connect")({
   head: () => ({
