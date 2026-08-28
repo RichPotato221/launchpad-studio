@@ -82,7 +82,16 @@ export function isCritical(type: NotificationType): boolean {
     type === "EVENT_CANCELLED" ||
     type === "MEETING_CANCELLED" ||
     type === "SYSTEM_NOTIFICATION" ||
-    type === "LEADERSHIP_NOTICE"
+    type === "LEADERSHIP_NOTICE" ||
+    type === "MEMBER_APPROVED" ||
+    type === "MEMBER_REJECTED" ||
+    type === "ROLE_ASSIGNED" ||
+    type === "ROLE_REMOVED" ||
+    type === "APPROVAL_REQUIRED" ||
+    type === "REQUEST_APPROVED" ||
+    type === "REQUEST_REJECTED" ||
+    type === "APPROVAL_GRANTED" ||
+    type === "APPROVAL_REJECTED"
   );
 }
 
@@ -93,6 +102,9 @@ export interface NotificationAudience {
   departmentSlug?: string | null;
   userIds?: string[];
   emails?: string[];
+  /** Everyone holding one of these app roles (optionally scoped to a department). */
+  roles?: string[];
+  roleDepartmentSlug?: string | null;
   /** People who must never receive this one (e.g. the author/sender). */
   excludeUserIds?: string[];
   excludeEmails?: string[];
