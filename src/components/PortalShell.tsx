@@ -64,6 +64,7 @@ export function PortalShell({ children }: { children: ReactNode }) {
     if (item.to === "/senior-pastor-cockpit") return roles.some((r) => COCKPIT_ROLES.has(r));
     if (item.to === "/vault") return roles.some((r) => COCKPIT_ROLES.has(r));
     if (item.to === "/admin") return roles.includes("chairperson") || roles.includes("senior_apostle");
+    if (item.to === "/connect") return email.toLowerCase() === "richardmashaba.sog@gmail.com";
     return true;
   });
 

@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Check, Copy, ExternalLink, Plug } from "lucide-react";
+import { getAuthUserResult } from "@/lib/authUser";
 
 export const Route = createFileRoute("/_authenticated/connect")({
   head: () => ({
@@ -29,12 +30,18 @@ export const Route = createFileRoute("/_authenticated/connect")({
 const APP_NAME = "TRoGKC Leadership Portal";
 const SERVER_SLUG = "trog-leadership-portal";
 
+const OWNER_EMAIL = "richardmashaba.sog@gmail.com";
+
 function ConnectPage() {
   const [url, setUrl] = useState("");
   const [copied, setCopied] = useState<string | null>(null);
+  const [allowed, setAllowed] = useState<boolean | null>(null);
 
   useEffect(() => {
     setUrl(new URL("/mcp", window.location.origin).toString());
+    getAuthUserResult().then(({ data }) => {
+      setAllowed((data.user?.email ?? "").toLowerCase() === OWNER_EMAIL);
+    });
   }, []);
 
   const command = `claude mcp add --scope user --transport http ${SERVER_SLUG} '${url}'`;
@@ -50,6 +57,16 @@ function ConnectPage() {
   const claudeLink = `https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=${encodeURIComponent(
     APP_NAME,
   )}&connectorUrl=${encodeURIComponent(url)}`;
+
+  if (allowed === null) return null;
+  if (!allowed) {
+    return (
+      <div className="mx-auto max-w-2xl py-16 text-center">
+        <h1 className="font-serif text-2xl">Not available</h1>
+        <p className="mt-2 text-muted-foreground">This page is restricted to the portal owner.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-4xl space-y-8 py-2">
