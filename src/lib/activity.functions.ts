@@ -109,10 +109,11 @@ export const notifyPurchaseRequest = createServerFn({ method: "POST" })
     const { data: pr } = await admin.from("purchase_requests").select("*").eq("id", data.requestId).maybeSingle();
     if (!pr) return { queued: 0, reason: "not_found" };
 
-    const requester: string[] = pr.created_by ? [pr.created_by] : [];
+    const requesterId = pr.requester_id ?? pr.created_by ?? null;
+    const requester: string[] = requesterId ? [requesterId] : [];
     const amount = pr.amount_estimated != null ? `R ${Number(pr.amount_estimated).toLocaleString()}` : "—";
     const details = [
-      ["Reference", pr.request_number ?? pr.id?.slice(0, 8)],
+      ["Reference", pr.pr_number ?? pr.request_number ?? String(pr.id).slice(0, 8)],
       ["Item", pr.title ?? pr.description ?? "—"],
       ["Department", pr.department_slug ?? "—"],
       ["Amount", amount],

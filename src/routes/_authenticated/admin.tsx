@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { notifyMemberDecision, notifyRoleChange } from "@/lib/activity.functions";
 import PhotoField from "@/components/common/PhotoField";
  
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -127,6 +128,11 @@ function AdminPage() {
       await supabase.from("profiles").update({ primary_department: department_slug }).eq("id", userId);
     }
 
+    try {
+      await notifyRoleChange({ data: { userId, role, departmentSlug: department_slug, action: "assigned" } });
+    } catch (err) {
+      console.error("role notification failed", err);
+    }
     toast.success("Role assigned");
     qc.invalidateQueries({ queryKey: ["all-profiles"] });
     qc.invalidateQueries({ queryKey: ["dept-team"] });
@@ -144,8 +150,27 @@ function AdminPage() {
     qc.invalidateQueries({ queryKey: ["branch-scope"] });
   };
   const removeRole = async (id: string) => {
+    const { data: existingRole } = await supabase
+      .from("user_roles")
+      .select("user_id, role, department_slug")
+      .eq("id", id)
+      .maybeSingle();
     const { error } = await supabase.from("user_roles").delete().eq("id", id);
     if (error) return toast.error(error.message);
+    if (existingRole?.user_id) {
+      try {
+        await notifyRoleChange({
+          data: {
+            userId: existingRole.user_id,
+            role: String(existingRole.role),
+            departmentSlug: existingRole.department_slug ?? null,
+            action: "removed",
+          },
+        });
+      } catch (err) {
+        console.error("role notification failed", err);
+      }
+    }
     qc.invalidateQueries({ queryKey: ["all-profiles"] });
     qc.invalidateQueries({ queryKey: ["current-role"] });
     qc.invalidateQueries({ queryKey: ["leadership-access"] });
@@ -156,6 +181,11 @@ function AdminPage() {
   const approve = async (userId: string, ok: boolean) => {
     const { error } = await supabase.rpc("approve_member", { _user_id: userId, _approve: ok });
     if (error) return toast.error(error.message);
+    try {
+      await notifyMemberDecision({ data: { userId, approved: ok } });
+    } catch (err) {
+      console.error("membership notification failed", err);
+    }
     toast.success(ok ? "Member approved and added to department" : "Request rejected");
     qc.invalidateQueries({ queryKey: ["all-profiles"] });
   };
@@ -194,7 +224,8 @@ function AdminPage() {
       <h1 className="mt-2 font-serif text-4xl md:text-5xl">User &amp; portal settings</h1>
       <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
         Only Senior Apostle, Church Secretary and Chairpersons can write here (enforced server-side by RLS).
-        Approval notifications are directed to <strong>richardmashaba.19@gmail.com</strong>.
+        Approval notices go to everyone currently holding an oversight office, and each
+                decision is emailed to the member concerned.
       </p>
  
       {/* Pending approvals */}
