@@ -28,7 +28,7 @@ export interface MatrixEntry {
 
 export const NOTIFICATION_MATRIX: MatrixEntry[] = [
   // Membership & access
-  { event: "MEMBER_REGISTERED", affected: "Oversight офис holders (chairperson, senior pastor, secretary)", email: true, inApp: true },
+  { event: "MEMBER_REGISTERED", affected: "Oversight office holders (chairperson, senior pastor, secretary)", email: true, inApp: true },
   { event: "MEMBER_APPROVED", affected: "The member whose account was approved", email: true, inApp: true },
   { event: "MEMBER_REJECTED", affected: "The member whose application was declined", email: true, inApp: true },
   { event: "ROLE_ASSIGNED", affected: "The member whose role changed", email: true, inApp: true },
