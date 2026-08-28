@@ -35,10 +35,10 @@ export const sendEventInvites = createServerFn({ method: "POST" })
             ? "MEETING_INVITATION"
             : "EVENT_INVITATION";
 
-    // Only the people this gathering actually touches:
+    // Audience:
     //   named roster → that roster only
-    //   otherwise    → the department and/or branch it belongs to
-    //   otherwise    → every approved member (church-wide gathering)
+    //   otherwise    → every approved member of the church (all branches),
+    //                  so nobody misses a gathering because of their branch.
     const { data: roster } = await admin
       .from("event_rosters")
       .select("user_id")
@@ -47,12 +47,8 @@ export const sendEventInvites = createServerFn({ method: "POST" })
       new Set(((roster ?? []) as any[]).map((r) => r.user_id).filter(Boolean)),
     ) as string[];
 
-    const audience = rosterIds.length
-      ? { userIds: rosterIds }
-      : {
-          ...(ev.branch ? { branch: ev.branch } : {}),
-          ...(ev.department_slug ? { departmentSlug: ev.department_slug } : {}),
-        };
+    const audience = rosterIds.length ? { userIds: rosterIds } : {};
+
 
     const result = await dispatchNotification({
       type: type as never,
