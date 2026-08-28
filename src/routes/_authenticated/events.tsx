@@ -265,61 +265,61 @@ function EventsPage() {
   );
 }
 
-function RosterPanel({ eventId, userId, rows, onChange }: { eventId: string; userId: string; rows: any[]; onChange: () => void }) {
-  const [form, setForm] = useState({ full_name: "", role: "", notes: "" });
+/** RSVP standing for the organiser: who accepted, declined, or has not replied. */
+function RsvpPanel({ eventId }: { eventId: string }) {
+  const [rows, setRows] = useState<RsvpRow[] | null>(null);
+  const [allowed, setAllowed] = useState(true);
 
-  const add = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const { error } = await supabase.from("event_rosters").insert({
-      event_id: eventId,
-      full_name: form.full_name,
-      role: form.role,
-      notes: form.notes || null,
-      created_by: userId,
-    });
-    if (error) return toast.error(error.message);
-    setForm({ full_name: "", role: "", notes: "" });
-    onChange();
-  };
+  useEffect(() => {
+    let live = true;
+    getEventRsvps({ data: { eventId } })
+      .then((r: any) => {
+        if (!live) return;
+        setAllowed(r.allowed);
+        setRows(r.rows ?? []);
+      })
+      .catch(() => live && setRows([]));
+    return () => {
+      live = false;
+    };
+  }, [eventId]);
 
-  const setStatus = async (id: string, status: string) => {
-    const { error } = await supabase.from("event_rosters").update({ status }).eq("id", id);
-    if (error) return toast.error(error.message);
-    onChange();
-  };
+  if (rows === null) return <p className="mt-4 border-t border-border pt-4 text-xs text-muted-foreground">Loading RSVPs…</p>;
+  if (!allowed)
+    return (
+      <p className="mt-4 border-t border-border pt-4 text-xs text-muted-foreground">
+        Only the person who scheduled this event can see the RSVP list.
+      </p>
+    );
 
-  const remove = async (id: string) => {
-    const { error } = await supabase.from("event_rosters").delete().eq("id", id);
-    if (error) return toast.error(error.message);
-    onChange();
+  const count = (s: string) => rows.filter((r) => r.response === s).length;
+  const tone: Record<string, string> = {
+    accepted: "text-emerald-600",
+    declined: "text-destructive",
+    pending: "text-muted-foreground",
   };
 
   return (
     <div className="mt-4 border-t border-border pt-4">
-      <form onSubmit={add} className="grid gap-3 md:grid-cols-4">
-        <Input placeholder="Name" required value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} />
-        <Input placeholder="Role (e.g. vocalist, usher)" required value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} />
-        <Input placeholder="Notes" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
-        <Button type="submit" size="sm">Add to roster</Button>
-      </form>
+      <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs uppercase tracking-widest">
+        <span className="text-emerald-600">Accepted {count("accepted")}</span>
+        <span className="text-destructive">Declined {count("declined")}</span>
+        <span className="text-muted-foreground">No reply {count("pending")}</span>
+      </div>
       <div className="mt-3 space-y-2">
         {rows.map((r) => (
-          <div key={r.id} className="flex flex-wrap items-center justify-between gap-2 rounded border border-border px-3 py-2 text-sm">
-            <div>
-              <span className="font-medium">{r.full_name}</span>
-              <span className="ml-2 text-xs uppercase tracking-widest text-muted-foreground">{r.role}</span>
-              {r.notes && <span className="ml-2 text-xs text-muted-foreground">— {r.notes}</span>}
+          <div key={r.email} className="flex flex-wrap items-center justify-between gap-2 rounded border border-border px-3 py-2 text-sm">
+            <div className="min-w-0">
+              <span className="font-medium">{r.name ?? r.email}</span>
+              {r.name && <span className="ml-2 text-xs text-muted-foreground">{r.email}</span>}
             </div>
-            <div className="flex items-center gap-2">
-              <Select value={r.status} onValueChange={(v) => setStatus(r.id, v)}>
-                <SelectTrigger className="h-8 w-32"><SelectValue /></SelectTrigger>
-                <SelectContent>{ROSTER_STATUSES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
-              </Select>
-              <Button size="sm" variant="ghost" onClick={() => remove(r.id)}>Remove</Button>
-            </div>
+            <span className={`text-xs uppercase tracking-widest ${tone[r.response]}`}>
+              {r.response === "pending" ? "No reply yet" : r.response}
+              {r.responded_at && <span className="ml-2 normal-case tracking-normal text-muted-foreground">{new Date(r.responded_at).toLocaleDateString()}</span>}
+            </span>
           </div>
         ))}
-        {rows.length === 0 && <p className="text-center text-xs text-muted-foreground">No one on the roster yet.</p>}
+        {rows.length === 0 && <p className="text-center text-xs text-muted-foreground">No invitations recorded for this event yet.</p>}
       </div>
     </div>
   );
