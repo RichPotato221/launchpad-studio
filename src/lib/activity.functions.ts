@@ -11,7 +11,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
  * hardcoded anywhere.
  */
 
-const OVERSIGHT_ROLES = ["chairperson", "senior_apostle", "lead_pastor", "associate_pastor", "secretary"];
+const OVERSIGHT_ROLES = ["chairperson", "secretary", "senior_apostle"];
 const FINANCE_ROLES = ["chairperson", "senior_apostle", "department_chair"];
 
 async function svc() {
