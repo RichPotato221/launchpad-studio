@@ -29,12 +29,18 @@ export const Route = createFileRoute("/_authenticated/connect")({
 const APP_NAME = "TRoGKC Leadership Portal";
 const SERVER_SLUG = "trog-leadership-portal";
 
+const OWNER_EMAIL = "richardmashaba.sog@gmail.com";
+
 function ConnectPage() {
   const [url, setUrl] = useState("");
   const [copied, setCopied] = useState<string | null>(null);
+  const [allowed, setAllowed] = useState<boolean | null>(null);
 
   useEffect(() => {
     setUrl(new URL("/mcp", window.location.origin).toString());
+    getAuthUserResult().then(({ data }) => {
+      setAllowed((data.user?.email ?? "").toLowerCase() === OWNER_EMAIL);
+    });
   }, []);
 
   const command = `claude mcp add --scope user --transport http ${SERVER_SLUG} '${url}'`;
