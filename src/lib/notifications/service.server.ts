@@ -442,13 +442,60 @@ export async function enqueueNotification(req: NotificationRequest): Promise<Enq
   const { data, error } = await admin
     .from("notification_log")
     .upsert(rows, { onConflict: "idempotency_key", ignoreDuplicates: true })
-    .select("id");
+    .select("id, recipient_id, recipient_email");
   if (error) {
     console.error("notification enqueue failed:", error.message);
     return { queued: 0, skipped: rows.length };
   }
   const queued = data?.length ?? 0;
+
+  // In-app notification centre: one row per newly queued recipient only, so a
+  // replayed event never double-posts to anybody's bell.
+  try {
+    const composed = compose(req.type, payload);
+    const inApp = ((data ?? []) as any[])
+      .filter((d) => d.recipient_id)
+      .map((d) => ({
+        user_id: d.recipient_id,
+        title: composed.body.heading ?? composed.subject,
+        message:
+          (payload["body"] as string | undefined) ??
+          composed.body.intro ??
+          composed.subject,
+        link: (payload["path"] as string | undefined) ?? inAppLinkFor(req),
+        type: req.type,
+        branch: (payload["branch"] as string | undefined) ?? null,
+      }));
+    if (inApp.length) await admin.from("notifications").insert(inApp);
+  } catch (err: unknown) {
+    console.error("in-app notification insert failed:", (err as Error)?.message);
+  }
+
   return { queued, skipped: rows.length - queued };
+}
+
+/** Default deep link for a notification's entity. */
+function inAppLinkFor(req: NotificationRequest): string {
+  switch (req.entityType) {
+    case "event":
+    case "meeting":
+      return "/events";
+    case "task":
+      return "/tasks";
+    case "document":
+      return "/documents";
+    case "purchase_request":
+      return "/finance";
+    case "governance_approval":
+      return "/governance";
+    case "announcement":
+    case "feed_post":
+      return "/feed";
+    case "profile":
+      return "/Profile";
+    default:
+      return "/home";
+  }
 }
 
 /* ───────────────────────── worker ───────────────────────── */
