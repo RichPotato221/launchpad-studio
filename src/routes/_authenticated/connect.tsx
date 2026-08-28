@@ -58,6 +58,16 @@ function ConnectPage() {
     APP_NAME,
   )}&connectorUrl=${encodeURIComponent(url)}`;
 
+  if (allowed === null) return null;
+  if (!allowed) {
+    return (
+      <div className="mx-auto max-w-2xl py-16 text-center">
+        <h1 className="font-serif text-2xl">Not available</h1>
+        <p className="mt-2 text-muted-foreground">This page is restricted to the portal owner.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto max-w-4xl space-y-8 py-2">
       <header className="space-y-3">
