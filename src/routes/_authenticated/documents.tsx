@@ -444,7 +444,7 @@ function UploadForm({
         .split(",")
         .map((t) => t.trim())
         .filter(Boolean),
-    } as any);
+    } as any).select("id").maybeSingle();
 
     if (insertError) {
       toast.error(
@@ -454,6 +454,14 @@ function UploadForm({
       );
       setUploading(false);
       return;
+    }
+
+    if (insertedDoc?.id) {
+      try {
+        await notifyDocumentActivity({ data: { documentId: insertedDoc.id, action: "uploaded" } });
+      } catch (err) {
+        console.error("document notification failed", err);
+      }
     }
 
     toast.success("Document registered.");
