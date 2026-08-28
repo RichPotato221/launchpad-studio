@@ -45,8 +45,31 @@ async function resolveRecipients(admin: Admin, audience: NotificationAudience = 
     }
   }
 
+  // Role-based recipients (e.g. "whoever holds the chairperson office"), so no
+  // owner/admin address is ever hardcoded anywhere in the portal.
+  let roleIds: string[] = [];
+  if (audience.roles?.length) {
+    let rq = admin.from("user_roles").select("user_id").in("role", audience.roles);
+    if (audience.roleDepartmentSlug) rq = rq.eq("department_slug", audience.roleDepartmentSlug);
+    const { data: rr } = await rq;
+    roleIds = Array.from(new Set(((rr ?? []) as any[]).map((r) => r.user_id).filter(Boolean)));
+    if (roleIds.length) {
+      const { data: rp } = await admin
+        .from("profiles")
+        .select("id, email, full_name")
+        .eq("approval_status", "approved")
+        .in("id", roleIds);
+      for (const p of (rp ?? []) as any[]) {
+        if (typeof p.email === "string" && p.email.includes("@")) {
+          out.set(p.email.toLowerCase(), { id: p.id, email: p.email, name: p.full_name });
+        }
+      }
+    }
+  }
+
   // Explicit people (private messages, approval chains) win: nobody else is emailed.
-  const explicit = !!audience.userIds?.length || !!audience.emails?.length;
+  const explicit =
+    !!audience.userIds?.length || !!audience.emails?.length || !!audience.roles?.length;
 
   if (audience.userIds?.length || !explicit) {
     // Department audiences include people serving in the department through a
