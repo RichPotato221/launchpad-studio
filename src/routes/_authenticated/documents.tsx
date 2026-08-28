@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { notifyDocumentActivity } from "@/lib/activity.functions";
 import { FileText, Image, Paperclip, Search, Upload, Trash2, Download, File } from "lucide-react";
 import { fetchDepartments } from "@/lib/portal";
 import { MemberAvatarLink } from "@/components/MemberAvatarlink";
@@ -423,7 +424,7 @@ function UploadForm({
 
     const { data: urlData } = supabase.storage.from("central-documents").getPublicUrl(path);
 
-    const { error: insertError } = await supabase.from("documents").insert({
+    const { data: insertedDoc, error: insertError } = await supabase.from("documents").insert({
       title: title.trim(),
       description: description.trim() || null,
       file_url: urlData?.publicUrl ?? "",
@@ -443,7 +444,7 @@ function UploadForm({
         .split(",")
         .map((t) => t.trim())
         .filter(Boolean),
-    } as any);
+    } as any).select("id").maybeSingle();
 
     if (insertError) {
       toast.error(
@@ -453,6 +454,14 @@ function UploadForm({
       );
       setUploading(false);
       return;
+    }
+
+    if (insertedDoc?.id) {
+      try {
+        await notifyDocumentActivity({ data: { documentId: insertedDoc.id, action: "uploaded" } });
+      } catch (err) {
+        console.error("document notification failed", err);
+      }
     }
 
     toast.success("Document registered.");

@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { useCurrentRole } from "@/lib/useCurrentRole";
+import { notifyPurchaseRequest } from "@/lib/activity.functions";
 import { Download, Printer } from "lucide-react";
 import {
   BRANCHES,
@@ -130,35 +131,23 @@ export default function ProcurementModule({ canManage, currentUserId, department
     }
   };
 
-  const notifyFinanceTeam = async (title: string, branch: string | null) => {
-    const financeSlugs = ["finance", "finance-administration"];
-    const [{ data: byProfile }, { data: byRole }] = await Promise.all([
-      sb.from("profiles").select("id").in("primary_department", financeSlugs),
-      sb.from("user_roles").select("user_id").in("department_slug", financeSlugs),
-    ]);
-    const ids = Array.from(
-      new Set([
-        ...((byProfile ?? []) as any[]).map((p) => p.id),
-        ...((byRole ?? []) as any[]).map((r) => r.user_id),
-      ]),
-    ).filter(Boolean);
-    if (ids.length === 0) return;
-    await sb.from("notifications").insert(
-      ids.map((id) => ({
-        user_id: id,
-        title: `New purchase request — ${titleCase(departmentSlug)}`,
-        message: title,
-        link: "/departments/finance",
-        type: "procurement",
-        branch: branch ?? null,
-      })),
-    );
+  /**
+   * Recipients are resolved server-side by the central notification engine:
+   * the finance/chair authorities responsible for the next action, plus the
+   * requester's own acknowledgement. No hardcoded addresses.
+   */
+  const notifyFinanceTeam = async (requestId: string) => {
+    try {
+      await notifyPurchaseRequest({ data: { requestId, stage: "submitted" } });
+    } catch (err) {
+      console.error("purchase request notification failed", err);
+    }
   };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.title.trim()) return toast.error("A title is required.");
-    const { error } = await sb.from("purchase_requests").insert({
+    const { data: inserted, error } = await sb.from("purchase_requests").insert({
       department_slug: departmentSlug,
       requester_id: currentUserId,
       title: form.title.trim(),
@@ -173,9 +162,9 @@ export default function ProcurementModule({ canManage, currentUserId, department
       quote_url: form.quote_url || null,
       quote_name: form.quote_name || null,
       status: "submitted",
-    });
+    }).select("id").maybeSingle();
     if (error) return toast.error(error.message);
-    await notifyFinanceTeam(form.title.trim(), form.branch || null);
+    if (inserted?.id) await notifyFinanceTeam(inserted.id);
     toast.success("Purchase request sent to the Finance Department");
     setForm(emptyForm);
     load();
@@ -214,15 +203,18 @@ export default function ProcurementModule({ canManage, currentUserId, department
     const { error } = await sb.from("purchase_requests").update(patch).eq("id", row.id);
     if (error) return toast.error(error.message);
 
-    if (row.requester_id && row.requester_id !== currentUserId) {
-      await sb.from("notifications").insert({
-        user_id: row.requester_id,
-        title: `Purchase request ${row.pr_number ?? ""} — ${titleCase(status)}`,
-        message: row.title,
-        link: "/departments/finance",
-        type: "procurement",
-        branch: row.branch ?? null,
-      });
+    try {
+      const stage =
+        status === "rejected"
+          ? "rejected"
+          : status === "finance_approved"
+            ? "department_approved"
+            : status === "senior_pastor_approved"
+              ? "approved"
+              : null;
+      if (stage) await notifyPurchaseRequest({ data: { requestId: row.id, stage, comment: patch.rejection_reason ?? null } });
+    } catch (err) {
+      console.error("purchase request notification failed", err);
     }
     toast.success(`Marked ${titleCase(status)}`);
     load();

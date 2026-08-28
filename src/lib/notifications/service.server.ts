@@ -8,7 +8,7 @@
  * records every attempt, and retries failures.
  */
 import { appUrl, ORGANISATION_NAME } from "@/lib/appConfig";
-import { sendMail } from "./mailer.server";
+import { sendMail, SENDER_EMAIL } from "./mailer.server";
 import { renderHtml, renderText, type EmailBody } from "./templates.server";
 import {
   isCritical,
@@ -19,7 +19,8 @@ import {
 } from "./types";
 
 const MAX_RETRIES = 3;
-const ORGANIZER_EMAIL = "richardmashaba.19@gmail.com";
+// The calendar ORGANIZER is the portal's own sending mailbox (not a recipient).
+const ORGANIZER_EMAIL = SENDER_EMAIL;
 
 type Admin = Awaited<ReturnType<typeof getAdmin>>;
 
@@ -45,8 +46,31 @@ async function resolveRecipients(admin: Admin, audience: NotificationAudience = 
     }
   }
 
+  // Role-based recipients (e.g. "whoever holds the chairperson office"), so no
+  // owner/admin address is ever hardcoded anywhere in the portal.
+  let roleIds: string[] = [];
+  if (audience.roles?.length) {
+    let rq = admin.from("user_roles").select("user_id").in("role", audience.roles);
+    if (audience.roleDepartmentSlug) rq = rq.eq("department_slug", audience.roleDepartmentSlug);
+    const { data: rr } = await rq;
+    roleIds = Array.from(new Set(((rr ?? []) as any[]).map((r) => r.user_id).filter(Boolean)));
+    if (roleIds.length) {
+      const { data: rp } = await admin
+        .from("profiles")
+        .select("id, email, full_name")
+        .eq("approval_status", "approved")
+        .in("id", roleIds);
+      for (const p of (rp ?? []) as any[]) {
+        if (typeof p.email === "string" && p.email.includes("@")) {
+          out.set(p.email.toLowerCase(), { id: p.id, email: p.email, name: p.full_name });
+        }
+      }
+    }
+  }
+
   // Explicit people (private messages, approval chains) win: nobody else is emailed.
-  const explicit = !!audience.userIds?.length || !!audience.emails?.length;
+  const explicit =
+    !!audience.userIds?.length || !!audience.emails?.length || !!audience.roles?.length;
 
   if (audience.userIds?.length || !explicit) {
     // Department audiences include people serving in the department through a
@@ -221,6 +245,12 @@ function when(ev: any): string {
   return `${ev?.event_date ?? ""}${time}`;
 }
 
+/** "REQUEST_APPROVED" → "Request approved" (fallback heading). */
+function titleFromType(type: string): string {
+  const words = type.toLowerCase().replace(/_/g, " ");
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
+
 interface Composed {
   subject: string;
   body: EmailBody;
@@ -325,6 +355,38 @@ function compose(type: NotificationType, payload: any): Composed {
       };
     }
 
+    case "MEMBER_REGISTERED":
+    case "MEMBER_APPROVED":
+    case "MEMBER_REJECTED":
+    case "ROLE_ASSIGNED":
+    case "ROLE_REMOVED":
+    case "REQUEST_SUBMITTED":
+    case "REQUEST_APPROVED":
+    case "REQUEST_REJECTED":
+    case "APPROVAL_REQUIRED":
+    case "APPROVAL_GRANTED":
+    case "APPROVAL_REJECTED":
+    case "TASK_ASSIGNED":
+    case "TASK_COMPLETED":
+    case "TASK_OVERDUE":
+    case "DOCUMENT_UPLOADED":
+    case "DOCUMENT_UPDATED":
+    case "DOCUMENT_REVIEW_REQUIRED": {
+      const heading = String(payload.heading ?? titleFromType(type));
+      return {
+        subject: String(payload.subject ?? `${heading} — ${ORGANISATION_NAME}`),
+        body: {
+          heading,
+          intro: payload.intro ? String(payload.intro) : undefined,
+          paragraphs: payload.body ? [String(payload.body)] : [],
+          details: (payload.details as any) ?? undefined,
+          buttons: [
+            { label: String(payload.action_label ?? "Open the portal"), url: appUrl(String(payload.path ?? "/home")) },
+          ],
+        },
+      };
+    }
+
     case "LEADERSHIP_NOTICE":
     case "SYSTEM_NOTIFICATION":
     default: {
@@ -380,13 +442,60 @@ export async function enqueueNotification(req: NotificationRequest): Promise<Enq
   const { data, error } = await admin
     .from("notification_log")
     .upsert(rows, { onConflict: "idempotency_key", ignoreDuplicates: true })
-    .select("id");
+    .select("id, recipient_id, recipient_email");
   if (error) {
     console.error("notification enqueue failed:", error.message);
     return { queued: 0, skipped: rows.length };
   }
   const queued = data?.length ?? 0;
+
+  // In-app notification centre: one row per newly queued recipient only, so a
+  // replayed event never double-posts to anybody's bell.
+  try {
+    const composed = compose(req.type, payload);
+    const inApp = ((data ?? []) as any[])
+      .filter((d) => d.recipient_id)
+      .map((d) => ({
+        user_id: d.recipient_id,
+        title: composed.body.heading ?? composed.subject,
+        message:
+          (payload["body"] as string | undefined) ??
+          composed.body.intro ??
+          composed.subject,
+        link: (payload["path"] as string | undefined) ?? inAppLinkFor(req),
+        type: req.type,
+        branch: (payload["branch"] as string | undefined) ?? null,
+      }));
+    if (inApp.length) await admin.from("notifications").insert(inApp);
+  } catch (err: unknown) {
+    console.error("in-app notification insert failed:", (err as Error)?.message);
+  }
+
   return { queued, skipped: rows.length - queued };
+}
+
+/** Default deep link for a notification's entity. */
+function inAppLinkFor(req: NotificationRequest): string {
+  switch (req.entityType) {
+    case "event":
+    case "meeting":
+      return "/events";
+    case "task":
+      return "/tasks";
+    case "document":
+      return "/documents";
+    case "purchase_request":
+      return "/finance";
+    case "governance_approval":
+      return "/governance";
+    case "announcement":
+    case "feed_post":
+      return "/feed";
+    case "profile":
+      return "/Profile";
+    default:
+      return "/home";
+  }
 }
 
 /* ───────────────────────── worker ───────────────────────── */

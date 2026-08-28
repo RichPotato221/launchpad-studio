@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { Download, Printer } from "lucide-react";
 import { BRANCHES, STATUS_CLASS, branchLabel, exportRows, fmtDate, money, titleCase } from "@/lib/finance";
 import { APPROVAL_TYPES } from "@/lib/governance";
+import { notifyGovernanceApproval } from "@/lib/activity.functions";
 
 const sb = supabase as any;
 
@@ -86,7 +87,7 @@ export default function ExecutiveApprovalsModule({ canManage, currentUserId }: P
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.title.trim()) return toast.error("A title is required.");
-    const { error } = await sb.from("governance_approvals").insert({
+    const { data: created, error } = await sb.from("governance_approvals").insert({
       item_type: form.item_type,
       title: form.title.trim(),
       detail: form.detail.trim() || null,
@@ -96,8 +97,15 @@ export default function ExecutiveApprovalsModule({ canManage, currentUserId }: P
       amount: form.amount ? Number(form.amount) : null,
       document_url: form.document_url || null,
       submitted_by: currentUserId,
-    });
+    }).select("id").maybeSingle();
     if (error) return toast.error(error.message);
+    if (created?.id) {
+      try {
+        await notifyGovernanceApproval({ data: { approvalId: created.id, stage: "submitted" } });
+      } catch (err) {
+        console.error("approval notification failed", err);
+      }
+    }
     toast.success("Submitted for executive approval");
     setForm(empty);
     load();
@@ -121,15 +129,12 @@ export default function ExecutiveApprovalsModule({ canManage, currentUserId }: P
       signature_data: `${signature.trim()} — ${status} on ${new Date().toISOString()}`,
     });
 
-    if (row.submitted_by && row.submitted_by !== currentUserId) {
-      await sb.from("notifications").insert({
-        user_id: row.submitted_by,
-        title: `Executive approval — ${titleCase(status)}`,
-        message: row.title,
-        link: "/departments/chairperson",
-        type: "governance_approval",
-        branch: row.branch ?? null,
+    try {
+      await notifyGovernanceApproval({
+        data: { approvalId: row.id, stage: status, comment: comment[row.id] ?? null },
       });
+    } catch (err) {
+      console.error("approval notification failed", err);
     }
     toast.success(`Signed off as ${status}`);
     load();
