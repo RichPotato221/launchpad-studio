@@ -8,7 +8,7 @@
  * records every attempt, and retries failures.
  */
 import { appUrl, ORGANISATION_NAME } from "@/lib/appConfig";
-import { sendMail } from "./mailer.server";
+import { sendMail, SENDER_EMAIL } from "./mailer.server";
 import { renderHtml, renderText, type EmailBody } from "./templates.server";
 import {
   isCritical,
