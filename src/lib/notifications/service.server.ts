@@ -245,6 +245,12 @@ function when(ev: any): string {
   return `${ev?.event_date ?? ""}${time}`;
 }
 
+/** "REQUEST_APPROVED" → "Request approved" (fallback heading). */
+function titleFromType(type: string): string {
+  const words = type.toLowerCase().replace(/_/g, " ");
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
+
 interface Composed {
   subject: string;
   body: EmailBody;
