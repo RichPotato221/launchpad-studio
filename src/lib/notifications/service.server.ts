@@ -19,7 +19,8 @@ import {
 } from "./types";
 
 const MAX_RETRIES = 3;
-const ORGANIZER_EMAIL = "richardmashaba.19@gmail.com";
+// The calendar ORGANIZER is the portal's own sending mailbox (not a recipient).
+const ORGANIZER_EMAIL = SENDER_EMAIL;
 
 type Admin = Awaited<ReturnType<typeof getAdmin>>;
 
