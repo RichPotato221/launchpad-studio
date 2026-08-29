@@ -35,10 +35,14 @@ export const sendEventInvites = createServerFn({ method: "POST" })
             ? "MEETING_INVITATION"
             : "EVENT_INVITATION";
 
-    // Audience: every approved member of the church (all branches), so nobody
-    // misses a gathering. Each recipient can accept or decline from the email
-    // and the organiser sees the RSVP standing in the portal.
-    const audience = {};
+    // Audience: strictly the people the activity concerns — the branch that
+    // owns it, and the owning department when the event belongs to one.
+    // Church-wide events (no branch set) reach every approved member.
+    const branch = (data.branch ?? ev.branch) || null;
+    const audience: Record<string, unknown> = {};
+    if (branch) audience["branch"] = branch;
+    if (ev.department_slug) audience["departmentSlug"] = ev.department_slug;
+
 
 
     const result = await dispatchNotification({
