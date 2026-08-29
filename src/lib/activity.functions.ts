@@ -208,7 +208,11 @@ export const notifyGovernanceApproval = createServerFn({ method: "POST" })
         entityType: "governance_approval",
         entityId: row.id,
         entityVersion: `submitted:${row.created_at ?? ""}`,
-        audience: { roles: ["chairperson", "senior_apostle", "secretary"], excludeUserIds: [context.userId] },
+        audience: {
+          roles: ["chairperson", "senior_apostle", "secretary"],
+          ...(row.branch ? { branch: row.branch } : {}),
+          excludeUserIds: [context.userId],
+        },
         metadata: {
           heading: "An item is awaiting your executive sign-off",
           body: row.detail ?? undefined,
@@ -290,8 +294,16 @@ export const notifyDocumentActivity = createServerFn({ method: "POST" })
     // Only the department that owns the document (plus the secretariat for
     // church-wide records) — never the whole membership.
     const audience = doc.department_slug
-      ? { departmentSlug: doc.department_slug, excludeUserIds: [context.userId] }
-      : { roles: ["chairperson", "senior_apostle", "secretary"], excludeUserIds: [context.userId] };
+      ? {
+          departmentSlug: doc.department_slug,
+          ...(doc.branch ? { branch: doc.branch } : {}),
+          excludeUserIds: [context.userId],
+        }
+      : {
+          roles: ["chairperson", "senior_apostle", "secretary"],
+          ...(doc.branch ? { branch: doc.branch } : {}),
+          excludeUserIds: [context.userId],
+        };
 
     return await dispatchNotification({
       type: data.action === "uploaded" ? "DOCUMENT_UPLOADED" : "DOCUMENT_UPDATED",
