@@ -55,8 +55,10 @@ async function resolveRecipients(admin: Admin, audience: NotificationAudience = 
     const { data: rr } = await rq;
     const roleRows = ((rr ?? []) as any[]).filter((r) => r.user_id);
     roleIds = Array.from(new Set(roleRows.map((r) => r.user_id)));
-    // Only church-wide oversight offices are notified outside their own branch.
-    const CHURCH_WIDE = new Set(["chairperson", "senior_apostle"]);
+    // Only the Senior Pastors oversee every branch. Chairpersons, Associate
+    // Pastors, Assistant Pastors and every other office are branch-scoped:
+    // they are notified only of activities in their own branch.
+    const CHURCH_WIDE = new Set(["senior_apostle"]);
     const oversight = new Set(
       roleRows.filter((r) => CHURCH_WIDE.has(String(r.role))).map((r) => r.user_id),
     );
