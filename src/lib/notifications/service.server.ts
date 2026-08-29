@@ -50,23 +50,31 @@ async function resolveRecipients(admin: Admin, audience: NotificationAudience = 
   // owner/admin address is ever hardcoded anywhere in the portal.
   let roleIds: string[] = [];
   if (audience.roles?.length) {
-    let rq = admin.from("user_roles").select("user_id").in("role", audience.roles);
+    let rq = admin.from("user_roles").select("user_id, role").in("role", audience.roles);
     if (audience.roleDepartmentSlug) rq = rq.eq("department_slug", audience.roleDepartmentSlug);
     const { data: rr } = await rq;
-    roleIds = Array.from(new Set(((rr ?? []) as any[]).map((r) => r.user_id).filter(Boolean)));
+    const roleRows = ((rr ?? []) as any[]).filter((r) => r.user_id);
+    roleIds = Array.from(new Set(roleRows.map((r) => r.user_id)));
+    // Only church-wide oversight offices are notified outside their own branch.
+    const CHURCH_WIDE = new Set(["chairperson", "senior_apostle"]);
+    const oversight = new Set(
+      roleRows.filter((r) => CHURCH_WIDE.has(String(r.role))).map((r) => r.user_id),
+    );
     if (roleIds.length) {
       const { data: rp } = await admin
         .from("profiles")
-        .select("id, email, full_name")
+        .select("id, email, full_name, branch")
         .eq("approval_status", "approved")
         .in("id", roleIds);
       for (const p of (rp ?? []) as any[]) {
+        if (audience.branch && p.branch !== audience.branch && !oversight.has(p.id)) continue;
         if (typeof p.email === "string" && p.email.includes("@")) {
           out.set(p.email.toLowerCase(), { id: p.id, email: p.email, name: p.full_name });
         }
       }
     }
   }
+
 
   // Explicit people (private messages, approval chains) win: nobody else is emailed.
   const explicit =
