@@ -96,6 +96,12 @@ export default function PrayerRosterModule({ canManage, currentUserId }: Props) 
     return map;
   }, [rows]);
 
+  /** Members offered for duty — scoped to the chosen branch unless overridden. */
+  const visibleMembers = useMemo(
+    () => (showAllBranches ? members : members.filter((m) => !m.branch || m.branch === form.branch)),
+    [members, showAllBranches, form.branch],
+  );
+
   const timeLabel = (r: any) =>
     r.start_time ? `${String(r.start_time).slice(0, 5)}${r.end_time ? ` – ${String(r.end_time).slice(0, 5)}` : ""}` : "—";
 
