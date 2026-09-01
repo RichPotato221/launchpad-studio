@@ -365,6 +365,15 @@ export const TEAM_CONFIG: Record<TeamKey, TeamConfig> = {
 };
 
 
+export const TEAM_SLUG: Record<TeamKey, string> = {
+  youth: "youth-ministry",
+  women: "womens-ministry",
+  men: "mens-ministry",
+  care: "hand-of-christ",
+  life_groups: "life-groups",
+  outreach: "outreach-evangelism",
+};
+
 export function teamFromSlug(slug: string): TeamKey {
   return TEAM_BY_SLUG[slug] ?? "youth";
 }
