@@ -10,6 +10,9 @@ import { toast } from "sonner";
 import { CalendarPlus, Download } from "lucide-react";
 import { BRANCHES, branchLabel, exportRows, fmtDate, titleCase } from "@/lib/finance";
 import { MEETING_TYPES, buildIcs, downloadIcs, googleCalendarUrl, labelFor, outlookCalendarUrl, pct } from "@/lib/intercession";
+import { publishDepartmentMeeting, splitTimestamp } from "@/lib/departmentMeetings";
+import RsvpPanel from "@/components/events/RsvpPanel";
+import PrayerRosterModule from "@/components/prayer/PrayerRosterModule";
 
 const sb = supabase as any;
 
@@ -19,6 +22,7 @@ type Props = { canManage: boolean; currentUserId: string };
 export default function PrayerMeetingsModule({ canManage, currentUserId }: Props) {
   const [rows, setRows] = useState<any[]>([]);
   const [minutesFor, setMinutesFor] = useState<string | null>(null);
+  const [rsvpFor, setRsvpFor] = useState<string | null>(null);
 
   const isoLocal = (d: Date) => new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
   const empty = {
@@ -45,16 +49,33 @@ export default function PrayerMeetingsModule({ canManage, currentUserId }: Props
   const create = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.title.trim()) return toast.error("Give the meeting a title");
+    // Publish on the church calendar first so every intercessor in this
+    // branch is emailed a real invite with Accept / Decline buttons.
+    const start = splitTimestamp(new Date(form.starts_at).toISOString());
+    const end = splitTimestamp(new Date(form.ends_at).toISOString());
+    const eventId = await publishDepartmentMeeting({
+      title: form.title,
+      description: [form.prayer_focus, form.scriptures].filter(Boolean).join("\n\n") || null,
+      eventDate: start.date,
+      startTime: start.time,
+      endTime: end.time,
+      location: form.venue,
+      branch: form.branch,
+      departmentSlug: "prayer-intercession",
+      createdBy: currentUserId,
+    });
+
     const { error } = await sb.from("int_meetings").insert({
       ...form,
       starts_at: new Date(form.starts_at).toISOString(),
       ends_at: new Date(form.ends_at).toISOString(),
       expected_count: form.expected_count ? Number(form.expected_count) : null,
+      event_id: eventId,
       leader_id: currentUserId,
       created_by: currentUserId,
     });
     if (error) return toast.error(error.message);
-    toast.success("Prayer meeting scheduled");
+    toast.success("Prayer meeting scheduled — invitations are on their way");
     setForm({ ...empty });
     load();
   };
@@ -171,6 +192,11 @@ export default function PrayerMeetingsModule({ canManage, currentUserId }: Props
                   <div className="flex flex-wrap items-center gap-2">
                     <a className="text-xs underline" href={googleCalendarUrl({ title: r.title, start: r.starts_at, end: r.ends_at, location: r.venue, description: r.prayer_focus })} target="_blank" rel="noreferrer">Google</a>
                     <a className="text-xs underline" href={outlookCalendarUrl({ title: r.title, start: r.starts_at, end: r.ends_at, location: r.venue, description: r.prayer_focus })} target="_blank" rel="noreferrer">Outlook</a>
+                    {r.event_id && (
+                      <Button size="sm" variant="outline" onClick={() => setRsvpFor(rsvpFor === r.id ? null : r.id)}>
+                        {rsvpFor === r.id ? "Hide RSVPs" : "RSVPs"}
+                      </Button>
+                    )}
                     {canManage && (
                       <Button size="sm" variant="outline" onClick={() => setMinutesFor(minutesFor === r.id ? null : r.id)}>
                         {minutesFor === r.id ? "Close" : "Minutes & attendance"}
@@ -178,6 +204,8 @@ export default function PrayerMeetingsModule({ canManage, currentUserId }: Props
                     )}
                   </div>
                 </div>
+
+                {rsvpFor === r.id && r.event_id && <RsvpPanel eventId={r.event_id} />}
 
                 {minutesFor === r.id && canManage && (
                   <div className="mt-4 grid gap-3 border-t pt-4 md:grid-cols-3">
@@ -208,6 +236,8 @@ export default function PrayerMeetingsModule({ canManage, currentUserId }: Props
           {rows.length === 0 && <p className="py-10 text-center text-sm text-muted-foreground">No prayer meetings scheduled yet.</p>}
         </div>
       </Card>
+
+      <PrayerRosterModule canManage={canManage} currentUserId={currentUserId} />
     </div>
   );
 }
