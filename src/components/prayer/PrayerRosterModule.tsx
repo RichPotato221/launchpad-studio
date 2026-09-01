@@ -43,12 +43,26 @@ export default function PrayerRosterModule({ canManage, currentUserId }: Props) 
   const [form, setForm] = useState<Record<string, any>>({ ...empty });
 
   const load = async () => {
-    const [{ data }, { data: m }] = await Promise.all([
+    const [{ data }, { data: team }, { data: people }] = await Promise.all([
       sb.from("int_prayer_roster").select("*").order("day_of_week").order("start_time"),
-      sb.from("int_team_members").select("id, user_id, full_name, branch").order("full_name"),
+      sb.from("int_team_members").select("user_id, full_name, branch").order("full_name"),
+      sb
+        .from("profiles")
+        .select("id, full_name, branch")
+        .eq("approval_status", "approved")
+        .order("full_name"),
     ]);
     setRows(data ?? []);
-    setMembers(m ?? []);
+
+    // Intercession team first, then every other approved member of the church.
+    const teamIds = new Set((team ?? []).map((t: any) => t.user_id).filter(Boolean));
+    const merged = [
+      ...(team ?? []).map((t: any) => ({ user_id: t.user_id, full_name: t.full_name, branch: t.branch, team: true })),
+      ...(people ?? [])
+        .filter((p: any) => p.full_name && !teamIds.has(p.id))
+        .map((p: any) => ({ user_id: p.id, full_name: p.full_name, branch: p.branch, team: false })),
+    ];
+    setMembers(merged);
   };
   useEffect(() => { load(); }, []);
 
