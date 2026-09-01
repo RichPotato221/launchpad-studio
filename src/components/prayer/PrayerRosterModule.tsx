@@ -68,7 +68,7 @@ export default function PrayerRosterModule({ canManage, currentUserId }: Props) 
 
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.full_name.trim()) return toast.error("Choose or type who is on duty");
+    if (!form.full_name.trim()) return toast.error("Select the member on duty");
     const { error } = await sb.from("int_prayer_roster").insert({
       ...form,
       day_of_week: Number(form.day_of_week),
