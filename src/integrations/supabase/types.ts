@@ -7760,6 +7760,7 @@ export type Database = {
           created_at: string
           created_by: string | null
           event_date: string
+          event_id: string | null
           event_type: string
           feedback: string | null
           follow_up: string | null
@@ -7785,6 +7786,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           event_date: string
+          event_id?: string | null
           event_type?: string
           feedback?: string | null
           follow_up?: string | null
@@ -7810,6 +7812,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           event_date?: string
+          event_id?: string | null
           event_type?: string
           feedback?: string | null
           follow_up?: string | null
@@ -7826,7 +7829,15 @@ export type Database = {
           updated_at?: string
           venue?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "mt_events_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       mt_groups: {
         Row: {
