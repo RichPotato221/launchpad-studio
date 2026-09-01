@@ -28,6 +28,7 @@ type Props = { canManage: boolean; currentUserId: string };
 export default function PrayerRosterModule({ canManage, currentUserId }: Props) {
   const [rows, setRows] = useState<any[]>([]);
   const [members, setMembers] = useState<any[]>([]);
+  const [showAllBranches, setShowAllBranches] = useState(false);
 
   const empty = {
     day_of_week: 1,
@@ -42,18 +43,32 @@ export default function PrayerRosterModule({ canManage, currentUserId }: Props) 
   const [form, setForm] = useState<Record<string, any>>({ ...empty });
 
   const load = async () => {
-    const [{ data }, { data: m }] = await Promise.all([
+    const [{ data }, { data: team }, { data: people }] = await Promise.all([
       sb.from("int_prayer_roster").select("*").order("day_of_week").order("start_time"),
-      sb.from("int_team_members").select("id, user_id, full_name, branch").order("full_name"),
+      sb.from("int_team_members").select("user_id, full_name, branch").order("full_name"),
+      sb
+        .from("profiles")
+        .select("id, full_name, branch")
+        .eq("approval_status", "approved")
+        .order("full_name"),
     ]);
     setRows(data ?? []);
-    setMembers(m ?? []);
+
+    // Intercession team first, then every other approved member of the church.
+    const teamIds = new Set((team ?? []).map((t: any) => t.user_id).filter(Boolean));
+    const merged = [
+      ...(team ?? []).map((t: any) => ({ user_id: t.user_id, full_name: t.full_name, branch: t.branch, team: true })),
+      ...(people ?? [])
+        .filter((p: any) => p.full_name && !teamIds.has(p.id))
+        .map((p: any) => ({ user_id: p.id, full_name: p.full_name, branch: p.branch, team: false })),
+    ];
+    setMembers(merged);
   };
   useEffect(() => { load(); }, []);
 
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.full_name.trim()) return toast.error("Choose or type who is on duty");
+    if (!form.full_name.trim()) return toast.error("Select the member on duty");
     const { error } = await sb.from("int_prayer_roster").insert({
       ...form,
       day_of_week: Number(form.day_of_week),
@@ -80,6 +95,12 @@ export default function PrayerRosterModule({ canManage, currentUserId }: Props) 
     rows.filter((r) => r.active !== false).forEach((r) => map.get(r.day_of_week)?.push(r));
     return map;
   }, [rows]);
+
+  /** Members offered for duty — scoped to the chosen branch unless overridden. */
+  const visibleMembers = useMemo(
+    () => (showAllBranches ? members : members.filter((m) => !m.branch || m.branch === form.branch)),
+    [members, showAllBranches, form.branch],
+  );
 
   const timeLabel = (r: any) =>
     r.start_time ? `${String(r.start_time).slice(0, 5)}${r.end_time ? ` – ${String(r.end_time).slice(0, 5)}` : ""}` : "—";
@@ -178,26 +199,48 @@ export default function PrayerRosterModule({ canManage, currentUserId }: Props) 
                 {PRAYER_WATCHES.map((w) => <option key={w} value={w}>{w}</option>)}
               </select>
             </div>
-            <div>
-              <Label>Intercessor</Label>
+            <div className="md:col-span-2">
+              <div className="flex items-center justify-between gap-2">
+                <Label>Intercessor</Label>
+                <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <input
+                    type="checkbox"
+                    checked={showAllBranches}
+                    onChange={(e) => setShowAllBranches(e.target.checked)}
+                  />
+                  Show members from all branches
+                </label>
+              </div>
               <select
                 className="mt-1 h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                 value={form.member_id}
                 onChange={(e) => {
-                  const m = members.find((x) => x.id === e.target.value);
+                  const m = members.find((x) => x.user_id === e.target.value);
                   setForm({
                     ...form,
                     member_id: m?.user_id ?? "",
-                    full_name: m?.full_name ?? form.full_name,
+                    full_name: m?.full_name ?? "",
                     branch: m?.branch ?? form.branch,
                   });
                 }}
               >
-                <option value="">Type a name below</option>
-                {members.map((m) => <option key={m.id} value={m.id}>{m.full_name}</option>)}
+                <option value="">Select a member…</option>
+                <optgroup label="Intercession team">
+                  {visibleMembers.filter((m) => m.team).map((m) => (
+                    <option key={m.user_id} value={m.user_id}>
+                      {m.full_name}{m.branch ? ` — ${branchLabel(m.branch)}` : ""}
+                    </option>
+                  ))}
+                </optgroup>
+                <optgroup label="General members">
+                  {visibleMembers.filter((m) => !m.team).map((m) => (
+                    <option key={m.user_id} value={m.user_id}>
+                      {m.full_name}{m.branch ? ` — ${branchLabel(m.branch)}` : ""}
+                    </option>
+                  ))}
+                </optgroup>
               </select>
             </div>
-            <div><Label>Name on duty</Label><Input value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} /></div>
             <div><Label>From</Label><Input type="time" value={form.start_time} onChange={(e) => setForm({ ...form, start_time: e.target.value })} /></div>
             <div><Label>To</Label><Input type="time" value={form.end_time} onChange={(e) => setForm({ ...form, end_time: e.target.value })} /></div>
             <div>
