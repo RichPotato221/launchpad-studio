@@ -193,26 +193,48 @@ export default function PrayerRosterModule({ canManage, currentUserId }: Props) 
                 {PRAYER_WATCHES.map((w) => <option key={w} value={w}>{w}</option>)}
               </select>
             </div>
-            <div>
-              <Label>Intercessor</Label>
+            <div className="md:col-span-2">
+              <div className="flex items-center justify-between gap-2">
+                <Label>Intercessor</Label>
+                <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <input
+                    type="checkbox"
+                    checked={showAllBranches}
+                    onChange={(e) => setShowAllBranches(e.target.checked)}
+                  />
+                  Show members from all branches
+                </label>
+              </div>
               <select
                 className="mt-1 h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                 value={form.member_id}
                 onChange={(e) => {
-                  const m = members.find((x) => x.id === e.target.value);
+                  const m = members.find((x) => x.user_id === e.target.value);
                   setForm({
                     ...form,
                     member_id: m?.user_id ?? "",
-                    full_name: m?.full_name ?? form.full_name,
+                    full_name: m?.full_name ?? "",
                     branch: m?.branch ?? form.branch,
                   });
                 }}
               >
-                <option value="">Type a name below</option>
-                {members.map((m) => <option key={m.id} value={m.id}>{m.full_name}</option>)}
+                <option value="">Select a member…</option>
+                <optgroup label="Intercession team">
+                  {visibleMembers.filter((m) => m.team).map((m) => (
+                    <option key={m.user_id} value={m.user_id}>
+                      {m.full_name}{m.branch ? ` — ${branchLabel(m.branch)}` : ""}
+                    </option>
+                  ))}
+                </optgroup>
+                <optgroup label="General members">
+                  {visibleMembers.filter((m) => !m.team).map((m) => (
+                    <option key={m.user_id} value={m.user_id}>
+                      {m.full_name}{m.branch ? ` — ${branchLabel(m.branch)}` : ""}
+                    </option>
+                  ))}
+                </optgroup>
               </select>
             </div>
-            <div><Label>Name on duty</Label><Input value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} /></div>
             <div><Label>From</Label><Input type="time" value={form.start_time} onChange={(e) => setForm({ ...form, start_time: e.target.value })} /></div>
             <div><Label>To</Label><Input type="time" value={form.end_time} onChange={(e) => setForm({ ...form, end_time: e.target.value })} /></div>
             <div>
