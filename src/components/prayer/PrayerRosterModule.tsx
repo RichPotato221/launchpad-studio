@@ -28,6 +28,7 @@ type Props = { canManage: boolean; currentUserId: string };
 export default function PrayerRosterModule({ canManage, currentUserId }: Props) {
   const [rows, setRows] = useState<any[]>([]);
   const [members, setMembers] = useState<any[]>([]);
+  const [showAllBranches, setShowAllBranches] = useState(false);
 
   const empty = {
     day_of_week: 1,
