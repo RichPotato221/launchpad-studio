@@ -5107,6 +5107,7 @@ export type Database = {
           created_by: string | null
           declarations: string | null
           ends_at: string | null
+          event_id: string | null
           expected_count: number
           host: string | null
           id: string
@@ -5134,6 +5135,7 @@ export type Database = {
           created_by?: string | null
           declarations?: string | null
           ends_at?: string | null
+          event_id?: string | null
           expected_count?: number
           host?: string | null
           id?: string
@@ -5161,6 +5163,7 @@ export type Database = {
           created_by?: string | null
           declarations?: string | null
           ends_at?: string | null
+          event_id?: string | null
           expected_count?: number
           host?: string | null
           id?: string
@@ -5180,7 +5183,85 @@ export type Database = {
           updated_at?: string
           venue?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "int_meetings_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      int_prayer_roster: {
+        Row: {
+          active: boolean
+          branch: string | null
+          created_at: string
+          created_by: string | null
+          day_of_week: number
+          end_time: string | null
+          focus: string | null
+          full_name: string
+          id: string
+          member_id: string | null
+          start_time: string | null
+          updated_at: string
+          watch: string | null
+        }
+        Insert: {
+          active?: boolean
+          branch?: string | null
+          created_at?: string
+          created_by?: string | null
+          day_of_week: number
+          end_time?: string | null
+          focus?: string | null
+          full_name: string
+          id?: string
+          member_id?: string | null
+          start_time?: string | null
+          updated_at?: string
+          watch?: string | null
+        }
+        Update: {
+          active?: boolean
+          branch?: string | null
+          created_at?: string
+          created_by?: string | null
+          day_of_week?: number
+          end_time?: string | null
+          focus?: string | null
+          full_name?: string
+          id?: string
+          member_id?: string | null
+          start_time?: string | null
+          updated_at?: string
+          watch?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "int_prayer_roster_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "department_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "int_prayer_roster_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "member_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "int_prayer_roster_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       int_requests: {
         Row: {
@@ -7679,6 +7760,7 @@ export type Database = {
           created_at: string
           created_by: string | null
           event_date: string
+          event_id: string | null
           event_type: string
           feedback: string | null
           follow_up: string | null
@@ -7704,6 +7786,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           event_date: string
+          event_id?: string | null
           event_type?: string
           feedback?: string | null
           follow_up?: string | null
@@ -7729,6 +7812,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           event_date?: string
+          event_id?: string | null
           event_type?: string
           feedback?: string | null
           follow_up?: string | null
@@ -7745,7 +7829,15 @@ export type Database = {
           updated_at?: string
           venue?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "mt_events_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       mt_groups: {
         Row: {

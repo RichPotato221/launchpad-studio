@@ -9,7 +9,9 @@ import { toast } from "sonner";
 import { Download } from "lucide-react";
 import { exportRows, fmtDate, money } from "@/lib/finance";
 import { Field, Picker, Stat } from "@/components/teams/TeamMembersModule";
-import { TEAM_CONFIG, labelFor, nice, pct, today, type TeamKey } from "@/lib/ministryTeams";
+import { TEAM_CONFIG, TEAM_SLUG, labelFor, nice, pct, today, type TeamKey } from "@/lib/ministryTeams";
+import { publishDepartmentMeeting } from "@/lib/departmentMeetings";
+import RsvpPanel from "@/components/events/RsvpPanel";
 
 const sb = supabase as any;
 
@@ -23,6 +25,7 @@ export default function TeamEventsModule({ team, canManage, currentUserId }: Pro
   const [attendance, setAttendance] = useState<any[]>([]);
   const [selected, setSelected] = useState<string>("");
   const [open, setOpen] = useState(false);
+  const [rsvpFor, setRsvpFor] = useState<string>("");
 
   const empty = {
     title: "",
@@ -59,8 +62,22 @@ export default function TeamEventsModule({ team, canManage, currentUserId }: Pro
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.title.trim()) return toast.error("Give the event a title");
+    // Put it on the church calendar so the team is emailed a real invite with
+    // Accept / Decline buttons, and the organiser can track replies.
+    const eventId = await publishDepartmentMeeting({
+      title: form.title,
+      description: [form.theme, form.resources].filter(Boolean).join("\n\n") || null,
+      eventDate: form.event_date,
+      startTime: form.start_time || null,
+      location: form.venue,
+      departmentSlug: TEAM_SLUG[team],
+      createdBy: currentUserId,
+      eventType: "meeting",
+    });
+
     const { error } = await sb.from("mt_events").insert({
       ...form,
+      event_id: eventId,
       team,
       capacity: form.capacity ? Number(form.capacity) : null,
       budget: form.budget ? Number(form.budget) : null,
@@ -68,7 +85,7 @@ export default function TeamEventsModule({ team, canManage, currentUserId }: Pro
       created_by: currentUserId,
     });
     if (error) return toast.error(error.message);
-    toast.success("Event created — attendance sheet ready");
+    toast.success("Event created — invitations sent and attendance sheet ready");
     setForm({ ...empty });
     setOpen(false);
     load();
@@ -192,6 +209,11 @@ export default function TeamEventsModule({ team, canManage, currentUserId }: Pro
                   <td><Badge variant="outline" className="text-[11px]">{nice(e.status)}</Badge></td>
                   <td className="whitespace-nowrap">
                     <Button size="sm" variant="outline" onClick={() => setSelected(e.id)}>Attendance</Button>
+                    {e.event_id && (
+                      <Button size="sm" variant="ghost" onClick={() => setRsvpFor(rsvpFor === e.id ? "" : e.id)}>
+                        {rsvpFor === e.id ? "Hide RSVPs" : "RSVPs"}
+                      </Button>
+                    )}
                     {canManage && e.status !== "completed" && (
                       <Button size="sm" variant="ghost" onClick={() => patch(e, { status: "completed" })}>Complete</Button>
                     )}
@@ -202,6 +224,9 @@ export default function TeamEventsModule({ team, canManage, currentUserId }: Pro
             </tbody>
           </table>
         </div>
+        {rsvpFor && events.find((e) => e.id === rsvpFor)?.event_id && (
+          <RsvpPanel eventId={events.find((e) => e.id === rsvpFor).event_id} />
+        )}
       </Card>
 
       {selected && (
