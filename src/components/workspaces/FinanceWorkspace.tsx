@@ -79,17 +79,39 @@ export default function FinanceWorkspace({ departmentSlug, currentUserId }: Work
   );
 }
 
+function useCanDeleteFinance() {
+  const [can, setCan] = useState(false);
+  useEffect(() => {
+    supabase.auth.getUser().then(async ({ data }) => {
+      const uid = data.user?.id;
+      if (!uid) return;
+      const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", uid);
+      setCan((roles ?? []).some((r: any) => ["chairperson", "senior_apostle", "lead_pastor"].includes(r.role)));
+    });
+  }, []);
+  return can;
+}
+
 /* -------------------- Expense Claims -------------------- */
 function ExpenseClaims({ departmentSlug, currentUserId }: WorkspaceProps) {
   const [rows, setRows] = useState<any[]>([]);
   const [form, setForm] = useState({ amount: "", description: "", claim_type: "", file_url: "" });
   const [uploading, setUploading] = useState(false);
+  const canDelete = useCanDeleteFinance();
 
   const load = async () => {
     const { data } = await supabase.from("expense_claims").select("*").eq("department_slug", departmentSlug).order("created_at", { ascending: false });
     setRows(data ?? []);
   };
   useEffect(() => { load(); }, [departmentSlug]);
+
+  const remove = async (id: string) => {
+    if (!window.confirm("Delete this claim permanently?")) return;
+    const { error } = await supabase.from("expense_claims").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success("Claim deleted");
+    load();
+  };
 
   const onFile = async (file: File | null) => {
     if (!file) return;
@@ -182,6 +204,9 @@ function ExpenseClaims({ departmentSlug, currentUserId }: WorkspaceProps) {
                 {r.status === "senior_pastor_approved" && <Button size="sm" onClick={() => advance(r.id, "paid")}>Mark paid</Button>}
                 {!["rejected", "paid"].includes(r.status) && <Button size="sm" variant="outline" onClick={() => advance(r.id, "rejected")}>Reject</Button>}
                 {r.receipt_url && <a className="text-xs underline self-center" href={r.receipt_url} target="_blank" rel="noreferrer">Slip</a>}
+                {(canDelete || r.claimant_id === currentUserId) && (
+                  <Button size="sm" variant="destructive" onClick={() => remove(r.id)}>Delete</Button>
+                )}
               </div>
             </div>
           </Card>
@@ -202,6 +227,7 @@ function EntryPanel({
 }: WorkspaceProps & { kind: EntryKind; label: string; needsMember?: boolean }) {
   const [rows, setRows] = useState<any[]>([]);
   const [members, setMembers] = useState<any[]>([]);
+  const canDelete = useCanDeleteFinance();
   const [form, setForm] = useState({
     entry_date: new Date().toISOString().slice(0, 10),
     title: "",
@@ -283,6 +309,14 @@ function EntryPanel({
     load();
   };
 
+  const remove = async (id: string) => {
+    if (!window.confirm(`Delete this ${label.toLowerCase()} entry permanently?`)) return;
+    const { error } = await supabase.from("finance_entries").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success("Entry deleted");
+    load();
+  };
+
   const total = useMemo(
     () => rows.reduce((s, r) => s + (Number(r.amount) || 0), 0),
     [rows],
@@ -348,11 +382,16 @@ function EntryPanel({
                 </p>
                 {r.notes && <p className="mt-2 whitespace-pre-wrap text-sm">{r.notes}</p>}
               </div>
-              {r.file_url && (
-                <a href={r.file_url} target="_blank" rel="noreferrer" className="text-sm underline">
-                  📎 {r.file_name ?? "Attachment"}
-                </a>
-              )}
+              <div className="flex items-center gap-3">
+                {r.file_url && (
+                  <a href={r.file_url} target="_blank" rel="noreferrer" className="text-sm underline">
+                    📎 {r.file_name ?? "Attachment"}
+                  </a>
+                )}
+                {(canDelete || r.created_by === currentUserId) && (
+                  <Button size="sm" variant="destructive" onClick={() => remove(r.id)}>Delete</Button>
+                )}
+              </div>
             </div>
           </Card>
         ))}
