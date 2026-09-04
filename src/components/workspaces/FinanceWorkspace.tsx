@@ -79,17 +79,39 @@ export default function FinanceWorkspace({ departmentSlug, currentUserId }: Work
   );
 }
 
+function useCanDeleteFinance() {
+  const [can, setCan] = useState(false);
+  useEffect(() => {
+    supabase.auth.getUser().then(async ({ data }) => {
+      const uid = data.user?.id;
+      if (!uid) return;
+      const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", uid);
+      setCan((roles ?? []).some((r: any) => ["chairperson", "senior_apostle", "lead_pastor"].includes(r.role)));
+    });
+  }, []);
+  return can;
+}
+
 /* -------------------- Expense Claims -------------------- */
 function ExpenseClaims({ departmentSlug, currentUserId }: WorkspaceProps) {
   const [rows, setRows] = useState<any[]>([]);
   const [form, setForm] = useState({ amount: "", description: "", claim_type: "", file_url: "" });
   const [uploading, setUploading] = useState(false);
+  const canDelete = useCanDeleteFinance();
 
   const load = async () => {
     const { data } = await supabase.from("expense_claims").select("*").eq("department_slug", departmentSlug).order("created_at", { ascending: false });
     setRows(data ?? []);
   };
   useEffect(() => { load(); }, [departmentSlug]);
+
+  const remove = async (id: string) => {
+    if (!window.confirm("Delete this claim permanently?")) return;
+    const { error } = await supabase.from("expense_claims").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success("Claim deleted");
+    load();
+  };
 
   const onFile = async (file: File | null) => {
     if (!file) return;
@@ -202,6 +224,7 @@ function EntryPanel({
 }: WorkspaceProps & { kind: EntryKind; label: string; needsMember?: boolean }) {
   const [rows, setRows] = useState<any[]>([]);
   const [members, setMembers] = useState<any[]>([]);
+  const canDelete = useCanDeleteFinance();
   const [form, setForm] = useState({
     entry_date: new Date().toISOString().slice(0, 10),
     title: "",
