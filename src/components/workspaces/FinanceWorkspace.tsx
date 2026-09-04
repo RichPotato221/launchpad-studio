@@ -204,6 +204,9 @@ function ExpenseClaims({ departmentSlug, currentUserId }: WorkspaceProps) {
                 {r.status === "senior_pastor_approved" && <Button size="sm" onClick={() => advance(r.id, "paid")}>Mark paid</Button>}
                 {!["rejected", "paid"].includes(r.status) && <Button size="sm" variant="outline" onClick={() => advance(r.id, "rejected")}>Reject</Button>}
                 {r.receipt_url && <a className="text-xs underline self-center" href={r.receipt_url} target="_blank" rel="noreferrer">Slip</a>}
+                {(canDelete || r.claimant_id === currentUserId) && (
+                  <Button size="sm" variant="destructive" onClick={() => remove(r.id)}>Delete</Button>
+                )}
               </div>
             </div>
           </Card>
