@@ -382,11 +382,16 @@ function EntryPanel({
                 </p>
                 {r.notes && <p className="mt-2 whitespace-pre-wrap text-sm">{r.notes}</p>}
               </div>
-              {r.file_url && (
-                <a href={r.file_url} target="_blank" rel="noreferrer" className="text-sm underline">
-                  📎 {r.file_name ?? "Attachment"}
-                </a>
-              )}
+              <div className="flex items-center gap-3">
+                {r.file_url && (
+                  <a href={r.file_url} target="_blank" rel="noreferrer" className="text-sm underline">
+                    📎 {r.file_name ?? "Attachment"}
+                  </a>
+                )}
+                {(canDelete || r.created_by === currentUserId) && (
+                  <Button size="sm" variant="destructive" onClick={() => remove(r.id)}>Delete</Button>
+                )}
+              </div>
             </div>
           </Card>
         ))}
