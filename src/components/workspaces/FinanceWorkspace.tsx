@@ -309,6 +309,14 @@ function EntryPanel({
     load();
   };
 
+  const remove = async (id: string) => {
+    if (!window.confirm(`Delete this ${label.toLowerCase()} entry permanently?`)) return;
+    const { error } = await supabase.from("finance_entries").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success("Entry deleted");
+    load();
+  };
+
   const total = useMemo(
     () => rows.reduce((s, r) => s + (Number(r.amount) || 0), 0),
     [rows],
