@@ -472,6 +472,10 @@ export default function ProcurementModule({ canManage, currentUserId, department
                     {["received", "rejected", "cancelled"].includes(r.status) && (
                       <Button size="sm" variant="ghost" onClick={() => archive(r)}>Archive</Button>
                     )}
+                    {canDelete && (
+                      <Button size="sm" variant="destructive" onClick={() => removeRequest(r)}>Delete</Button>
+
+                    )}
                   </div>
                 )}
               </div>
