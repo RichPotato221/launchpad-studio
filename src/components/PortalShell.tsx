@@ -1,6 +1,7 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useIdentity } from "@/lib/identity";
 import { getAuthUserResult } from "@/lib/authUser";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -46,17 +47,7 @@ export function PortalShell({ children }: { children: ReactNode }) {
    * portal, so moving between pages no longer re-hits auth + user_roles on
    * every navigation.
    */
-  const session = useQuery({
-    queryKey: ["portal-identity"],
-    staleTime: 5 * 60_000,
-    queryFn: async () => {
-      const { data } = await getAuthUserResult();
-      const uid = data.user?.id;
-      if (!uid) return { email: "", roles: [] as string[] };
-      const { data: roleRows } = await supabase.from("user_roles").select("role").eq("user_id", uid);
-      return { email: data.user?.email ?? "", roles: (roleRows ?? []).map((r: any) => r.role as string) };
-    },
-  });
+  const session = useIdentity();
   const email = session.data?.email ?? "";
   const roles: string[] = session.data?.roles ?? [];
 
