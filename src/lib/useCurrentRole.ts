@@ -1,6 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { getAuthUserResult } from "@/lib/authUser";
+import { useIdentity } from "@/lib/identity";
 
 export type CurrentRoleInfo = {
   userId: string | null;
@@ -30,43 +28,28 @@ const ADMIN_LIKE = new Set([
 ]);
 
 export function useCurrentRole() {
-  return useQuery<CurrentRoleInfo>({
-    queryKey: ["current-role"],
-    queryFn: async () => {
-      const { data: userRes } = await getAuthUserResult();
-      const uid = userRes.user?.id ?? null;
-      if (!uid) {
+  const identity = useIdentity();
+  const id = identity.data;
+  const data: CurrentRoleInfo | undefined = id
+    ? (() => {
+        const roleNames = id.roles;
+        const isHospitality =
+          id.primaryDepartment === "hospitality" ||
+          id.roleRows.some((r) => r.department_slug === "hospitality");
         return {
-          userId: null,
-          roles: [],
-          branch: null,
-          canPostCrossBranch: false,
-          isSeniorApostle: false,
-          canViewCheckupWatch: false,
-          canSeeDeclineReasons: false,
+          userId: id.userId,
+          roles: roleNames,
+          branch: id.branch,
+          canPostCrossBranch: roleNames.some((r) => CROSS_BRANCH.has(r)),
+          isSeniorApostle: roleNames.includes("senior_apostle"),
+          canViewCheckupWatch:
+            isHospitality ||
+            roleNames.some((r) =>
+              ["senior_apostle", "chairperson", "lead_pastor", "associate_pastor"].includes(r),
+            ),
+          canSeeDeclineReasons: roleNames.some((r) => ADMIN_LIKE.has(r)),
         };
-      }
-      const [{ data: roles }, { data: profile }] = await Promise.all([
-        supabase.from("user_roles").select("role, department_slug").eq("user_id", uid),
-        supabase.from("profiles").select("branch, primary_department").eq("id", uid).maybeSingle(),
-      ]);
-      const hospDept = (roles ?? []).filter((r: any) => r.department_slug === "hospitality");
-      const roleNames = (roles ?? []).map((r: any) => r.role as string);
-      const isHospitality =
-        profile?.primary_department === "hospitality" || (hospDept ?? []).length > 0;
-      return {
-        userId: uid,
-        roles: roleNames,
-        branch: (profile as any)?.branch ?? null,
-        canPostCrossBranch: roleNames.some((r) => CROSS_BRANCH.has(r)),
-        isSeniorApostle: roleNames.includes("senior_apostle"),
-        canViewCheckupWatch:
-          isHospitality ||
-          roleNames.some((r) =>
-            ["senior_apostle", "chairperson", "lead_pastor", "associate_pastor"].includes(r),
-          ),
-        canSeeDeclineReasons: roleNames.some((r) => ADMIN_LIKE.has(r)),
-      };
-    },
-  });
+      })()
+    : undefined;
+  return { ...identity, data } as typeof identity & { data: CurrentRoleInfo | undefined };
 }
