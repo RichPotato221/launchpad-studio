@@ -230,6 +230,18 @@ export default function ProcurementModule({ canManage, currentUserId, department
     load();
   };
 
+  /** Chairpersons and Senior Pastors may remove a procurement record outright. */
+  const canDelete = myRoles.some((r) => r === "chairperson" || r === "senior_apostle");
+
+  const removeRequest = async (row: any) => {
+    if (!window.confirm("Delete this purchase request permanently?")) return;
+    const { error } = await sb.from("purchase_requests").delete().eq("id", row.id);
+    if (error) return toast.error(error.message);
+    toast.success("Purchase request deleted");
+    load();
+  };
+
+
   const filtered = useMemo(
     () =>
       rows.filter((r) => {
@@ -459,6 +471,10 @@ export default function ProcurementModule({ canManage, currentUserId, department
                     )}
                     {["received", "rejected", "cancelled"].includes(r.status) && (
                       <Button size="sm" variant="ghost" onClick={() => archive(r)}>Archive</Button>
+                    )}
+                    {canDelete && (
+                      <Button size="sm" variant="destructive" onClick={() => removeRequest(r)}>Delete</Button>
+
                     )}
                   </div>
                 )}

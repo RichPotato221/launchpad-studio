@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { money, fmtDate, exportRows, BRANCHES, branchLabel } from "@/lib/finance";
 import { INVENTORY_CATEGORIES, labelFor, titleish, daysUntil } from "@/lib/resources";
+import { notifyPurchaseRequest } from "@/lib/activity.functions";
+
 
 const sb = supabase as any;
 
@@ -73,15 +75,23 @@ export default function InventoryModule({ canManage, currentUserId }: { canManag
 
   const reorder = async (row: any) => {
     const qty = Math.max(Number(row.maximum_stock ?? 0) - Number(row.quantity_on_hand ?? 0), Number(row.minimum_stock ?? 1));
-    const { error } = await sb.from("purchase_requests").insert({
+    const { data: inserted, error } = await sb.from("purchase_requests").insert({
       title: `Restock: ${row.name} (${qty} ${row.unit})`,
       department_slug: "resource-administrator", branch: row.branch,
       justification: `Stock at ${row.quantity_on_hand} ${row.unit}, minimum ${row.minimum_stock}. Automatic reorder trigger.`,
       amount_estimated: qty * Number(row.unit_cost ?? 0),
-      requested_by: currentUserId, status: "submitted",
-    });
+      requested_by: currentUserId, requester_id: currentUserId, status: "submitted",
+    }).select("id").maybeSingle();
     if (error) return toast.error(error.message);
+    if (inserted?.id) {
+      try {
+        await notifyPurchaseRequest({ data: { requestId: inserted.id, stage: "submitted" } });
+      } catch (err) {
+        console.error("purchase request notification failed", err);
+      }
+    }
     toast.success("Purchase request raised with Finance"); load();
+
   };
 
   return (

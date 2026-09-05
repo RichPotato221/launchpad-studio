@@ -12,7 +12,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
  */
 
 const OVERSIGHT_ROLES = ["chairperson", "secretary", "senior_apostle"];
-const FINANCE_ROLES = ["chairperson", "senior_apostle", "department_chair"];
+const FINANCE_ROLES = ["chairperson", "senior_apostle", "department_chair", "finance_officer", "treasurer"];
 
 async function svc() {
   return await import("@/lib/notifications/service.server");
@@ -126,6 +126,10 @@ export const notifyPurchaseRequest = createServerFn({ method: "POST" })
       entityVersion: `${data.stage}:${pr.updated_at ?? ""}`,
     } as const;
 
+    // Approvers are branch-scoped: the Chairpersons and finance authorities of
+    // the branch that raised the request (Senior Pastors always oversee all).
+    const prBranch = (pr as any).branch ?? undefined;
+
     if (data.stage === "submitted") {
       // Requester's own department (so leaders see it) + the finance/chair
       // authorities responsible for the next action. Requester is excluded
@@ -133,7 +137,7 @@ export const notifyPurchaseRequest = createServerFn({ method: "POST" })
       const approvers = await dispatchNotification({
         ...common,
         type: "REQUEST_SUBMITTED",
-        audience: { roles: FINANCE_ROLES, excludeUserIds: requester },
+        audience: { roles: FINANCE_ROLES, branch: prBranch, excludeUserIds: requester },
         metadata: {
           heading: "Purchase request awaiting your approval",
           body: `A purchase request from ${pr.department_slug ?? "a department"} needs review.`,
@@ -142,6 +146,7 @@ export const notifyPurchaseRequest = createServerFn({ method: "POST" })
           path: "/finance",
         },
       });
+
       const own = requester.length
         ? await dispatchNotification({
             ...common,
@@ -166,9 +171,10 @@ export const notifyPurchaseRequest = createServerFn({ method: "POST" })
       type: approved ? "REQUEST_APPROVED" : "REQUEST_REJECTED",
       audience: {
         userIds: requester,
-        ...(data.stage === "department_approved" ? { roles: FINANCE_ROLES } : {}),
+        ...(data.stage === "department_approved" ? { roles: FINANCE_ROLES, branch: prBranch } : {}),
         excludeUserIds: [context.userId],
       },
+
       metadata: {
         heading:
           data.stage === "department_approved"
