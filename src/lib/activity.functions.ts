@@ -171,9 +171,10 @@ export const notifyPurchaseRequest = createServerFn({ method: "POST" })
       type: approved ? "REQUEST_APPROVED" : "REQUEST_REJECTED",
       audience: {
         userIds: requester,
-        ...(data.stage === "department_approved" ? { roles: FINANCE_ROLES } : {}),
+        ...(data.stage === "department_approved" ? { roles: FINANCE_ROLES, branch: prBranch } : {}),
         excludeUserIds: [context.userId],
       },
+
       metadata: {
         heading:
           data.stage === "department_approved"
