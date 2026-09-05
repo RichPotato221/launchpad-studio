@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { getAuthUserResult } from "@/lib/authUser";
+import { useIdentity } from "@/lib/identity";
 import { notify } from "@/lib/notifications.functions";
 
 import { Button } from "@/components/ui/button";
@@ -34,24 +34,13 @@ export function AnnouncementComposer({ onPosted }: Props) {
   const [body, setBody] = useState("");
   const [priority, setPriority] = useState(false);
   const [targetBranch, setTargetBranch] = useState("all");
-  const [canPickBranch, setCanPickBranch] = useState(false);
-  const [authorId, setAuthorId] = useState<string | null>(null);
+  const identity = useIdentity();
+  const canPickBranch = (identity.data?.roles ?? []).some((r) => CROSS_BRANCH_ROLES.has(r));
+  const authorId = identity.data?.userId ?? null;
   const [files, setFiles] = useState<FileList | null>(null);
 
   const [posting, setPosting] = useState(false);
 
-  useEffect(() => {
-    void checkRole();
-  }, []);
-
-  async function checkRole() {
-    const { data: userData } = await getAuthUserResult();
-    const uid = userData.user?.id;
-    if (!uid) return;
-    setAuthorId(uid);
-    const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", uid);
-    setCanPickBranch((roles ?? []).some((r) => CROSS_BRANCH_ROLES.has(r.role as string)));
-  }
 
   async function submit() {
     if (!body.trim() || posting) return;
