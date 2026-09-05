@@ -153,13 +153,30 @@ export const notifyPurchaseRequest = createServerFn({ method: "POST" })
         type: "REQUEST_SUBMITTED",
         audience: { roles: FINANCE_ROLES, branch: prBranch, excludeUserIds: requester },
         metadata: {
-          heading: "Purchase request awaiting your approval",
-          body: `A purchase request from ${pr.department_slug ?? "a department"} needs review.`,
+          heading: "Purchase request received — Finance reviews first",
+          body: `A purchase request from ${pr.department_slug ?? "a department"} has been raised. The Financial Administrator must review it before any other office can approve.`,
           details,
           action_label: "Review the request",
           path: "/finance",
         },
       });
+
+      // The Finance Administration team itself (people serving in the finance
+      // department, whatever office title they hold).
+      const finance = await dispatchNotification({
+        ...common,
+        entityVersion: `${data.stage}:finance:${pr.updated_at ?? ""}`,
+        type: "REQUEST_SUBMITTED",
+        audience: { departmentSlug: FINANCE_DEPARTMENT, excludeUserIds: requester },
+        metadata: {
+          heading: "Purchase request awaiting Finance review",
+          body: `A purchase request from ${pr.department_slug ?? "a department"} needs your review before leadership can approve it.`,
+          details,
+          action_label: "Review the request",
+          path: "/finance",
+        },
+      });
+
 
       const own = requester.length
         ? await dispatchNotification({
