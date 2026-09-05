@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { getAuthUserResult } from "@/lib/authUser";
+import { useIdentity } from "@/lib/identity";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,22 +9,16 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
 export function DepartmentResources({ slug }: { slug: string }) {
-
-
-  const access = useQuery({
-    queryKey: ["is-chairperson"],
-    queryFn: async () => {
-      const { data: userRes } = await getAuthUserResult();
-      const uid = userRes.user?.id;
-      if (!uid) return { isChair: false, userId: null as string | null };
-      const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", uid);
-      // Chairpersons and Senior Pastors both have church-wide oversight.
-      return {
-        isChair: (roles ?? []).some((r: any) => r.role === "chairperson" || r.role === "senior_apostle"),
-        userId: uid,
-      };
-    },
-  });
+  // Chairpersons and Senior Pastors both have church-wide oversight.
+  const identity = useIdentity();
+  const access = {
+    data: identity.data
+      ? {
+          isChair: identity.data.roles.some((r) => r === "chairperson" || r === "senior_apostle"),
+          userId: identity.data.userId,
+        }
+      : undefined,
+  };
 
   const docs = useQuery({
     queryKey: ["dept-resources", slug],

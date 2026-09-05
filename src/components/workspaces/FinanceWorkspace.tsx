@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useIdentity } from "@/lib/identity";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -80,16 +81,10 @@ export default function FinanceWorkspace({ departmentSlug, currentUserId }: Work
 }
 
 function useCanDeleteFinance() {
-  const [can, setCan] = useState(false);
-  useEffect(() => {
-    supabase.auth.getUser().then(async ({ data }) => {
-      const uid = data.user?.id;
-      if (!uid) return;
-      const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", uid);
-      setCan((roles ?? []).some((r: any) => ["chairperson", "senior_apostle", "lead_pastor"].includes(r.role)));
-    });
-  }, []);
-  return can;
+  const { data } = useIdentity();
+  return (data?.roles ?? []).some((r) =>
+    ["chairperson", "senior_apostle", "lead_pastor"].includes(r),
+  );
 }
 
 /* -------------------- Expense Claims -------------------- */

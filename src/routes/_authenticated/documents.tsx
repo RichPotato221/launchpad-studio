@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useIdentity } from "@/lib/identity";
 import { getAuthUserResult } from "@/lib/authUser";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -98,23 +99,15 @@ async function fetchDocuments(): Promise<DocumentRow[]> {
 function DocumentsPage() {
   const docs = useQuery({ queryKey: ["documents"], queryFn: fetchDocuments });
   const depts = useQuery({ queryKey: ["departments"], queryFn: fetchDepartments });
-  const [userId, setUserId] = useState<string>("");
-  const [roles, setRoles] = useState<string[]>([]);
+  const identity = useIdentity();
+  const userId = identity.data?.userId ?? "";
+  const roles = identity.data?.roles ?? [];
   const [search, setSearch] = useState("");
   const [deptFilter, setDeptFilter] = useState<string>("all");
   const [catFilter, setCatFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  useEffect(() => {
-    getAuthUserResult().then(async ({ data }) => {
-      setUserId(data.user?.id ?? "");
-      if (data.user?.id) {
-        const { data: rows } = await supabase.from("user_roles").select("role").eq("user_id", data.user.id);
-        setRoles((rows ?? []).map((r: any) => r.role));
-      }
-    });
-  }, []);
 
   const isAdmin = roles.some((r) =>
     ["senior_apostle", "chairperson", "lead_pastor", "associate_pastor", "secretary"].includes(r),

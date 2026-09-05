@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { getAuthUserResult } from "@/lib/authUser";
+import { useIdentity } from "@/lib/identity";
 
 interface MediaItem {
   id: string;
@@ -25,8 +25,9 @@ const TOP_LEADER_ROLES = new Set(["chairperson", "senior_apostle"]);
 
 export function AnnouncementFeed() {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-  const [isTopLeader, setIsTopLeader] = useState(false);
+  const identity = useIdentity();
+  const currentUserId = identity.data?.userId ?? null;
+  const isTopLeader = (identity.data?.roles ?? []).some((r) => TOP_LEADER_ROLES.has(r));
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -36,14 +37,7 @@ export function AnnouncementFeed() {
   async function load() {
     setLoading(true);
 
-    const { data: userData } = await getAuthUserResult();
-    const uid = userData.user?.id ?? null;
-    setCurrentUserId(uid);
-
-    if (uid) {
-      const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", uid);
-      setIsTopLeader((roles ?? []).some((r) => TOP_LEADER_ROLES.has(r.role as string)));
-    }
+    const uid = currentUserId;
 
     // Step 1: the posts themselves, plus their media and likes (these DO
     // have real foreign keys back to announcements, so nested embeds work).

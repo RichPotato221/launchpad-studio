@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useIdentity } from "@/lib/identity";
 import { getAuthUserResult } from "@/lib/authUser";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -377,13 +378,6 @@ function RsvpRoster() {
     if (error) return toast.error(error.message);
     setRows(data ?? []);
 
-    const { data: userRes } = await getAuthUserResult();
-    const uid = userRes.user?.id;
-    if (uid) {
-      const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", uid);
-      const pastoral = new Set(["senior_apostle", "lead_pastor", "associate_pastor", "chairperson"]);
-      setCanSeeReasons((roles ?? []).some((r: any) => pastoral.has(r.role)));
-    }
   };
 
   useEffect(() => { load(); }, []);
