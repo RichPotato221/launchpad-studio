@@ -12,7 +12,21 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
  */
 
 const OVERSIGHT_ROLES = ["chairperson", "secretary", "senior_apostle"];
-const FINANCE_ROLES = ["chairperson", "senior_apostle", "department_chair", "finance_officer", "treasurer"];
+/**
+ * Everyone who must SEE a purchase / budget request the moment it is raised.
+ * (Only the Finance Administrator may act first — the approval gate itself is
+ * enforced in the approvals table, this list is purely about visibility.)
+ * These must be valid app_role values, otherwise the whole lookup errors and
+ * nobody is notified at all.
+ */
+const FINANCE_ROLES = [
+  "chairperson",
+  "senior_apostle",
+  "associate_pastor",
+  "lead_pastor",
+  "department_chair",
+];
+const FINANCE_DEPARTMENT = "finance";
 
 async function svc() {
   return await import("@/lib/notifications/service.server");
