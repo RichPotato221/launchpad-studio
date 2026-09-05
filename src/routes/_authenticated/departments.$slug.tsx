@@ -41,6 +41,7 @@ function DepartmentPortal() {
   const kpis = useQuery({ queryKey: ["kpis", slug], queryFn: () => fetchDepartmentKpis(slug) });
   const membership = useIsDepartmentMember(slug);
   const [activeTab, setActiveTab] = useState("overview");
+  const myRole = useCurrentRole();
 
   if (dept.isLoading) return <div className="p-8 text-muted-foreground">Loading…</div>;
   if (!dept.data) throw notFound();
@@ -69,7 +70,6 @@ function DepartmentPortal() {
   const showAssistantTab = !BUILT_IN_ASSISTANT.has(slug);
   // Executive offices see the full financial command (all transactions plus the
   // purchase-request and budget approval registers) inside this same tab.
-  const myRole = useCurrentRole();
   const isExecutive = (myRole.data?.roles ?? []).some((r) =>
     ["chairperson", "senior_apostle", "associate_pastor", "lead_pastor", "secretary"].includes(r),
   );
