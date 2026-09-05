@@ -51,15 +51,6 @@ function AdminPage() {
         }
       : undefined,
   };
-  const _unusedAccess = () => {
-    const roles: any[] = [];
-      // Senior Pastors oversee every branch and department alongside the Chairpersons.
-      return {
-        isChair: (roles ?? []).some((r: any) => r.role === "chairperson" || r.role === "senior_apostle"),
-        userId: uid,
-      };
-    },
-  });
   const depts = useQuery({ queryKey: ["departments"], queryFn: fetchDepartments });
   const profiles = useQuery({
     queryKey: ["all-profiles"],
