@@ -126,6 +126,10 @@ export const notifyPurchaseRequest = createServerFn({ method: "POST" })
       entityVersion: `${data.stage}:${pr.updated_at ?? ""}`,
     } as const;
 
+    // Approvers are branch-scoped: the Chairpersons and finance authorities of
+    // the branch that raised the request (Senior Pastors always oversee all).
+    const prBranch = (pr as any).branch ?? undefined;
+
     if (data.stage === "submitted") {
       // Requester's own department (so leaders see it) + the finance/chair
       // authorities responsible for the next action. Requester is excluded
@@ -133,7 +137,7 @@ export const notifyPurchaseRequest = createServerFn({ method: "POST" })
       const approvers = await dispatchNotification({
         ...common,
         type: "REQUEST_SUBMITTED",
-        audience: { roles: FINANCE_ROLES, excludeUserIds: requester },
+        audience: { roles: FINANCE_ROLES, branch: prBranch, excludeUserIds: requester },
         metadata: {
           heading: "Purchase request awaiting your approval",
           body: `A purchase request from ${pr.department_slug ?? "a department"} needs review.`,
@@ -142,6 +146,7 @@ export const notifyPurchaseRequest = createServerFn({ method: "POST" })
           path: "/finance",
         },
       });
+
       const own = requester.length
         ? await dispatchNotification({
             ...common,
