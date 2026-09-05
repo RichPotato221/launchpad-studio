@@ -12,7 +12,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
  */
 
 const OVERSIGHT_ROLES = ["chairperson", "secretary", "senior_apostle"];
-const FINANCE_ROLES = ["chairperson", "senior_apostle", "department_chair"];
+const FINANCE_ROLES = ["chairperson", "senior_apostle", "department_chair", "finance_officer", "treasurer"];
 
 async function svc() {
   return await import("@/lib/notifications/service.server");
