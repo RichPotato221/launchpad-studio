@@ -2,6 +2,7 @@ import { Suspense, lazy, useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
+import { useIdentity } from "@/lib/identity";
 import { getAuthUserResult } from "@/lib/authUser";
 import { useCurrentRole } from "@/lib/useCurrentRole";
 
@@ -25,26 +26,12 @@ const FINANCE_ROLES = [
  */
 export function DepartmentProcurement({ slug }: { slug: string }) {
   const { data: role } = useCurrentRole();
-  const [userId, setUserId] = useState<string | null>(null);
-  const [isFinanceMember, setIsFinanceMember] = useState(false);
-
-  useEffect(() => {
-    (async () => {
-      const { data } = await getAuthUserResult();
-      const uid = data.user?.id ?? null;
-      setUserId(uid);
-      if (!uid) return;
-      const [{ data: profile }, { data: deptRoles }] = await Promise.all([
-        supabase.from("profiles").select("primary_department").eq("id", uid).maybeSingle(),
-        supabase.from("user_roles").select("department_slug").eq("user_id", uid),
-      ]);
-      const finance = ["finance", "finance-administration"];
-      setIsFinanceMember(
-        finance.includes((profile as any)?.primary_department ?? "") ||
-          (deptRoles ?? []).some((r: any) => finance.includes(r.department_slug ?? "")),
-      );
-    })();
-  }, []);
+  const identity = useIdentity();
+  const userId = identity.data?.userId ?? null;
+  const FINANCE_DEPTS = ["finance", "finance-administration"];
+  const isFinanceMember =
+    FINANCE_DEPTS.includes(identity.data?.primaryDepartment ?? "") ||
+    (identity.data?.roleRows ?? []).some((r) => FINANCE_DEPTS.includes(r.department_slug ?? ""));
 
   const roles = role?.roles ?? [];
   // Only the Finance team and executive leadership may approve/decline requests.

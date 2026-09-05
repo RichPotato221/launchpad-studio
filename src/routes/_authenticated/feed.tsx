@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useIdentity } from "@/lib/identity";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -266,20 +267,14 @@ function PostCard({ post, likes, currentUserId, onChange }: {
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState<any[]>([]);
   const [comment, setComment] = useState("");
-  const [isTopLeader, setIsTopLeader] = useState(false);
+  const identityRoles = useIdentity().data?.roles ?? [];
+  const isTopLeader = identityRoles.some((r) => r === "chairperson" || r === "senior_apostle");
   const [viewCount, setViewCount] = useState<number>(0);
   const [shareCount, setShareCount] = useState<number>(0);
   const [viewersOpen, setViewersOpen] = useState(false);
   const [viewers, setViewers] = useState<any[]>([]);
   const liked = !!currentUserId && likes.some((l) => l.user_id === currentUserId);
 
-  useEffect(() => {
-    if (!currentUserId) return;
-    supabase.from("user_roles").select("role").eq("user_id", currentUserId).then(({ data }) => {
-      const topRoles = new Set(["chairperson", "senior_apostle"]);
-      setIsTopLeader((data ?? []).some((r: any) => topRoles.has(r.role)));
-    });
-  }, [currentUserId]);
 
   // Log a view (once per user per day, enforced by DB unique constraint)
   useEffect(() => {

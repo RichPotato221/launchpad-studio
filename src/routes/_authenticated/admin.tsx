@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useIdentity } from "@/lib/identity";
 import { getAuthUserResult } from "@/lib/authUser";
 import { fetchDepartments, ROLE_LABELS, type AppRole } from "@/lib/portal";
 import { Card } from "@/components/ui/card";
@@ -41,13 +42,17 @@ const OFFICE_ROLES: Record<string, AppRole> = {
  
 function AdminPage() {
   const qc = useQueryClient();
-  const access = useQuery({
-    queryKey: ["is-chairperson"],
-    queryFn: async () => {
-      const { data: userRes } = await getAuthUserResult();
-      const uid = userRes.user?.id;
-      if (!uid) return { isChair: false, userId: null as string | null };
-      const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", uid);
+  const identity = useIdentity();
+  const access = {
+    data: identity.data
+      ? {
+          isChair: identity.data.roles.some((r) => r === "chairperson" || r === "senior_apostle"),
+          userId: identity.data.userId,
+        }
+      : undefined,
+  };
+  const _unusedAccess = () => {
+    const roles: any[] = [];
       // Senior Pastors oversee every branch and department alongside the Chairpersons.
       return {
         isChair: (roles ?? []).some((r: any) => r.role === "chairperson" || r.role === "senior_apostle"),
