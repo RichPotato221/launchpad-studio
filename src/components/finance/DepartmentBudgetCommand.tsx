@@ -22,6 +22,7 @@ import {
   utilisationBand,
   type BudgetPosition,
 } from "@/lib/budgets";
+import { notifyBudgetRequest } from "@/lib/activity.functions";
 
 const sb = supabase as any;
 
@@ -299,7 +300,7 @@ function CreateBudgetDialog({
       return;
     }
     setSaving(true);
-    const { error } = await sb.from("budgets").insert({
+    const { data: inserted, error } = await sb.from("budgets").insert({
       name: form.name.trim(),
       department_slug: slug,
       budget_type: "department",
@@ -318,9 +319,16 @@ function CreateBudgetDialog({
       status: asDraft ? "draft" : "submitted",
       submitted_by: asDraft ? null : currentUserId,
       submitted_at: asDraft ? null : new Date().toISOString(),
-    });
+    }).select("id").maybeSingle();
     setSaving(false);
     if (error) return toast.error(error.message);
+    if (!asDraft && inserted?.id) {
+      try {
+        await notifyBudgetRequest({ data: { budgetId: inserted.id, stage: "submitted" } });
+      } catch (err) {
+        console.error("budget request notification failed", err);
+      }
+    }
     toast.success(asDraft ? "Budget saved as draft" : "Budget submitted to Finance for approval");
     onOpenChange(false);
     setForm({ ...form, name: "", requested_amount: "", purpose: "", notes: "" });

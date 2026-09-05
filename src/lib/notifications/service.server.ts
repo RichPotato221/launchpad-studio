@@ -50,10 +50,20 @@ async function resolveRecipients(admin: Admin, audience: NotificationAudience = 
   // owner/admin address is ever hardcoded anywhere in the portal.
   let roleIds: string[] = [];
   if (audience.roles?.length) {
-    let rq = admin.from("user_roles").select("user_id, role").in("role", audience.roles);
-    if (audience.roleDepartmentSlug) rq = rq.eq("department_slug", audience.roleDepartmentSlug);
-    const { data: rr } = await rq;
-    const roleRows = ((rr ?? []) as any[]).filter((r) => r.user_id);
+    // Unknown office names make Postgres reject the whole enum comparison,
+    // which would silently leave every legitimate office unnotified. Ask for
+    // each office separately so one bad name can never drop the others.
+    const roleRows: any[] = [];
+    for (const role of audience.roles) {
+      let rq = admin.from("user_roles").select("user_id, role").eq("role", role);
+      if (audience.roleDepartmentSlug) rq = rq.eq("department_slug", audience.roleDepartmentSlug);
+      const { data: rr, error } = await rq;
+      if (error) {
+        console.error("notification: could not resolve office", role, error.message);
+        continue;
+      }
+      for (const r of (rr ?? []) as any[]) if (r.user_id) roleRows.push(r);
+    }
     roleIds = Array.from(new Set(roleRows.map((r) => r.user_id)));
     // Only the Senior Pastors oversee every branch. Chairpersons, Associate
     // Pastors, Assistant Pastors and every other office are branch-scoped:
