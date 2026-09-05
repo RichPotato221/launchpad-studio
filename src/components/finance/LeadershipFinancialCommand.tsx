@@ -91,36 +91,106 @@ export default function LeadershipFinancialCommand() {
     },
   });
 
-  const rows = useMemo(() => {
-    let list = filterByBranch(entries.data ?? [], scope);
-    if (kind !== "all") list = list.filter((r: any) => r.kind === kind);
-    if (branch !== "all") list = list.filter((r: any) => r.branch === branch);
-    const q = search.trim().toLowerCase();
-    if (q)
-      list = list.filter((r: any) =>
-        [r.title, r.reference_number, r.department_slug, r.category].some((v: any) =>
-          String(v ?? "").toLowerCase().includes(q),
-        ),
-      );
-    return list;
-  }, [entries.data, scope, kind, branch, search]);
+  const claims = useQuery({
+    queryKey: ["leadership-expense-claims"],
+    queryFn: async () => {
+      const { data, error } = await sb
+        .from("expense_claims")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(300);
+      if (error) return [] as any[];
+      return (data ?? []) as any[];
+    },
+  });
 
   const prRows = useMemo(() => filterByBranch(purchases.data ?? [], scope), [purchases.data, scope]);
   const budgetRows = useMemo(() => filterByBranch(budgets.data ?? [], scope), [budgets.data, scope]);
 
+  /**
+   * Every money movement on record, not just the general-ledger entries:
+   * ledger transactions, purchase requests, department budgets and expense
+   * claims are folded into one register so nothing is missing from this view.
+   */
+  const allRows = useMemo(() => {
+    const ledger = filterByBranch(entries.data ?? [], scope).map((r: any) => ({
+      id: `fe-${r.id}`,
+      date: r.entry_date ?? r.created_at,
+      title: r.title,
+      reference: r.reference_number,
+      kind: r.kind ?? "journal",
+      department: r.department_slug,
+      branch: r.branch,
+      amount: Number(r.amount ?? 0),
+      status: r.status ?? "recorded",
+      statusLabel: titleCase(r.status ?? "recorded"),
+    }));
+    const prs = prRows.map((r: any) => ({
+      id: `pr-${r.id}`,
+      date: r.created_at,
+      title: r.title ?? r.item_description ?? "Purchase request",
+      reference: r.request_number ?? r.pr_number,
+      kind: "purchase_request",
+      department: r.department_slug,
+      branch: r.branch,
+      amount: Number(r.total_amount ?? r.estimated_cost ?? r.amount ?? 0),
+      status: r.status,
+      statusLabel: prStatusLabel(r.status),
+    }));
+    const buds = budgetRows.map((b: any) => ({
+      id: `bg-${b.id}`,
+      date: b.submitted_at ?? b.created_at,
+      title: b.name,
+      reference: b.reference_number,
+      kind: "budget",
+      department: b.department_slug,
+      branch: b.branch,
+      amount: Number(b.total_amount ?? b.requested_amount ?? 0),
+      status: b.status,
+      statusLabel: BUDGET_STATUS_LABEL[b.status] ?? titleCase(b.status),
+    }));
+    const cl = filterByBranch(claims.data ?? [], scope).map((c: any) => ({
+      id: `ec-${c.id}`,
+      date: c.claim_date ?? c.created_at,
+      title: c.description ?? c.title ?? "Expense claim",
+      reference: c.claim_number ?? c.reference_number,
+      kind: "expense_claim",
+      department: c.department_slug,
+      branch: c.branch,
+      amount: Number(c.amount ?? c.total_amount ?? 0),
+      status: c.status ?? "submitted",
+      statusLabel: titleCase(c.status ?? "submitted"),
+    }));
+    return [...ledger, ...prs, ...buds, ...cl].sort(
+      (a, b) => new Date(b.date ?? 0).getTime() - new Date(a.date ?? 0).getTime(),
+    );
+  }, [entries.data, prRows, budgetRows, claims.data, scope]);
+
+  const rows = useMemo(() => {
+    let list = allRows;
+    if (kind !== "all") list = list.filter((r) => r.kind === kind);
+    if (branch !== "all") list = list.filter((r) => r.branch === branch);
+    const q = search.trim().toLowerCase();
+    if (q)
+      list = list.filter((r) =>
+        [r.title, r.reference, r.department].some((v) => String(v ?? "").toLowerCase().includes(q)),
+      );
+    return list;
+  }, [allRows, kind, branch, search]);
+
   const totals = useMemo(() => {
     const income = rows
-      .filter((r: any) => !["procurement", "journal", "other"].includes(r.kind))
-      .reduce((s: number, r: any) => s + Number(r.amount ?? 0), 0);
+      .filter((r) => !["procurement", "journal", "other", "purchase_request", "budget", "expense_claim"].includes(r.kind))
+      .reduce((s, r) => s + r.amount, 0);
     const spend = rows
-      .filter((r: any) => ["procurement"].includes(r.kind))
-      .reduce((s: number, r: any) => s + Number(r.amount ?? 0), 0);
+      .filter((r) => ["procurement", "purchase_request", "expense_claim"].includes(r.kind))
+      .reduce((s, r) => s + r.amount, 0);
     return { income, spend, count: rows.length };
   }, [rows]);
 
   const kinds = useMemo(
-    () => Array.from(new Set((entries.data ?? []).map((r: any) => r.kind).filter(Boolean))) as string[],
-    [entries.data],
+    () => Array.from(new Set(allRows.map((r) => r.kind).filter(Boolean))) as string[],
+    [allRows],
   );
 
   const exportTransactions = () =>
