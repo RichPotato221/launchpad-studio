@@ -151,9 +151,9 @@ export default function LeadershipFinancialCommand() {
     }));
     const cl = filterByBranch(claims.data ?? [], scope).map((c: any) => ({
       id: `ec-${c.id}`,
-      date: c.claim_date ?? c.created_at,
-      title: c.description ?? c.title ?? "Expense claim",
-      reference: c.claim_number ?? c.reference_number,
+      date: c.created_at,
+      title: c.description ?? "Expense claim",
+      reference: c.reference_number,
       kind: "expense_claim",
       department: c.department_slug,
       branch: c.branch,
