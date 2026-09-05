@@ -221,7 +221,80 @@ export const notifyPurchaseRequest = createServerFn({ method: "POST" })
     });
   });
 
+/* ───────────── budget requests ───────────── */
+
+export const notifyBudgetRequest = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { budgetId: string; stage: "submitted" | "approved" | "rejected"; comment?: string | null }) => d)
+  .handler(async ({ data, context }) => {
+    const { dispatchNotification, getAdmin } = await svc();
+    const admin = await getAdmin();
+    const { data: b } = await admin.from("budgets").select("*").eq("id", data.budgetId).maybeSingle();
+    if (!b) return { queued: 0, reason: "not_found" };
+
+    const ownerId = b.responsible_user_id ?? b.submitted_by ?? b.created_by ?? null;
+    const owner: string[] = ownerId ? [ownerId] : [];
+    const amount =
+      b.requested_amount != null ? `R ${Number(b.requested_amount).toLocaleString()}` : "—";
+    const details = [
+      ["Budget", b.name ?? "—"],
+      ["Department", b.department_slug ?? "—"],
+      ["Period", b.period_label ?? "—"],
+      ["Requested", amount],
+      ["Status", b.status ?? "—"],
+    ];
+    const common = {
+      entityType: "budget",
+      entityId: b.id,
+      entityVersion: `${data.stage}:${b.updated_at ?? ""}`,
+    } as const;
+    const branch = (b as any).branch ?? undefined;
+
+    if (data.stage === "submitted") {
+      const approvers = await dispatchNotification({
+        ...common,
+        type: "REQUEST_SUBMITTED",
+        audience: { roles: FINANCE_ROLES, branch, excludeUserIds: owner },
+        metadata: {
+          heading: "Budget request received — Finance reviews first",
+          body: `${b.department_slug ?? "A department"} has submitted a budget request. The Financial Administrator must approve it before any other office can sign it off.`,
+          details,
+          action_label: "Open budgets",
+          path: "/finance",
+        },
+      });
+      const finance = await dispatchNotification({
+        ...common,
+        entityVersion: `${data.stage}:finance:${b.updated_at ?? ""}`,
+        type: "REQUEST_SUBMITTED",
+        audience: { departmentSlug: FINANCE_DEPARTMENT, excludeUserIds: owner },
+        metadata: {
+          heading: "Budget request awaiting Finance review",
+          body: `${b.department_slug ?? "A department"} has submitted a budget request for your review.`,
+          details,
+          action_label: "Open budgets",
+          path: "/finance",
+        },
+      });
+      return { approvers, finance };
+    }
+
+    return await dispatchNotification({
+      ...common,
+      type: data.stage === "approved" ? "REQUEST_APPROVED" : "REQUEST_REJECTED",
+      audience: { userIds: owner, excludeUserIds: [context.userId] },
+      metadata: {
+        heading: data.stage === "approved" ? "Your budget was approved" : "Your budget request was declined",
+        body: data.comment ? String(data.comment) : undefined,
+        details,
+        action_label: "Open budgets",
+        path: "/finance",
+      },
+    });
+  });
+
 /* ───────────── governance approvals ───────────── */
+
 
 export const notifyGovernanceApproval = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
