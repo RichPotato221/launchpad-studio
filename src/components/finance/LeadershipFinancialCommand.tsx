@@ -133,7 +133,7 @@ export default function LeadershipFinancialCommand() {
       kind: "purchase_request",
       department: r.department_slug,
       branch: r.branch,
-      amount: Number(r.total_amount ?? r.estimated_cost ?? r.amount ?? 0),
+      amount: Number(r.amount_actual ?? r.amount_estimated ?? 0),
       status: r.status,
       statusLabel: prStatusLabel(r.status),
     }));
