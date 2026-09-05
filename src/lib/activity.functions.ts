@@ -193,7 +193,7 @@ export const notifyPurchaseRequest = createServerFn({ method: "POST" })
             },
           })
         : { queued: 0, sent: 0 };
-      return { approvers, requester: own };
+      return { approvers, finance, requester: own };
     }
 
     const approved = data.stage !== "rejected";
