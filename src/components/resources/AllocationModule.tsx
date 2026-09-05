@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { money, fmtDate, exportRows, BRANCHES, branchLabel } from "@/lib/finance";
 import { PRIORITIES, REQUESTABLE_ITEMS, REQUEST_STATUS_LABELS, titleish } from "@/lib/resources";
+import { notifyPurchaseRequest } from "@/lib/activity.functions";
+
 
 const sb = supabase as any;
 
