@@ -14,8 +14,12 @@ const sb = supabase as any;
 
 /** Offices that form the leadership approval queue (step 2). */
 export const LEADERSHIP_ROLES = ["lead_pastor", "associate_pastor", "senior_apostle", "chairperson"];
-/** Offices that act as the Finance Administrator (step 1). */
-const FINANCE_ROLES = ["finance_officer", "chairperson"];
+/**
+ * Only the Finance Administration team performs step 1. Chairpersons and
+ * pastors sign off afterwards — they may never clear the Finance review
+ * themselves, so no leadership office belongs in this list.
+ */
+const FINANCE_ROLES: string[] = [];
 
 const PAYMENT_STATUSES = [
   { value: "waiting_finance_review", label: "Waiting for Finance Review" },

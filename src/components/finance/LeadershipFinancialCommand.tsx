@@ -58,7 +58,7 @@ export default function LeadershipFinancialCommand() {
         .is("archived_at", null)
         .order("entry_date", { ascending: false })
         .limit(500);
-      if (error) throw error;
+      if (error) return [] as any[];
       return (data ?? []) as any[];
     },
   });
@@ -72,7 +72,7 @@ export default function LeadershipFinancialCommand() {
         .is("archived_at", null)
         .order("created_at", { ascending: false })
         .limit(300);
-      if (error) throw error;
+      if (error) return [] as any[];
       return (data ?? []) as any[];
     },
   });
@@ -86,56 +86,126 @@ export default function LeadershipFinancialCommand() {
         .is("archived_at", null)
         .order("created_at", { ascending: false })
         .limit(300);
-      if (error) throw error;
+      if (error) return [] as any[];
       return (data ?? []) as any[];
     },
   });
 
-  const rows = useMemo(() => {
-    let list = filterByBranch(entries.data ?? [], scope);
-    if (kind !== "all") list = list.filter((r: any) => r.kind === kind);
-    if (branch !== "all") list = list.filter((r: any) => r.branch === branch);
-    const q = search.trim().toLowerCase();
-    if (q)
-      list = list.filter((r: any) =>
-        [r.title, r.reference_number, r.department_slug, r.category].some((v: any) =>
-          String(v ?? "").toLowerCase().includes(q),
-        ),
-      );
-    return list;
-  }, [entries.data, scope, kind, branch, search]);
+  const claims = useQuery({
+    queryKey: ["leadership-expense-claims"],
+    queryFn: async () => {
+      const { data, error } = await sb
+        .from("expense_claims")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(300);
+      if (error) return [] as any[];
+      return (data ?? []) as any[];
+    },
+  });
 
   const prRows = useMemo(() => filterByBranch(purchases.data ?? [], scope), [purchases.data, scope]);
   const budgetRows = useMemo(() => filterByBranch(budgets.data ?? [], scope), [budgets.data, scope]);
 
+  /**
+   * Every money movement on record, not just the general-ledger entries:
+   * ledger transactions, purchase requests, department budgets and expense
+   * claims are folded into one register so nothing is missing from this view.
+   */
+  const allRows = useMemo(() => {
+    const ledger = filterByBranch(entries.data ?? [], scope).map((r: any) => ({
+      id: `fe-${r.id}`,
+      date: r.entry_date ?? r.created_at,
+      title: r.title,
+      reference: r.reference_number,
+      kind: r.kind ?? "journal",
+      department: r.department_slug,
+      branch: r.branch,
+      amount: Number(r.amount ?? 0),
+      status: r.status ?? "recorded",
+      statusLabel: titleCase(r.status ?? "recorded"),
+    }));
+    const prs = prRows.map((r: any) => ({
+      id: `pr-${r.id}`,
+      date: r.created_at,
+      title: r.title ?? r.description ?? "Purchase request",
+      reference: r.pr_number ?? r.request_number,
+      kind: "purchase_request",
+      department: r.department_slug,
+      branch: r.branch,
+      amount: Number(r.amount_actual ?? r.amount_estimated ?? 0),
+      status: r.status,
+      statusLabel: prStatusLabel(r.status),
+    }));
+    const buds = budgetRows.map((b: any) => ({
+      id: `bg-${b.id}`,
+      date: b.submitted_at ?? b.created_at,
+      title: b.name,
+      reference: b.reference_number,
+      kind: "budget",
+      department: b.department_slug,
+      branch: b.branch,
+      amount: Number(b.total_amount ?? b.requested_amount ?? 0),
+      status: b.status,
+      statusLabel: BUDGET_STATUS_LABEL[b.status] ?? titleCase(b.status),
+    }));
+    const cl = filterByBranch(claims.data ?? [], scope).map((c: any) => ({
+      id: `ec-${c.id}`,
+      date: c.created_at,
+      title: c.description ?? "Expense claim",
+      reference: c.reference_number,
+      kind: "expense_claim",
+      department: c.department_slug,
+      branch: c.branch,
+      amount: Number(c.amount ?? c.total_amount ?? 0),
+      status: c.status ?? "submitted",
+      statusLabel: titleCase(c.status ?? "submitted"),
+    }));
+    return [...ledger, ...prs, ...buds, ...cl].sort(
+      (a, b) => new Date(b.date ?? 0).getTime() - new Date(a.date ?? 0).getTime(),
+    );
+  }, [entries.data, prRows, budgetRows, claims.data, scope]);
+
+  const rows = useMemo(() => {
+    let list = allRows;
+    if (kind !== "all") list = list.filter((r) => r.kind === kind);
+    if (branch !== "all") list = list.filter((r) => r.branch === branch);
+    const q = search.trim().toLowerCase();
+    if (q)
+      list = list.filter((r) =>
+        [r.title, r.reference, r.department].some((v) => String(v ?? "").toLowerCase().includes(q)),
+      );
+    return list;
+  }, [allRows, kind, branch, search]);
+
   const totals = useMemo(() => {
     const income = rows
-      .filter((r: any) => !["procurement", "journal", "other"].includes(r.kind))
-      .reduce((s: number, r: any) => s + Number(r.amount ?? 0), 0);
+      .filter((r) => !["procurement", "journal", "other", "purchase_request", "budget", "expense_claim"].includes(r.kind))
+      .reduce((s, r) => s + r.amount, 0);
     const spend = rows
-      .filter((r: any) => ["procurement"].includes(r.kind))
-      .reduce((s: number, r: any) => s + Number(r.amount ?? 0), 0);
+      .filter((r) => ["procurement", "purchase_request", "expense_claim"].includes(r.kind))
+      .reduce((s, r) => s + r.amount, 0);
     return { income, spend, count: rows.length };
   }, [rows]);
 
   const kinds = useMemo(
-    () => Array.from(new Set((entries.data ?? []).map((r: any) => r.kind).filter(Boolean))) as string[],
-    [entries.data],
+    () => Array.from(new Set(allRows.map((r) => r.kind).filter(Boolean))) as string[],
+    [allRows],
   );
 
   const exportTransactions = () =>
     exportRows(
       "financial-command-transactions",
       ["Date", "Reference", "Title", "Type", "Department", "Branch", "Amount", "Status"],
-      rows.map((r: any) => [
-        fmtDate(r.entry_date),
-        r.reference_number ?? "",
+      rows.map((r) => [
+        fmtDate(r.date),
+        r.reference ?? "",
         r.title,
         titleCase(r.kind),
-        r.department_slug ?? "",
+        r.department ?? "",
         branchLabel(r.branch),
         r.amount ?? 0,
-        titleCase(r.status),
+        r.statusLabel,
       ]),
     );
 
@@ -183,13 +253,13 @@ export default function LeadershipFinancialCommand() {
                 {prRows.slice(0, 25).map((r: any) => (
                   <tr key={r.id} className="border-t border-border/60 align-top">
                     <td className="py-2 pr-2">
-                      <p className="font-medium">{r.title ?? r.item_description ?? "Request"}</p>
+                      <p className="font-medium">{r.title ?? r.description ?? "Request"}</p>
                       <p className="text-xs text-muted-foreground">
-                        {r.request_number ?? "—"} · {fmtDate(r.created_at)} · {branchLabel(r.branch)}
+                        {r.pr_number ?? "—"} · {fmtDate(r.created_at)} · {branchLabel(r.branch)}
                       </p>
                     </td>
                     <td className="py-2 pr-2 text-xs">{r.department_slug ?? "—"}</td>
-                    <td className="py-2 pr-2 text-right">{money(r.total_amount ?? r.estimated_cost ?? r.amount)}</td>
+                    <td className="py-2 pr-2 text-right">{money(r.amount_actual ?? r.amount_estimated)}</td>
                     <td className="py-2"><Pill status={r.status} label={prStatusLabel(r.status)} /></td>
                   </tr>
                 ))}
@@ -285,24 +355,24 @@ export default function LeadershipFinancialCommand() {
               </tr>
             </thead>
             <tbody>
-              {entries.isLoading && (
+              {(entries.isLoading || purchases.isLoading || budgets.isLoading) && (
                 <tr><td colSpan={7} className="py-8 text-center text-muted-foreground">Loading transactions…</td></tr>
               )}
-              {!entries.isLoading && rows.length === 0 && (
+              {!entries.isLoading && !purchases.isLoading && !budgets.isLoading && rows.length === 0 && (
                 <tr><td colSpan={7} className="py-8 text-center text-muted-foreground">No transactions match this view.</td></tr>
               )}
-              {rows.map((r: any) => (
+              {rows.map((r) => (
                 <tr key={r.id} className="border-t border-border/60">
-                  <td className="py-2 pr-2 whitespace-nowrap">{fmtDate(r.entry_date)}</td>
+                  <td className="py-2 pr-2 whitespace-nowrap">{fmtDate(r.date)}</td>
                   <td className="py-2 pr-2">
                     <p className="font-medium">{r.title}</p>
-                    {r.reference_number && <p className="text-xs text-muted-foreground">{r.reference_number}</p>}
+                    {r.reference && <p className="text-xs text-muted-foreground">{r.reference}</p>}
                   </td>
                   <td className="py-2 pr-2 text-xs">{titleCase(r.kind)}</td>
-                  <td className="py-2 pr-2 text-xs">{r.department_slug ?? "—"}</td>
+                  <td className="py-2 pr-2 text-xs">{r.department ?? "—"}</td>
                   <td className="py-2 pr-2 text-xs">{branchLabel(r.branch)}</td>
                   <td className="py-2 pr-2 text-right">{money(r.amount)}</td>
-                  <td className="py-2"><Pill status={r.status} label={titleCase(r.status)} /></td>
+                  <td className="py-2"><Pill status={r.status} label={r.statusLabel} /></td>
                 </tr>
               ))}
             </tbody>
