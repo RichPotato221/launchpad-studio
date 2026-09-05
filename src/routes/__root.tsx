@@ -31,18 +31,28 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponent({ error, reset }: { error: unknown; reset: () => void }) {
   console.error(error);
   const router = useRouter();
+  // Anything can be thrown — including `undefined`. Normalise it so the
+  // boundary itself can never crash and leave a blank screen behind.
+  const normalised =
+    error instanceof Error
+      ? error
+      : new Error(
+          typeof error === "string"
+            ? error
+            : (error as { message?: string } | null)?.message ?? "An unexpected error occurred.",
+        );
   useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
+    reportLovableError(normalised, { boundary: "tanstack_root_error_component" });
+  }, [normalised]);
   return (
     <div className="flex min-h-[70vh] items-center justify-center px-6">
       <div className="max-w-md text-center">
         <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Something went wrong</p>
         <h1 className="mt-4 font-serif text-3xl text-foreground">This page didn't load</h1>
-        <p className="mt-3 text-sm text-muted-foreground">{error.message}</p>
+        <p className="mt-3 text-sm text-muted-foreground">{normalised.message}</p>
         <button
           onClick={() => { router.invalidate(); reset(); }}
           className="mt-6 border border-foreground bg-foreground px-6 py-3 text-xs font-medium uppercase tracking-widest text-background"
@@ -53,6 +63,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
     </div>
   );
 }
+
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
