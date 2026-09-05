@@ -7,7 +7,7 @@ import { AppointmentsModule } from "./AppointmentsModule";
 import { DecisionCentre, ProjectsModule, ExecutiveRiskModule, CommunicationsModule, ExecutiveReports } from "./ExecutiveModules";
 import ExecutiveCockpit from "@/components/chairperson/ExecutiveCockpit";
 import GovernanceAssistant from "@/components/chairperson/GovernanceAssistant";
-import FinanceApprovalsTable from "@/components/finance/FinanceApprovalsTable";
+import LeadershipFinancialCommand from "@/components/finance/LeadershipFinancialCommand";
 
 const TABS = [
   { key: "dashboard", label: "Executive dashboard" },
@@ -44,7 +44,7 @@ export function ApostolicCenter() {
       <TabsContent value="appointments" className="mt-6"><AppointmentsModule /></TabsContent>
       <TabsContent value="decisions" className="mt-6"><DecisionCentre /></TabsContent>
       <TabsContent value="financial" className="mt-6">
-        <FinanceApprovalsTable financeView={false} title="Financial command — purchase request approvals" />
+        <LeadershipFinancialCommand />
       </TabsContent>
 
       <TabsContent value="projects" className="mt-6"><ProjectsModule /></TabsContent>
