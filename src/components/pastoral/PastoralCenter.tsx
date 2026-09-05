@@ -14,6 +14,7 @@ const MinistryPlanningModule = lazy(() => import("@/components/pastoral/Ministry
 const GrowthAndKpiCentre = lazy(() => import("@/components/pastoral/GrowthAndKpiCentre"));
 const MinistryReports = lazy(() => import("@/components/pastoral/MinistryReports"));
 const MinistryAssistant = lazy(() => import("@/components/pastoral/MinistryAssistant"));
+const LeadershipFinancialCommand = lazy(() => import("@/components/finance/LeadershipFinancialCommand"));
 const RiskRegisterModule = lazy(() => import("@/components/chairperson/RiskRegisterModule"));
 
 /** Roles allowed to act (not merely view) inside the pastoral offices. */
@@ -61,6 +62,7 @@ export default function PastoralCenter({ departmentSlug, currentUserId }: { depa
           {!isLead && <TabsTrigger value="planning">Ministry planning</TabsTrigger>}
           <TabsTrigger value="growth">Growth &amp; KPIs</TabsTrigger>
           <TabsTrigger value="risk">Ministry risk</TabsTrigger>
+          <TabsTrigger value="financial">Financial command</TabsTrigger>
           <TabsTrigger value="reports">Reports</TabsTrigger>
           <TabsTrigger value="assistant">AI assistant</TabsTrigger>
         </TabsList>
@@ -97,6 +99,7 @@ export default function PastoralCenter({ departmentSlug, currentUserId }: { depa
           <TabsContent value="risk" className="mt-6">
             <RiskRegisterModule canManage={canManage} currentUserId={currentUserId} />
           </TabsContent>
+          <TabsContent value="financial" className="mt-6"><LeadershipFinancialCommand /></TabsContent>
           <TabsContent value="reports" className="mt-6"><MinistryReports /></TabsContent>
           <TabsContent value="assistant" className="mt-6"><MinistryAssistant /></TabsContent>
         </Suspense>
