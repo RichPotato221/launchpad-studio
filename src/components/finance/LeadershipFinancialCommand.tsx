@@ -129,7 +129,7 @@ export default function LeadershipFinancialCommand() {
       id: `pr-${r.id}`,
       date: r.created_at,
       title: r.title ?? r.item_description ?? "Purchase request",
-      reference: r.request_number ?? r.pr_number,
+      reference: r.pr_number ?? r.request_number,
       kind: "purchase_request",
       department: r.department_slug,
       branch: r.branch,
