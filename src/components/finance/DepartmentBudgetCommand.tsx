@@ -22,6 +22,7 @@ import {
   utilisationBand,
   type BudgetPosition,
 } from "@/lib/budgets";
+import { notifyBudgetRequest } from "@/lib/activity.functions";
 
 const sb = supabase as any;
 
