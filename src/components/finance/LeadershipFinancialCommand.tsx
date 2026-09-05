@@ -355,24 +355,24 @@ export default function LeadershipFinancialCommand() {
               </tr>
             </thead>
             <tbody>
-              {entries.isLoading && (
+              {(entries.isLoading || purchases.isLoading || budgets.isLoading) && (
                 <tr><td colSpan={7} className="py-8 text-center text-muted-foreground">Loading transactions…</td></tr>
               )}
-              {!entries.isLoading && rows.length === 0 && (
+              {!entries.isLoading && !purchases.isLoading && !budgets.isLoading && rows.length === 0 && (
                 <tr><td colSpan={7} className="py-8 text-center text-muted-foreground">No transactions match this view.</td></tr>
               )}
-              {rows.map((r: any) => (
+              {rows.map((r) => (
                 <tr key={r.id} className="border-t border-border/60">
-                  <td className="py-2 pr-2 whitespace-nowrap">{fmtDate(r.entry_date)}</td>
+                  <td className="py-2 pr-2 whitespace-nowrap">{fmtDate(r.date)}</td>
                   <td className="py-2 pr-2">
                     <p className="font-medium">{r.title}</p>
-                    {r.reference_number && <p className="text-xs text-muted-foreground">{r.reference_number}</p>}
+                    {r.reference && <p className="text-xs text-muted-foreground">{r.reference}</p>}
                   </td>
                   <td className="py-2 pr-2 text-xs">{titleCase(r.kind)}</td>
-                  <td className="py-2 pr-2 text-xs">{r.department_slug ?? "—"}</td>
+                  <td className="py-2 pr-2 text-xs">{r.department ?? "—"}</td>
                   <td className="py-2 pr-2 text-xs">{branchLabel(r.branch)}</td>
                   <td className="py-2 pr-2 text-right">{money(r.amount)}</td>
-                  <td className="py-2"><Pill status={r.status} label={titleCase(r.status)} /></td>
+                  <td className="py-2"><Pill status={r.status} label={r.statusLabel} /></td>
                 </tr>
               ))}
             </tbody>
