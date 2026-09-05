@@ -197,15 +197,15 @@ export default function LeadershipFinancialCommand() {
     exportRows(
       "financial-command-transactions",
       ["Date", "Reference", "Title", "Type", "Department", "Branch", "Amount", "Status"],
-      rows.map((r: any) => [
-        fmtDate(r.entry_date),
-        r.reference_number ?? "",
+      rows.map((r) => [
+        fmtDate(r.date),
+        r.reference ?? "",
         r.title,
         titleCase(r.kind),
-        r.department_slug ?? "",
+        r.department ?? "",
         branchLabel(r.branch),
         r.amount ?? 0,
-        titleCase(r.status),
+        r.statusLabel,
       ]),
     );
 
