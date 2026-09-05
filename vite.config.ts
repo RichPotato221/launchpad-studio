@@ -15,14 +15,5 @@ export default defineConfig({
   },
   vite: {
     plugins: [mcpPlugin()],
-    // Vite 8's production optimizer can drop declarations from this app's
-    // large re-export graph while leaving their references behind. The
-    // resulting bundle builds successfully but crashes before React mounts.
-    // Keep declarations intact until the upstream Rolldown issue is fixed.
-    build: {
-      rollupOptions: {
-        treeshake: false,
-      },
-    },
   },
 });
