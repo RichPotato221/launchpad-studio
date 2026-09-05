@@ -58,7 +58,7 @@ export default function LeadershipFinancialCommand() {
         .is("archived_at", null)
         .order("entry_date", { ascending: false })
         .limit(500);
-      if (error) throw error;
+      if (error) return [] as any[];
       return (data ?? []) as any[];
     },
   });
@@ -72,7 +72,7 @@ export default function LeadershipFinancialCommand() {
         .is("archived_at", null)
         .order("created_at", { ascending: false })
         .limit(300);
-      if (error) throw error;
+      if (error) return [] as any[];
       return (data ?? []) as any[];
     },
   });
@@ -86,7 +86,7 @@ export default function LeadershipFinancialCommand() {
         .is("archived_at", null)
         .order("created_at", { ascending: false })
         .limit(300);
-      if (error) throw error;
+      if (error) return [] as any[];
       return (data ?? []) as any[];
     },
   });
@@ -128,7 +128,7 @@ export default function LeadershipFinancialCommand() {
     const prs = prRows.map((r: any) => ({
       id: `pr-${r.id}`,
       date: r.created_at,
-      title: r.title ?? r.item_description ?? "Purchase request",
+      title: r.title ?? r.description ?? "Purchase request",
       reference: r.pr_number ?? r.request_number,
       kind: "purchase_request",
       department: r.department_slug,
@@ -253,13 +253,13 @@ export default function LeadershipFinancialCommand() {
                 {prRows.slice(0, 25).map((r: any) => (
                   <tr key={r.id} className="border-t border-border/60 align-top">
                     <td className="py-2 pr-2">
-                      <p className="font-medium">{r.title ?? r.item_description ?? "Request"}</p>
+                      <p className="font-medium">{r.title ?? r.description ?? "Request"}</p>
                       <p className="text-xs text-muted-foreground">
-                        {r.request_number ?? "—"} · {fmtDate(r.created_at)} · {branchLabel(r.branch)}
+                        {r.pr_number ?? "—"} · {fmtDate(r.created_at)} · {branchLabel(r.branch)}
                       </p>
                     </td>
                     <td className="py-2 pr-2 text-xs">{r.department_slug ?? "—"}</td>
-                    <td className="py-2 pr-2 text-right">{money(r.total_amount ?? r.estimated_cost ?? r.amount)}</td>
+                    <td className="py-2 pr-2 text-right">{money(r.amount_actual ?? r.amount_estimated)}</td>
                     <td className="py-2"><Pill status={r.status} label={prStatusLabel(r.status)} /></td>
                   </tr>
                 ))}
