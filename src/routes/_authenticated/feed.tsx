@@ -285,7 +285,7 @@ function PostCard({ post, likes, currentUserId, onChange }: {
       .from("announcement_views")
       .upsert(
         { announcement_id: post.id, user_id: currentUserId },
-        { onConflict: "announcement_id,user_id", ignoreDuplicates: true },
+        { onConflict: "announcement_id,user_id,view_date", ignoreDuplicates: true },
       )
       .then(() => refreshCounts());
   }, [currentUserId, post.id]);
