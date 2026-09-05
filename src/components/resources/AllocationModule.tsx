@@ -83,12 +83,20 @@ export default function AllocationModule({ canManage, isChair, currentUserId }: 
       department_slug: row.department_slug, branch: row.branch,
       justification: row.purpose ?? "Raised from a resource allocation request that cannot be met from stock.",
       amount_estimated: row.budget_impact, needed_by: row.start_date,
-      requested_by: currentUserId, status: "submitted",
+      requested_by: currentUserId, requester_id: currentUserId, status: "submitted",
     }).select("id").maybeSingle();
     if (error) return toast.error(error.message);
     await sb.from("res_requests").update({ procurement_request_id: data?.id }).eq("id", row.id);
+    if (data?.id) {
+      try {
+        await notifyPurchaseRequest({ data: { requestId: data.id, stage: "submitted" } });
+      } catch (err) {
+        console.error("purchase request notification failed", err);
+      }
+    }
     toast.success("Procurement request raised for Finance"); load();
   };
+
 
   return (
     <div className="space-y-6">
