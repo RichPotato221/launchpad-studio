@@ -299,7 +299,7 @@ function CreateBudgetDialog({
       return;
     }
     setSaving(true);
-    const { error } = await sb.from("budgets").insert({
+    const { data: inserted, error } = await sb.from("budgets").insert({
       name: form.name.trim(),
       department_slug: slug,
       budget_type: "department",
