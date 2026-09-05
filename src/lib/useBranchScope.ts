@@ -5,11 +5,11 @@ import { getAuthUserResult } from "@/lib/authUser";
 /**
  * Branch visibility rule for the whole portal.
  *
- * Every member only sees activities, teams and records that belong to
- * their own branch. Only the Chairpersons and the Senior Pastors
- * (senior_apostle) oversee every branch.
+ * Every member — Chairpersons, Associate / Lead Pastors and Secretaries
+ * included — only sees activities, teams and records that belong to their
+ * own branch. Only the Senior Pastors (senior_apostle) oversee every branch.
  */
-const ALL_BRANCH_ROLES = new Set(["chairperson", "senior_apostle"]);
+const ALL_BRANCH_ROLES = new Set(["senior_apostle"]);
 
 export type BranchScope = {
   branch: string | null;
