@@ -40,12 +40,16 @@ export function installChunkRecovery() {
   if (w.__trogChunkRecovery) return;
   w.__trogChunkRecovery = true;
 
-  // A successful load means the current code is good; clear the guard.
-  try {
-    sessionStorage.removeItem(RELOAD_FLAG);
-  } catch {
-    /* ignore */
-  }
+  // Once the app has stayed up for a while the current code is good, so the
+  // one-reload guard can be cleared. Clearing it immediately would risk a
+  // reload loop when the failure happens again right away.
+  window.setTimeout(() => {
+    try {
+      sessionStorage.removeItem(RELOAD_FLAG);
+    } catch {
+      /* ignore */
+    }
+  }, 15_000);
 
   window.addEventListener("error", (event) => {
     if (looksLikeStaleCode(event.error ?? event.message)) reloadOnce();
