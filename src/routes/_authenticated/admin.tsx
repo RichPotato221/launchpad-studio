@@ -202,7 +202,7 @@ function AdminPage() {
     (p: any) => !BRANCH_GROUPS.some((g) => g.key === p.branch)
   );
  
-  if (access.isLoading) return <div className="mx-auto max-w-7xl px-4 py-10 text-sm text-muted-foreground">Loading…</div>;
+  if (!access.data) return <div className="mx-auto max-w-7xl px-4 py-10 text-sm text-muted-foreground">Loading…</div>;
   if (!access.data?.isChair)
     return (
       <div className="mx-auto max-w-3xl px-4 py-16 md:px-8">
