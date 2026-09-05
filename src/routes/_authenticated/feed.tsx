@@ -276,13 +276,18 @@ function PostCard({ post, likes, currentUserId, onChange }: {
   const liked = !!currentUserId && likes.some((l) => l.user_id === currentUserId);
 
 
-  // Log a view (once per user per day, enforced by DB unique constraint)
+  // Log a view (once per user per day, enforced by DB unique constraint).
+  // Upsert with ignoreDuplicates so a repeat view is a silent no-op instead
+  // of a failed request on every scroll past the post.
   useEffect(() => {
     if (!currentUserId) return;
-    (supabase as any).from("announcement_views").insert({
-      announcement_id: post.id,
-      user_id: currentUserId,
-    }).then(() => refreshCounts());
+    (supabase as any)
+      .from("announcement_views")
+      .upsert(
+        { announcement_id: post.id, user_id: currentUserId },
+        { onConflict: "announcement_id,user_id", ignoreDuplicates: true },
+      )
+      .then(() => refreshCounts());
   }, [currentUserId, post.id]);
 
   const refreshCounts = async () => {
