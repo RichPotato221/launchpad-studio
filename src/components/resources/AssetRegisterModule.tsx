@@ -446,6 +446,10 @@ function AssetDetailDialog({ asset, onClose, checkouts, maintLogs, supplierName,
           </Card>
         </div>
 
+        <AssetDocumentsPanel assetId={asset.id} canManage={canManage} currentUserId={currentUserId} />
+
+
+
         {canManage && (
           <Card className="mt-4 p-4">
             {open ? (
