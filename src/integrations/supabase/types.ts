@@ -1030,6 +1030,69 @@ export type Database = {
           },
         ]
       }
+      asset_documents: {
+        Row: {
+          asset_id: string
+          created_at: string
+          doc_date: string | null
+          doc_type: string
+          file_size: number | null
+          file_url: string | null
+          id: string
+          mime_type: string | null
+          notes: string | null
+          storage_path: string | null
+          title: string
+          updated_at: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          asset_id: string
+          created_at?: string
+          doc_date?: string | null
+          doc_type?: string
+          file_size?: number | null
+          file_url?: string | null
+          id?: string
+          mime_type?: string | null
+          notes?: string | null
+          storage_path?: string | null
+          title: string
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          asset_id?: string
+          created_at?: string
+          doc_date?: string | null
+          doc_type?: string
+          file_size?: number | null
+          file_url?: string | null
+          id?: string
+          mime_type?: string | null
+          notes?: string | null
+          storage_path?: string | null
+          title?: string
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_documents_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_documents_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets_low_stock"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       asset_maintenance_logs: {
         Row: {
           asset_id: string
