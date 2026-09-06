@@ -1,19 +1,20 @@
-import { Suspense, lazy, useState } from "react";
+import { Suspense, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCurrentRole } from "@/lib/useCurrentRole";
 import { useIsDepartmentMember } from "@/lib/useIsDepartmentMember";
+import { lazyWithRetry } from "@/lib/lazyWithRetry";
 import type { WorkspaceProps } from "@/lib/workspaceRegistry";
 
-const ResourceDashboard = lazy(() => import("./ResourceDashboard"));
-const AssetRegisterModule = lazy(() => import("./AssetRegisterModule"));
-const AllocationModule = lazy(() => import("./AllocationModule"));
-const FacilitiesModule = lazy(() => import("./FacilitiesModule"));
-const MaintenanceModule = lazy(() => import("./MaintenanceModule"));
-const ProjectsModule = lazy(() => import("./ProjectsModule"));
-const InventoryModule = lazy(() => import("./InventoryModule"));
-const RiskTrainingModule = lazy(() => import("./RiskTrainingModule"));
-const ResourceReports = lazy(() => import("./ResourceReports"));
-const ResourceAssistant = lazy(() => import("./ResourceAssistant"));
+const ResourceDashboard = lazyWithRetry(() => import("./ResourceDashboard"));
+const AssetRegisterModule = lazyWithRetry(() => import("./AssetRegisterModule"));
+const AllocationModule = lazyWithRetry(() => import("./AllocationModule"));
+const FacilitiesModule = lazyWithRetry(() => import("./FacilitiesModule"));
+const MaintenanceModule = lazyWithRetry(() => import("./MaintenanceModule"));
+const ProjectsModule = lazyWithRetry(() => import("./ProjectsModule"));
+const InventoryModule = lazyWithRetry(() => import("./InventoryModule"));
+const RiskTrainingModule = lazyWithRetry(() => import("./RiskTrainingModule"));
+const ResourceReports = lazyWithRetry(() => import("./ResourceReports"));
+const ResourceAssistant = lazyWithRetry(() => import("./ResourceAssistant"));
 
 const MANAGER_ROLES = ["senior_apostle", "chairperson", "secretary", "lead_pastor", "associate_pastor"];
 
