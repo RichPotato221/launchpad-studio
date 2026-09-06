@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { money, fmtDate, exportRows, branchLabel, BRANCHES } from "@/lib/finance";
+import AssetDocumentsPanel from "./AssetDocumentsPanel";
 import {
   ASSET_CATEGORIES, ASSET_CONDITIONS, ASSET_LIFECYCLE, INSURANCE_STATUSES,
   depreciatedValue, daysUntil, labelFor, titleish,
