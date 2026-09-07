@@ -23,6 +23,7 @@ import {
   type BudgetPosition,
 } from "@/lib/budgets";
 import { notifyBudgetRequest } from "@/lib/activity.functions";
+import { useIdentity } from "@/lib/identity";
 
 const sb = supabase as any;
 
@@ -54,6 +55,20 @@ export default function DepartmentBudgetCommand({
   const positions = useBudgetPositions(slug);
   const [openBudget, setOpenBudget] = useState(false);
   const [increaseFor, setIncreaseFor] = useState<BudgetPosition | null>(null);
+  const identity = useIdentity();
+  /** Chairpersons, Senior Pastors and Lead Pastors may remove a budget record outright. */
+  const canDelete = (identity.data?.roles ?? []).some((r) =>
+    ["chairperson", "senior_apostle", "lead_pastor"].includes(r),
+  );
+
+  const removeBudget = async (id: string, name: string) => {
+    if (!window.confirm(`Delete the budget "" permanently?`)) return;
+    const { error } = await sb.from("budgets").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success("Budget deleted");
+    qc.invalidateQueries({ queryKey: ["budget-positions"] });
+    qc.invalidateQueries({ queryKey: ["church-finance-position"] });
+  };
 
   const rows = positions.data ?? [];
   const totals = useMemo(() => sumPositions(rows.filter((r) => ["approved", "active", "locked"].includes(r.status))), [rows]);
