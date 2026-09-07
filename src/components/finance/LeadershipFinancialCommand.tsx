@@ -43,8 +43,12 @@ function Pill({ status, label }: { status: string; label: string }) {
  * Assistant / Associate Pastors): every transaction on one screen, plus the
  * two approval queues side by side — purchase requests and budgets.
  */
-export default function LeadershipFinancialCommand() {
+const FINANCE_DEPTS = ["finance", "finance-administration"];
+
+export default function LeadershipFinancialCommand({ departmentSlug }: { departmentSlug?: string } = {}) {
   const { data: scope } = useBranchScope();
+  /** Outside the Finance office, a department only sees its own money. */
+  const deptFilter = departmentSlug && !FINANCE_DEPTS.includes(departmentSlug) ? departmentSlug : null;
   const [kind, setKind] = useState("all");
   const [branch, setBranch] = useState("all");
   const [search, setSearch] = useState("");
