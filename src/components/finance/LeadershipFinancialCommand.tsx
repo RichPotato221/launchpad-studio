@@ -222,8 +222,9 @@ export default function LeadershipFinancialCommand({ departmentSlug }: { departm
         <p className="text-xs uppercase tracking-widest text-muted-foreground">Financial Command</p>
         <h3 className="mt-2 font-serif text-2xl">Transactions & approvals</h3>
         <p className="mt-2 text-sm text-muted-foreground">
-          Every recorded transaction, together with the two approval queues — purchase requests and department budgets.
-          The Financial Administrator reviews first; leadership sign-off follows.
+          {deptFilter
+            ? "Every recorded transaction for this department only, together with its purchase request and budget approval queues. The Financial Administrator reviews first; leadership sign-off follows."
+            : "Every recorded transaction across the church, together with the two approval queues — purchase requests and department budgets. The Financial Administrator reviews first; leadership sign-off follows."}
         </p>
       </Card>
 
