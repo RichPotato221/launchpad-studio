@@ -185,11 +185,18 @@ export default function DepartmentBudgetCommand({
                     </p>
                   </td>
                   <td className="p-3">
-                    {["approved", "active", "locked"].includes(b.status) && (
-                      <Button size="sm" variant="outline" onClick={() => setIncreaseFor(b)}>
-                        <TrendingUp className="mr-1 h-3.5 w-3.5" /> Increase
-                      </Button>
-                    )}
+                    <div className="flex flex-wrap gap-2">
+                      {["approved", "active", "locked"].includes(b.status) && (
+                        <Button size="sm" variant="outline" onClick={() => setIncreaseFor(b)}>
+                          <TrendingUp className="mr-1 h-3.5 w-3.5" /> Increase
+                        </Button>
+                      )}
+                      {canDelete && (
+                        <Button size="sm" variant="destructive" onClick={() => removeBudget(b.budget_id, b.name)}>
+                          Delete
+                        </Button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               );
