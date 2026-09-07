@@ -229,6 +229,18 @@ export default function LedgerModule({
                           <Button size="sm" variant="ghost" onClick={() => setStatusMut.mutate({ id: r.id, next: "rejected" })}>Reject</Button>
                         )}
                         <Button size="sm" variant="ghost" onClick={() => setStatusMut.mutate({ id: r.id, next: "archived" })}>Archive</Button>
+                        {canDelete && (
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => {
+                              if (window.confirm("Delete this transaction permanently?")) deleteMut.mutate(r.id);
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        )}
+
                       </div>
                     </td>
                   )}
