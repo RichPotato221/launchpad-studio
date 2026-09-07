@@ -6,6 +6,27 @@ import { PortalShell } from "@/components/PortalShell";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/trog-logo.png";
 
+function SectionError({ error, reset }: { error: unknown; reset: () => void }) {
+  console.error(error);
+  const message =
+    (error instanceof Error ? error.message : (error as { message?: string } | null)?.message) ??
+    "This section didn't load.";
+  return (
+    <div className="grid min-h-[60vh] place-items-center p-6 text-center">
+      <div className="max-w-md">
+        <h2 className="font-serif text-2xl">This section didn't load</h2>
+        <p className="mt-3 text-sm text-muted-foreground">{message}</p>
+        <div className="mt-6 flex justify-center gap-3">
+          <Button onClick={reset}>Try again</Button>
+          <Button variant="outline" onClick={() => window.location.reload()}>
+            Reload page
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   beforeLoad: async () => {
@@ -14,6 +35,7 @@ export const Route = createFileRoute("/_authenticated")({
     return { user: data.user };
   },
   component: Gate,
+  errorComponent: SectionError,
 });
 
 function Gate() {

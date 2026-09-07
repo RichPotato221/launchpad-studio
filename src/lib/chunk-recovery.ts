@@ -57,4 +57,12 @@ export function installChunkRecovery() {
   window.addEventListener("unhandledrejection", (event) => {
     if (looksLikeStaleCode(event.reason)) reloadOnce();
   });
+
+  // Last-resort blank-screen watchdog: if nothing at all has rendered a few
+  // seconds after load, reload once so the visitor gets a working page instead
+  // of an empty white screen.
+  window.setTimeout(() => {
+    const text = document.body?.innerText?.trim() ?? "";
+    if (text.length === 0) reloadOnce();
+  }, 6_000);
 }
