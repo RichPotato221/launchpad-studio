@@ -43,8 +43,12 @@ function Pill({ status, label }: { status: string; label: string }) {
  * Assistant / Associate Pastors): every transaction on one screen, plus the
  * two approval queues side by side — purchase requests and budgets.
  */
-export default function LeadershipFinancialCommand() {
+const FINANCE_DEPTS = ["finance", "finance-administration"];
+
+export default function LeadershipFinancialCommand({ departmentSlug }: { departmentSlug?: string } = {}) {
   const { data: scope } = useBranchScope();
+  /** Outside the Finance office, a department only sees its own money. */
+  const deptFilter = departmentSlug && !FINANCE_DEPTS.includes(departmentSlug) ? departmentSlug : null;
   const [kind, setKind] = useState("all");
   const [branch, setBranch] = useState("all");
   const [search, setSearch] = useState("");
@@ -104,8 +108,11 @@ export default function LeadershipFinancialCommand() {
     },
   });
 
-  const prRows = useMemo(() => filterByBranch(purchases.data ?? [], scope), [purchases.data, scope]);
-  const budgetRows = useMemo(() => filterByBranch(budgets.data ?? [], scope), [budgets.data, scope]);
+  const byDept = <T extends { department_slug?: string | null }>(list: T[]) =>
+    deptFilter ? list.filter((r) => r.department_slug === deptFilter) : list;
+
+  const prRows = useMemo(() => byDept(filterByBranch(purchases.data ?? [], scope)), [purchases.data, scope, deptFilter]);
+  const budgetRows = useMemo(() => byDept(filterByBranch(budgets.data ?? [], scope)), [budgets.data, scope, deptFilter]);
 
   /**
    * Every money movement on record, not just the general-ledger entries:
@@ -113,7 +120,7 @@ export default function LeadershipFinancialCommand() {
    * claims are folded into one register so nothing is missing from this view.
    */
   const allRows = useMemo(() => {
-    const ledger = filterByBranch(entries.data ?? [], scope).map((r: any) => ({
+    const ledger = byDept(filterByBranch(entries.data ?? [], scope)).map((r: any) => ({
       id: `fe-${r.id}`,
       date: r.entry_date ?? r.created_at,
       title: r.title,
@@ -149,7 +156,7 @@ export default function LeadershipFinancialCommand() {
       status: b.status,
       statusLabel: BUDGET_STATUS_LABEL[b.status] ?? titleCase(b.status),
     }));
-    const cl = filterByBranch(claims.data ?? [], scope).map((c: any) => ({
+    const cl = byDept(filterByBranch(claims.data ?? [], scope)).map((c: any) => ({
       id: `ec-${c.id}`,
       date: c.created_at,
       title: c.description ?? "Expense claim",
@@ -164,7 +171,7 @@ export default function LeadershipFinancialCommand() {
     return [...ledger, ...prs, ...buds, ...cl].sort(
       (a, b) => new Date(b.date ?? 0).getTime() - new Date(a.date ?? 0).getTime(),
     );
-  }, [entries.data, prRows, budgetRows, claims.data, scope]);
+  }, [entries.data, prRows, budgetRows, claims.data, scope, deptFilter]);
 
   const rows = useMemo(() => {
     let list = allRows;
@@ -215,8 +222,9 @@ export default function LeadershipFinancialCommand() {
         <p className="text-xs uppercase tracking-widest text-muted-foreground">Financial Command</p>
         <h3 className="mt-2 font-serif text-2xl">Transactions & approvals</h3>
         <p className="mt-2 text-sm text-muted-foreground">
-          Every recorded transaction, together with the two approval queues — purchase requests and department budgets.
-          The Financial Administrator reviews first; leadership sign-off follows.
+          {deptFilter
+            ? "Every recorded transaction for this department only, together with its purchase request and budget approval queues. The Financial Administrator reviews first; leadership sign-off follows."
+            : "Every recorded transaction across the church, together with the two approval queues — purchase requests and department budgets. The Financial Administrator reviews first; leadership sign-off follows."}
         </p>
       </Card>
 

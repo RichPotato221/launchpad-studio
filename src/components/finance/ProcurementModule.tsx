@@ -231,7 +231,7 @@ export default function ProcurementModule({ canManage, currentUserId, department
   };
 
   /** Chairpersons and Senior Pastors may remove a procurement record outright. */
-  const canDelete = myRoles.some((r) => r === "chairperson" || r === "senior_apostle");
+  const canDelete = myRoles.some((r) => ["chairperson", "senior_apostle", "lead_pastor"].includes(r));
 
   const removeRequest = async (row: any) => {
     if (!window.confirm("Delete this purchase request permanently?")) return;

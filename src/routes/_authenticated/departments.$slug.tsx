@@ -175,7 +175,7 @@ function DepartmentPortal() {
         {showFinanceTab && (
           <TabsContent value="finance" className="mt-6 space-y-8">
             <DepartmentProcurement slug={slug} />
-            {isExecutive && <LeadershipFinancialCommand />}
+            {isExecutive && <LeadershipFinancialCommand departmentSlug={slug} />}
           </TabsContent>
         )}
 
