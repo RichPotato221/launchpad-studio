@@ -120,7 +120,7 @@ export default function LeadershipFinancialCommand({ departmentSlug }: { departm
    * claims are folded into one register so nothing is missing from this view.
    */
   const allRows = useMemo(() => {
-    const ledger = filterByBranch(entries.data ?? [], scope).map((r: any) => ({
+    const ledger = byDept(filterByBranch(entries.data ?? [], scope)).map((r: any) => ({
       id: `fe-${r.id}`,
       date: r.entry_date ?? r.created_at,
       title: r.title,
@@ -156,7 +156,7 @@ export default function LeadershipFinancialCommand({ departmentSlug }: { departm
       status: b.status,
       statusLabel: BUDGET_STATUS_LABEL[b.status] ?? titleCase(b.status),
     }));
-    const cl = filterByBranch(claims.data ?? [], scope).map((c: any) => ({
+    const cl = byDept(filterByBranch(claims.data ?? [], scope)).map((c: any) => ({
       id: `ec-${c.id}`,
       date: c.created_at,
       title: c.description ?? "Expense claim",
@@ -171,7 +171,7 @@ export default function LeadershipFinancialCommand({ departmentSlug }: { departm
     return [...ledger, ...prs, ...buds, ...cl].sort(
       (a, b) => new Date(b.date ?? 0).getTime() - new Date(a.date ?? 0).getTime(),
     );
-  }, [entries.data, prRows, budgetRows, claims.data, scope]);
+  }, [entries.data, prRows, budgetRows, claims.data, scope, deptFilter]);
 
   const rows = useMemo(() => {
     let list = allRows;
