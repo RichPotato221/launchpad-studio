@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { Download, RefreshCw } from "lucide-react";
 import { branchLabel, exportRows, fmtDate, money, STATUS_CLASS, titleCase } from "@/lib/finance";
 import FinanceApprovalsTable from "@/components/finance/FinanceApprovalsTable";
+import { useIdentity } from "@/lib/identity";
 
 
 const sb = supabase as any;
@@ -28,6 +29,10 @@ export default function ApprovalsModule({
   currentUserId: string;
 }) {
   const qc = useQueryClient();
+  const { data: identity } = useIdentity();
+  const canDelete = (identity?.roles ?? []).some((r: string) =>
+    ["chairperson", "senior_apostle", "lead_pastor"].includes(r),
+  );
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("open");
 
@@ -90,6 +95,19 @@ export default function ApprovalsModule({
       qc.invalidateQueries({ queryKey: ["finance-summary"] });
     },
     onError: (e: any) => toast.error(e.message ?? "Could not update the claim"),
+  });
+
+  const removeClaim = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await sb.from("expense_claims").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Claim deleted");
+      qc.invalidateQueries({ queryKey: ["finance-approvals"] });
+      qc.invalidateQueries({ queryKey: ["finance-summary"] });
+    },
+    onError: (e: any) => toast.error(e.message ?? "Could not delete the claim"),
   });
 
   return (
@@ -173,16 +191,27 @@ export default function ApprovalsModule({
                     )}
                   </div>
                 </div>
-                {canManage && (
+                {(canManage || canDelete) && (
                   <div className="mt-3 flex flex-wrap gap-2 print:hidden">
-                    {step && (
+                    {canManage && step && (
                       <Button size="sm" onClick={() => advance.mutate({ row: r, next: step.next })}>
                         {step.label}
                       </Button>
                     )}
-                    {!["rejected", "paid"].includes(r.status) && (
+                    {canManage && !["rejected", "paid"].includes(r.status) && (
                       <Button size="sm" variant="outline" onClick={() => advance.mutate({ row: r, next: "rejected" })}>
                         Reject
+                      </Button>
+                    )}
+                    {canDelete && (
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => {
+                          if (window.confirm("Delete this claim permanently?")) removeClaim.mutate(r.id);
+                        }}
+                      >
+                        Delete
                       </Button>
                     )}
                   </div>
