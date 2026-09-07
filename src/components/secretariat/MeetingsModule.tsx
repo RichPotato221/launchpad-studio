@@ -21,6 +21,7 @@ import {
   exportRows,
   exportPdf,
   logAudit,
+  postAgendaToFeed,
 } from "@/lib/secretariat";
 
 type Props = { currentUserId: string; canManage: boolean };
@@ -92,7 +93,9 @@ function MeetingList({
         location: [form.location, form.meeting_link].filter(Boolean).join(" · ") || null,
         branch: branch as never,
         description: form.description || null,
-        department_slug: "secretary",
+        // Governance meetings concern the whole branch, not just the secretarial
+        // team, so they are not tagged to a single department audience.
+        department_slug: null,
         created_by: currentUserId,
       })
       .select("id")
