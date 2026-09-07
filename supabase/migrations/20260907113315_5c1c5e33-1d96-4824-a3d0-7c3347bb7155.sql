@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.keep_profile_email() FROM public, anon, authenticated;
