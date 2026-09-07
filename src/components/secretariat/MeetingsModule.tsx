@@ -456,7 +456,13 @@ function AgendaBuilder({
       .eq("id", agendaId);
     if (error) return toast.error(error.message);
     await logAudit("publish", "agenda", agendaId, {});
-    toast.success("Agenda approved and published.");
+    try {
+      await postAgendaToFeed(meetingId, agendaId, currentUserId);
+      toast.success("Agenda approved, published and posted to the feed.");
+    } catch (err) {
+      console.error("Agenda feed post failed", err);
+      toast.message("Agenda published — it could not be posted to the feed.");
+    }
     onChange();
   };
 
