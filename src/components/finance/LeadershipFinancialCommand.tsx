@@ -108,8 +108,11 @@ export default function LeadershipFinancialCommand({ departmentSlug }: { departm
     },
   });
 
-  const prRows = useMemo(() => filterByBranch(purchases.data ?? [], scope), [purchases.data, scope]);
-  const budgetRows = useMemo(() => filterByBranch(budgets.data ?? [], scope), [budgets.data, scope]);
+  const byDept = <T extends { department_slug?: string | null }>(list: T[]) =>
+    deptFilter ? list.filter((r) => r.department_slug === deptFilter) : list;
+
+  const prRows = useMemo(() => byDept(filterByBranch(purchases.data ?? [], scope)), [purchases.data, scope, deptFilter]);
+  const budgetRows = useMemo(() => byDept(filterByBranch(budgets.data ?? [], scope)), [budgets.data, scope, deptFilter]);
 
   /**
    * Every money movement on record, not just the general-ledger entries:
