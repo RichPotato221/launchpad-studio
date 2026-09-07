@@ -22,6 +22,7 @@ import {
   titleCase,
   TRANSACTION_KINDS,
 } from "@/lib/finance";
+import { useIdentity } from "@/lib/identity";
 
 const sb = supabase as any;
 const PAGE = 25;
@@ -34,6 +35,10 @@ export default function LedgerModule({
   currentUserId: string;
 }) {
   const qc = useQueryClient();
+  const { data: identity } = useIdentity();
+  const canDelete = (identity?.roles ?? []).some((r: string) =>
+    ["chairperson", "senior_apostle", "lead_pastor"].includes(r),
+  );
   const [search, setSearch] = useState("");
   const [kind, setKind] = useState("all");
   const [status, setStatus] = useState("all");
@@ -200,7 +205,7 @@ export default function LedgerModule({
                 <th className="p-3">Branch</th>
                 <th className="p-3 text-right">Amount</th>
                 <th className="p-3">Status</th>
-                {canManage && <th className="p-3 print:hidden">Actions</th>}
+                {(canManage || canDelete) && <th className="p-3 print:hidden">Actions</th>}
               </tr>
             </thead>
             <tbody>
@@ -219,16 +224,16 @@ export default function LedgerModule({
                   <td className="p-3">
                     <Badge variant="outline" className={STATUS_CLASS[r.status] ?? ""}>{titleCase(r.status)}</Badge>
                   </td>
-                  {canManage && (
+                  {(canManage || canDelete) && (
                     <td className="p-3 print:hidden">
                       <div className="flex flex-wrap gap-1">
-                        {r.status !== "approved" && r.status !== "completed" && (
+                        {canManage && r.status !== "approved" && r.status !== "completed" && (
                           <Button size="sm" variant="outline" onClick={() => setStatusMut.mutate({ id: r.id, next: "approved" })}>Approve</Button>
                         )}
-                        {r.status !== "rejected" && (
+                        {canManage && r.status !== "rejected" && (
                           <Button size="sm" variant="ghost" onClick={() => setStatusMut.mutate({ id: r.id, next: "rejected" })}>Reject</Button>
                         )}
-                        <Button size="sm" variant="ghost" onClick={() => setStatusMut.mutate({ id: r.id, next: "archived" })}>Archive</Button>
+                        {canManage && <Button size="sm" variant="ghost" onClick={() => setStatusMut.mutate({ id: r.id, next: "archived" })}>Archive</Button>}
                         {canDelete && (
                           <Button
                             size="sm"
