@@ -126,3 +126,65 @@ export function exportRows(
 export function exportPdf() {
   window.print();
 }
+
+/** Maps the branch enum used on events to the feed's branch-target enum. */
+export function feedBranchTarget(branch?: string | null) {
+  if (!branch) return "all";
+  if (branch === "etwatwa" || branch === "twatwa") return "twatwa";
+  if (branch === "joburg_north" || branch === "joburg_south") return branch;
+  return "all";
+}
+
+/**
+ * Publishes an approved agenda onto the members' feed so everyone the meeting
+ * concerns can read it without opening the secretariat module.
+ * Safe to call twice — an existing post for the same agenda is left alone.
+ */
+export async function postAgendaToFeed(meetingId: string, agendaId: string, authorId: string) {
+  const [{ data: meeting }, { data: agenda }] = await Promise.all([
+    supabase.from("meetings").select("event_id, events(title, event_date, start_time, location, branch)").eq("id", meetingId).maybeSingle(),
+    supabase.from("agendas").select("title, agenda_items(order_index, title, estimated_minutes)").eq("id", agendaId).maybeSingle(),
+  ]);
+  const ev: any = (meeting as any)?.events;
+  const title = `Agenda published — ${ev?.title ?? "Meeting"}`;
+
+  const { data: existing } = await supabase
+    .from("announcements")
+    .select("id")
+    .eq("title", title)
+    .limit(1);
+  if (existing && existing.length > 0) return existing[0].id as string;
+
+  const items = ((agenda as any)?.agenda_items ?? [])
+    .slice()
+    .sort((a: any, b: any) => a.order_index - b.order_index)
+    .map((i: any, n: number) => `${n + 1}. ${i.title}${i.estimated_minutes ? ` (${i.estimated_minutes} min)` : ""}`)
+    .join("\n");
+
+  const when = [fmtDate(ev?.event_date), ev?.start_time ? String(ev.start_time).slice(0, 5) : null, ev?.location]
+    .filter(Boolean)
+    .join(" · ");
+
+  const body = [
+    `The agenda for ${ev?.title ?? "the meeting"} has been approved and published by the Secretariat.`,
+    when,
+    items ? `\nAgenda:\n${items}` : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  const { data, error } = await supabase
+    .from("announcements")
+    .insert({
+      title,
+      body,
+      author_id: authorId,
+      author_department_slug: "secretary",
+      priority: false,
+      target_branch: feedBranchTarget(ev?.branch) as never,
+    })
+    .select("id")
+    .single();
+  if (error) throw error;
+  return data.id as string;
+}
