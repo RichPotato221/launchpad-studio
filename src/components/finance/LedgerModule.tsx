@@ -90,8 +90,22 @@ export default function LedgerModule({
     onError: (e: any) => toast.error(e.message ?? "Update failed"),
   });
 
+  const deleteMut = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await sb.from("finance_entries").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Transaction deleted");
+      qc.invalidateQueries({ queryKey: ["finance-ledger"] });
+      qc.invalidateQueries({ queryKey: ["finance-summary"] });
+    },
+    onError: (e: any) => toast.error(e.message ?? "Delete failed"),
+  });
+
   const total = query.data?.count ?? 0;
   const pages = Math.max(1, Math.ceil(total / PAGE));
+
 
   return (
     <div className="space-y-4">
