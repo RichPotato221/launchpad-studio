@@ -1,4 +1,5 @@
 import { useIdentity } from "@/lib/identity";
+import { ALL_BRANCHES, useBranchView } from "@/lib/branchView";
 
 /**
  * Branch visibility rule for the whole portal.
@@ -16,11 +17,17 @@ export type BranchScope = {
 
 export function useBranchScope() {
   const identity = useIdentity();
+  const view = useBranchView();
   const data: BranchScope | undefined = identity.data
-    ? {
-        branch: identity.data.branch,
-        seesAllBranches: identity.data.roles.some((r) => ALL_BRANCH_ROLES.includes(r)),
-      }
+    ? (() => {
+        const seesAll = identity.data.roles.some((r) => ALL_BRANCH_ROLES.includes(r));
+        // A Senior Pastor may narrow the dashboard to one branch. Everyone else
+        // is pinned to their own branch — the view preference is ignored.
+        if (seesAll && view !== ALL_BRANCHES) {
+          return { branch: view, seesAllBranches: false };
+        }
+        return { branch: identity.data.branch, seesAllBranches: seesAll };
+      })()
     : undefined;
   return { ...identity, data } as typeof identity & { data: BranchScope | undefined };
 }

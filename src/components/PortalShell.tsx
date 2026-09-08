@@ -9,6 +9,7 @@ import { Menu, X, LogOut } from "lucide-react";
 import logo from "@/assets/trog-logo.png";
 import { GlobalSearch } from "@/components/GlobalSearch";
 import { ProfileMenu } from "@/components/ProfileMenu";
+import { BranchIndicator } from "@/components/BranchIndicator";
 
 const nav = [
   { to: "/home", label: "Home" },
@@ -97,6 +98,7 @@ export function PortalShell({ children }: { children: ReactNode }) {
           </nav>
 
           <div className="ml-auto flex shrink-0 items-center gap-3">
+            <BranchIndicator />
             <ProfileMenu />
             <button
               className="rounded p-2 lg:hidden"
