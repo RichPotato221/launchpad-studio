@@ -1712,6 +1712,27 @@ export type Database = {
           },
         ]
       }
+      branches: {
+        Row: {
+          code: Database["public"]["Enums"]["branch"]
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          code: Database["public"]["Enums"]["branch"]
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          code?: Database["public"]["Enums"]["branch"]
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       budget_adjustments: {
         Row: {
           approved_amount: number | null
@@ -14982,13 +15003,23 @@ export type Database = {
         }
         Returns: undefined
       }
+      my_branch: { Args: never; Returns: Database["public"]["Enums"]["branch"] }
       run_asset_maintenance_check: { Args: never; Returns: undefined }
       run_kpi_alert_check: { Args: never; Returns: undefined }
       run_task_overdue_check: { Args: never; Returns: undefined }
-      same_branch_or_admin: {
-        Args: { _branch: Database["public"]["Enums"]["branch"] }
-        Returns: boolean
-      }
+      same_branch_or_admin:
+        | {
+            Args: { _branch: Database["public"]["Enums"]["branch"] }
+            Returns: {
+              error: true
+            } & "Could not choose the best candidate function between: public.same_branch_or_admin(_branch => text), public.same_branch_or_admin(_branch => branch). Try renaming the parameters or the function itself in the database so function overloading can be resolved"
+          }
+        | {
+            Args: { _branch: string }
+            Returns: {
+              error: true
+            } & "Could not choose the best candidate function between: public.same_branch_or_admin(_branch => text), public.same_branch_or_admin(_branch => branch). Try renaming the parameters or the function itself in the database so function overloading can be resolved"
+          }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
       user_dept_slugs: { Args: { _user_id: string }; Returns: string[] }
