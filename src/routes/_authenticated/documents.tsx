@@ -13,7 +13,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { notifyDocumentActivity } from "@/lib/activity.functions";
-import { FileText, Image, Paperclip, Search, Upload, Trash2, Download, File } from "lucide-react";
+import { FileText, Image, Paperclip, Search, Upload, Trash2, Download, File, ZoomIn } from "lucide-react";
+import { DocumentViewer, type ViewerFile } from "@/components/DocumentViewer";
 import { fetchDepartments } from "@/lib/portal";
 import { MemberAvatarLink } from "@/components/MemberAvatarlink";
 
@@ -107,6 +108,7 @@ function DocumentsPage() {
   const [catFilter, setCatFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [viewer, setViewer] = useState<{ file: ViewerFile; doc: DocumentRow } | null>(null);
 
 
   const isAdmin = roles.some((r) =>
@@ -162,6 +164,25 @@ function DocumentsPage() {
     } catch {
       window.open(doc.file_url, "_blank", "noreferrer");
     }
+  };
+
+  /**
+   * The document library is a private store, so a plain link does not open.
+   * We mint a short-lived signed link for previewing and opening files.
+   */
+  const openViewer = async (doc: DocumentRow) => {
+    const { data, error } = await supabase.storage
+      .from("central-documents")
+      .createSignedUrl(doc.storage_path, 60 * 60);
+    const url = data?.signedUrl ?? doc.file_url;
+    if (error && !url) {
+      toast.error("Could not open this document.");
+      return;
+    }
+    setViewer({
+      file: { title: doc.title, fileName: doc.file_name, fileType: doc.file_type, url },
+      doc,
+    });
   };
 
   const deptName = (slug: string | null) =>
