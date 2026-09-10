@@ -344,10 +344,8 @@ function DocumentsPage() {
                 <Button variant="outline" size="sm" className="flex-1 gap-1" onClick={() => download(doc)}>
                   <Download className="h-4 w-4" /> Download
                 </Button>
-                <Button asChild variant="outline" size="sm" className="px-2">
-                  <a href={doc.file_url} target="_blank" rel="noreferrer">
-                    Open
-                  </a>
+                <Button variant="outline" size="sm" className="flex-1 gap-1" onClick={() => openViewer(doc)}>
+                  <ZoomIn className="h-4 w-4" /> View
                 </Button>
                 {canDelete && (
                   <Button variant="outline" size="sm" className="px-2 text-destructive" onClick={() => handleDelete(doc)}>
@@ -368,6 +366,13 @@ function DocumentsPage() {
           </p>
         </Card>
       )}
+
+      <DocumentViewer
+        file={viewer?.file ?? null}
+        open={viewer !== null}
+        onOpenChange={(o) => !o && setViewer(null)}
+        onDownload={viewer ? () => download(viewer.doc) : undefined}
+      />
     </div>
   );
 }
