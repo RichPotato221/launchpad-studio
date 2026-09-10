@@ -1030,6 +1030,140 @@ export type Database = {
           },
         ]
       }
+      asset_condition_records: {
+        Row: {
+          asset_id: string
+          branch: Database["public"]["Enums"]["branch"] | null
+          condition: string
+          created_at: string
+          id: string
+          movement_id: string | null
+          notes: string | null
+          photo_urls: Json
+          previous_condition: string | null
+          recorded_by: string | null
+          stage: string
+        }
+        Insert: {
+          asset_id: string
+          branch?: Database["public"]["Enums"]["branch"] | null
+          condition: string
+          created_at?: string
+          id?: string
+          movement_id?: string | null
+          notes?: string | null
+          photo_urls?: Json
+          previous_condition?: string | null
+          recorded_by?: string | null
+          stage: string
+        }
+        Update: {
+          asset_id?: string
+          branch?: Database["public"]["Enums"]["branch"] | null
+          condition?: string
+          created_at?: string
+          id?: string
+          movement_id?: string | null
+          notes?: string | null
+          photo_urls?: Json
+          previous_condition?: string | null
+          recorded_by?: string | null
+          stage?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_condition_records_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_condition_records_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets_low_stock"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_condition_records_movement_id_fkey"
+            columns: ["movement_id"]
+            isOneToOne: false
+            referencedRelation: "asset_movements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      asset_custody_events: {
+        Row: {
+          actor_id: string | null
+          asset_id: string
+          branch: Database["public"]["Enums"]["branch"] | null
+          condition: string | null
+          created_at: string
+          custodian_id: string | null
+          custodian_name: string | null
+          event_type: string
+          id: string
+          location: string | null
+          movement_id: string | null
+          notes: string | null
+          status: string | null
+        }
+        Insert: {
+          actor_id?: string | null
+          asset_id: string
+          branch?: Database["public"]["Enums"]["branch"] | null
+          condition?: string | null
+          created_at?: string
+          custodian_id?: string | null
+          custodian_name?: string | null
+          event_type: string
+          id?: string
+          location?: string | null
+          movement_id?: string | null
+          notes?: string | null
+          status?: string | null
+        }
+        Update: {
+          actor_id?: string | null
+          asset_id?: string
+          branch?: Database["public"]["Enums"]["branch"] | null
+          condition?: string | null
+          created_at?: string
+          custodian_id?: string | null
+          custodian_name?: string | null
+          event_type?: string
+          id?: string
+          location?: string | null
+          movement_id?: string | null
+          notes?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_custody_events_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_custody_events_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets_low_stock"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_custody_events_movement_id_fkey"
+            columns: ["movement_id"]
+            isOneToOne: false
+            referencedRelation: "asset_movements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       asset_documents: {
         Row: {
           asset_id: string
@@ -1093,6 +1227,203 @@ export type Database = {
           },
         ]
       }
+      asset_extensions: {
+        Row: {
+          approved_by: string | null
+          created_at: string
+          decided_at: string | null
+          id: string
+          movement_id: string
+          original_return_date: string | null
+          reason: string | null
+          requested_by: string | null
+          requested_return_date: string
+          status: string
+        }
+        Insert: {
+          approved_by?: string | null
+          created_at?: string
+          decided_at?: string | null
+          id?: string
+          movement_id: string
+          original_return_date?: string | null
+          reason?: string | null
+          requested_by?: string | null
+          requested_return_date: string
+          status?: string
+        }
+        Update: {
+          approved_by?: string | null
+          created_at?: string
+          decided_at?: string | null
+          id?: string
+          movement_id?: string
+          original_return_date?: string | null
+          reason?: string | null
+          requested_by?: string | null
+          requested_return_date?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_extensions_movement_id_fkey"
+            columns: ["movement_id"]
+            isOneToOne: false
+            referencedRelation: "asset_movements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      asset_handover_records: {
+        Row: {
+          accessories: string | null
+          acknowledged_at: string
+          acknowledged_by: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          condition_summary: string | null
+          created_at: string
+          discrepancies: string | null
+          id: string
+          kind: string
+          movement_id: string
+          notes: string | null
+          person_name: string | null
+          person_role: string | null
+          photo_urls: Json
+          quantity_confirmed: number | null
+        }
+        Insert: {
+          accessories?: string | null
+          acknowledged_at?: string
+          acknowledged_by?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          condition_summary?: string | null
+          created_at?: string
+          discrepancies?: string | null
+          id?: string
+          kind: string
+          movement_id: string
+          notes?: string | null
+          person_name?: string | null
+          person_role?: string | null
+          photo_urls?: Json
+          quantity_confirmed?: number | null
+        }
+        Update: {
+          accessories?: string | null
+          acknowledged_at?: string
+          acknowledged_by?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          condition_summary?: string | null
+          created_at?: string
+          discrepancies?: string | null
+          id?: string
+          kind?: string
+          movement_id?: string
+          notes?: string | null
+          person_name?: string | null
+          person_role?: string | null
+          photo_urls?: Json
+          quantity_confirmed?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_handover_records_movement_id_fkey"
+            columns: ["movement_id"]
+            isOneToOne: false
+            referencedRelation: "asset_movements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      asset_incidents: {
+        Row: {
+          actions_taken: string | null
+          approved_outcome: string | null
+          asset_id: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          condition: string | null
+          created_at: string
+          description: string
+          estimated_cost: number | null
+          id: string
+          incident_type: string
+          investigation_status: string | null
+          movement_id: string | null
+          occurred_at: string | null
+          photo_urls: Json
+          reported_by: string | null
+          resolution: string | null
+          resolved_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          actions_taken?: string | null
+          approved_outcome?: string | null
+          asset_id?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          condition?: string | null
+          created_at?: string
+          description: string
+          estimated_cost?: number | null
+          id?: string
+          incident_type: string
+          investigation_status?: string | null
+          movement_id?: string | null
+          occurred_at?: string | null
+          photo_urls?: Json
+          reported_by?: string | null
+          resolution?: string | null
+          resolved_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          actions_taken?: string | null
+          approved_outcome?: string | null
+          asset_id?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          condition?: string | null
+          created_at?: string
+          description?: string
+          estimated_cost?: number | null
+          id?: string
+          incident_type?: string
+          investigation_status?: string | null
+          movement_id?: string | null
+          occurred_at?: string | null
+          photo_urls?: Json
+          reported_by?: string | null
+          resolution?: string | null
+          resolved_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_incidents_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_incidents_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets_low_stock"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_incidents_movement_id_fkey"
+            columns: ["movement_id"]
+            isOneToOne: false
+            referencedRelation: "asset_movements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       asset_maintenance_logs: {
         Row: {
           asset_id: string
@@ -1137,6 +1468,267 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      asset_movement_approvals: {
+        Row: {
+          comment: string | null
+          created_at: string
+          decided_by: string
+          decided_by_branch: Database["public"]["Enums"]["branch"] | null
+          decided_by_role: string | null
+          decision: string
+          id: string
+          movement_id: string
+          retrospective: boolean
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          decided_by: string
+          decided_by_branch?: Database["public"]["Enums"]["branch"] | null
+          decided_by_role?: string | null
+          decision: string
+          id?: string
+          movement_id: string
+          retrospective?: boolean
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          decided_by?: string
+          decided_by_branch?: Database["public"]["Enums"]["branch"] | null
+          decided_by_role?: string | null
+          decision?: string
+          id?: string
+          movement_id?: string
+          retrospective?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_movement_approvals_movement_id_fkey"
+            columns: ["movement_id"]
+            isOneToOne: false
+            referencedRelation: "asset_movements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      asset_movement_audit: {
+        Row: {
+          action: string
+          actor_branch: Database["public"]["Enums"]["branch"] | null
+          actor_id: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          created_at: string
+          entity: string
+          id: string
+          new_value: Json | null
+          previous_value: Json | null
+          reason: string | null
+          record_id: string | null
+        }
+        Insert: {
+          action: string
+          actor_branch?: Database["public"]["Enums"]["branch"] | null
+          actor_id?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          entity: string
+          id?: string
+          new_value?: Json | null
+          previous_value?: Json | null
+          reason?: string | null
+          record_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor_branch?: Database["public"]["Enums"]["branch"] | null
+          actor_id?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          entity?: string
+          id?: string
+          new_value?: Json | null
+          previous_value?: Json | null
+          reason?: string | null
+          record_id?: string | null
+        }
+        Relationships: []
+      }
+      asset_movement_items: {
+        Row: {
+          accessories: string | null
+          asset_id: string
+          condition_after: string | null
+          condition_before: string | null
+          created_at: string
+          dispatched: boolean
+          id: string
+          movement_id: string
+          notes: string | null
+          quantity: number
+          received: boolean
+          returned: boolean
+        }
+        Insert: {
+          accessories?: string | null
+          asset_id: string
+          condition_after?: string | null
+          condition_before?: string | null
+          created_at?: string
+          dispatched?: boolean
+          id?: string
+          movement_id: string
+          notes?: string | null
+          quantity?: number
+          received?: boolean
+          returned?: boolean
+        }
+        Update: {
+          accessories?: string | null
+          asset_id?: string
+          condition_after?: string | null
+          condition_before?: string | null
+          created_at?: string
+          dispatched?: boolean
+          id?: string
+          movement_id?: string
+          notes?: string | null
+          quantity?: number
+          received?: boolean
+          returned?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_movement_items_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_movement_items_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets_low_stock"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_movement_items_movement_id_fkey"
+            columns: ["movement_id"]
+            isOneToOne: false
+            referencedRelation: "asset_movements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      asset_movements: {
+        Row: {
+          actual_return_date: string | null
+          agreement_no: string | null
+          closed_at: string | null
+          created_at: string
+          created_by: string | null
+          department_slug: string | null
+          destination_branch: Database["public"]["Enums"]["branch"] | null
+          destination_location: string | null
+          dispatch_date: string | null
+          driver_name: string | null
+          emergency_reason: string | null
+          event_end: string | null
+          event_location: string | null
+          event_name: string | null
+          event_start: string | null
+          expected_return_date: string | null
+          id: string
+          is_emergency: boolean
+          movement_type: string
+          notes: string | null
+          original_return_date: string | null
+          overdue: boolean
+          purpose: string | null
+          purpose_notes: string | null
+          requested_by: string | null
+          responsible_name: string | null
+          responsible_person: string | null
+          source_branch: Database["public"]["Enums"]["branch"] | null
+          status: string
+          transport_details: string | null
+          updated_at: string
+          updated_by: string | null
+          vehicle_details: string | null
+        }
+        Insert: {
+          actual_return_date?: string | null
+          agreement_no?: string | null
+          closed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string | null
+          destination_branch?: Database["public"]["Enums"]["branch"] | null
+          destination_location?: string | null
+          dispatch_date?: string | null
+          driver_name?: string | null
+          emergency_reason?: string | null
+          event_end?: string | null
+          event_location?: string | null
+          event_name?: string | null
+          event_start?: string | null
+          expected_return_date?: string | null
+          id?: string
+          is_emergency?: boolean
+          movement_type?: string
+          notes?: string | null
+          original_return_date?: string | null
+          overdue?: boolean
+          purpose?: string | null
+          purpose_notes?: string | null
+          requested_by?: string | null
+          responsible_name?: string | null
+          responsible_person?: string | null
+          source_branch?: Database["public"]["Enums"]["branch"] | null
+          status?: string
+          transport_details?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          vehicle_details?: string | null
+        }
+        Update: {
+          actual_return_date?: string | null
+          agreement_no?: string | null
+          closed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          department_slug?: string | null
+          destination_branch?: Database["public"]["Enums"]["branch"] | null
+          destination_location?: string | null
+          dispatch_date?: string | null
+          driver_name?: string | null
+          emergency_reason?: string | null
+          event_end?: string | null
+          event_location?: string | null
+          event_name?: string | null
+          event_start?: string | null
+          expected_return_date?: string | null
+          id?: string
+          is_emergency?: boolean
+          movement_type?: string
+          notes?: string | null
+          original_return_date?: string | null
+          overdue?: boolean
+          purpose?: string | null
+          purpose_notes?: string | null
+          requested_by?: string | null
+          responsible_name?: string | null
+          responsible_person?: string | null
+          source_branch?: Database["public"]["Enums"]["branch"] | null
+          status?: string
+          transport_details?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          vehicle_details?: string | null
+        }
+        Relationships: []
       }
       asset_stock_movements: {
         Row: {
@@ -1240,7 +1832,11 @@ export type Database = {
       }
       assets: {
         Row: {
+          accessories: string | null
+          acquisition_method: string | null
+          archived_at: string | null
           asset_code: string | null
+          asset_ref: string | null
           barcode: string | null
           branch: Database["public"]["Enums"]["branch"] | null
           brand: string | null
@@ -1248,6 +1844,8 @@ export type Database = {
           condition: string | null
           created_at: string
           created_by: string | null
+          current_branch: Database["public"]["Enums"]["branch"] | null
+          current_custodian_id: string | null
           current_value: number | null
           custodian: string | null
           department_slug: string | null
@@ -1255,6 +1853,7 @@ export type Database = {
           description: string | null
           document_urls: Json
           facility_id: string | null
+          home_branch: Database["public"]["Enums"]["branch"] | null
           id: string
           insurance_status: string | null
           is_bookable: boolean
@@ -1262,6 +1861,7 @@ export type Database = {
           lifecycle_status: string | null
           location: string | null
           model: string | null
+          movement_status: string
           name: string
           next_maintenance_date: string | null
           notes: string | null
@@ -1275,12 +1875,18 @@ export type Database = {
           room_number: string | null
           serial_number: string | null
           status: string
+          subcategory: string | null
           unit_of_measure: string | null
           updated_at: string
+          updated_by: string | null
           warranty_expiry: string | null
         }
         Insert: {
+          accessories?: string | null
+          acquisition_method?: string | null
+          archived_at?: string | null
           asset_code?: string | null
+          asset_ref?: string | null
           barcode?: string | null
           branch?: Database["public"]["Enums"]["branch"] | null
           brand?: string | null
@@ -1288,6 +1894,8 @@ export type Database = {
           condition?: string | null
           created_at?: string
           created_by?: string | null
+          current_branch?: Database["public"]["Enums"]["branch"] | null
+          current_custodian_id?: string | null
           current_value?: number | null
           custodian?: string | null
           department_slug?: string | null
@@ -1295,6 +1903,7 @@ export type Database = {
           description?: string | null
           document_urls?: Json
           facility_id?: string | null
+          home_branch?: Database["public"]["Enums"]["branch"] | null
           id?: string
           insurance_status?: string | null
           is_bookable?: boolean
@@ -1302,6 +1911,7 @@ export type Database = {
           lifecycle_status?: string | null
           location?: string | null
           model?: string | null
+          movement_status?: string
           name: string
           next_maintenance_date?: string | null
           notes?: string | null
@@ -1315,12 +1925,18 @@ export type Database = {
           room_number?: string | null
           serial_number?: string | null
           status?: string
+          subcategory?: string | null
           unit_of_measure?: string | null
           updated_at?: string
+          updated_by?: string | null
           warranty_expiry?: string | null
         }
         Update: {
+          accessories?: string | null
+          acquisition_method?: string | null
+          archived_at?: string | null
           asset_code?: string | null
+          asset_ref?: string | null
           barcode?: string | null
           branch?: Database["public"]["Enums"]["branch"] | null
           brand?: string | null
@@ -1328,6 +1944,8 @@ export type Database = {
           condition?: string | null
           created_at?: string
           created_by?: string | null
+          current_branch?: Database["public"]["Enums"]["branch"] | null
+          current_custodian_id?: string | null
           current_value?: number | null
           custodian?: string | null
           department_slug?: string | null
@@ -1335,6 +1953,7 @@ export type Database = {
           description?: string | null
           document_urls?: Json
           facility_id?: string | null
+          home_branch?: Database["public"]["Enums"]["branch"] | null
           id?: string
           insurance_status?: string | null
           is_bookable?: boolean
@@ -1342,6 +1961,7 @@ export type Database = {
           lifecycle_status?: string | null
           location?: string | null
           model?: string | null
+          movement_status?: string
           name?: string
           next_maintenance_date?: string | null
           notes?: string | null
@@ -1355,8 +1975,10 @@ export type Database = {
           room_number?: string | null
           serial_number?: string | null
           status?: string
+          subcategory?: string | null
           unit_of_measure?: string | null
           updated_at?: string
+          updated_by?: string | null
           warranty_expiry?: string | null
         }
         Relationships: [
@@ -14699,6 +15321,16 @@ export type Database = {
         Returns: boolean
       }
       can_post_cross_branch: { Args: { _user_id: string }; Returns: boolean }
+      can_see_movement: {
+        Args: {
+          _destination: Database["public"]["Enums"]["branch"]
+          _requested_by: string
+          _responsible: string
+          _source: Database["public"]["Enums"]["branch"]
+        }
+        Returns: boolean
+      }
+      can_see_movement_id: { Args: { _movement_id: string }; Returns: boolean }
       can_view_all_kpis: { Args: { _user_id: string }; Returns: boolean }
       can_view_checkup_watch: { Args: { _user_id: string }; Returns: boolean }
       can_view_profile: {
