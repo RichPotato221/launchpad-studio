@@ -1,65 +1,56 @@
+# Inter-Branch Asset Movement & Resource Loan Agreement
 
-# Calendar Sync (Google + Outlook)
+Adds a real, database-backed asset movement system to the Office of the Resource Administrator, built on top of the asset register you already have (assets, QR tokens, categories, custodians, branches).
 
-One-way push from portal → each connected user's Google Calendar and/or Microsoft Outlook. Fires immediately on event create/update/delete. Retries failures. Existing `.ics` subscribe feed stays as fallback.
+## What you get
 
-## What you'll do (one-time setup)
+**Asset profile upgrade**
+- Each asset gets a permanent reference (TRG-ASSET-000001) plus its QR label, printable.
+- Home branch stays fixed; current branch, location, custodian and condition update as the asset moves.
+- New statuses: Available, Reserved, On Loan, In Transit, At Event, Under Maintenance, Damaged, Lost, Stolen, Disposed, Retired, Archived. Assets with history are archived, never deleted.
 
-1. I'll open two connector setup forms — **Google Calendar** and **Microsoft Outlook** App User Connector clients.
-2. Paste your Google Cloud OAuth Client ID/Secret and your Microsoft Entra Client ID/Secret into the respective forms.
-3. Add this exact redirect URI in **both** provider consoles:
-   `https://connector-gateway.lovable.dev/api/v1/app-users/oauth2/callback`
-4. Ensure **offline access** is enabled on both clients (needed for background sync).
+**Movement agreements**
+- Numbered agreements (TROG-MOV-2026-000001) covering temporary inter-branch loan, permanent transfer, event movement, internal movement, other.
+- Captures source/destination branch, purpose, requester, responsible person, department, dates, transport, notes, and a schedule of one or many assets.
+- Workflow: Draft → Requested → Pending approval → Approved → Ready for dispatch → In transit → Received → On loan → Return requested → Return in transit → Returned → Closed, plus Rejected, Overdue, Incident review, Cancelled.
+- A requester can never approve their own request; emergency movements can be recorded first and approved afterwards, with the reason kept.
 
-## What I'll build
+**Handover, receipt and return**
+- Dispatch screen: confirm assets, quantity, condition, accessories, transport, photos, then a digital acknowledgement recording name, role, branch, time.
+- Receiving branch scans the QR or opens the agreement and confirms what arrived; discrepancies open an incident instead of closing quietly.
+- Return runs the same way in reverse, with inspection and condition update before closure.
+- Temporary loans keep the home branch; permanent transfers change it only after approval and completed handover, and the original branch stays on record.
 
-### 1. Database (migration)
-- `app_user_connections` — encrypted per-user Google/Outlook connection keys.
-- `calendar_sync_map` — maps (portal event_id, user_id, provider) → provider event ID, so updates/deletes hit the right calendar entry.
-- `calendar_sync_log` — every sync attempt: status (success/failed/retry), error, timestamp. For debugging + retry worker.
-- All tables RLS-protected: users see only their own rows; service_role for backend workers.
+**Overdue, extensions, incidents**
+- Automatic overdue flagging with reminders before and after the due date, worded neutrally, and escalation at 1, 3 and 7 days.
+- Extension requests keep the original return date and record the new one, reason, requester and approver.
+- Incidents for damage, loss, theft, missing accessory, quantity or condition discrepancy, with status, photos, estimated impact, actions and outcome. Open incidents block closing an agreement.
 
-### 2. Server functions (`createServerFn`, protected)
-- `startGoogleCalendarConnect` / `startOutlookConnect` → popup OAuth consent.
-- `completeCalendarConnect` → exchanges one-time code, encrypts + stores connection key.
-- `disconnectCalendar` → revokes connection + purges sync map for that provider.
-- `getCalendarConnectionStatus` → shows Connected/Not connected in Profile UI.
-- `syncEventToUserCalendars(eventId, action)` → push create/update/delete to every connected user for a given portal event.
-- `retryFailedSyncs` → cron-invoked (every 15 min) to retry entries in `calendar_sync_log` where status = 'failed' and attempts < 5, exponential backoff.
+**Custody history and audit trail**
+- Every asset shows a timeline: location, branch, custodian, agreement, handover, receipt, return, closure.
+- Immutable audit records for creation, updates, scans, approvals, dispatch, receipt, return, status/condition/custodian changes, incidents, extensions, cancellation, archiving and document generation. Members cannot edit or delete them.
 
-### 3. Immediate sync triggers
-Instead of a DB trigger (which can't call the connector gateway), the existing Events page (`_authenticated/events.tsx`) calls `syncEventToUserCalendars` right after successful insert/update/delete in Supabase. Fire-and-forget with `.catch()` so calendar sync never blocks the user's action.
+**Dashboard, reports, agreement document**
+- Dashboard counters (total, available, reserved, on loan, in transit, at event, overdue, damaged, lost, stolen, under maintenance) plus assets by branch, pending approvals, awaiting receipt, due for return, open incidents and recent activity.
+- Filterable reports (branch, department, asset, category, status, condition, movement type, date, custodian, agreement, user) exportable to CSV, with printable PDF for the register and movement reports.
+- A professional printable agreement carrying the TROGKC header, agreement number, full schedule, QR references, confirmations, the 13 agreement terms and audit information — view, download, print.
 
-### 4. UI
-- **Profile page** → new "Connected Calendars" card: two buttons (Google, Outlook), each shows Connected ✓ / Connect / Disconnect. Also a "Sync status" line: last successful sync + link to log if there are failures.
-- **Events page** → small badge on each event: "Synced to N calendars" (for admins only).
+**Notifications**
+- In-app notices for new requests, approval required, approved, rejected, ready for dispatch, dispatch confirmed, receipt required, receipt confirmed, return due, overdue, incident, maintenance, extensions and closure, sent through the portal's existing notification engine so email follows the same branch rules already in place.
 
-### 5. Public API route
-`/api/public/hooks/retry-calendar-syncs` — cron-callable endpoint (HMAC-verified) that pg_cron hits every 15 min to drive the retry worker.
+**Who can do what**
+- Senior Pastors: church-wide oversight.
+- Resource Administrator: full operation of register, QR, movements, dispatch, receipt, returns, incidents, reports.
+- Branch leaders: their own branch plus authorised inter-branch transactions.
+- Department leaders: request resources for their department.
+- Everyone else: no access. Enforced in the database, not just the screens.
 
-## Scope of sync
-- **What syncs:** all rows in `events` table with `parent_event_id IS NULL` (recurring parents push RRULE; child occurrences skipped, calendars expand them).
-- **Recurring events:** mapped to Google/Outlook `recurrence` field (daily/weekly/monthly + until).
-- **Fields synced:** title, description, location, start/end, all-day flag, RRULE.
-- **Tasks with due dates:** NOT synced (per your answer — only church-wide events).
-- **RSVPs:** NOT synced back (one-way only).
+## Technical notes
 
-## Reliability
-- Every gateway call wrapped in try/catch; failures written to `calendar_sync_log` with error text + attempt count.
-- Retry worker runs every 15 min, exponential backoff (5m → 30m → 2h → 6h → 24h), gives up after 5 attempts.
-- 401 from provider → mark connection as `needs_reauth`, notify user in-app, stop retrying until reconnect.
-- Sync failures never block the portal event save.
-
-## Existing functionality preserved
-- `.ics` calendar feed (`/api/public/calendar.ics`) stays as-is for users who prefer manual subscribe.
-- All existing RLS policies untouched.
-- No changes to events schema, roster logic, or attendance.
-
-## Order of execution
-1. You configure the two OAuth clients (I'll prompt).
-2. I create the migration (tables + RLS + grants + pg_cron entry).
-3. I write the server functions + AES-GCM crypto helper.
-4. I add the Profile UI card + Events page hook.
-5. I verify with a test event + document how to check sync status.
-
-Ready to proceed? I'll start by opening the two connector setup forms.
+- New tables: `asset_qr_codes`, `asset_movements`, `asset_movement_items`, `asset_movement_approvals`, `asset_handover_records`, `asset_condition_records`, `asset_incidents`, `asset_extensions`, `asset_custody_events`, `asset_movement_audit`; existing `assets`, `branches`, `departments`, `asset_documents`, `asset_maintenance_logs`, `user_roles` are reused rather than duplicated.
+- Sequential human numbers via Postgres sequences + `BEFORE INSERT` triggers (`TRG-ASSET-%06d`, `TROG-MOV-YYYY-%06d`); unique constraints on asset code and QR token.
+- Status transitions, self-approval blocking, unavailable-asset blocking and open-incident closure blocking enforced by triggers/check constraints, not client code.
+- RLS: branch isolation using the existing `my_branch()` / `same_branch_or_admin()` helpers, extended with source/destination branch visibility for movement rows; `senior_apostle` and resource-administrator role get church-wide read. GRANTs on every new table.
+- Audit rows written by triggers; no update/delete grants for `authenticated`.
+- Frontend: new `MovementsModule.tsx`, `AssetProfile.tsx` (custody timeline), `IncidentsModule.tsx`, `MovementAgreementDoc.tsx` (print/PDF via browser print stylesheet + jsPDF for download), QR scan via device camera (`html5-qrcode`) with manual code entry fallback; wired into the existing Resource Center tabs and dashboard.
+- Reports extended in `ResourceReports.tsx` with the new filter set and CSV export using the existing `exportRows` helper.
