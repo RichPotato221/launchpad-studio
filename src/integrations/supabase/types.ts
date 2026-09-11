@@ -15315,6 +15315,12 @@ export type Database = {
         Args: { _approve: boolean; _user_id: string }
         Returns: undefined
       }
+      asset_movement_recipients: {
+        Args: { _movement_id: string }
+        Returns: {
+          user_id: string
+        }[]
+      }
       can_access_admin_panel: { Args: { _user_id: string }; Returns: boolean }
       can_manage_meeting: {
         Args: { _meeting_id: string; _user_id: string }
@@ -15338,6 +15344,7 @@ export type Database = {
         Returns: boolean
       }
       can_view_rsvp_reasons: { Args: { _user_id: string }; Returns: boolean }
+      flag_overdue_asset_movements: { Args: never; Returns: number }
       generate_upcoming_recurring_events: { Args: never; Returns: undefined }
       get_all_uploads: {
         Args: never
@@ -15636,6 +15643,15 @@ export type Database = {
         Returns: undefined
       }
       my_branch: { Args: never; Returns: Database["public"]["Enums"]["branch"] }
+      notify_asset_movement: {
+        Args: {
+          _kind: string
+          _message: string
+          _movement_id: string
+          _title: string
+        }
+        Returns: number
+      }
       run_asset_maintenance_check: { Args: never; Returns: undefined }
       run_kpi_alert_check: { Args: never; Returns: undefined }
       run_task_overdue_check: { Args: never; Returns: undefined }
