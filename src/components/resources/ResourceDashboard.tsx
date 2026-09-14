@@ -115,6 +115,11 @@ export default function ResourceDashboard() {
         <Widget label="Asset utilisation" value={`${m.utilisation}%`} sub="Share of assets in active use" rag={ragForPct(m.utilisation, 40, 15)} />
         <Widget label="Replacement forecast" value={money(m.forecast.total)} sub={`${m.forecast.items.length} item(s) next 12 months`} rag={m.forecast.items.length > 10 ? "red" : m.forecast.items.length ? "amber" : "green"} />
         <Widget label="Health & safety compliance" value={`${m.safetyPct}%`} sub={`${m.lowStock.length} stock item(s) below minimum`} rag={ragForPct(m.safetyPct, 95, 80)} />
+
+        <Widget label="Movement agreements open" value={String(m.movementsOpen)} sub="Assets currently away from home branch" rag={ragForOverdue(m.movementsOpen, 5, 15)} />
+        <Widget label="Awaiting approval" value={String(m.movementsPending)} sub="Movement requests to review" rag={ragForOverdue(m.movementsPending, 1, 5)} />
+        <Widget label="Overdue returns (agreements)" value={String(m.movementsOverdue)} sub="Past their agreed return date" rag={ragForOverdue(m.movementsOverdue)} />
+        <Widget label="Open asset incidents" value={String(m.incidentsOpen)} sub="Damage, loss or discrepancy under review" rag={ragForOverdue(m.incidentsOpen)} />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
