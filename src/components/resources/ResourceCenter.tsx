@@ -51,6 +51,9 @@ export default function ResourceCenter({ departmentSlug, currentUserId }: Worksp
           <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
           <TabsTrigger value="assets">Asset Register &amp; QR</TabsTrigger>
           <TabsTrigger value="allocation">Allocation &amp; Requests</TabsTrigger>
+          <TabsTrigger value="movements">Inter-Branch Movements</TabsTrigger>
+          <TabsTrigger value="incidents">Incidents</TabsTrigger>
+          <TabsTrigger value="movereports">Enterprise Asset Reports</TabsTrigger>
           <TabsTrigger value="facilities">Facilities &amp; Bookings</TabsTrigger>
           <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
           <TabsTrigger value="inventory">Inventory &amp; Procurement</TabsTrigger>
