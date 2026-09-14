@@ -29,12 +29,12 @@ function Widget({ label, value, sub, rag }: { label: string; value: string; sub?
 export default function ResourceDashboard() {
   const [d, setD] = useState<any>({
     assets: [], facilities: [], tickets: [], requests: [], checkouts: [],
-    projects: [], inventory: [], risks: [], training: [],
+    projects: [], inventory: [], risks: [], training: [], movements: [], incidents: [],
   });
 
   useEffect(() => {
     (async () => {
-      const [assets, facilities, tickets, requests, checkouts, projects, inventory, risks, training] = await Promise.all([
+      const [assets, facilities, tickets, requests, checkouts, projects, inventory, risks, training, movements, incidents] = await Promise.all([
         sb.from("assets").select("*"),
         sb.from("res_facilities").select("*"),
         sb.from("res_maintenance_tickets").select("*"),
