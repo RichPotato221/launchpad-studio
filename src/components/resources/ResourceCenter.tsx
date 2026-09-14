@@ -67,6 +67,9 @@ export default function ResourceCenter({ departmentSlug, currentUserId }: Worksp
           <TabsContent value="dashboard" className="mt-6"><ResourceDashboard /></TabsContent>
           <TabsContent value="assets" className="mt-6"><AssetRegisterModule canManage={canManage} currentUserId={currentUserId} /></TabsContent>
           <TabsContent value="allocation" className="mt-6"><AllocationModule canManage={canManage} isChair={isChair} currentUserId={currentUserId} /></TabsContent>
+          <TabsContent value="movements" className="mt-6"><MovementsModule canManage={canManage} isChair={isChair} currentUserId={currentUserId} /></TabsContent>
+          <TabsContent value="incidents" className="mt-6"><AssetIncidentsModule canManage={canManage} currentUserId={currentUserId} /></TabsContent>
+          <TabsContent value="movereports" className="mt-6"><AssetMovementReports /></TabsContent>
           <TabsContent value="facilities" className="mt-6"><FacilitiesModule canManage={canManage} currentUserId={currentUserId} /></TabsContent>
           <TabsContent value="maintenance" className="mt-6"><MaintenanceModule canManage={canManage} currentUserId={currentUserId} /></TabsContent>
           <TabsContent value="inventory" className="mt-6"><InventoryModule canManage={canManage} currentUserId={currentUserId} /></TabsContent>
