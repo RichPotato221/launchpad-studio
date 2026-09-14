@@ -44,11 +44,14 @@ export default function ResourceDashboard() {
         sb.from("res_inventory_items").select("*"),
         sb.from("res_risks").select("*"),
         sb.from("res_training_records").select("*"),
+        sb.from("asset_movements").select("*"),
+        sb.from("asset_incidents").select("*"),
       ]);
       setD({
         assets: assets.data ?? [], facilities: facilities.data ?? [], tickets: tickets.data ?? [],
         requests: requests.data ?? [], checkouts: checkouts.data ?? [], projects: projects.data ?? [],
         inventory: inventory.data ?? [], risks: risks.data ?? [], training: training.data ?? [],
+        movements: movements.data ?? [], incidents: incidents.data ?? [],
       });
     })();
   }, []);
