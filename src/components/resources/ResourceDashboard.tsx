@@ -29,12 +29,12 @@ function Widget({ label, value, sub, rag }: { label: string; value: string; sub?
 export default function ResourceDashboard() {
   const [d, setD] = useState<any>({
     assets: [], facilities: [], tickets: [], requests: [], checkouts: [],
-    projects: [], inventory: [], risks: [], training: [],
+    projects: [], inventory: [], risks: [], training: [], movements: [], incidents: [],
   });
 
   useEffect(() => {
     (async () => {
-      const [assets, facilities, tickets, requests, checkouts, projects, inventory, risks, training] = await Promise.all([
+      const [assets, facilities, tickets, requests, checkouts, projects, inventory, risks, training, movements, incidents] = await Promise.all([
         sb.from("assets").select("*"),
         sb.from("res_facilities").select("*"),
         sb.from("res_maintenance_tickets").select("*"),
@@ -44,11 +44,14 @@ export default function ResourceDashboard() {
         sb.from("res_inventory_items").select("*"),
         sb.from("res_risks").select("*"),
         sb.from("res_training_records").select("*"),
+        sb.from("asset_movements").select("*"),
+        sb.from("asset_incidents").select("*"),
       ]);
       setD({
         assets: assets.data ?? [], facilities: facilities.data ?? [], tickets: tickets.data ?? [],
         requests: requests.data ?? [], checkouts: checkouts.data ?? [], projects: projects.data ?? [],
         inventory: inventory.data ?? [], risks: risks.data ?? [], training: training.data ?? [],
+        movements: movements.data ?? [], incidents: incidents.data ?? [],
       });
     })();
   }, []);
@@ -88,6 +91,10 @@ export default function ResourceDashboard() {
       activeProjects, openRequests, lowStock, readiness, utilisation, forecast, safetyPct, topRisks,
       byCategory, uncategorised,
       available: liveAssets.length - openOut.length,
+      movementsOpen: (d.movements as any[]).filter((x) => !["CLOSED", "REJECTED", "CANCELLED"].includes(x.status)).length,
+      movementsOverdue: (d.movements as any[]).filter((x) => x.overdue || x.status === "OVERDUE").length,
+      movementsPending: (d.movements as any[]).filter((x) => ["REQUESTED", "PENDING_APPROVAL"].includes(x.status)).length,
+      incidentsOpen: (d.incidents as any[]).filter((x) => ["REPORTED", "UNDER_REVIEW", "ACTION_REQUIRED"].includes(x.status)).length,
     };
   }, [d]);
 
@@ -108,6 +115,11 @@ export default function ResourceDashboard() {
         <Widget label="Asset utilisation" value={`${m.utilisation}%`} sub="Share of assets in active use" rag={ragForPct(m.utilisation, 40, 15)} />
         <Widget label="Replacement forecast" value={money(m.forecast.total)} sub={`${m.forecast.items.length} item(s) next 12 months`} rag={m.forecast.items.length > 10 ? "red" : m.forecast.items.length ? "amber" : "green"} />
         <Widget label="Health & safety compliance" value={`${m.safetyPct}%`} sub={`${m.lowStock.length} stock item(s) below minimum`} rag={ragForPct(m.safetyPct, 95, 80)} />
+
+        <Widget label="Movement agreements open" value={String(m.movementsOpen)} sub="Assets currently away from home branch" rag={ragForOverdue(m.movementsOpen, 5, 15)} />
+        <Widget label="Awaiting approval" value={String(m.movementsPending)} sub="Movement requests to review" rag={ragForOverdue(m.movementsPending, 1, 5)} />
+        <Widget label="Overdue returns (agreements)" value={String(m.movementsOverdue)} sub="Past their agreed return date" rag={ragForOverdue(m.movementsOverdue)} />
+        <Widget label="Open asset incidents" value={String(m.incidentsOpen)} sub="Damage, loss or discrepancy under review" rag={ragForOverdue(m.incidentsOpen)} />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
