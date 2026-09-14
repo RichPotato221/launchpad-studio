@@ -91,6 +91,10 @@ export default function ResourceDashboard() {
       activeProjects, openRequests, lowStock, readiness, utilisation, forecast, safetyPct, topRisks,
       byCategory, uncategorised,
       available: liveAssets.length - openOut.length,
+      movementsOpen: (d.movements as any[]).filter((x) => !["CLOSED", "REJECTED", "CANCELLED"].includes(x.status)).length,
+      movementsOverdue: (d.movements as any[]).filter((x) => x.overdue || x.status === "OVERDUE").length,
+      movementsPending: (d.movements as any[]).filter((x) => ["REQUESTED", "PENDING_APPROVAL"].includes(x.status)).length,
+      incidentsOpen: (d.incidents as any[]).filter((x) => ["REPORTED", "UNDER_REVIEW", "ACTION_REQUIRED"].includes(x.status)).length,
     };
   }, [d]);
 
