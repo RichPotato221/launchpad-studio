@@ -58,7 +58,11 @@ function AuthPage() {
   const [deptSlug, setDeptSlug] = useState<string>("");
   const [requestedRole, setRequestedRole] = useState("");
   const [pendingMsg, setPendingMsg] = useState(false);
+  const [deptSearch, setDeptSearch] = useState("");
   const depts = useQuery({ queryKey: ["departments"], queryFn: fetchDepartments });
+  const filteredDepts = [...(depts.data ?? [])]
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .filter((d) => d.name.toLowerCase().includes(deptSearch.trim().toLowerCase()));
 
   const goAfterAuth = () => {
     const next = safeNextPath();
@@ -281,14 +285,35 @@ function AuthPage() {
                   <Label>Department you serve in *</Label>
                   <Select value={deptSlug} onValueChange={setDeptSlug} required>
                     <SelectTrigger><SelectValue placeholder="Select a department" /></SelectTrigger>
-                    <SelectContent className="max-h-72">
-                      {[...(depts.data ?? [])]
-                        .sort((a, b) => a.name.localeCompare(b.name))
-                        .map((d) => (
-                          <SelectItem key={d.slug} value={d.slug}>{d.name}</SelectItem>
-                        ))}
+                    <SelectContent className="max-h-80">
+                      <div className="sticky top-0 z-10 bg-popover p-2">
+                        <Input
+                          autoFocus
+                          placeholder="Search departments…"
+                          value={deptSearch}
+                          onChange={(e) => setDeptSearch(e.target.value)}
+                          onKeyDown={(e) => e.stopPropagation()}
+                        />
+                      </div>
+                      {depts.isLoading && (
+                        <p className="px-3 py-2 text-sm text-muted-foreground">Loading departments…</p>
+                      )}
+                      {depts.isError && (
+                        <p className="px-3 py-2 text-sm text-muted-foreground">
+                          Departments could not load. Please check your connection and try again.
+                        </p>
+                      )}
+                      {!depts.isLoading && !depts.isError && filteredDepts.length === 0 && (
+                        <p className="px-3 py-2 text-sm text-muted-foreground">No department matches that search.</p>
+                      )}
+                      {filteredDepts.map((d) => (
+                        <SelectItem key={d.slug} value={d.slug}>{d.name}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Can’t see yours? Type a keyword above, or pick the closest one — an admin can move you after approval.
+                  </p>
                 </div>
                 <div>
                   <Label htmlFor="role">Your role in that department *</Label>
