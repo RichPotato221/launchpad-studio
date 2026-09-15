@@ -58,7 +58,11 @@ function AuthPage() {
   const [deptSlug, setDeptSlug] = useState<string>("");
   const [requestedRole, setRequestedRole] = useState("");
   const [pendingMsg, setPendingMsg] = useState(false);
+  const [deptSearch, setDeptSearch] = useState("");
   const depts = useQuery({ queryKey: ["departments"], queryFn: fetchDepartments });
+  const filteredDepts = [...(depts.data ?? [])]
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .filter((d) => d.name.toLowerCase().includes(deptSearch.trim().toLowerCase()));
 
   const goAfterAuth = () => {
     const next = safeNextPath();
