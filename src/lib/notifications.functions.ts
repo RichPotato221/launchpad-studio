@@ -9,10 +9,24 @@ import type { NotificationRequest } from "@/lib/notifications/types";
 export const notify = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: NotificationRequest) => d)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const { dispatchNotification } = await import("@/lib/notifications/service.server");
     try {
-      return await dispatchNotification(data);
+      // Stamp the responsible person onto every notice, so recipients can see
+      // who it came from and reply directly to them.
+      let request = data;
+      const meta = (data.metadata ?? {}) as Record<string, unknown>;
+      if (!meta["actor_email"]) {
+        const { data: me } = await (context.supabase as any)
+          .from("profiles")
+          .select("full_name, email")
+          .eq("id", context.userId)
+          .maybeSingle();
+        if (me?.email) {
+          request = { ...data, metadata: { ...meta, actor_email: me.email, actor_name: me.full_name ?? null } };
+        }
+      }
+      return await dispatchNotification(request);
     } catch (err: unknown) {
       console.error("notify failed:", (err as Error)?.message);
       return { queued: 0, skipped: 0, processed: 0, sent: 0, failed: 0, errors: ["dispatch_failed"] };
