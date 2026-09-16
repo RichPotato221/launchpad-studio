@@ -307,6 +307,7 @@ function AdminPage() {
                   onAssign={(role, dept) => assignRole(p.id, role, dept, p.roles ?? [])}
                   onRemove={removeRole}
                   onMoveBranch={(b) => moveBranch(p.id, b)}
+                  onDeleteMember={() => deleteMember(p.id, p.full_name ?? p.email ?? "this member")}
                 />
               ))}
               {group.members.length === 0 && (
@@ -331,6 +332,7 @@ function AdminPage() {
                 onAssign={(role, dept) => assignRole(p.id, role, dept, p.roles ?? [])}
                 onRemove={removeRole}
                 onMoveBranch={(b) => moveBranch(p.id, b)}
+                onDeleteMember={() => deleteMember(p.id, p.full_name ?? p.email ?? "this member")}
               />
             ))}
           </div>
@@ -346,12 +348,14 @@ function UserRow({
   onAssign,
   onRemove,
   onMoveBranch,
+  onDeleteMember,
 }: {
   profile: any;
   departments: { slug: string; name: string }[];
   onAssign: (role: AppRole, department: string | null) => void;
   onRemove: (id: string) => void;
   onMoveBranch: (branch: string) => void;
+  onDeleteMember: () => void;
 }) {
   const [role, setRole] = useState<AppRole>("team_member");
   const [dept, setDept] = useState<string>("");
