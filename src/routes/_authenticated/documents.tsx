@@ -91,10 +91,22 @@ const formatBytes = (bytes: number | null) => {
 async function fetchDocuments(): Promise<DocumentRow[]> {
   const { data, error } = await supabase
     .from("documents")
-    .select("*, uploader:profiles!documents_uploaded_by_fkey(id, full_name, avatar_url)")
+    .select("*")
     .order("created_at", { ascending: false });
   if (error) throw error;
-  return (data ?? []) as unknown as DocumentRow[];
+  const rows = (data ?? []) as unknown as DocumentRow[];
+
+  // There is no database relationship between documents and profiles, so the
+  // uploader details are fetched separately and matched up here.
+  const uploaderIds = Array.from(new Set(rows.map((r) => r.uploaded_by).filter(Boolean)));
+  if (uploaderIds.length === 0) return rows;
+
+  const { data: people } = await supabase
+    .from("profiles")
+    .select("id, full_name, avatar_url")
+    .in("id", uploaderIds);
+  const byId = new Map((people ?? []).map((p: any) => [p.id, p]));
+  return rows.map((r) => ({ ...r, uploader: byId.get(r.uploaded_by) as DocumentRow["uploader"] }));
 }
 
 function DocumentsPage() {
