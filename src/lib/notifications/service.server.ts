@@ -578,11 +578,30 @@ export async function processPendingNotifications(limit = 60): Promise<ProcessRe
       body.buttons = buttons;
     }
 
+    /**
+     * Every notice names the person responsible for it and lets the member
+     * reply straight to them, instead of to the portal mailbox.
+     */
+    const actorEmail = typeof payload.actor_email === "string" ? payload.actor_email : null;
+    const actorName = typeof payload.actor_name === "string" ? payload.actor_name : null;
+    if (actorEmail || actorName) {
+      body.details = [
+        ...(body.details ?? []),
+        ["Sent by", [actorName, actorEmail ? `<${actorEmail}>` : null].filter(Boolean).join(" ")],
+      ];
+      if (actorEmail) {
+        body.footerNote = [body.footerNote, `Replies to this email go to ${actorName ?? actorEmail} (${actorEmail}).`]
+          .filter(Boolean)
+          .join(" ");
+      }
+    }
+
     const result = await sendMail({
       to: row.recipient_email,
       subject: composed.subject,
       text: renderText(body),
       html: renderHtml(body),
+      ...(actorEmail ? { replyTo: { name: actorName, email: actorEmail } } : {}),
       ...(ics ? { ics: { ...ics, filename: "invite.ics" } } : {}),
     });
 

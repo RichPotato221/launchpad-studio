@@ -40,6 +40,8 @@ export interface MailParts {
   subject: string;
   text: string;
   html?: string;
+  /** Person responsible for this notice — replies go to them, not the mailbox. */
+  replyTo?: { name?: string | null; email: string };
   /** Raw iCalendar payload, attached as text/calendar + .ics file. */
   ics?: { content: string; method: "REQUEST" | "CANCEL"; filename?: string };
   headers?: Record<string, string>;
@@ -55,6 +57,13 @@ export function buildRawMessage(parts: MailParts): string {
     `Subject: ${encodeHeader(parts.subject)}`,
     "MIME-Version: 1.0",
   ];
+  if (parts.replyTo?.email?.includes("@")) {
+    lines.push(
+      parts.replyTo.name
+        ? `Reply-To: ${encodeHeader(parts.replyTo.name)} <${parts.replyTo.email}>`
+        : `Reply-To: ${parts.replyTo.email}`,
+    );
+  }
   for (const [k, v] of Object.entries(parts.headers ?? {})) lines.push(`${k}: ${v}`);
 
   lines.push(`Content-Type: multipart/mixed; boundary="${mixed}"`, "");
