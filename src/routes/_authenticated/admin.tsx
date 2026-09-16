@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { notifyMemberDecision, notifyRoleChange } from "@/lib/activity.functions";
+import { removeMember } from "@/lib/memberAdmin.functions";
 import PhotoField from "@/components/common/PhotoField";
  
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -174,6 +175,18 @@ function AdminPage() {
 
 
  
+  /** Chairpersons may remove a member from the portal entirely. */
+  const deleteMember = async (userId: string, name: string) => {
+    if (!window.confirm(`Remove ${name} from the portal? Their sign-in and access are withdrawn immediately.`)) return;
+    try {
+      const res = await removeMember({ data: { userId } });
+      toast.success(res.deleted ? `${res.name} removed from the portal` : `${res.name} — ${res.note}`);
+      qc.invalidateQueries({ queryKey: ["all-profiles"] });
+    } catch (err: unknown) {
+      toast.error((err as Error)?.message ?? "Could not remove this member");
+    }
+  };
+
   const approve = async (userId: string, ok: boolean) => {
     const { error } = await supabase.rpc("approve_member", { _user_id: userId, _approve: ok });
     if (error) return toast.error(error.message);
