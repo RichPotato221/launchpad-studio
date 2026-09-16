@@ -449,6 +449,15 @@ function UserRow({
         <Button size="sm" onClick={() => onAssign(role, dept || null)}>
           Assign
         </Button>
+
+        <Button
+          size="sm"
+          variant="outline"
+          className="text-red-600 hover:bg-red-50 hover:text-red-700"
+          onClick={onDeleteMember}
+        >
+          Remove member
+        </Button>
       </div>
     </div>
   );
