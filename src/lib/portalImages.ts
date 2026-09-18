@@ -64,7 +64,7 @@ export const DEPARTMENT_HERO: Record<string, { src: string; alt: string }> = {
   elders: { src: eldersCover.url, alt: "Elders emblem" },
   "life-groups": { src: lifeGroupsCover.url, alt: "Life Groups emblem" },
   "hand-of-christ": { src: handOfChristCover.url, alt: "Hand of Christ emblem" },
-  ushers: { src: ushersCover.url, alt: "Ushers Department emblem" },
+  ushers: { src: ushersCover.url, alt: "Ushering Department emblem" },
 };
 
 // Extra imagery per department
