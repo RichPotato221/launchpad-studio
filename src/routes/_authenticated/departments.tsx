@@ -4,7 +4,16 @@ import { fetchDepartments } from "@/lib/portal";
 import { Card } from "@/components/ui/card";
 
 export const Route = createFileRoute("/_authenticated/departments")({
-  head: () => ({ meta: [{ title: "Departments — TRoGKC Portal" }] }),
+  head: () => ({
+    meta: [
+      { title: "Departments — TRoGKC Portal" },
+      { name: "description", content: "Open every TRoGKC leadership, ministry, support, and School of Ministry department portal." },
+      { property: "og:title", content: "Departments — TRoGKC Portal" },
+      { property: "og:description", content: "Open every TRoGKC leadership, ministry, support, and School of Ministry department portal." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: DepartmentsLayout,
 });
 
@@ -21,6 +30,7 @@ function DepartmentsIndex() {
   if (isLoading) return <div className="mx-auto max-w-7xl p-8 text-muted-foreground">Loading…</div>;
 
   const groups: { key: string; label: string; note?: string }[] = [
+    { key: "leadership", label: "Administration", note: "Administration and church-wide leadership portals." },
     { key: "governmental", label: "Governmental Structure", note: "Oversight and pastoral leadership." },
     { key: "functional", label: "Functional Structure", note: "Weekly service operations." },
     { key: "developmental", label: "Developmental Structure", note: "Discipleship pathways and ministry schools." },
