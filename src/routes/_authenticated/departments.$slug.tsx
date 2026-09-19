@@ -28,6 +28,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import { DEPARTMENT_HERO, DEPARTMENT_GALLERY } from "@/lib/portalImages";
+import LegalComplianceCenter from "@/components/legal/LegalComplianceCenter";
+import { LEGAL_SECTIONS, type LegalSection } from "@/lib/legalCompliance";
 
 
 export const Route = createFileRoute("/_authenticated/departments/$slug")({
@@ -50,7 +52,8 @@ function DepartmentPortal() {
   const gallery = DEPARTMENT_GALLERY[slug] ?? [];
   const workspace = membership.data?.isMember ? getWorkspaceFor(slug) : null;
   // The Finance department already has a full Financial Command Centre in its workspace.
-  const showFinanceTab = slug !== "finance" && slug !== "finance-administration";
+  const isLegal = slug === "protocol";
+  const showFinanceTab = slug !== "finance" && slug !== "finance-administration" && !isLegal;
   const WorkspaceComponent = workspace?.component;
   // Departments whose operations centre already ships a specialised AI assistant.
   const BUILT_IN_ASSISTANT = new Set([
@@ -103,9 +106,10 @@ function DepartmentPortal() {
               <SelectItem value="kpis">KPI Dashboard</SelectItem>
               <SelectItem value="reports">Reports</SelectItem>
               <SelectItem value="resources">Resources</SelectItem>
+              {isLegal && LEGAL_SECTIONS.map((item) => <SelectItem key={item.key} value={item.key}>{item.label}</SelectItem>)}
               {showFinanceTab && <SelectItem value="finance">Financial Command Centre</SelectItem>}
               {showAssistantTab && <SelectItem value="assistant">AI Assistant</SelectItem>}
-              {workspace && <SelectItem value="workspace">{workspace.label}</SelectItem>}
+              {workspace && !isLegal && <SelectItem value="workspace">{workspace.label}</SelectItem>}
             </SelectContent>
           </Select>
         </div>
@@ -117,13 +121,15 @@ function DepartmentPortal() {
           <TabsTrigger value="kpis">KPI Dashboard</TabsTrigger>
           <TabsTrigger value="reports">Reports</TabsTrigger>
           <TabsTrigger value="resources">Resources</TabsTrigger>
+          {isLegal && LEGAL_SECTIONS.map((item) => <TabsTrigger key={item.key} value={item.key}>{item.label}</TabsTrigger>)}
           {showFinanceTab && <TabsTrigger value="finance">Financial Command Centre</TabsTrigger>}
           {showAssistantTab && <TabsTrigger value="assistant">AI Assistant</TabsTrigger>}
-          {workspace && <TabsTrigger value="workspace">{workspace.label}</TabsTrigger>}
+          {workspace && !isLegal && <TabsTrigger value="workspace">{workspace.label}</TabsTrigger>}
         </TabsList>
 
         <TabsContent value="overview" className="mt-6 space-y-6">
           {slug === "religion" && <FiveFoldHub />}
+          {d.purpose && <p className="max-w-4xl text-base leading-relaxed text-muted-foreground">{d.purpose}</p>}
           <Card className="p-6">
             <p className="text-xs uppercase tracking-widest text-muted-foreground">Vision</p>
             <p className="mt-2 text-sm leading-relaxed">{d.vision ?? "Not yet set."}</p>
@@ -132,18 +138,15 @@ function DepartmentPortal() {
             <p className="text-xs uppercase tracking-widest text-muted-foreground">Mission</p>
             <p className="mt-2 text-sm leading-relaxed">{d.mission ?? "Not yet set."}</p>
           </Card>
-          {d.functions && d.functions.length > 0 && (
+          {isLegal && d.functions && d.functions.length > 0 && (
             <Card className="p-6">
-              <p className="text-xs uppercase tracking-widest text-muted-foreground">Functions</p>
-              <ul className="mt-3 space-y-2">
-                {d.functions.map((f, i) => (
-                  <li key={i} className="flex gap-3 text-sm">
-                    <span className="font-mono text-muted-foreground">{String(i + 1).padStart(2, "0")}</span>
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
+              <p className="text-xs uppercase tracking-widest text-muted-foreground">Mandate</p>
+              <p className="mt-2 text-sm leading-relaxed">{d.functions[0]}</p>
             </Card>
+          )}
+          {isLegal && <Card className="p-6"><p className="text-xs uppercase tracking-widest text-muted-foreground">Biblical foundation</p><blockquote className="mt-3 border-l-2 border-primary pl-4 font-serif text-lg">“Let all things be done decently and in order.” — 1 Corinthians 14:40</blockquote><p className="mt-4 text-sm leading-relaxed text-muted-foreground">Proverbs 11:14 · Proverbs 27:23 · Luke 14:28 · Romans 13:1–7</p></Card>}
+          {!isLegal && d.functions && d.functions.length > 0 && (
+            <Card className="p-6"><p className="text-xs uppercase tracking-widest text-muted-foreground">Functions</p><ul className="mt-3 space-y-2">{d.functions.map((f, i) => <li key={i} className="flex gap-3 text-sm"><span className="font-mono text-muted-foreground">{String(i + 1).padStart(2, "0")}</span><span>{f}</span></li>)}</ul></Card>
           )}
           {gallery.length > 0 && (
             <div className="grid gap-4 sm:grid-cols-2">
@@ -157,6 +160,7 @@ function DepartmentPortal() {
         </TabsContent>
 
         <TabsContent value="team" className="mt-6">
+          {isLegal && <div className="mb-5"><p className="text-xs uppercase tracking-widest text-muted-foreground">Legal &amp; Compliance team</p><p className="mt-2 max-w-3xl text-sm text-muted-foreground">Approved Legal &amp; Compliance Officers, Compliance Administrators and supporting members monitor legal, governance and compliance matters and escalate to authorised leadership or professional advice where required.</p></div>}
           <DepartmentTeam slug={slug} currentUserId={membership.data?.userId ?? null} />
         </TabsContent>
  
@@ -188,7 +192,13 @@ function DepartmentPortal() {
           </TabsContent>
         )}
 
-        {workspace && WorkspaceComponent && membership.data?.userId && (
+        {isLegal && membership.data?.userId && LEGAL_SECTIONS.map((item) => (
+          <TabsContent key={item.key} value={item.key} className="mt-6">
+            <LegalComplianceCenter currentUserId={membership.data.userId} section={item.key as LegalSection} />
+          </TabsContent>
+        ))}
+
+        {workspace && WorkspaceComponent && membership.data?.userId && !isLegal && (
           <TabsContent value="workspace" className="mt-6">
             <Suspense fallback={<div className="p-8 text-sm text-muted-foreground">Loading workspace…</div>}>
               <WorkspaceComponent departmentSlug={slug} currentUserId={membership.data.userId} />

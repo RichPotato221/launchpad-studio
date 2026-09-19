@@ -119,8 +119,8 @@ export const workspaceRegistry: Record<string, Entry> = {
     component: lazy(() => import("@/components/ushers/UsheringCenter")),
   },
   protocol: {
-    label: "Church Operations, Hospitality & Congregational Care",
-    component: lazy(() => import("@/components/ushers/UsheringCenter")),
+    label: "Legal & Compliance",
+    component: lazy(() => import("@/components/legal/LegalComplianceCenter")),
   },
   "ushering-protocol": {
     label: "Church Operations, Hospitality & Congregational Care",

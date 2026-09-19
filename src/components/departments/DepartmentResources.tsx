@@ -6,9 +6,13 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 
 export function DepartmentResources({ slug }: { slug: string }) {
+  const isLegal = slug === "protocol";
+  const legalCategories = ["NPC / CIPC", "NPO", "Constitution", "Governance", "Financial Audit", "Property & Land", "Contracts", "Policies", "Insurance", "Operational Compliance", "Risk Management", "Legal Matters", "Other"];
   // Chairpersons and Senior Pastors both have church-wide oversight.
   const identity = useIdentity();
   const access = {
@@ -35,6 +39,8 @@ export function DepartmentResources({ slug }: { slug: string }) {
 
   const [title, setTitle] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [category, setCategory] = useState(legalCategories[0]);
+  const [notes, setNotes] = useState("");
   const [busy, setBusy] = useState(false);
 
   const upload = async (e: React.FormEvent) => {
@@ -54,11 +60,14 @@ export function DepartmentResources({ slug }: { slug: string }) {
         file_url: signed.data?.signedUrl ?? "",
         storage_path: path,
         uploaded_by: access.data?.userId ?? null,
+        category: isLegal ? category : null,
+        notes: isLegal ? notes.trim() || null : null,
       });
       if (error) throw error;
       toast.success("Document uploaded");
       setTitle("");
       setFile(null);
+      setNotes("");
       docs.refetch();
     } catch (err: any) {
       toast.error(err.message ?? "Upload failed");
@@ -81,7 +90,7 @@ export function DepartmentResources({ slug }: { slug: string }) {
 
 
       <Card className="p-6">
-        <p className="text-xs uppercase tracking-widest text-muted-foreground">Department documents</p>
+        <p className="text-xs uppercase tracking-widest text-muted-foreground">{isLegal ? "Legal & governance documents" : "Department documents"}</p>
         {docs.isLoading ? (
           <p className="mt-3 text-sm text-muted-foreground">Loading…</p>
         ) : (docs.data ?? []).length === 0 ? (
@@ -94,8 +103,9 @@ export function DepartmentResources({ slug }: { slug: string }) {
                   {d.title}
                 </a>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Added {new Date(d.created_at).toLocaleDateString()}
+                  {d.category ? `${d.category} · ` : ""}Added {new Date(d.created_at).toLocaleDateString()}
                 </p>
+                {d.notes && <p className="mt-2 text-sm text-muted-foreground">{d.notes}</p>}
                 {access.data?.isChair && (
                   <Button variant="ghost" size="sm" className="mt-2 h-7 px-2 text-xs" onClick={() => remove(d)}>
                     Remove
@@ -106,8 +116,8 @@ export function DepartmentResources({ slug }: { slug: string }) {
           </ul>
         )}
 
-        {access.data?.isChair ? (
-          <form onSubmit={upload} className="mt-6 grid gap-3 border-t border-border pt-6 md:grid-cols-[1fr_1fr_auto] md:items-end">
+        {(access.data?.isChair || (isLegal && access.data?.userId)) ? (
+          <form onSubmit={upload} className="mt-6 grid gap-3 border-t border-border pt-6 md:grid-cols-2 md:items-end">
             <div>
               <Label htmlFor="doc-title">Title</Label>
               <Input id="doc-title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Document title" />
@@ -116,7 +126,9 @@ export function DepartmentResources({ slug }: { slug: string }) {
               <Label htmlFor="doc-file">File</Label>
               <Input id="doc-file" type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
             </div>
-            <Button type="submit" disabled={busy}>{busy ? "Uploading…" : "Upload"}</Button>
+            {isLegal && <div><Label>Category</Label><Select value={category} onValueChange={setCategory}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{legalCategories.map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select></div>}
+            {isLegal && <div><Label>Comment / notes</Label><Textarea value={notes} onChange={(event) => setNotes(event.target.value)} /></div>}
+            <div className="md:col-span-2"><Button type="submit" disabled={busy}>{busy ? "Uploading…" : "Upload"}</Button></div>
           </form>
         ) : (
           <p className="mt-6 border-t border-border pt-4 text-xs text-muted-foreground">
