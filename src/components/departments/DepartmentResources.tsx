@@ -12,7 +12,10 @@ import { toast } from "sonner";
 
 export function DepartmentResources({ slug }: { slug: string }) {
   const isLegal = slug === "protocol";
+  const isUsheringProtocol = slug === "ushers";
   const legalCategories = ["NPC / CIPC", "NPO", "Constitution", "Governance", "Financial Audit", "Property & Land", "Contracts", "Policies", "Insurance", "Operational Compliance", "Risk Management", "Legal Matters", "Other"];
+  const usheringCategories = ["Ushering resources", "Protocol guidelines", "Guest handling procedures", "Leadership service procedures", "Special event procedures", "Service-day checklists", "Communication procedures", "Emergency procedures", "Department SOPs", "Training materials", "Other"];
+  const categories = isLegal ? legalCategories : usheringCategories;
   // Chairpersons and Senior Pastors both have church-wide oversight.
   const identity = useIdentity();
   const access = {
@@ -40,7 +43,7 @@ export function DepartmentResources({ slug }: { slug: string }) {
 
   const [title, setTitle] = useState("");
   const [file, setFile] = useState<File | null>(null);
-  const [category, setCategory] = useState(legalCategories[0]);
+  const [category, setCategory] = useState(categories[0]);
   const [notes, setNotes] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -61,8 +64,8 @@ export function DepartmentResources({ slug }: { slug: string }) {
         file_url: signed.data?.signedUrl ?? "",
         storage_path: path,
         uploaded_by: access.data?.userId ?? null,
-        category: isLegal ? category : null,
-        notes: isLegal ? notes.trim() || null : null,
+        category: (isLegal || isUsheringProtocol) ? category : null,
+        notes: (isLegal || isUsheringProtocol) ? notes.trim() || null : null,
       });
       if (error) throw error;
       toast.success("Document uploaded");
@@ -117,7 +120,7 @@ export function DepartmentResources({ slug }: { slug: string }) {
           </ul>
         )}
 
-        {(access.data?.isChair || (isLegal && access.data?.isDepartmentMember)) ? (
+        {(access.data?.isChair || ((isLegal || isUsheringProtocol) && access.data?.isDepartmentMember)) ? (
           <form onSubmit={upload} className="mt-6 grid gap-3 border-t border-border pt-6 md:grid-cols-2 md:items-end">
             <div>
               <Label htmlFor="doc-title">Title</Label>
@@ -127,8 +130,8 @@ export function DepartmentResources({ slug }: { slug: string }) {
               <Label htmlFor="doc-file">File</Label>
               <Input id="doc-file" type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
             </div>
-            {isLegal && <div><Label>Category</Label><Select value={category} onValueChange={setCategory}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{legalCategories.map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select></div>}
-            {isLegal && <div><Label>Comment / notes</Label><Textarea value={notes} onChange={(event) => setNotes(event.target.value)} /></div>}
+            {(isLegal || isUsheringProtocol) && <div><Label>Category</Label><Select value={category} onValueChange={setCategory}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{categories.map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select></div>}
+            {(isLegal || isUsheringProtocol) && <div><Label>Comment / notes</Label><Textarea value={notes} onChange={(event) => setNotes(event.target.value)} /></div>}
             <div className="md:col-span-2"><Button type="submit" disabled={busy}>{busy ? "Uploading…" : "Upload"}</Button></div>
           </form>
         ) : (
