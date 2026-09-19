@@ -111,11 +111,11 @@ export const workspaceRegistry: Record<string, Entry> = {
     component: lazy(() => import("@/components/media/MediaCenter")),
   },
   ushers: {
-    label: "Church Operations, Hospitality & Congregational Care",
+    label: "Ushering & Protocol",
     component: lazy(() => import("@/components/ushers/UsheringCenter")),
   },
   ushering: {
-    label: "Church Operations, Hospitality & Congregational Care",
+    label: "Ushering & Protocol",
     component: lazy(() => import("@/components/ushers/UsheringCenter")),
   },
   protocol: {
@@ -123,7 +123,7 @@ export const workspaceRegistry: Record<string, Entry> = {
     component: lazy(() => import("@/components/legal/LegalComplianceCenter")),
   },
   "ushering-protocol": {
-    label: "Church Operations, Hospitality & Congregational Care",
+    label: "Ushering & Protocol",
     component: lazy(() => import("@/components/ushers/UsheringCenter")),
   },
   "childrens-ministry": {

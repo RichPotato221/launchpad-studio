@@ -18,7 +18,7 @@ export const askUsheringAssistant = createServerFn({ method: "POST" })
     if (!apiKey) throw new Error("AI is not configured for this workspace.");
 
     const sb = supabase as any;
-    const [services, volunteers, roster, visitors, seating, attendance, incidents, care, risks, training] =
+    const [services, volunteers, roster, visitors, seating, attendance, incidents, care, risks, training, protocolPlans] =
       await Promise.all([
         sb.from("ush_services").select("*").order("service_date", { ascending: false }).limit(80),
         sb.from("ush_volunteers").select("*").limit(300),
@@ -30,6 +30,7 @@ export const askUsheringAssistant = createServerFn({ method: "POST" })
         sb.from("ush_care").select("*").order("created_at", { ascending: false }).limit(200),
         sb.from("ush_risks").select("*").limit(200),
         sb.from("ush_training_records").select("*").limit(300),
+        sb.from("ush_protocol_plans").select("*").order("service_date", { ascending: true }).limit(300),
       ]);
 
     const snapshot = {
@@ -43,6 +44,7 @@ export const askUsheringAssistant = createServerFn({ method: "POST" })
       care: care.data ?? [],
       risks: risks.data ?? [],
       training: training.data ?? [],
+      protocolPlans: protocolPlans.data ?? [],
     };
 
     const specs: TableSpec[] = [
@@ -64,6 +66,22 @@ export const askUsheringAssistant = createServerFn({ method: "POST" })
           checklist: { kind: "json" },
           service_lead: { kind: "string" },
           notes: { kind: "string" },
+        },
+      },
+      {
+        entity: "protocol_plan",
+        table: "ush_protocol_plans",
+        describe: "leadership, guest, service or special-event protocol preparation",
+        columns: {
+          service_id: { kind: "uuid" },
+          area: { kind: "string", enum: ["leadership_protocol", "guest_protocol", "service_protocol", "special_events"], requiredOnCreate: true },
+          title: { kind: "string", requiredOnCreate: true },
+          description: { kind: "string" },
+          assigned_person: { kind: "string" },
+          service_date: { kind: "date" },
+          status: { kind: "string", enum: ["planned", "briefed", "ready", "in_progress", "completed", "blocked"] },
+          notes: { kind: "string" },
+          function_area: { kind: "string", enum: ["ushering", "protocol", "ushering_protocol"] },
         },
       },
       {
@@ -243,18 +261,20 @@ export const askUsheringAssistant = createServerFn({ method: "POST" })
     const { answer, actions } = await runAgentTurn({
       apiKey,
       systemPrompt:
-        "You are the TRoGKC Ushering Assistant for the ushering, protocol and congregational care ministry of a " +
+        "You are the TRoGKC Ushering & Protocol Assistant for one combined ushering, protocol and congregational care ministry of a " +
         "Christian church. Ground every answer strictly in the JSON ushering snapshot supplied. Help with: service " +
         "readiness checklists, roster coverage gaps and fair rotation, volunteer availability, training and " +
         "certification expiry, seating and crowd flow, first-timer follow-up, congregational care for the elderly, " +
         "children and the unwell, incident trends and safety improvements, attendance patterns, and department " +
-        "risks. Never invent people, numbers, incidents or visitors that are not in the snapshot. Answer concisely " +
+        "risks, leadership arrival and seating, guest reception and briefing, service positioning, special events, " +
+        "protocol checklists and post-service reporting. Distinguish Ushering from Protocol while treating them as one department. " +
+        "Never invent people, numbers, incidents, guests or preparations that are not in the snapshot. Answer concisely " +
         "with short headings, bullets and clear numbers, in a warm, servant-hearted tone.",
       snapshot,
       question: data.question,
       history: data.history,
       specs,
-      ctx: { supabase: sb, userId, actorLabel: "ushering assistant" },
+      ctx: { supabase: sb, userId, actorLabel: "ushering and protocol assistant" },
     });
 
     return { answer, actions };

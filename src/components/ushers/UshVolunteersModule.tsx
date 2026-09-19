@@ -13,6 +13,7 @@ import { Download } from "lucide-react";
 import { RAG_CLASS, exportRows } from "@/lib/finance";
 import {
   USH_AVAILABILITY,
+  USH_FUNCTION_AREAS,
   USH_ROLES,
   USH_TEAMS,
   USH_TRAINING_STATUSES,
@@ -33,6 +34,7 @@ export default function UshVolunteersModule({ canManage, currentUserId }: Props)
     email: "",
     team: "auditorium",
     role: "usher",
+    function_assignment: "ushering",
     section: "",
     availability: "available",
     training_status: "in_progress",
@@ -107,6 +109,13 @@ export default function UshVolunteersModule({ canManage, currentUserId }: Props)
                 <SelectContent>{USH_ROLES.map((t) => <SelectItem key={t} value={t}>{ushLabel(t)}</SelectItem>)}</SelectContent>
               </Select>
             </div>
+            <div>
+              <Label>Function / assignment</Label>
+              <Select value={form.function_assignment} onValueChange={(v) => setForm({ ...form, function_assignment: v })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>{USH_FUNCTION_AREAS.map((value) => <SelectItem key={value} value={value}>{ushLabel(value)}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
             <div><Label>Section</Label><Input value={form.section} onChange={(e) => setForm({ ...form, section: e.target.value })} /></div>
             <div>
               <Label>Availability</Label>
@@ -141,8 +150,8 @@ export default function UshVolunteersModule({ canManage, currentUserId }: Props)
           onClick={() =>
             exportRows(
               "ushering-volunteers",
-              ["Name", "Team", "Role", "Section", "Availability", "Training", "Services", "Rating", "Phone"],
-              filtered.map((r) => [r.full_name, r.team, r.role, r.section, r.availability, r.training_status, r.services_served, r.performance_rating, r.phone]),
+              ["Name", "Team", "Role", "Function", "Section", "Availability", "Training", "Services", "Rating", "Phone"],
+              filtered.map((r) => [r.full_name, r.team, r.role, r.function_assignment, r.section, r.availability, r.training_status, r.services_served, r.performance_rating, r.phone]),
             )
           }
         >
@@ -162,7 +171,7 @@ export default function UshVolunteersModule({ canManage, currentUserId }: Props)
                 )}
                 <div>
                   <p className="font-medium">{r.full_name}</p>
-                  <p className="text-xs text-muted-foreground">{ushLabel(r.role)} · {ushLabel(r.team)}{r.section ? ` · ${r.section}` : ""}</p>
+                   <p className="text-xs text-muted-foreground">{ushLabel(r.role)} · {ushLabel(r.function_assignment)} · {ushLabel(r.team)}{r.section ? ` · ${r.section}` : ""}</p>
                   <p className="text-xs text-muted-foreground">{r.phone ?? "no phone"} · {r.services_served} services served</p>
                 </div>
               </div>
@@ -171,7 +180,11 @@ export default function UshVolunteersModule({ canManage, currentUserId }: Props)
               </Badge>
             </div>
             {canManage && (
-              <div className="mt-3 grid gap-2 md:grid-cols-3">
+               <div className="mt-3 grid gap-2 md:grid-cols-4">
+                 <Select value={r.function_assignment ?? "ushering"} onValueChange={(v) => patch(r.id, { function_assignment: v })}>
+                   <SelectTrigger><SelectValue /></SelectTrigger>
+                   <SelectContent>{USH_FUNCTION_AREAS.map((value) => <SelectItem key={value} value={value}>{ushLabel(value)}</SelectItem>)}</SelectContent>
+                 </Select>
                 <Select value={r.availability} onValueChange={(v) => patch(r.id, { availability: v })}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>{USH_AVAILABILITY.map((t) => <SelectItem key={t} value={t}>{ushLabel(t)}</SelectItem>)}</SelectContent>

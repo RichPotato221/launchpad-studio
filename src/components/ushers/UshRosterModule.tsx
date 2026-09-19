@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { Download } from "lucide-react";
 import { RAG_CLASS, exportRows, fmtDate } from "@/lib/finance";
 import { pct } from "@/lib/intercession";
-import { USH_DUTIES, USH_ROSTER_STATUSES, ushLabel } from "@/lib/ushering";
+import { USH_DUTIES, USH_FUNCTION_AREAS, USH_ROSTER_STATUSES, ushLabel } from "@/lib/ushering";
 
 const sb = supabase as any;
 
@@ -22,7 +22,7 @@ export default function UshRosterModule({ canManage, currentUserId }: Props) {
   const [volunteers, setVolunteers] = useState<any[]>([]);
   const [roster, setRoster] = useState<any[]>([]);
   const [serviceId, setServiceId] = useState("");
-  const [form, setForm] = useState({ volunteer_id: "", duty: "entrance", section: "", is_backup: "no" });
+  const [form, setForm] = useState({ volunteer_id: "", duty: "entrance", function_area: "ushering", section: "", is_backup: "no" });
 
   const load = async () => {
     const [{ data: s }, { data: v }, { data: r }] = await Promise.all([
@@ -52,13 +52,14 @@ export default function UshRosterModule({ canManage, currentUserId }: Props) {
       volunteer_id: form.volunteer_id || null,
       volunteer_name: vol?.full_name ?? null,
       duty: form.duty,
+      function_area: form.function_area,
       section: form.section || null,
       is_backup: form.is_backup === "yes",
       created_by: currentUserId,
     });
     if (error) return toast.error(error.message);
     toast.success("Duty assigned");
-    setForm({ volunteer_id: "", duty: "entrance", section: "", is_backup: "no" });
+    setForm({ volunteer_id: "", duty: "entrance", function_area: "ushering", section: "", is_backup: "no" });
     load();
   };
 
@@ -109,7 +110,7 @@ export default function UshRosterModule({ canManage, currentUserId }: Props) {
       {canManage && (
         <Card className="p-6">
           <p className="text-xs uppercase tracking-widest text-muted-foreground">Assign a duty</p>
-          <form onSubmit={assign} className="mt-4 grid gap-4 md:grid-cols-4">
+           <form onSubmit={assign} className="mt-4 grid gap-4 md:grid-cols-5">
             <div>
               <Label>Volunteer</Label>
               <Select value={form.volunteer_id} onValueChange={(v) => setForm({ ...form, volunteer_id: v })}>
@@ -122,6 +123,13 @@ export default function UshRosterModule({ canManage, currentUserId }: Props) {
               <Select value={form.duty} onValueChange={(v) => setForm({ ...form, duty: v })}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>{USH_DUTIES.map((d) => <SelectItem key={d} value={d}>{ushLabel(d)}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Function</Label>
+              <Select value={form.function_area} onValueChange={(v) => setForm({ ...form, function_area: v })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>{USH_FUNCTION_AREAS.map((area) => <SelectItem key={area} value={area}>{ushLabel(area)}</SelectItem>)}</SelectContent>
               </Select>
             </div>
             <div><Label>Section</Label><Input value={form.section} onChange={(e) => setForm({ ...form, section: e.target.value })} /></div>
@@ -145,8 +153,8 @@ export default function UshRosterModule({ canManage, currentUserId }: Props) {
           onClick={() =>
             exportRows(
               "ushering-roster",
-              ["Volunteer", "Duty", "Section", "Status", "Backup", "Checked in"],
-              rows.map((r) => [r.volunteer_name, r.duty, r.section, r.status, r.is_backup ? "yes" : "no", r.checked_in_at]),
+              ["Volunteer", "Duty", "Function", "Section", "Status", "Backup", "Checked in"],
+              rows.map((r) => [r.volunteer_name, r.duty, r.function_area, r.section, r.status, r.is_backup ? "yes" : "no", r.checked_in_at]),
             )
           }
         >
@@ -160,7 +168,7 @@ export default function UshRosterModule({ canManage, currentUserId }: Props) {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="font-medium">{r.volunteer_name ?? "Unassigned"}{r.is_backup && <span className="ml-2 text-xs text-muted-foreground">(backup)</span>}</p>
-                <p className="text-xs text-muted-foreground">{ushLabel(r.duty)}{r.section ? ` · ${r.section}` : ""}{r.checked_in_at ? ` · checked in ${fmtDate(r.checked_in_at)}` : ""}</p>
+                <p className="text-xs text-muted-foreground">{ushLabel(r.duty)} · {ushLabel(r.function_area)}{r.section ? ` · ${r.section}` : ""}{r.checked_in_at ? ` · checked in ${fmtDate(r.checked_in_at)}` : ""}</p>
               </div>
               <div className="flex items-center gap-2">
                 <Badge className={RAG_CLASS[r.status === "accepted" ? "green" : r.status === "declined" || r.status === "no_show" ? "red" : "amber"]}>{ushLabel(r.status)}</Badge>

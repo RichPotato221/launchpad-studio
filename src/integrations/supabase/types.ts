@@ -13872,6 +13872,62 @@ export type Database = {
           },
         ]
       }
+      ush_protocol_plans: {
+        Row: {
+          area: string
+          assigned_person: string | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          notes: string | null
+          service_date: string | null
+          service_id: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          area: string
+          assigned_person?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          notes?: string | null
+          service_date?: string | null
+          service_id?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          area?: string
+          assigned_person?: string | null
+          branch?: Database["public"]["Enums"]["branch"] | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          notes?: string | null
+          service_date?: string | null
+          service_id?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ush_protocol_plans_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "ush_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ush_risks: {
         Row: {
           category: string
@@ -13926,6 +13982,7 @@ export type Database = {
           created_at: string
           created_by: string | null
           duty: string
+          function_area: string
           id: string
           is_backup: boolean
           leave_reason: string | null
@@ -13944,6 +14001,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           duty?: string
+          function_area?: string
           id?: string
           is_backup?: boolean
           leave_reason?: string | null
@@ -13962,6 +14020,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           duty?: string
+          function_area?: string
           id?: string
           is_backup?: boolean
           leave_reason?: string | null
@@ -14253,6 +14312,7 @@ export type Database = {
           emergency_contact: string | null
           emergency_phone: string | null
           full_name: string
+          function_assignment: string
           id: string
           mentor_name: string | null
           ministry_experience: string | null
@@ -14279,6 +14339,7 @@ export type Database = {
           emergency_contact?: string | null
           emergency_phone?: string | null
           full_name: string
+          function_assignment?: string
           id?: string
           mentor_name?: string | null
           ministry_experience?: string | null
@@ -14305,6 +14366,7 @@ export type Database = {
           emergency_contact?: string | null
           emergency_phone?: string | null
           full_name?: string
+          function_assignment?: string
           id?: string
           mentor_name?: string | null
           ministry_experience?: string | null

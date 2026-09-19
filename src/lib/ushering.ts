@@ -13,7 +13,7 @@ export const USH_SERVICE_TYPES = [
 
 export const USH_SERVICE_STATUSES = ["planned", "ready", "in_progress", "completed", "cancelled"] as const;
 
-export const USH_TEAMS = ["auditorium", "entrance", "parking", "protocol", "welcome_desk", "overflow"] as const;
+export const USH_TEAMS = ["auditorium", "entrance", "parking", "protocol", "ushering_protocol", "welcome_desk", "overflow"] as const;
 
 export const USH_ROLES = [
   "usher",
@@ -23,6 +23,9 @@ export const USH_ROLES = [
   "parking_marshal",
   "safety_marshal",
   "section_leader",
+  "team_leader",
+  "department_leader",
+  "ushering_protocol",
 ] as const;
 
 export const USH_DUTIES = [
@@ -39,6 +42,12 @@ export const USH_DUTIES = [
 ] as const;
 
 export const USH_ROSTER_STATUSES = ["assigned", "accepted", "declined", "on_leave", "swapped", "no_show"] as const;
+
+export const USH_FUNCTION_AREAS = ["ushering", "protocol", "ushering_protocol"] as const;
+
+export const USH_PROTOCOL_AREAS = ["leadership_protocol", "guest_protocol", "service_protocol", "special_events"] as const;
+
+export const USH_PROTOCOL_STATUSES = ["planned", "briefed", "ready", "in_progress", "completed", "blocked"] as const;
 
 export const USH_AVAILABILITY = ["available", "limited", "on_leave", "unavailable"] as const;
 
@@ -101,6 +110,9 @@ export const USH_RISK_CATEGORIES = [
   "volunteer_shortage",
   "facility",
   "reputational",
+  "protocol_readiness",
+  "leadership_guest_coordination",
+  "special_events",
 ] as const;
 
 export const USH_COURSES = [
@@ -127,6 +139,9 @@ export const USH_SERVICE_CHECKLIST = [
   "Emergency exit routes walked and clear",
   "Team briefing and prayer completed",
   "Radios / comms tested",
+  "Leadership arrival, seating and movement confirmed",
+  "Guest reception, briefing and positioning confirmed",
+  "Special service protocol requirements confirmed",
 ];
 
 export function ushLabel(key?: string | null) {

@@ -34,10 +34,11 @@ import LegalComplianceCenter from "@/components/legal/LegalComplianceCenter";
 export const Route = createFileRoute("/_authenticated/departments/$slug")({
   head: ({ params }) => {
     const legal = params.slug === "protocol";
-    const title = legal ? "Legal & Compliance — TRoGKC Portal" : `${params.slug} — TRoGKC Portal`;
+    const ushering = params.slug === "ushers";
+    const title = legal ? "Legal & Compliance — TRoGKC Portal" : ushering ? "Ushering & Protocol — TRoGKC Portal" : `${params.slug} — TRoGKC Portal`;
     const description = legal
       ? "Legal, governance, audit, property, contract, risk and compliance oversight for Throne Room of God Kingdom Center."
-      : `Department leadership, team, performance and resources for ${params.slug}.`;
+      : ushering ? "Ushering, service readiness, congregation flow, leadership and guest protocol for Throne Room of God Kingdom Center." : `Department leadership, team, performance and resources for ${params.slug}.`;
     return { meta: [
       { title },
       { name: "description", content: description },
@@ -67,7 +68,8 @@ function DepartmentPortal() {
   const workspace = membership.data?.isMember ? getWorkspaceFor(slug) : null;
   // The Finance department already has a full Financial Command Centre in its workspace.
   const isLegal = slug === "protocol";
-  const showFinanceTab = slug !== "finance" && slug !== "finance-administration" && !isLegal;
+  const isUsheringProtocol = slug === "ushers";
+  const showFinanceTab = slug !== "finance" && slug !== "finance-administration" && !isLegal && !isUsheringProtocol;
   const WorkspaceComponent = workspace?.component;
   // Departments whose operations centre already ships a specialised AI assistant.
   const BUILT_IN_ASSISTANT = new Set([
@@ -108,7 +110,7 @@ function DepartmentPortal() {
         </div>
         {d.chair_name && <p className="text-sm text-muted-foreground">Chair: <strong className="text-foreground">{d.chair_name}</strong></p>}
       </div>
-      {isLegal && d.purpose && <p className="mt-4 max-w-4xl text-base leading-relaxed text-muted-foreground">{d.purpose}</p>}
+      {(isLegal || isUsheringProtocol) && d.purpose && <p className="mt-4 max-w-4xl text-base leading-relaxed text-muted-foreground">{d.purpose}</p>}
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-8">
         {/* Mobile: dropdown */}
@@ -124,7 +126,7 @@ function DepartmentPortal() {
               {isLegal && <SelectItem value="legal-compliance">Legal &amp; Compliance</SelectItem>}
               {showFinanceTab && <SelectItem value="finance">Financial Command Centre</SelectItem>}
               {showAssistantTab && <SelectItem value="assistant">AI Assistant</SelectItem>}
-              {workspace && !isLegal && <SelectItem value="workspace">{workspace.label}</SelectItem>}
+              {workspace && !isLegal && <SelectItem value="workspace">{isUsheringProtocol ? "Operations" : workspace.label}</SelectItem>}
             </SelectContent>
           </Select>
         </div>
@@ -139,7 +141,7 @@ function DepartmentPortal() {
           {isLegal && <TabsTrigger value="legal-compliance">Legal &amp; Compliance</TabsTrigger>}
           {showFinanceTab && <TabsTrigger value="finance">Financial Command Centre</TabsTrigger>}
           {showAssistantTab && <TabsTrigger value="assistant">AI Assistant</TabsTrigger>}
-          {workspace && !isLegal && <TabsTrigger value="workspace">{workspace.label}</TabsTrigger>}
+          {workspace && !isLegal && <TabsTrigger value="workspace">{isUsheringProtocol ? "Operations" : workspace.label}</TabsTrigger>}
         </TabsList>
 
         <TabsContent value="overview" className="mt-6 space-y-6">
@@ -175,6 +177,7 @@ function DepartmentPortal() {
 
         <TabsContent value="team" className="mt-6">
           {isLegal && <div className="mb-5"><p className="text-xs uppercase tracking-widest text-muted-foreground">Legal &amp; Compliance team</p><p className="mt-2 max-w-3xl text-sm text-muted-foreground">Approved Legal &amp; Compliance Officers, Compliance Administrators and supporting members monitor legal, governance and compliance matters and escalate to authorised leadership or professional advice where required.</p></div>}
+          {isUsheringProtocol && <div className="mb-5"><p className="text-xs uppercase tracking-widest text-muted-foreground">Ushering &amp; Protocol team</p><p className="mt-2 max-w-3xl text-sm text-muted-foreground">One approved team serving as ushers, protocol officers, combined team members and department leaders.</p></div>}
           <DepartmentTeam slug={slug} currentUserId={membership.data?.userId ?? null} />
         </TabsContent>
  
@@ -540,7 +543,10 @@ function KpiCard({ kpi, onChange }: { kpi: any; onChange: () => void }) {
 
 function DepartmentReports({ slug, deptName }: { slug: string; deptName: string }) {
   const isLegal = slug === "protocol";
+  const isUsheringProtocol = slug === "ushers";
   const legalReportTypes = ["Monthly Legal & Compliance Report", "Quarterly Governance & Compliance Report", "Annual Compliance Report", "Financial Audit Follow-up Report", "Registration & Governance Status Report", "Property & Land Compliance Report", "Contract Review Report", "Operational Compliance Report", "Risk Register Report", "Outstanding Corrective Actions Report"];
+  const usheringReportTypes = ["Service report", "Ushering report", "Protocol report", "Guest report", "Leadership coordination report", "Incident report", "Volunteer report", "Training report", "Special event report"];
+  const reportTypes = isLegal ? legalReportTypes : usheringReportTypes;
   const entries = useQuery({
     queryKey: ["report-entries", slug],
     queryFn: async () => {
@@ -557,7 +563,7 @@ function DepartmentReports({ slug, deptName }: { slug: string; deptName: string 
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [file, setFile] = useState<File | null>(null);
-  const [reportType, setReportType] = useState(legalReportTypes[0]);
+  const [reportType, setReportType] = useState(reportTypes[0]);
   const [reportPeriod, setReportPeriod] = useState("");
   const [reportStatus, setReportStatus] = useState("Draft");
   const [preparedBy, setPreparedBy] = useState("");
@@ -593,11 +599,11 @@ function DepartmentReports({ slug, deptName }: { slug: string; deptName: string 
         file_url,
         file_name,
         created_by: userRes.user.id,
-        report_type: isLegal ? reportType : null,
-        report_period: isLegal ? reportPeriod || null : null,
-        report_status: isLegal ? reportStatus : null,
-        prepared_by: isLegal ? preparedBy || null : null,
-        report_date: isLegal ? reportDate : null,
+         report_type: (isLegal || isUsheringProtocol) ? reportType : null,
+         report_period: (isLegal || isUsheringProtocol) ? reportPeriod || null : null,
+         report_status: (isLegal || isUsheringProtocol) ? reportStatus : null,
+         prepared_by: (isLegal || isUsheringProtocol) ? preparedBy || null : null,
+         report_date: (isLegal || isUsheringProtocol) ? reportDate : null,
       });
       if (error) throw error;
       toast.success("Saved to department storage");
@@ -623,8 +629,8 @@ function DepartmentReports({ slug, deptName }: { slug: string; deptName: string 
             <Label>Title</Label>
             <Input required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. October finance report" />
           </div>
-          {isLegal && <>
-            <div><Label>Report name</Label><Select value={reportType} onValueChange={setReportType}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{legalReportTypes.map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select></div>
+          {(isLegal || isUsheringProtocol) && <>
+            <div><Label>Report name</Label><Select value={reportType} onValueChange={setReportType}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{reportTypes.map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select></div>
             <div><Label>Period</Label><Input value={reportPeriod} onChange={(e) => setReportPeriod(e.target.value)} placeholder="e.g. September 2026" /></div>
             <div><Label>Status</Label><Select value={reportStatus} onValueChange={setReportStatus}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{["Draft", "Under Review", "Final"].map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select></div>
             <div><Label>Prepared by</Label><Input value={preparedBy} onChange={(e) => setPreparedBy(e.target.value)} /></div>
@@ -654,7 +660,7 @@ function DepartmentReports({ slug, deptName }: { slug: string; deptName: string 
                 <p className="font-serif text-lg">{e.title}</p>
                 <span className="text-xs text-muted-foreground">{new Date(e.created_at).toLocaleString()}</span>
               </div>
-              {isLegal && <p className="mt-1 text-xs uppercase tracking-wider text-muted-foreground">{e.report_type ?? "Legal & Compliance report"} · {e.report_period ?? "Period not set"} · {e.report_status ?? "Draft"} · Prepared by {e.prepared_by ?? "—"} · {e.report_date ? new Date(e.report_date).toLocaleDateString() : "Date not set"}</p>}
+              {(isLegal || isUsheringProtocol) && <p className="mt-1 text-xs uppercase tracking-wider text-muted-foreground">{e.report_type ?? `${deptName} report`} · {e.report_period ?? "Period not set"} · {e.report_status ?? "Draft"} · Prepared by {e.prepared_by ?? "—"} · {e.report_date ? new Date(e.report_date).toLocaleDateString() : "Date not set"}</p>}
               {e.body && <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed">{e.body}</p>}
               {e.file_url && (
                 <a href={e.file_url} target="_blank" rel="noreferrer" className="mt-3 inline-block text-sm underline">
