@@ -95,6 +95,7 @@ function DepartmentPortal() {
         </div>
         {d.chair_name && <p className="text-sm text-muted-foreground">Chair: <strong className="text-foreground">{d.chair_name}</strong></p>}
       </div>
+      {isLegal && d.purpose && <p className="mt-4 max-w-4xl text-base leading-relaxed text-muted-foreground">{d.purpose}</p>}
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-8">
         {/* Mobile: dropdown */}
@@ -130,7 +131,6 @@ function DepartmentPortal() {
 
         <TabsContent value="overview" className="mt-6 space-y-6">
           {slug === "religion" && <FiveFoldHub />}
-          {d.purpose && <p className="max-w-4xl text-base leading-relaxed text-muted-foreground">{d.purpose}</p>}
           <Card className="p-6">
             <p className="text-xs uppercase tracking-widest text-muted-foreground">Vision</p>
             <p className="mt-2 text-sm leading-relaxed">{d.vision ?? "Not yet set."}</p>
