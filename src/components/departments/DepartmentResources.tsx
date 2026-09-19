@@ -19,6 +19,7 @@ export function DepartmentResources({ slug }: { slug: string }) {
     data: identity.data
       ? {
           isChair: identity.data.roles.some((r) => r === "chairperson" || r === "senior_apostle"),
+          isDepartmentMember: identity.data.approvalStatus === "approved" && (identity.data.primaryDepartment === slug || identity.data.roleRows.some((r) => r.department_slug === slug)),
           userId: identity.data.userId,
         }
       : undefined,
@@ -116,7 +117,7 @@ export function DepartmentResources({ slug }: { slug: string }) {
           </ul>
         )}
 
-        {(access.data?.isChair || (isLegal && access.data?.userId)) ? (
+        {(access.data?.isChair || (isLegal && access.data?.isDepartmentMember)) ? (
           <form onSubmit={upload} className="mt-6 grid gap-3 border-t border-border pt-6 md:grid-cols-2 md:items-end">
             <div>
               <Label htmlFor="doc-title">Title</Label>

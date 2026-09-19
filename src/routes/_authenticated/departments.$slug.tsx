@@ -42,6 +42,7 @@ function DepartmentPortal() {
   const dept = useQuery({ queryKey: ["department", slug], queryFn: () => fetchDepartment(slug) });
   const kpis = useQuery({ queryKey: ["kpis", slug], queryFn: () => fetchDepartmentKpis(slug) });
   const membership = useIsDepartmentMember(slug);
+  const currentMemberId = membership.data?.userId ?? undefined;
   const [activeTab, setActiveTab] = useState("overview");
   const myRole = useCurrentRole();
 
@@ -192,9 +193,9 @@ function DepartmentPortal() {
           </TabsContent>
         )}
 
-        {isLegal && membership.data?.userId && LEGAL_SECTIONS.map((item) => (
+        {isLegal && currentMemberId && LEGAL_SECTIONS.map((item) => (
           <TabsContent key={item.key} value={item.key} className="mt-6">
-            <LegalComplianceCenter currentUserId={membership.data.userId} section={item.key as LegalSection} />
+            <LegalComplianceCenter currentUserId={currentMemberId} section={item.key as LegalSection} />
           </TabsContent>
         ))}
 
