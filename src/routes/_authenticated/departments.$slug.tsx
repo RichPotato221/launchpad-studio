@@ -525,6 +525,8 @@ function KpiCard({ kpi, onChange }: { kpi: any; onChange: () => void }) {
 }
 
 function DepartmentReports({ slug, deptName }: { slug: string; deptName: string }) {
+  const isLegal = slug === "protocol";
+  const legalReportTypes = ["Monthly Legal & Compliance Report", "Quarterly Governance & Compliance Report", "Annual Compliance Report", "Financial Audit Follow-up Report", "Registration & Governance Status Report", "Property & Land Compliance Report", "Contract Review Report", "Operational Compliance Report", "Risk Register Report", "Outstanding Corrective Actions Report"];
   const entries = useQuery({
     queryKey: ["report-entries", slug],
     queryFn: async () => {
@@ -541,6 +543,11 @@ function DepartmentReports({ slug, deptName }: { slug: string; deptName: string 
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [reportType, setReportType] = useState(legalReportTypes[0]);
+  const [reportPeriod, setReportPeriod] = useState("");
+  const [reportStatus, setReportStatus] = useState("Draft");
+  const [preparedBy, setPreparedBy] = useState("");
+  const [reportDate, setReportDate] = useState(new Date().toISOString().slice(0, 10));
   const [saving, setSaving] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
@@ -572,6 +579,11 @@ function DepartmentReports({ slug, deptName }: { slug: string; deptName: string 
         file_url,
         file_name,
         created_by: userRes.user.id,
+        report_type: isLegal ? reportType : null,
+        report_period: isLegal ? reportPeriod || null : null,
+        report_status: isLegal ? reportStatus : null,
+        prepared_by: isLegal ? preparedBy || null : null,
+        report_date: isLegal ? reportDate : null,
       });
       if (error) throw error;
       toast.success("Saved to department storage");
@@ -597,6 +609,13 @@ function DepartmentReports({ slug, deptName }: { slug: string; deptName: string 
             <Label>Title</Label>
             <Input required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. October finance report" />
           </div>
+          {isLegal && <>
+            <div><Label>Report name</Label><Select value={reportType} onValueChange={setReportType}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{legalReportTypes.map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select></div>
+            <div><Label>Period</Label><Input value={reportPeriod} onChange={(e) => setReportPeriod(e.target.value)} placeholder="e.g. September 2026" /></div>
+            <div><Label>Status</Label><Select value={reportStatus} onValueChange={setReportStatus}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{["Draft", "Under Review", "Final"].map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select></div>
+            <div><Label>Prepared by</Label><Input value={preparedBy} onChange={(e) => setPreparedBy(e.target.value)} /></div>
+            <div><Label>Date</Label><Input type="date" value={reportDate} onChange={(e) => setReportDate(e.target.value)} /></div>
+          </>}
           <div className="md:col-span-2">
             <Label>Comment / notes (optional)</Label>
             <Textarea rows={3} value={body} onChange={(e) => setBody(e.target.value)} />
@@ -621,6 +640,7 @@ function DepartmentReports({ slug, deptName }: { slug: string; deptName: string 
                 <p className="font-serif text-lg">{e.title}</p>
                 <span className="text-xs text-muted-foreground">{new Date(e.created_at).toLocaleString()}</span>
               </div>
+              {isLegal && <p className="mt-1 text-xs uppercase tracking-wider text-muted-foreground">{e.report_type ?? "Legal & Compliance report"} · {e.report_period ?? "Period not set"} · {e.report_status ?? "Draft"} · Prepared by {e.prepared_by ?? "—"} · {e.report_date ? new Date(e.report_date).toLocaleDateString() : "Date not set"}</p>}
               {e.body && <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed">{e.body}</p>}
               {e.file_url && (
                 <a href={e.file_url} target="_blank" rel="noreferrer" className="mt-3 inline-block text-sm underline">
