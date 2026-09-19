@@ -3516,33 +3516,39 @@ export type Database = {
       }
       department_resources: {
         Row: {
+          category: string | null
           created_at: string
           department_slug: string
           description: string | null
           file_url: string
           id: string
+          notes: string | null
           storage_path: string | null
           title: string
           updated_at: string
           uploaded_by: string | null
         }
         Insert: {
+          category?: string | null
           created_at?: string
           department_slug: string
           description?: string | null
           file_url: string
           id?: string
+          notes?: string | null
           storage_path?: string | null
           title: string
           updated_at?: string
           uploaded_by?: string | null
         }
         Update: {
+          category?: string | null
           created_at?: string
           department_slug?: string
           description?: string | null
           file_url?: string
           id?: string
+          notes?: string | null
           storage_path?: string | null
           title?: string
           updated_at?: string
@@ -7013,6 +7019,125 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      legal_compliance_escalations: {
+        Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
+          chairperson_notes: string | null
+          id: string
+          matter: string
+          priority: string
+          reason: string
+          source_record_id: string | null
+          status: string
+          submitted_at: string
+          submitted_by: string
+          supporting_document_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          chairperson_notes?: string | null
+          id?: string
+          matter: string
+          priority: string
+          reason: string
+          source_record_id?: string | null
+          status?: string
+          submitted_at?: string
+          submitted_by: string
+          supporting_document_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          chairperson_notes?: string | null
+          id?: string
+          matter?: string
+          priority?: string
+          reason?: string
+          source_record_id?: string | null
+          status?: string
+          submitted_at?: string
+          submitted_by?: string
+          supporting_document_url?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legal_compliance_escalations_source_record_id_fkey"
+            columns: ["source_record_id"]
+            isOneToOne: false
+            referencedRelation: "legal_compliance_records"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legal_compliance_records: {
+        Row: {
+          branch: Database["public"]["Enums"]["branch"] | null
+          category: string | null
+          created_at: string
+          created_by: string | null
+          details: Json
+          document_url: string | null
+          id: string
+          issue_date: string | null
+          last_verified: string | null
+          notes: string | null
+          record_type: string
+          reference_number: string | null
+          renewal_date: string | null
+          responsible_person: string | null
+          review_date: string | null
+          status: string
+          title: string
+          updated_at: string
+          verified_by: string | null
+        }
+        Insert: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          details?: Json
+          document_url?: string | null
+          id?: string
+          issue_date?: string | null
+          last_verified?: string | null
+          notes?: string | null
+          record_type: string
+          reference_number?: string | null
+          renewal_date?: string | null
+          responsible_person?: string | null
+          review_date?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          verified_by?: string | null
+        }
+        Update: {
+          branch?: Database["public"]["Enums"]["branch"] | null
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          details?: Json
+          document_url?: string | null
+          id?: string
+          issue_date?: string | null
+          last_verified?: string | null
+          notes?: string | null
+          record_type?: string
+          reference_number?: string | null
+          renewal_date?: string | null
+          responsible_person?: string | null
+          review_date?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          verified_by?: string | null
+        }
+        Relationships: []
       }
       med_analytics: {
         Row: {
@@ -10503,6 +10628,11 @@ export type Database = {
           file_name: string | null
           file_url: string | null
           id: string
+          prepared_by: string | null
+          report_date: string | null
+          report_period: string | null
+          report_status: string | null
+          report_type: string | null
           title: string
           updated_at: string
         }
@@ -10515,6 +10645,11 @@ export type Database = {
           file_name?: string | null
           file_url?: string | null
           id?: string
+          prepared_by?: string | null
+          report_date?: string | null
+          report_period?: string | null
+          report_status?: string | null
+          report_type?: string | null
           title: string
           updated_at?: string
         }
@@ -10527,6 +10662,11 @@ export type Database = {
           file_name?: string | null
           file_url?: string | null
           id?: string
+          prepared_by?: string | null
+          report_date?: string | null
+          report_period?: string | null
+          report_status?: string | null
+          report_type?: string | null
           title?: string
           updated_at?: string
         }
@@ -15613,6 +15753,10 @@ export type Database = {
       is_hospitality_team: { Args: { _user_id: string }; Returns: boolean }
       is_intercession_team: { Args: { _user_id: string }; Returns: boolean }
       is_kids_team: { Args: { _user_id: string }; Returns: boolean }
+      is_legal_compliance_member: {
+        Args: { _user_id: string }
+        Returns: boolean
+      }
       is_media_team: { Args: { _user_id: string }; Returns: boolean }
       is_pastoral_team: { Args: { _user_id: string }; Returns: boolean }
       is_prayer_leadership: { Args: { _user_id: string }; Returns: boolean }
