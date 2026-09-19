@@ -28,10 +28,26 @@ import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import { DEPARTMENT_HERO, DEPARTMENT_GALLERY } from "@/lib/portalImages";
+import LegalComplianceCenter from "@/components/legal/LegalComplianceCenter";
+import { LEGAL_SECTIONS, type LegalSection } from "@/lib/legalCompliance";
 
 
 export const Route = createFileRoute("/_authenticated/departments/$slug")({
-  head: ({ params }) => ({ meta: [{ title: `${params.slug} — TRoGKC Portal` }] }),
+  head: ({ params }) => {
+    const legal = params.slug === "protocol";
+    const title = legal ? "Legal & Compliance — TRoGKC Portal" : `${params.slug} — TRoGKC Portal`;
+    const description = legal
+      ? "Legal, governance, audit, property, contract, risk and compliance oversight for Throne Room of God Kingdom Center."
+      : `Department leadership, team, performance and resources for ${params.slug}.`;
+    return { meta: [
+      { title },
+      { name: "description", content: description },
+      { property: "og:title", content: title },
+      { property: "og:description", content: description },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ] };
+  },
   component: DepartmentPortal,
 });
 
@@ -40,6 +56,7 @@ function DepartmentPortal() {
   const dept = useQuery({ queryKey: ["department", slug], queryFn: () => fetchDepartment(slug) });
   const kpis = useQuery({ queryKey: ["kpis", slug], queryFn: () => fetchDepartmentKpis(slug) });
   const membership = useIsDepartmentMember(slug);
+  const currentMemberId = membership.data?.userId ?? undefined;
   const [activeTab, setActiveTab] = useState("overview");
   const myRole = useCurrentRole();
 
@@ -50,7 +67,8 @@ function DepartmentPortal() {
   const gallery = DEPARTMENT_GALLERY[slug] ?? [];
   const workspace = membership.data?.isMember ? getWorkspaceFor(slug) : null;
   // The Finance department already has a full Financial Command Centre in its workspace.
-  const showFinanceTab = slug !== "finance" && slug !== "finance-administration";
+  const isLegal = slug === "protocol";
+  const showFinanceTab = slug !== "finance" && slug !== "finance-administration" && !isLegal;
   const WorkspaceComponent = workspace?.component;
   // Departments whose operations centre already ships a specialised AI assistant.
   const BUILT_IN_ASSISTANT = new Set([
@@ -91,6 +109,7 @@ function DepartmentPortal() {
         </div>
         {d.chair_name && <p className="text-sm text-muted-foreground">Chair: <strong className="text-foreground">{d.chair_name}</strong></p>}
       </div>
+      {isLegal && d.purpose && <p className="mt-4 max-w-4xl text-base leading-relaxed text-muted-foreground">{d.purpose}</p>}
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-8">
         {/* Mobile: dropdown */}
@@ -103,9 +122,10 @@ function DepartmentPortal() {
               <SelectItem value="kpis">KPI Dashboard</SelectItem>
               <SelectItem value="reports">Reports</SelectItem>
               <SelectItem value="resources">Resources</SelectItem>
+              {isLegal && LEGAL_SECTIONS.map((item) => <SelectItem key={item.key} value={item.key}>{item.label}</SelectItem>)}
               {showFinanceTab && <SelectItem value="finance">Financial Command Centre</SelectItem>}
               {showAssistantTab && <SelectItem value="assistant">AI Assistant</SelectItem>}
-              {workspace && <SelectItem value="workspace">{workspace.label}</SelectItem>}
+              {workspace && !isLegal && <SelectItem value="workspace">{workspace.label}</SelectItem>}
             </SelectContent>
           </Select>
         </div>
@@ -117,9 +137,10 @@ function DepartmentPortal() {
           <TabsTrigger value="kpis">KPI Dashboard</TabsTrigger>
           <TabsTrigger value="reports">Reports</TabsTrigger>
           <TabsTrigger value="resources">Resources</TabsTrigger>
+          {isLegal && LEGAL_SECTIONS.map((item) => <TabsTrigger key={item.key} value={item.key}>{item.label}</TabsTrigger>)}
           {showFinanceTab && <TabsTrigger value="finance">Financial Command Centre</TabsTrigger>}
           {showAssistantTab && <TabsTrigger value="assistant">AI Assistant</TabsTrigger>}
-          {workspace && <TabsTrigger value="workspace">{workspace.label}</TabsTrigger>}
+          {workspace && !isLegal && <TabsTrigger value="workspace">{workspace.label}</TabsTrigger>}
         </TabsList>
 
         <TabsContent value="overview" className="mt-6 space-y-6">
@@ -132,18 +153,15 @@ function DepartmentPortal() {
             <p className="text-xs uppercase tracking-widest text-muted-foreground">Mission</p>
             <p className="mt-2 text-sm leading-relaxed">{d.mission ?? "Not yet set."}</p>
           </Card>
-          {d.functions && d.functions.length > 0 && (
+          {isLegal && d.functions && d.functions.length > 0 && (
             <Card className="p-6">
-              <p className="text-xs uppercase tracking-widest text-muted-foreground">Functions</p>
-              <ul className="mt-3 space-y-2">
-                {d.functions.map((f, i) => (
-                  <li key={i} className="flex gap-3 text-sm">
-                    <span className="font-mono text-muted-foreground">{String(i + 1).padStart(2, "0")}</span>
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
+              <p className="text-xs uppercase tracking-widest text-muted-foreground">Mandate</p>
+              <p className="mt-2 text-sm leading-relaxed">{d.functions[0]}</p>
             </Card>
+          )}
+          {isLegal && <Card className="p-6"><p className="text-xs uppercase tracking-widest text-muted-foreground">Biblical foundation</p><blockquote className="mt-3 border-l-2 border-primary pl-4 font-serif text-lg">“Let all things be done decently and in order.” — 1 Corinthians 14:40</blockquote><p className="mt-4 text-sm leading-relaxed text-muted-foreground">Proverbs 11:14 · Proverbs 27:23 · Luke 14:28 · Romans 13:1–7</p></Card>}
+          {!isLegal && d.functions && d.functions.length > 0 && (
+            <Card className="p-6"><p className="text-xs uppercase tracking-widest text-muted-foreground">Functions</p><ul className="mt-3 space-y-2">{d.functions.map((f, i) => <li key={i} className="flex gap-3 text-sm"><span className="font-mono text-muted-foreground">{String(i + 1).padStart(2, "0")}</span><span>{f}</span></li>)}</ul></Card>
           )}
           {gallery.length > 0 && (
             <div className="grid gap-4 sm:grid-cols-2">
@@ -157,6 +175,7 @@ function DepartmentPortal() {
         </TabsContent>
 
         <TabsContent value="team" className="mt-6">
+          {isLegal && <div className="mb-5"><p className="text-xs uppercase tracking-widest text-muted-foreground">Legal &amp; Compliance team</p><p className="mt-2 max-w-3xl text-sm text-muted-foreground">Approved Legal &amp; Compliance Officers, Compliance Administrators and supporting members monitor legal, governance and compliance matters and escalate to authorised leadership or professional advice where required.</p></div>}
           <DepartmentTeam slug={slug} currentUserId={membership.data?.userId ?? null} />
         </TabsContent>
  
@@ -188,7 +207,13 @@ function DepartmentPortal() {
           </TabsContent>
         )}
 
-        {workspace && WorkspaceComponent && membership.data?.userId && (
+        {isLegal && currentMemberId && LEGAL_SECTIONS.map((item) => (
+          <TabsContent key={item.key} value={item.key} className="mt-6">
+            <LegalComplianceCenter currentUserId={currentMemberId} section={item.key as LegalSection} />
+          </TabsContent>
+        ))}
+
+        {workspace && WorkspaceComponent && membership.data?.userId && !isLegal && (
           <TabsContent value="workspace" className="mt-6">
             <Suspense fallback={<div className="p-8 text-sm text-muted-foreground">Loading workspace…</div>}>
               <WorkspaceComponent departmentSlug={slug} currentUserId={membership.data.userId} />
@@ -515,6 +540,8 @@ function KpiCard({ kpi, onChange }: { kpi: any; onChange: () => void }) {
 }
 
 function DepartmentReports({ slug, deptName }: { slug: string; deptName: string }) {
+  const isLegal = slug === "protocol";
+  const legalReportTypes = ["Monthly Legal & Compliance Report", "Quarterly Governance & Compliance Report", "Annual Compliance Report", "Financial Audit Follow-up Report", "Registration & Governance Status Report", "Property & Land Compliance Report", "Contract Review Report", "Operational Compliance Report", "Risk Register Report", "Outstanding Corrective Actions Report"];
   const entries = useQuery({
     queryKey: ["report-entries", slug],
     queryFn: async () => {
@@ -531,6 +558,11 @@ function DepartmentReports({ slug, deptName }: { slug: string; deptName: string 
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [reportType, setReportType] = useState(legalReportTypes[0]);
+  const [reportPeriod, setReportPeriod] = useState("");
+  const [reportStatus, setReportStatus] = useState("Draft");
+  const [preparedBy, setPreparedBy] = useState("");
+  const [reportDate, setReportDate] = useState(new Date().toISOString().slice(0, 10));
   const [saving, setSaving] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
@@ -562,6 +594,11 @@ function DepartmentReports({ slug, deptName }: { slug: string; deptName: string 
         file_url,
         file_name,
         created_by: userRes.user.id,
+        report_type: isLegal ? reportType : null,
+        report_period: isLegal ? reportPeriod || null : null,
+        report_status: isLegal ? reportStatus : null,
+        prepared_by: isLegal ? preparedBy || null : null,
+        report_date: isLegal ? reportDate : null,
       });
       if (error) throw error;
       toast.success("Saved to department storage");
@@ -587,6 +624,13 @@ function DepartmentReports({ slug, deptName }: { slug: string; deptName: string 
             <Label>Title</Label>
             <Input required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. October finance report" />
           </div>
+          {isLegal && <>
+            <div><Label>Report name</Label><Select value={reportType} onValueChange={setReportType}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{legalReportTypes.map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select></div>
+            <div><Label>Period</Label><Input value={reportPeriod} onChange={(e) => setReportPeriod(e.target.value)} placeholder="e.g. September 2026" /></div>
+            <div><Label>Status</Label><Select value={reportStatus} onValueChange={setReportStatus}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{["Draft", "Under Review", "Final"].map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select></div>
+            <div><Label>Prepared by</Label><Input value={preparedBy} onChange={(e) => setPreparedBy(e.target.value)} /></div>
+            <div><Label>Date</Label><Input type="date" value={reportDate} onChange={(e) => setReportDate(e.target.value)} /></div>
+          </>}
           <div className="md:col-span-2">
             <Label>Comment / notes (optional)</Label>
             <Textarea rows={3} value={body} onChange={(e) => setBody(e.target.value)} />
@@ -611,6 +655,7 @@ function DepartmentReports({ slug, deptName }: { slug: string; deptName: string 
                 <p className="font-serif text-lg">{e.title}</p>
                 <span className="text-xs text-muted-foreground">{new Date(e.created_at).toLocaleString()}</span>
               </div>
+              {isLegal && <p className="mt-1 text-xs uppercase tracking-wider text-muted-foreground">{e.report_type ?? "Legal & Compliance report"} · {e.report_period ?? "Period not set"} · {e.report_status ?? "Draft"} · Prepared by {e.prepared_by ?? "—"} · {e.report_date ? new Date(e.report_date).toLocaleDateString() : "Date not set"}</p>}
               {e.body && <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed">{e.body}</p>}
               {e.file_url && (
                 <a href={e.file_url} target="_blank" rel="noreferrer" className="mt-3 inline-block text-sm underline">

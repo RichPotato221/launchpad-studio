@@ -22,6 +22,7 @@ import leadPastorCover from "@/assets/dept/lead-pastor.webp.asset.json";
 import eldersCover from "@/assets/dept/elders.webp.asset.json";
 import lifeGroupsCover from "@/assets/dept/life-groups.webp.asset.json";
 import handOfChristCover from "@/assets/dept/hand-of-christ.webp.asset.json";
+import legalComplianceCover from "@/assets/dept/legal-compliance-hero.jpg";
 export const PORTAL_IMAGES = {
   logo: "/images/landing/logo-flame-emblem.jpg",
   marchingOrdersBanner: "/images/landing/marching-orders-2026-banner.jpg",
@@ -34,7 +35,7 @@ export const PORTAL_IMAGES = {
 // Department slug → hero image (matches supabase department slugs)
 export const DEPARTMENT_HERO: Record<string, { src: string; alt: string }> = {
   worship: { src: worshipCover.url, alt: "Worship / Music Team emblem" },
-  protocol: { src: "/images/departments/protocol/podium-announcement.jpg", alt: "Protocol Department — formal announcement at the podium" },
+  protocol: { src: legalComplianceCover, alt: "Legal and governance records arranged in a church office" },
   "childrens-ministry": { src: childrensCover.url, alt: "Children's Ministry emblem" },
   "sound-technical": { src: soundTechCover.url, alt: "Sound & Technical Team emblem" },
   discipleship: { src: discipleshipCover.url, alt: "Discipleship — open Bible emblem" },

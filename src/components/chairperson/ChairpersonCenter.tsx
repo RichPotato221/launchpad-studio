@@ -14,6 +14,7 @@ const CommunicationsCentre = lazy(() => import("@/components/chairperson/Communi
 const AccountabilityTracker = lazy(() => import("@/components/chairperson/AccountabilityTracker"));
 const LeadershipFinancialCommand = lazy(() => import("@/components/finance/LeadershipFinancialCommand"));
 const GovernanceAssistant = lazy(() => import("@/components/chairperson/GovernanceAssistant"));
+const LegalEscalations = lazy(() => import("@/components/chairperson/LegalEscalations"));
 
 const LEADERSHIP = ["senior_apostle", "chairperson", "secretary", "lead_pastor", "associate_pastor"];
 
@@ -43,6 +44,7 @@ export default function ChairpersonCenter({ currentUserId }: { departmentSlug?: 
           <TabsTrigger value="decisions">Decisions</TabsTrigger>
           <TabsTrigger value="risk">Risk register</TabsTrigger>
           <TabsTrigger value="compliance">Compliance & statutory</TabsTrigger>
+          <TabsTrigger value="legal-escalations">Legal escalations</TabsTrigger>
           <TabsTrigger value="accountability">Accountability tracker</TabsTrigger>
           <TabsTrigger value="communications">Communications</TabsTrigger>
           <TabsTrigger value="financial">Financial command</TabsTrigger>
@@ -62,6 +64,9 @@ export default function ChairpersonCenter({ currentUserId }: { departmentSlug?: 
           </TabsContent>
           <TabsContent value="compliance" className="mt-6">
             <ComplianceCentre canManage={canManage} currentUserId={currentUserId} />
+          </TabsContent>
+          <TabsContent value="legal-escalations" className="mt-6">
+            <LegalEscalations canManage={canManage} currentUserId={currentUserId} />
           </TabsContent>
           <TabsContent value="accountability" className="mt-6"><AccountabilityTracker /></TabsContent>
           <TabsContent value="communications" className="mt-6">
