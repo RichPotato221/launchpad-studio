@@ -19,11 +19,14 @@ export default function UsheringDashboard() {
     attendance: [],
     seating: [],
     care: [],
+    protocol: [],
+    risks: [],
+    training: [],
   });
 
   useEffect(() => {
     (async () => {
-      const [services, roster, volunteers, visitors, incidents, attendance, seating, care] = await Promise.all([
+      const [services, roster, volunteers, visitors, incidents, attendance, seating, care, protocol, risks, training] = await Promise.all([
         sb.from("ush_services").select("*").order("service_date", { ascending: false }).limit(30),
         sb.from("ush_roster").select("*").limit(500),
         sb.from("ush_volunteers").select("*").limit(400),
@@ -32,6 +35,9 @@ export default function UsheringDashboard() {
         sb.from("ush_attendance").select("*").order("service_date", { ascending: false }).limit(30),
         sb.from("ush_seating").select("*").limit(200),
         sb.from("ush_care").select("*").limit(200),
+        sb.from("ush_protocol_plans").select("*").limit(300),
+        sb.from("ush_risks").select("*").limit(200),
+        sb.from("ush_training_records").select("*").limit(300),
       ]);
       setState({
         services: services.data ?? [],
@@ -42,6 +48,9 @@ export default function UsheringDashboard() {
         attendance: attendance.data ?? [],
         seating: seating.data ?? [],
         care: care.data ?? [],
+        protocol: protocol.data ?? [],
+        risks: risks.data ?? [],
+        training: training.data ?? [],
       });
     })();
   }, []);
@@ -60,6 +69,14 @@ export default function UsheringDashboard() {
   const openIncidents = state.incidents.filter((i: any) => i.followup_status !== "closed").length;
   const openCare = state.care.filter((c: any) => c.status !== "closed").length;
   const lastAttendance = state.attendance[0];
+  const usheringAssignments = nextRoster.filter((r: any) => r.function_area !== "protocol");
+  const usheringReady = pct(usheringAssignments.filter((r: any) => r.status === "accepted").length, usheringAssignments.length);
+  const protocolPlans = state.protocol.filter((row: any) => !row.service_id || row.service_id === next?.id);
+  const protocolReady = pct(protocolPlans.filter((row: any) => ["ready", "completed"].includes(row.status)).length, protocolPlans.length);
+  const guestPlans = protocolPlans.filter((row: any) => ["leadership_protocol", "guest_protocol"].includes(row.area));
+  const guestReady = pct(guestPlans.filter((row: any) => ["ready", "completed"].includes(row.status)).length, guestPlans.length);
+  const openRisks = state.risks.filter((risk: any) => risk.status !== "closed").length;
+  const trainingComplete = pct(state.training.filter((row: any) => Number(row.progress_pct) >= 100).length, state.training.length);
 
   const tile = (label: string, value: string | number, rag?: "green" | "amber" | "red", hint?: string) => (
     <Card className="p-4">
@@ -76,26 +93,21 @@ export default function UsheringDashboard() {
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-4">
         {tile(
-          "Next service readiness",
+          "Service readiness",
           `${readiness}%`,
           readiness >= 90 ? "green" : readiness >= 60 ? "amber" : "red",
           next ? `${next.title} · ${fmtDate(next.service_date)}` : "No service planned",
         )}
-        {tile("Roster acceptance", `${acceptance}%`, acceptance >= 85 ? "green" : acceptance >= 60 ? "amber" : "red", `${nextRoster.length} duties assigned`)}
-        {tile("Seating pressure", `${occupancyPct(occ, cap)}%`, occupancyPct(occ, cap) >= 95 ? "red" : occupancyPct(occ, cap) >= 80 ? "amber" : "green", `${occ}/${cap} seats`)}
-        {tile("Active volunteers", state.volunteers.filter((v: any) => v.active).length, "green", `${state.volunteers.filter((v: any) => v.availability === "on_leave").length} on leave`)}
+        {tile("Ushering readiness", `${usheringReady}%`, usheringReady >= 85 ? "green" : usheringReady >= 60 ? "amber" : "red", `${usheringAssignments.length} duties assigned`)}
+        {tile("Protocol readiness", `${protocolReady}%`, protocolReady >= 90 ? "green" : protocolReady >= 60 ? "amber" : "red", `${protocolPlans.length} preparations`)}
+        {tile("Volunteer coverage", `${acceptance}%`, acceptance >= 85 ? "green" : acceptance >= 60 ? "amber" : "red", `${state.volunteers.filter((v: any) => v.active).length} active volunteers`)}
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">
-        {tile("Visitors awaiting follow-up", pendingFollowUp, overdueFollowUp > 0 ? "red" : pendingFollowUp > 0 ? "amber" : "green", `${overdueFollowUp} overdue past 7 days`)}
-        {tile("Open incidents", openIncidents, openIncidents > 3 ? "red" : openIncidents > 0 ? "amber" : "green")}
-        {tile("Open care cases", openCare, openCare > 5 ? "amber" : "green")}
-        {tile(
-          "Last attendance",
-          lastAttendance ? (lastAttendance.adults ?? 0) + (lastAttendance.children ?? 0) : 0,
-          "green",
-          lastAttendance ? fmtDate(lastAttendance.service_date) : "no counts yet",
-        )}
+        {tile("Visitor / guest care", pendingFollowUp + openCare, overdueFollowUp > 0 ? "red" : pendingFollowUp + openCare > 0 ? "amber" : "green", `${overdueFollowUp} follow-ups overdue`)}
+        {tile("Leadership & guest coordination", `${guestReady}%`, guestReady >= 90 ? "green" : guestReady >= 60 ? "amber" : "red", `${guestPlans.length} preparations`)}
+        {tile("Incidents / risks", openIncidents + openRisks, openIncidents + openRisks > 3 ? "red" : openIncidents + openRisks > 0 ? "amber" : "green", `${openIncidents} incidents · ${openRisks} risks`)}
+        {tile("Training completion", `${trainingComplete}%`, trainingComplete >= 90 ? "green" : trainingComplete >= 60 ? "amber" : "red")}
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
