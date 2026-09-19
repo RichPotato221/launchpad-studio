@@ -29,7 +29,6 @@ import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import { DEPARTMENT_HERO, DEPARTMENT_GALLERY } from "@/lib/portalImages";
 import LegalComplianceCenter from "@/components/legal/LegalComplianceCenter";
-import { LEGAL_SECTIONS, type LegalSection } from "@/lib/legalCompliance";
 
 
 export const Route = createFileRoute("/_authenticated/departments/$slug")({
@@ -122,7 +121,7 @@ function DepartmentPortal() {
               <SelectItem value="kpis">KPI Dashboard</SelectItem>
               <SelectItem value="reports">Reports</SelectItem>
               <SelectItem value="resources">Resources</SelectItem>
-              {isLegal && LEGAL_SECTIONS.map((item) => <SelectItem key={item.key} value={item.key}>{item.label}</SelectItem>)}
+              {isLegal && <SelectItem value="legal-compliance">Legal &amp; Compliance</SelectItem>}
               {showFinanceTab && <SelectItem value="finance">Financial Command Centre</SelectItem>}
               {showAssistantTab && <SelectItem value="assistant">AI Assistant</SelectItem>}
               {workspace && !isLegal && <SelectItem value="workspace">{workspace.label}</SelectItem>}
@@ -137,7 +136,7 @@ function DepartmentPortal() {
           <TabsTrigger value="kpis">KPI Dashboard</TabsTrigger>
           <TabsTrigger value="reports">Reports</TabsTrigger>
           <TabsTrigger value="resources">Resources</TabsTrigger>
-          {isLegal && LEGAL_SECTIONS.map((item) => <TabsTrigger key={item.key} value={item.key}>{item.label}</TabsTrigger>)}
+          {isLegal && <TabsTrigger value="legal-compliance">Legal &amp; Compliance</TabsTrigger>}
           {showFinanceTab && <TabsTrigger value="finance">Financial Command Centre</TabsTrigger>}
           {showAssistantTab && <TabsTrigger value="assistant">AI Assistant</TabsTrigger>}
           {workspace && !isLegal && <TabsTrigger value="workspace">{workspace.label}</TabsTrigger>}
@@ -207,11 +206,11 @@ function DepartmentPortal() {
           </TabsContent>
         )}
 
-        {isLegal && currentMemberId && LEGAL_SECTIONS.map((item) => (
-          <TabsContent key={item.key} value={item.key} className="mt-6">
-            <LegalComplianceCenter currentUserId={currentMemberId} section={item.key as LegalSection} />
+        {isLegal && currentMemberId && (
+          <TabsContent value="legal-compliance" className="mt-6">
+            <LegalComplianceCenter currentUserId={currentMemberId} />
           </TabsContent>
-        ))}
+        )}
 
         {workspace && WorkspaceComponent && membership.data?.userId && !isLegal && (
           <TabsContent value="workspace" className="mt-6">
