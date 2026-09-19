@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
-import { LEGAL_CONFIG, type LegalSection } from "@/lib/legalCompliance";
+import { LEGAL_CONFIG, LEGAL_SECTIONS, type LegalSection } from "@/lib/legalCompliance";
 import { askLegalComplianceAssistant } from "@/lib/legalComplianceAi.functions";
 import AgentChat from "@/components/ai/AgentChat";
 import { Card } from "@/components/ui/card";
@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertTriangle, Download, FileText, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { useIdentity } from "@/lib/identity";
@@ -19,11 +20,31 @@ import { useIdentity } from "@/lib/identity";
 const sb = supabase as any;
 const PROMPTS = ["Show me overdue compliance matters.", "Which registration documents are expiring?", "Show outstanding audit findings.", "Which contracts require review?", "Show critical risks.", "Show unresolved legal matters.", "Generate this month's compliance summary.", "Show property documents that need review."];
 
-export default function LegalComplianceCenter({ currentUserId, section = "registration_governance" }: { departmentSlug?: string; currentUserId: string; section?: LegalSection }) {
+export default function LegalComplianceCenter({ currentUserId }: { departmentSlug?: string; currentUserId: string }) {
   const identity = useIdentity();
+  const [section, setSection] = useState<LegalSection>("registration_governance");
   const canManage = Boolean(identity.data && (identity.data.primaryDepartment === "protocol" || identity.data.roleRows.some((r) => r.department_slug === "protocol") || identity.data.roles.some((r) => ["senior_apostle", "chairperson", "secretary"].includes(r))));
-  if (section === "legal_assistant") return <LegalAssistant />;
-  return <RecordsSection section={section} currentUserId={currentUserId} branch={identity.data?.branch ?? null} canManage={canManage} />;
+  return (
+    <Tabs value={section} onValueChange={(value) => setSection(value as LegalSection)} className="space-y-6">
+      <div className="md:hidden">
+        <Label htmlFor="legal-section">Legal &amp; Compliance section</Label>
+        <Select value={section} onValueChange={(value) => setSection(value as LegalSection)}>
+          <SelectTrigger id="legal-section" className="mt-2"><SelectValue /></SelectTrigger>
+          <SelectContent>{LEGAL_SECTIONS.map((item) => <SelectItem key={item.key} value={item.key}>{item.label}</SelectItem>)}</SelectContent>
+        </Select>
+      </div>
+      <TabsList className="hidden h-auto w-full flex-wrap justify-start gap-1 md:flex">
+        {LEGAL_SECTIONS.map((item) => <TabsTrigger key={item.key} value={item.key}>{item.label}</TabsTrigger>)}
+      </TabsList>
+      {LEGAL_SECTIONS.map((item) => (
+        <TabsContent key={item.key} value={item.key} className="mt-0">
+          {item.key === "legal_assistant"
+            ? <LegalAssistant />
+            : <RecordsSection section={item.key} currentUserId={currentUserId} branch={identity.data?.branch ?? null} canManage={canManage} />}
+        </TabsContent>
+      ))}
+    </Tabs>
+  );
 }
 
 function LegalAssistant() {
