@@ -33,7 +33,21 @@ import { LEGAL_SECTIONS, type LegalSection } from "@/lib/legalCompliance";
 
 
 export const Route = createFileRoute("/_authenticated/departments/$slug")({
-  head: ({ params }) => ({ meta: [{ title: `${params.slug} — TRoGKC Portal` }] }),
+  head: ({ params }) => {
+    const legal = params.slug === "protocol";
+    const title = legal ? "Legal & Compliance — TRoGKC Portal" : `${params.slug} — TRoGKC Portal`;
+    const description = legal
+      ? "Legal, governance, audit, property, contract, risk and compliance oversight for Throne Room of God Kingdom Center."
+      : `Department leadership, team, performance and resources for ${params.slug}.`;
+    return { meta: [
+      { title },
+      { name: "description", content: description },
+      { property: "og:title", content: title },
+      { property: "og:description", content: description },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ] };
+  },
   component: DepartmentPortal,
 });
 

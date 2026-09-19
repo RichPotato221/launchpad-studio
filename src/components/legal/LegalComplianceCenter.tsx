@@ -61,9 +61,9 @@ function RecordsSection({ section, currentUserId, branch, canManage }: { section
       let documentUrl = form.document_url || null;
       if (file) {
         const path = `protocol/legal/${Date.now()}-${file.name.replace(/[^\w.\-]+/g, "_")}`;
-        const up = await supabase.storage.from("department-resources").upload(path, file);
+        const up = await supabase.storage.from("department-reports").upload(path, file);
         if (up.error) throw up.error;
-        const signed = await supabase.storage.from("department-resources").createSignedUrl(path, 60 * 60 * 24 * 365);
+        const signed = await supabase.storage.from("department-reports").createSignedUrl(path, 60 * 60 * 24 * 365);
         if (signed.error) throw signed.error; documentUrl = signed.data.signedUrl;
       }
       const details = Object.fromEntries(config.fields.filter((f) => !["reference_number","issue_date","review_date","renewal_date","responsible_person","last_verified","verified_by"].includes(f.key)).map((f) => [f.key, form[f.key] || null]));
