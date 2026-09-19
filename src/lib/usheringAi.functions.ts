@@ -66,7 +66,6 @@ export const askUsheringAssistant = createServerFn({ method: "POST" })
           checklist: { kind: "json" },
           service_lead: { kind: "string" },
           notes: { kind: "string" },
-          function_area: { kind: "string", enum: ["ushering", "protocol", "ushering_protocol"] },
         },
       },
       {
@@ -82,6 +81,7 @@ export const askUsheringAssistant = createServerFn({ method: "POST" })
           service_date: { kind: "date" },
           status: { kind: "string", enum: ["planned", "briefed", "ready", "in_progress", "completed", "blocked"] },
           notes: { kind: "string" },
+          function_area: { kind: "string", enum: ["ushering", "protocol", "ushering_protocol"] },
         },
       },
       {

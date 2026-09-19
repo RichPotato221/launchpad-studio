@@ -69,7 +69,7 @@ function DepartmentPortal() {
   // The Finance department already has a full Financial Command Centre in its workspace.
   const isLegal = slug === "protocol";
   const isUsheringProtocol = slug === "ushers";
-  const showFinanceTab = slug !== "finance" && slug !== "finance-administration" && !isLegal;
+  const showFinanceTab = slug !== "finance" && slug !== "finance-administration" && !isLegal && !isUsheringProtocol;
   const WorkspaceComponent = workspace?.component;
   // Departments whose operations centre already ships a specialised AI assistant.
   const BUILT_IN_ASSISTANT = new Set([
@@ -177,6 +177,7 @@ function DepartmentPortal() {
 
         <TabsContent value="team" className="mt-6">
           {isLegal && <div className="mb-5"><p className="text-xs uppercase tracking-widest text-muted-foreground">Legal &amp; Compliance team</p><p className="mt-2 max-w-3xl text-sm text-muted-foreground">Approved Legal &amp; Compliance Officers, Compliance Administrators and supporting members monitor legal, governance and compliance matters and escalate to authorised leadership or professional advice where required.</p></div>}
+          {isUsheringProtocol && <div className="mb-5"><p className="text-xs uppercase tracking-widest text-muted-foreground">Ushering &amp; Protocol team</p><p className="mt-2 max-w-3xl text-sm text-muted-foreground">One approved team serving as ushers, protocol officers, combined team members and department leaders.</p></div>}
           <DepartmentTeam slug={slug} currentUserId={membership.data?.userId ?? null} />
         </TabsContent>
  
