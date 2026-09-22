@@ -313,7 +313,7 @@ function AdminPage() {
                   key={p.id}
                   profile={p}
                   departments={depts.data ?? []}
-                  onAssign={(role, dept) => assignRole(p.id, role, dept, p.roles ?? [])}
+                  onAssign={(role, dept) => assignRole(p.id, role, dept, p.roles ?? [], p.primary_department)}
                   onRemove={removeRole}
                   onMoveBranch={(b) => moveBranch(p.id, b)}
                   onDeleteMember={() => deleteMember(p.id, p.full_name ?? p.email ?? "this member")}
@@ -338,7 +338,7 @@ function AdminPage() {
                 key={p.id}
                 profile={p}
                 departments={depts.data ?? []}
-                onAssign={(role, dept) => assignRole(p.id, role, dept, p.roles ?? [])}
+                onAssign={(role, dept) => assignRole(p.id, role, dept, p.roles ?? [], p.primary_department)}
                 onRemove={removeRole}
                 onMoveBranch={(b) => moveBranch(p.id, b)}
                 onDeleteMember={() => deleteMember(p.id, p.full_name ?? p.email ?? "this member")}
