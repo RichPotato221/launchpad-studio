@@ -100,7 +100,13 @@ function AdminPage() {
     qc.invalidateQueries({ queryKey: ["setting"] });
   };
  
-  const assignRole = async (userId: string, role: AppRole, department_slug: string | null, existing: any[]) => {
+  const assignRole = async (
+    userId: string,
+    role: AppRole,
+    department_slug: string | null,
+    existing: any[],
+    profileDepartment?: string | null,
+  ) => {
     // Guard against the duplicate chips we were seeing: same role + same department.
     if (existing.some((r) => r.role === role && (r.department_slug ?? null) === department_slug)) {
       return toast.error("That role is already assigned for this department.");
