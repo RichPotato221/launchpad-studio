@@ -100,7 +100,13 @@ function AdminPage() {
     qc.invalidateQueries({ queryKey: ["setting"] });
   };
  
-  const assignRole = async (userId: string, role: AppRole, department_slug: string | null, existing: any[]) => {
+  const assignRole = async (
+    userId: string,
+    role: AppRole,
+    department_slug: string | null,
+    existing: any[],
+    profileDepartment?: string | null,
+  ) => {
     // Guard against the duplicate chips we were seeing: same role + same department.
     if (existing.some((r) => r.role === role && (r.department_slug ?? null) === department_slug)) {
       return toast.error("That role is already assigned for this department.");
@@ -121,7 +127,10 @@ function AdminPage() {
     if (officeRole && officeRole !== role && !existing.some((r) => r.role === officeRole && !r.department_slug)) {
       await supabase.from("user_roles").insert({ user_id: userId, role: officeRole, department_slug: null });
     }
-    if (department_slug) {
+    // A member can serve in several departments. Only set their home
+    // department when they don't have one yet — never replace it, otherwise
+    // the earlier department would stop being their main one.
+    if (department_slug && !profileDepartment) {
       await supabase.from("profiles").update({ primary_department: department_slug }).eq("id", userId);
     }
 
@@ -304,7 +313,7 @@ function AdminPage() {
                   key={p.id}
                   profile={p}
                   departments={depts.data ?? []}
-                  onAssign={(role, dept) => assignRole(p.id, role, dept, p.roles ?? [])}
+                  onAssign={(role, dept) => assignRole(p.id, role, dept, p.roles ?? [], p.primary_department)}
                   onRemove={removeRole}
                   onMoveBranch={(b) => moveBranch(p.id, b)}
                   onDeleteMember={() => deleteMember(p.id, p.full_name ?? p.email ?? "this member")}
@@ -329,7 +338,7 @@ function AdminPage() {
                 key={p.id}
                 profile={p}
                 departments={depts.data ?? []}
-                onAssign={(role, dept) => assignRole(p.id, role, dept, p.roles ?? [])}
+                onAssign={(role, dept) => assignRole(p.id, role, dept, p.roles ?? [], p.primary_department)}
                 onRemove={removeRole}
                 onMoveBranch={(b) => moveBranch(p.id, b)}
                 onDeleteMember={() => deleteMember(p.id, p.full_name ?? p.email ?? "this member")}
