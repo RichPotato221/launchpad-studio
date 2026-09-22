@@ -121,7 +121,10 @@ function AdminPage() {
     if (officeRole && officeRole !== role && !existing.some((r) => r.role === officeRole && !r.department_slug)) {
       await supabase.from("user_roles").insert({ user_id: userId, role: officeRole, department_slug: null });
     }
-    if (department_slug) {
+    // A member can serve in several departments. Only set their home
+    // department when they don't have one yet — never replace it, otherwise
+    // the earlier department would stop being their main one.
+    if (department_slug && !profileDepartment) {
       await supabase.from("profiles").update({ primary_department: department_slug }).eq("id", userId);
     }
 
