@@ -79,14 +79,29 @@ export default function MonthlyWorkbook({ canManage, currentUserId }: { canManag
   const [period, setPeriod] = useState<string>(monthKey(new Date()));
   const [saving, setSaving] = useState(false);
 
-  const head = useQuery({
-    queryKey: ["fin-month", period],
+  const branchQ = useQuery({
+    queryKey: ["fin-month-branch", currentUserId],
     queryFn: async () => {
+      const { data } = await sb.from("profiles").select("branch").eq("id", currentUserId).maybeSingle();
+      return (data?.branch as string | null) ?? null;
+    },
+  });
+
+  const head = useQuery({
+    enabled: !branchQ.isLoading,
+    queryKey: ["fin-month", period, branchQ.data ?? "none"],
+    queryFn: async () => {
+      // Prefer the viewer's branch sheet; fall back to the legacy branch-less sheet.
+      const filter = branchQ.data
+        ? `branch.is.null,branch.eq.${branchQ.data}`
+        : "branch.is.null";
       const { data, error } = await sb
         .from("fin_month_periods")
         .select("*")
         .eq("period_month", period)
-        .is("branch", null)
+        .or(filter)
+        .order("created_at", { ascending: false })
+        .limit(1)
         .maybeSingle();
       if (error) throw error;
       return data as any | null;
