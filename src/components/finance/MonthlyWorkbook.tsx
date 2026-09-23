@@ -136,11 +136,16 @@ export default function MonthlyWorkbook({ canManage, currentUserId }: { canManag
       return toast.error(error.message);
     }
 
+    const filter = branchQ.data
+      ? `branch.is.null,branch.eq.${branchQ.data}`
+      : "branch.is.null";
     const { data: prior } = await sb
       .from("fin_month_periods")
       .select("id")
       .eq("period_month", prevMonth(period))
-      .is("branch", null)
+      .or(filter)
+      .order("created_at", { ascending: false })
+      .limit(1)
       .maybeSingle();
 
     let template: { section: string; category: string; target: number }[] = DEFAULT_TEMPLATE.map((t, i) => ({
