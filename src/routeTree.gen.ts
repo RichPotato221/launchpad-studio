@@ -9,54 +9,45 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as McpRouteImport } from './routes/mcp'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
-import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
-import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/Profile'
-import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
-import { Route as AuthenticatedAssetsRouteImport } from './routes/_authenticated/assets'
-import { Route as AuthenticatedAttendanceRouteImport } from './routes/_authenticated/attendance'
-import { Route as AuthenticatedConnectRouteImport } from './routes/_authenticated/connect'
-import { Route as AuthenticatedDepartmentsRouteImport } from './routes/_authenticated/departments'
-import { Route as AuthenticatedDocumentsRouteImport } from './routes/_authenticated/documents'
-import { Route as AuthenticatedEventsRouteImport } from './routes/_authenticated/events'
-import { Route as AuthenticatedFeedRouteImport } from './routes/_authenticated/feed'
-import { Route as AuthenticatedFinanceRouteImport } from './routes/_authenticated/finance'
-import { Route as AuthenticatedGovernanceRouteImport } from './routes/_authenticated/governance'
-import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
-import { Route as AuthenticatedMessagesRouteImport } from './routes/_authenticated/messages'
-import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
-import { Route as AuthenticatedSecretariatRouteImport } from './routes/_authenticated/secretariat'
-import { Route as AuthenticatedSeniorPastorCockpitRouteImport } from './routes/_authenticated/senior-pastor-cockpit'
-import { Route as AuthenticatedTasksRouteImport } from './routes/_authenticated/tasks'
+import { Route as McpRouteImport } from './routes/mcp'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedVaultRouteImport } from './routes/_authenticated/vault'
-import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
-import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
-import { Route as AuthenticatedDepartmentsSlugRouteImport } from './routes/_authenticated/departments.$slug'
-import { Route as AuthenticatedMembersIdRouteImport } from './routes/_authenticated/members.$id'
-import { Route as AuthenticatedMessagesUserIdRouteImport } from './routes/_authenticated/messages.$userId'
+import { Route as AuthenticatedTasksRouteImport } from './routes/_authenticated/tasks'
+import { Route as AuthenticatedSeniorPastorCockpitRouteImport } from './routes/_authenticated/senior-pastor-cockpit'
+import { Route as AuthenticatedSecretariatRouteImport } from './routes/_authenticated/secretariat'
+import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
+import { Route as AuthenticatedMessagesRouteImport } from './routes/_authenticated/messages'
+import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
+import { Route as AuthenticatedGovernanceRouteImport } from './routes/_authenticated/governance'
+import { Route as AuthenticatedFinanceRouteImport } from './routes/_authenticated/finance'
+import { Route as AuthenticatedFeedRouteImport } from './routes/_authenticated/feed'
+import { Route as AuthenticatedEventsRouteImport } from './routes/_authenticated/events'
+import { Route as AuthenticatedDocumentsRouteImport } from './routes/_authenticated/documents'
+import { Route as AuthenticatedDepartmentsRouteImport } from './routes/_authenticated/departments'
+import { Route as AuthenticatedConnectRouteImport } from './routes/_authenticated/connect'
+import { Route as AuthenticatedAttendanceRouteImport } from './routes/_authenticated/attendance'
+import { Route as AuthenticatedAssetsRouteImport } from './routes/_authenticated/assets'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/Profile'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as ApiPublicCalendarDoticsRouteImport } from './routes/api/public/calendar[.]ics'
-import { Route as AuthenticatedMessagesGroupGroupIdRouteImport } from './routes/_authenticated/messages.group.$groupId'
-import { Route as ApiPublicEmailActionsRespondRouteImport } from './routes/api/public/email-actions/respond'
-import { Route as ApiPublicHooksProcessNotificationsRouteImport } from './routes/api/public/hooks/process-notifications'
+import { Route as AuthenticatedMessagesUserIdRouteImport } from './routes/_authenticated/messages.$userId'
+import { Route as AuthenticatedMembersIdRouteImport } from './routes/_authenticated/members.$id'
+import { Route as AuthenticatedDepartmentsSlugRouteImport } from './routes/_authenticated/departments.$slug'
+import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as ApiPublicHooksSendAnnouncementEmailsRouteImport } from './routes/api/public/hooks/send-announcement-emails'
+import { Route as ApiPublicHooksProcessNotificationsRouteImport } from './routes/api/public/hooks/process-notifications'
+import { Route as ApiPublicEmailActionsRespondRouteImport } from './routes/api/public/email-actions/respond'
+import { Route as AuthenticatedMessagesGroupGroupIdRouteImport } from './routes/_authenticated/messages.group.$groupId'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const McpRoute = McpRouteImport.update({
@@ -64,46 +55,80 @@ const McpRoute = McpRouteImport.update({
   path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ResetPasswordRoute = ResetPasswordRouteImport.update({
-  id: '/reset-password',
-  path: '/reset-password',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const Char91DotmcpChar93ListToolsRoute =
-  Char91DotmcpChar93ListToolsRouteImport.update({
-    id: '/.mcp/list-tools',
-    path: '/.mcp/list-tools',
-    getParentRoute: () => rootRouteImport,
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedVaultRoute = AuthenticatedVaultRouteImport.update({
+  id: '/vault',
+  path: '/vault',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedTasksRoute = AuthenticatedTasksRouteImport.update({
+  id: '/tasks',
+  path: '/tasks',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSeniorPastorCockpitRoute =
+  AuthenticatedSeniorPastorCockpitRouteImport.update({
+    id: '/senior-pastor-cockpit',
+    path: '/senior-pastor-cockpit',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const Char91DotwellKnownChar93OauthProtectedResourceRoute =
-  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
-    id: '/.well-known/oauth-protected-resource',
-    path: '/.well-known/oauth-protected-resource',
-    getParentRoute: () => rootRouteImport,
+const AuthenticatedSecretariatRoute =
+  AuthenticatedSecretariatRouteImport.update({
+    id: '/secretariat',
+    path: '/secretariat',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
-  id: '/Profile',
-  path: '/Profile',
+const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
+const AuthenticatedMessagesRoute = AuthenticatedMessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedAssetsRoute = AuthenticatedAssetsRouteImport.update({
-  id: '/assets',
-  path: '/assets',
+const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
+  id: '/home',
+  path: '/home',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedAttendanceRoute = AuthenticatedAttendanceRouteImport.update({
-  id: '/attendance',
-  path: '/attendance',
+const AuthenticatedGovernanceRoute = AuthenticatedGovernanceRouteImport.update({
+  id: '/governance',
+  path: '/governance',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedConnectRoute = AuthenticatedConnectRouteImport.update({
-  id: '/connect',
-  path: '/connect',
+const AuthenticatedFinanceRoute = AuthenticatedFinanceRouteImport.update({
+  id: '/finance',
+  path: '/finance',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedFeedRoute = AuthenticatedFeedRouteImport.update({
+  id: '/feed',
+  path: '/feed',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedEventsRoute = AuthenticatedEventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDocumentsRoute = AuthenticatedDocumentsRouteImport.update({
+  id: '/documents',
+  path: '/documents',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedDepartmentsRoute =
@@ -112,89 +137,47 @@ const AuthenticatedDepartmentsRoute =
     path: '/departments',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedDocumentsRoute = AuthenticatedDocumentsRouteImport.update({
-  id: '/documents',
-  path: '/documents',
+const AuthenticatedConnectRoute = AuthenticatedConnectRouteImport.update({
+  id: '/connect',
+  path: '/connect',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedEventsRoute = AuthenticatedEventsRouteImport.update({
-  id: '/events',
-  path: '/events',
+const AuthenticatedAttendanceRoute = AuthenticatedAttendanceRouteImport.update({
+  id: '/attendance',
+  path: '/attendance',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedFeedRoute = AuthenticatedFeedRouteImport.update({
-  id: '/feed',
-  path: '/feed',
+const AuthenticatedAssetsRoute = AuthenticatedAssetsRouteImport.update({
+  id: '/assets',
+  path: '/assets',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedFinanceRoute = AuthenticatedFinanceRouteImport.update({
-  id: '/finance',
-  path: '/finance',
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedGovernanceRoute = AuthenticatedGovernanceRouteImport.update({
-  id: '/governance',
-  path: '/governance',
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: '/Profile',
+  path: '/Profile',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
-  id: '/home',
-  path: '/home',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedMessagesRoute = AuthenticatedMessagesRouteImport.update({
-  id: '/messages',
-  path: '/messages',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
-  id: '/reports',
-  path: '/reports',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedSecretariatRoute =
-  AuthenticatedSecretariatRouteImport.update({
-    id: '/secretariat',
-    path: '/secretariat',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedSeniorPastorCockpitRoute =
-  AuthenticatedSeniorPastorCockpitRouteImport.update({
-    id: '/senior-pastor-cockpit',
-    path: '/senior-pastor-cockpit',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedTasksRoute = AuthenticatedTasksRouteImport.update({
-  id: '/tasks',
-  path: '/tasks',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedVaultRoute = AuthenticatedVaultRouteImport.update({
-  id: '/vault',
-  path: '/vault',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
-  id: '/.lovable/oauth/consent',
-  path: '/.lovable/oauth/consent',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const Char91DotmcpChar93InvokeToolToolRoute =
-  Char91DotmcpChar93InvokeToolToolRouteImport.update({
-    id: '/.mcp/invoke-tool/$tool',
-    path: '/.mcp/invoke-tool/$tool',
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
     getParentRoute: () => rootRouteImport,
   } as any)
-const AuthenticatedDepartmentsSlugRoute =
-  AuthenticatedDepartmentsSlugRouteImport.update({
-    id: '/$slug',
-    path: '/$slug',
-    getParentRoute: () => AuthenticatedDepartmentsRoute,
+const Char91DotmcpChar93ListToolsRoute =
+  Char91DotmcpChar93ListToolsRouteImport.update({
+    id: '/.mcp/list-tools',
+    path: '/.mcp/list-tools',
+    getParentRoute: () => rootRouteImport,
   } as any)
-const AuthenticatedMembersIdRoute = AuthenticatedMembersIdRouteImport.update({
-  id: '/members/$id',
-  path: '/members/$id',
-  getParentRoute: () => AuthenticatedRouteRoute,
+const ApiPublicCalendarDoticsRoute = ApiPublicCalendarDoticsRouteImport.update({
+  id: '/api/public/calendar.ics',
+  path: '/api/public/calendar.ics',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedMessagesUserIdRoute =
   AuthenticatedMessagesUserIdRouteImport.update({
@@ -202,21 +185,32 @@ const AuthenticatedMessagesUserIdRoute =
     path: '/$userId',
     getParentRoute: () => AuthenticatedMessagesRoute,
   } as any)
-const ApiPublicCalendarDoticsRoute = ApiPublicCalendarDoticsRouteImport.update({
-  id: '/api/public/calendar.ics',
-  path: '/api/public/calendar.ics',
+const AuthenticatedMembersIdRoute = AuthenticatedMembersIdRouteImport.update({
+  id: '/members/$id',
+  path: '/members/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDepartmentsSlugRoute =
+  AuthenticatedDepartmentsSlugRouteImport.update({
+    id: '/$slug',
+    path: '/$slug',
+    getParentRoute: () => AuthenticatedDepartmentsRoute,
+  } as any)
+const Char91DotmcpChar93InvokeToolToolRoute =
+  Char91DotmcpChar93InvokeToolToolRouteImport.update({
+    id: '/.mcp/invoke-tool/$tool',
+    path: '/.mcp/invoke-tool/$tool',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedMessagesGroupGroupIdRoute =
-  AuthenticatedMessagesGroupGroupIdRouteImport.update({
-    id: '/group/$groupId',
-    path: '/group/$groupId',
-    getParentRoute: () => AuthenticatedMessagesRoute,
-  } as any)
-const ApiPublicEmailActionsRespondRoute =
-  ApiPublicEmailActionsRespondRouteImport.update({
-    id: '/api/public/email-actions/respond',
-    path: '/api/public/email-actions/respond',
+const ApiPublicHooksSendAnnouncementEmailsRoute =
+  ApiPublicHooksSendAnnouncementEmailsRouteImport.update({
+    id: '/api/public/hooks/send-announcement-emails',
+    path: '/api/public/hooks/send-announcement-emails',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksProcessNotificationsRoute =
@@ -225,11 +219,17 @@ const ApiPublicHooksProcessNotificationsRoute =
     path: '/api/public/hooks/process-notifications',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicHooksSendAnnouncementEmailsRoute =
-  ApiPublicHooksSendAnnouncementEmailsRouteImport.update({
-    id: '/api/public/hooks/send-announcement-emails',
-    path: '/api/public/hooks/send-announcement-emails',
+const ApiPublicEmailActionsRespondRoute =
+  ApiPublicEmailActionsRespondRouteImport.update({
+    id: '/api/public/email-actions/respond',
+    path: '/api/public/email-actions/respond',
     getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthenticatedMessagesGroupGroupIdRoute =
+  AuthenticatedMessagesGroupGroupIdRouteImport.update({
+    id: '/group/$groupId',
+    path: '/group/$groupId',
+    getParentRoute: () => AuthenticatedMessagesRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -472,25 +472,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated': {
-      id: '/_authenticated'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mcp': {
@@ -500,137 +486,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/reset-password': {
-      id: '/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof ResetPasswordRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/.mcp/list-tools': {
-      id: '/.mcp/list-tools'
-      path: '/.mcp/list-tools'
-      fullPath: '/.mcp/list-tools'
-      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/.well-known/oauth-protected-resource': {
-      id: '/.well-known/oauth-protected-resource'
-      path: '/.well-known/oauth-protected-resource'
-      fullPath: '/.well-known/oauth-protected-resource'
-      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/Profile': {
-      id: '/_authenticated/Profile'
-      path: '/Profile'
-      fullPath: '/Profile'
-      preLoaderRoute: typeof AuthenticatedProfileRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/admin': {
-      id: '/_authenticated/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AuthenticatedAdminRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/assets': {
-      id: '/_authenticated/assets'
-      path: '/assets'
-      fullPath: '/assets'
-      preLoaderRoute: typeof AuthenticatedAssetsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/attendance': {
-      id: '/_authenticated/attendance'
-      path: '/attendance'
-      fullPath: '/attendance'
-      preLoaderRoute: typeof AuthenticatedAttendanceRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/connect': {
-      id: '/_authenticated/connect'
-      path: '/connect'
-      fullPath: '/connect'
-      preLoaderRoute: typeof AuthenticatedConnectRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/departments': {
-      id: '/_authenticated/departments'
-      path: '/departments'
-      fullPath: '/departments'
-      preLoaderRoute: typeof AuthenticatedDepartmentsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/documents': {
-      id: '/_authenticated/documents'
-      path: '/documents'
-      fullPath: '/documents'
-      preLoaderRoute: typeof AuthenticatedDocumentsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/events': {
-      id: '/_authenticated/events'
-      path: '/events'
-      fullPath: '/events'
-      preLoaderRoute: typeof AuthenticatedEventsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/feed': {
-      id: '/_authenticated/feed'
-      path: '/feed'
-      fullPath: '/feed'
-      preLoaderRoute: typeof AuthenticatedFeedRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/finance': {
-      id: '/_authenticated/finance'
-      path: '/finance'
-      fullPath: '/finance'
-      preLoaderRoute: typeof AuthenticatedFinanceRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/governance': {
-      id: '/_authenticated/governance'
-      path: '/governance'
-      fullPath: '/governance'
-      preLoaderRoute: typeof AuthenticatedGovernanceRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/home': {
-      id: '/_authenticated/home'
-      path: '/home'
-      fullPath: '/home'
-      preLoaderRoute: typeof AuthenticatedHomeRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/messages': {
-      id: '/_authenticated/messages'
-      path: '/messages'
-      fullPath: '/messages'
-      preLoaderRoute: typeof AuthenticatedMessagesRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/reports': {
-      id: '/_authenticated/reports'
-      path: '/reports'
-      fullPath: '/reports'
-      preLoaderRoute: typeof AuthenticatedReportsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/secretariat': {
-      id: '/_authenticated/secretariat'
-      path: '/secretariat'
-      fullPath: '/secretariat'
-      preLoaderRoute: typeof AuthenticatedSecretariatRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/senior-pastor-cockpit': {
-      id: '/_authenticated/senior-pastor-cockpit'
-      path: '/senior-pastor-cockpit'
-      fullPath: '/senior-pastor-cockpit'
-      preLoaderRoute: typeof AuthenticatedSeniorPastorCockpitRouteImport
+    '/_authenticated/vault': {
+      id: '/_authenticated/vault'
+      path: '/vault'
+      fullPath: '/vault'
+      preLoaderRoute: typeof AuthenticatedVaultRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/tasks': {
@@ -640,47 +521,131 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTasksRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/vault': {
-      id: '/_authenticated/vault'
-      path: '/vault'
-      fullPath: '/vault'
-      preLoaderRoute: typeof AuthenticatedVaultRouteImport
+    '/_authenticated/senior-pastor-cockpit': {
+      id: '/_authenticated/senior-pastor-cockpit'
+      path: '/senior-pastor-cockpit'
+      fullPath: '/senior-pastor-cockpit'
+      preLoaderRoute: typeof AuthenticatedSeniorPastorCockpitRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/.lovable/oauth/consent': {
-      id: '/.lovable/oauth/consent'
-      path: '/.lovable/oauth/consent'
-      fullPath: '/.lovable/oauth/consent'
-      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/.mcp/invoke-tool/$tool': {
-      id: '/.mcp/invoke-tool/$tool'
-      path: '/.mcp/invoke-tool/$tool'
-      fullPath: '/.mcp/invoke-tool/$tool'
-      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/departments/$slug': {
-      id: '/_authenticated/departments/$slug'
-      path: '/$slug'
-      fullPath: '/departments/$slug'
-      preLoaderRoute: typeof AuthenticatedDepartmentsSlugRouteImport
-      parentRoute: typeof AuthenticatedDepartmentsRoute
-    }
-    '/_authenticated/members/$id': {
-      id: '/_authenticated/members/$id'
-      path: '/members/$id'
-      fullPath: '/members/$id'
-      preLoaderRoute: typeof AuthenticatedMembersIdRouteImport
+    '/_authenticated/secretariat': {
+      id: '/_authenticated/secretariat'
+      path: '/secretariat'
+      fullPath: '/secretariat'
+      preLoaderRoute: typeof AuthenticatedSecretariatRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/messages/$userId': {
-      id: '/_authenticated/messages/$userId'
-      path: '/$userId'
-      fullPath: '/messages/$userId'
-      preLoaderRoute: typeof AuthenticatedMessagesUserIdRouteImport
-      parentRoute: typeof AuthenticatedMessagesRoute
+    '/_authenticated/reports': {
+      id: '/_authenticated/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof AuthenticatedReportsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/messages': {
+      id: '/_authenticated/messages'
+      path: '/messages'
+      fullPath: '/messages'
+      preLoaderRoute: typeof AuthenticatedMessagesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/home': {
+      id: '/_authenticated/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof AuthenticatedHomeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/governance': {
+      id: '/_authenticated/governance'
+      path: '/governance'
+      fullPath: '/governance'
+      preLoaderRoute: typeof AuthenticatedGovernanceRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/finance': {
+      id: '/_authenticated/finance'
+      path: '/finance'
+      fullPath: '/finance'
+      preLoaderRoute: typeof AuthenticatedFinanceRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/feed': {
+      id: '/_authenticated/feed'
+      path: '/feed'
+      fullPath: '/feed'
+      preLoaderRoute: typeof AuthenticatedFeedRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/events': {
+      id: '/_authenticated/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof AuthenticatedEventsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/documents': {
+      id: '/_authenticated/documents'
+      path: '/documents'
+      fullPath: '/documents'
+      preLoaderRoute: typeof AuthenticatedDocumentsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/departments': {
+      id: '/_authenticated/departments'
+      path: '/departments'
+      fullPath: '/departments'
+      preLoaderRoute: typeof AuthenticatedDepartmentsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/connect': {
+      id: '/_authenticated/connect'
+      path: '/connect'
+      fullPath: '/connect'
+      preLoaderRoute: typeof AuthenticatedConnectRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/attendance': {
+      id: '/_authenticated/attendance'
+      path: '/attendance'
+      fullPath: '/attendance'
+      preLoaderRoute: typeof AuthenticatedAttendanceRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/assets': {
+      id: '/_authenticated/assets'
+      path: '/assets'
+      fullPath: '/assets'
+      preLoaderRoute: typeof AuthenticatedAssetsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/Profile': {
+      id: '/_authenticated/Profile'
+      path: '/Profile'
+      fullPath: '/Profile'
+      preLoaderRoute: typeof AuthenticatedProfileRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.mcp/list-tools': {
+      id: '/.mcp/list-tools'
+      path: '/.mcp/list-tools'
+      fullPath: '/.mcp/list-tools'
+      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/public/calendar.ics': {
       id: '/api/public/calendar.ics'
@@ -689,18 +654,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCalendarDoticsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/messages/group/$groupId': {
-      id: '/_authenticated/messages/group/$groupId'
-      path: '/group/$groupId'
-      fullPath: '/messages/group/$groupId'
-      preLoaderRoute: typeof AuthenticatedMessagesGroupGroupIdRouteImport
+    '/_authenticated/messages/$userId': {
+      id: '/_authenticated/messages/$userId'
+      path: '/$userId'
+      fullPath: '/messages/$userId'
+      preLoaderRoute: typeof AuthenticatedMessagesUserIdRouteImport
       parentRoute: typeof AuthenticatedMessagesRoute
     }
-    '/api/public/email-actions/respond': {
-      id: '/api/public/email-actions/respond'
-      path: '/api/public/email-actions/respond'
-      fullPath: '/api/public/email-actions/respond'
-      preLoaderRoute: typeof ApiPublicEmailActionsRespondRouteImport
+    '/_authenticated/members/$id': {
+      id: '/_authenticated/members/$id'
+      path: '/members/$id'
+      fullPath: '/members/$id'
+      preLoaderRoute: typeof AuthenticatedMembersIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/departments/$slug': {
+      id: '/_authenticated/departments/$slug'
+      path: '/$slug'
+      fullPath: '/departments/$slug'
+      preLoaderRoute: typeof AuthenticatedDepartmentsSlugRouteImport
+      parentRoute: typeof AuthenticatedDepartmentsRoute
+    }
+    '/.mcp/invoke-tool/$tool': {
+      id: '/.mcp/invoke-tool/$tool'
+      path: '/.mcp/invoke-tool/$tool'
+      fullPath: '/.mcp/invoke-tool/$tool'
+      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/send-announcement-emails': {
+      id: '/api/public/hooks/send-announcement-emails'
+      path: '/api/public/hooks/send-announcement-emails'
+      fullPath: '/api/public/hooks/send-announcement-emails'
+      preLoaderRoute: typeof ApiPublicHooksSendAnnouncementEmailsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/process-notifications': {
@@ -710,12 +703,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksProcessNotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/send-announcement-emails': {
-      id: '/api/public/hooks/send-announcement-emails'
-      path: '/api/public/hooks/send-announcement-emails'
-      fullPath: '/api/public/hooks/send-announcement-emails'
-      preLoaderRoute: typeof ApiPublicHooksSendAnnouncementEmailsRouteImport
+    '/api/public/email-actions/respond': {
+      id: '/api/public/email-actions/respond'
+      path: '/api/public/email-actions/respond'
+      fullPath: '/api/public/email-actions/respond'
+      preLoaderRoute: typeof ApiPublicEmailActionsRespondRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/messages/group/$groupId': {
+      id: '/_authenticated/messages/group/$groupId'
+      path: '/group/$groupId'
+      fullPath: '/messages/group/$groupId'
+      preLoaderRoute: typeof AuthenticatedMessagesGroupGroupIdRouteImport
+      parentRoute: typeof AuthenticatedMessagesRoute
     }
   }
 }
