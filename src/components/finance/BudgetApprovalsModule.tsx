@@ -260,8 +260,12 @@ function DecisionDialog({
           total_amount: approving ? approved : decision.row.total_amount,
           approved_by: approving ? currentUserId : null,
           approved_at: approving ? now : null,
-          rejected_reason: approving ? null : reason.trim(),
+          rejection_reason: approving ? null : reason.trim(),
           rejected_at: approving ? null : now,
+          rejected_by: approving ? null : currentUserId,
+          ...(approving && reason.trim()
+            ? { notes: [decision.row.notes, `Approval note: ${reason.trim()}`].filter(Boolean).join("\n") }
+            : {}),
         })
         .eq("id", decision.row.id);
       setSaving(false);
