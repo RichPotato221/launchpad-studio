@@ -1,4 +1,4 @@
-import { exportToCsv } from "@/lib/exportCsv";
+
 
 export const INCOME_KINDS = [
   "sunday_contribution",
@@ -114,10 +114,22 @@ export const STATUS_CLASS: Record<string, string> = {
   archived: "bg-muted text-muted-foreground border-border",
 };
 
-export function exportRows(
+export async function exportRows(
   filename: string,
   headers: string[],
   rows: (string | number | null | undefined)[][],
 ) {
-  exportToCsv(`${filename}-${new Date().toISOString().slice(0, 10)}`, headers, rows);
+  const { default: ExcelJS } = await import("exceljs");
+  const workbook = new ExcelJS.Workbook();
+  const sheet = workbook.addWorksheet("Finance");
+  sheet.addRow(headers);
+  rows.forEach(row => sheet.addRow(row.map(cell => cell ?? "")));
+  sheet.getRow(1).font = { bold: true };
+  sheet.columns.forEach(col => { col.width = 24; });
+  sheet.views = [{ state: "frozen", ySplit: 1 }];
+  const bytes = await workbook.xlsx.writeBuffer();
+  const url = URL.createObjectURL(new Blob([new Uint8Array(bytes)], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }));
+  const link = document.createElement("a"); link.href = url;
+  link.download = `${filename.replace(/\.(csv|xlsx)$/i, "")}-${new Date().toISOString().slice(0, 10)}.xlsx`;
+  link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
 }

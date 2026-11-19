@@ -1,3 +1,4 @@
+import { fetchAllRows } from "@/lib/financeData";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -116,12 +117,28 @@ export default function MonthlyWorkbook({ canManage, currentUserId }: { canManag
         .from("fin_month_lines")
         .select("*")
         .eq("period_id", head.data.id)
+        .is("archived_at", null)
         .order("section")
         .order("sort_order");
       if (error) throw error;
       return (data ?? []) as Line[];
     },
   });
+
+  const posted = useQuery({
+    queryKey: ["finance-workbook-posted", period, branchQ.data],
+    enabled: !branchQ.isLoading,
+    queryFn: () => {
+      const end = new Date(`${period.slice(0, 7)}-01T12:00:00Z`); end.setUTCMonth(end.getUTCMonth() + 1);
+      return fetchAllRows(() => {
+        let q = sb.from("finance_movements").select("*").gte("movement_date", period).lt("movement_date", end.toISOString().slice(0, 10)).order("id");
+        if (branchQ.data) q = q.eq("branch", branchQ.data); else q = q.is("branch", null);
+        return q;
+      });
+    },
+  });
+  const ledgerIncome = (posted.data ?? []).reduce((sum: number, r: any) => sum + Math.max(0, Number(r.amount)), 0);
+  const ledgerExpense = (posted.data ?? []).reduce((sum: number, r: any) => sum + Math.max(0, -Number(r.amount)), 0);
 
   /** Creates the month sheet — carrying last month's categories & targets forward. */
   const createMonth = async () => {
@@ -158,7 +175,7 @@ export default function MonthlyWorkbook({ canManage, currentUserId }: { canManag
       const { data: priorLines } = await sb
         .from("fin_month_lines")
         .select("section, category, target, sort_order")
-        .eq("period_id", prior.id);
+        .eq("period_id", prior.id).is("archived_at", null);
       if (priorLines && priorLines.length) template = priorLines as any;
     }
 
@@ -196,7 +213,7 @@ export default function MonthlyWorkbook({ canManage, currentUserId }: { canManag
   };
 
   const removeLine = async (id: string) => {
-    const { error } = await sb.from("fin_month_lines").delete().eq("id", id);
+    const { error } = await sb.from("fin_month_lines").update({ archived_at: new Date().toISOString() }).eq("id", id);
     if (error) return toast.error(error.message);
     lines.refetch();
   };
@@ -262,7 +279,7 @@ export default function MonthlyWorkbook({ canManage, currentUserId }: { canManag
               )
             }
           >
-            <Download className="mr-2 h-4 w-4" /> Excel (CSV)
+            <Download className="mr-2 h-4 w-4" /> Excel (.xlsx)
           </Button>
         </div>
       </Card>
@@ -284,6 +301,12 @@ export default function MonthlyWorkbook({ canManage, currentUserId }: { canManag
       ) : (
         <>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <Summary label="Posted income" value={money(ledgerIncome)} sub="Recorded money movements" />
+            <Summary label="Posted expenditure" value={money(ledgerExpense)} sub="Recorded money movements" />
+            <Summary label="Income reconciliation gap" value={money((totals.by.income?.actual ?? 0) - ledgerIncome)} sub="Workbook actual less posted income" />
+            <Summary label="Expense reconciliation gap" value={money((totals.by.expense?.actual ?? 0) - ledgerExpense)} sub="Workbook actual less posted expenditure" />
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Summary label="Opening balance" value={money(head.data.opening_balance)} sub="Carried into the month" />
             <Summary
               label="Income vs target"
@@ -296,7 +319,7 @@ export default function MonthlyWorkbook({ canManage, currentUserId }: { canManag
               sub={`${pct(totals.by.expense?.actual ?? 0, totals.by.expense?.target ?? 0)}% of ${money(totals.by.expense?.target)}`}
             />
             <Summary
-              label="Closing position"
+              label="Workbook closing estimate"
               value={money(totals.closing)}
               sub={`Net ${money(totals.netActual)} this month`}
             />

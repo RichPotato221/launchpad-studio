@@ -1,3 +1,4 @@
+import { FUNDED_BUDGET_STATUSES } from "@/lib/financeRules";
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -49,7 +50,7 @@ export default function FinancialControlRoom({ canManage }: { canManage: boolean
   });
 
   const byDepartment = useMemo(() => {
-    const active = (positions.data ?? []).filter((p) => ["approved", "active", "locked"].includes(p.status));
+    const active = (positions.data ?? []).filter((p) => FUNDED_BUDGET_STATUSES.includes(p.status));
     const slugs = Array.from(new Set(active.map((p) => p.department_slug ?? "church-wide")));
     return slugs
       .map((slug) => [slug, sumPositions(active.filter((r) => (r.department_slug ?? "church-wide") === slug))] as const)
@@ -137,7 +138,7 @@ export default function FinancialControlRoom({ canManage }: { canManage: boolean
             )
           }
         >
-          <Download className="mr-2 h-4 w-4" /> Excel (CSV)
+          <Download className="mr-2 h-4 w-4" /> Excel (.xlsx)
         </Button>
       </div>
       <Card className="overflow-x-auto p-0">

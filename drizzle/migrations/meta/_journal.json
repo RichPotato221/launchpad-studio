@@ -43,6 +43,20 @@
       "when": 1790101893815,
       "tag": "0005_allow_multiple_department_memberships",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1795103217039,
+      "tag": "0006_finance_command_safeguards",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1795103259721,
+      "tag": "0007_finance_audit_reporting_alignment",
+      "breakpoints": true
     }
   ]
 }

@@ -120,14 +120,17 @@ export const notifyPurchaseRequest = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { dispatchNotification, getAdmin } = await svc();
     const admin = await getAdmin();
-    const { data: pr } = await admin.from("purchase_requests").select("*").eq("id", data.requestId).maybeSingle();
+    const { data: pr } = await context.supabase.from("purchase_requests").select("*").eq("id", data.requestId).maybeSingle();
     if (!pr) return { queued: 0, reason: "not_found" };
+    const expected = data.stage === "submitted" ? ["submitted"] : data.stage === "department_approved" ? ["finance_approved", "returned"] : data.stage === "approved" ? ["senior_pastor_approved", "ordered", "received"] : ["rejected"];
+    if (!expected.includes(pr.status)) throw new Error("Notification does not match the saved decision.");
+    if (![pr.requester_id, pr.finance_approved_by, pr.approved_by_senior].includes(context.userId)) throw new Error("Only a participant can send this notification.");
 
     const requesterId = pr.requester_id ?? pr.created_by ?? null;
     const requester: string[] = requesterId ? [requesterId] : [];
     const amount = pr.amount_estimated != null ? `R ${Number(pr.amount_estimated).toLocaleString()}` : "—";
     const details = [
-      ["Reference", pr.pr_number ?? pr.request_number ?? String(pr.id).slice(0, 8)],
+      ["Reference", pr.pr_number ?? String(pr.id).slice(0, 8)],
       ["Item", pr.title ?? pr.description ?? "—"],
       ["Department", pr.department_slug ?? "—"],
       ["Amount", amount],
@@ -167,7 +170,7 @@ export const notifyPurchaseRequest = createServerFn({ method: "POST" })
         ...common,
         entityVersion: `${data.stage}:finance:${pr.updated_at ?? ""}`,
         type: "REQUEST_SUBMITTED",
-        audience: { departmentSlug: FINANCE_DEPARTMENT, excludeUserIds: requester },
+        audience: { departmentSlug: FINANCE_DEPARTMENT, branch: prBranch, excludeUserIds: requester },
         metadata: {
           heading: "Purchase request awaiting Finance review",
           body: `A purchase request from ${pr.department_slug ?? "a department"} needs your review before leadership can approve it.`,
@@ -202,7 +205,7 @@ export const notifyPurchaseRequest = createServerFn({ method: "POST" })
       type: approved ? "REQUEST_APPROVED" : "REQUEST_REJECTED",
       audience: {
         userIds: requester,
-        ...(data.stage === "department_approved" ? { roles: FINANCE_ROLES, branch: prBranch } : {}),
+        ...(data.stage === "department_approved" && pr.status === "finance_approved" ? { roles: ["chairperson", "senior_apostle", "lead_pastor", "associate_pastor"], branch: prBranch } : {}),
         excludeUserIds: [context.userId],
       },
 

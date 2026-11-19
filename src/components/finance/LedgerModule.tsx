@@ -1,3 +1,4 @@
+import { fetchAllRows, invalidateFinance } from "@/lib/financeData";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -46,36 +47,25 @@ export default function LedgerModule({
   const [page, setPage] = useState(0);
   const [open, setOpen] = useState(false);
 
+  const makeQuery = () => {
+    let q = sb.from("finance_entries").select("*", { count: "exact" }).is("archived_at", null)
+      .order("entry_date", { ascending: false }).order("id", { ascending: false });
+    if (kind !== "all") q = q.eq("kind", kind);
+    if (status !== "all") q = q.eq("status", status);
+    if (branch !== "all") q = q.eq("branch", branch);
+    const term = search.trim().replace(/[^\p{L}\p{N} _-]/gu, " ").trim();
+    if (term) q = q.or(["transaction_no", "title", "reference_number", "category", "notes", "department_slug"].map(c => `${c}.ilike.%${term}%`).join(","));
+    return q;
+  };
   const query = useQuery({
-    queryKey: ["finance-ledger", kind, status, branch, page],
+    queryKey: ["finance-ledger", kind, status, branch, search, page],
     queryFn: async () => {
-      let q = sb
-        .from("finance_entries")
-        .select("*", { count: "exact" })
-        .is("archived_at", null)
-        .order("entry_date", { ascending: false })
-        .order("created_at", { ascending: false })
-        .range(page * PAGE, page * PAGE + PAGE - 1);
-      if (kind !== "all") q = q.eq("kind", kind);
-      if (status !== "all") q = q.eq("status", status);
-      if (branch !== "all") q = q.eq("branch", branch);
-      const { data, error, count } = await q;
+      const { data, error, count } = await makeQuery().range(page * PAGE, page * PAGE + PAGE - 1);
       if (error) throw error;
       return { rows: (data ?? []) as any[], count: count ?? 0 };
     },
   });
-
-  const rows = useMemo(() => {
-    const list = query.data?.rows ?? [];
-    const term = search.trim().toLowerCase();
-    if (!term) return list;
-    return list.filter((r) =>
-      [r.transaction_no, r.title, r.reference_number, r.category, r.notes, r.department_slug]
-        .filter(Boolean)
-        .some((v: string) => String(v).toLowerCase().includes(term)),
-    );
-  }, [query.data, search]);
-
+  const rows = query.data?.rows ?? [];
   const setStatusMut = useMutation({
     mutationFn: async ({ id, next }: { id: string; next: string }) => {
       const patch: any = { status: next, updated_by: currentUserId };
@@ -90,20 +80,20 @@ export default function LedgerModule({
     onSuccess: () => {
       toast.success("Transaction updated");
       qc.invalidateQueries({ queryKey: ["finance-ledger"] });
-      qc.invalidateQueries({ queryKey: ["finance-summary"] });
+      invalidateFinance(qc);
     },
     onError: (e: any) => toast.error(e.message ?? "Update failed"),
   });
 
   const deleteMut = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await sb.from("finance_entries").delete().eq("id", id);
+      const { error } = await sb.from("finance_entries").update({ archived_at: new Date().toISOString() }).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("Transaction deleted");
+      toast.success("Transaction archived");
       qc.invalidateQueries({ queryKey: ["finance-ledger"] });
-      qc.invalidateQueries({ queryKey: ["finance-summary"] });
+      invalidateFinance(qc);
     },
     onError: (e: any) => toast.error(e.message ?? "Delete failed"),
   });
@@ -118,7 +108,7 @@ export default function LedgerModule({
         <Input
           placeholder="Search transaction no, title, reference…"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => { setSearch(e.target.value); setPage(0); }}
           className="w-full max-w-xs"
         />
         <Select value={kind} onValueChange={(v) => { setKind(v); setPage(0); }}>
@@ -150,18 +140,18 @@ export default function LedgerModule({
         <Button
           variant="outline"
           size="sm"
-          onClick={() =>
+          onClick={async () =>
             exportRows(
               "finance-general-ledger",
               ["Transaction no", "Date", "Posting date", "Title", "Type", "Category", "Department", "Branch", "Reference", "Amount", "Status"],
-              rows.map((r) => [
+              (await fetchAllRows(makeQuery)).map((r) => [
                 r.transaction_no, r.entry_date, r.posting_date, r.title, r.kind, r.category,
                 r.department_slug, r.branch, r.reference_number, r.amount, r.status,
               ]),
             )
           }
         >
-          <Download className="mr-2 h-4 w-4" /> Excel (CSV)
+          <Download className="mr-2 h-4 w-4" /> Excel (.xlsx)
         </Button>
         <Button variant="outline" size="sm" onClick={() => window.print()}>Print / PDF</Button>
         {canManage && (
@@ -176,7 +166,7 @@ export default function LedgerModule({
                 onDone={() => {
                   setOpen(false);
                   qc.invalidateQueries({ queryKey: ["finance-ledger"] });
-                  qc.invalidateQueries({ queryKey: ["finance-summary"] });
+                  invalidateFinance(qc);
                 }}
               />
             </DialogContent>
@@ -239,10 +229,10 @@ export default function LedgerModule({
                             size="sm"
                             variant="destructive"
                             onClick={() => {
-                              if (window.confirm("Delete this transaction permanently?")) deleteMut.mutate(r.id);
+                              if (window.confirm("Archive this transaction?")) deleteMut.mutate(r.id);
                             }}
                           >
-                            Delete
+                            Archive
                           </Button>
                         )}
 

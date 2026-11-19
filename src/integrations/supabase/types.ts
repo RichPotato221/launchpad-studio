@@ -2140,6 +2140,7 @@ export type Database = {
           file_name: string | null
           file_url: string | null
           id: string
+          import_key: string | null
           imported_by: string
           opening_balance: number
           period_end: string
@@ -2154,6 +2155,7 @@ export type Database = {
           file_name?: string | null
           file_url?: string | null
           id?: string
+          import_key?: string | null
           imported_by: string
           opening_balance?: number
           period_end: string
@@ -2168,6 +2170,7 @@ export type Database = {
           file_name?: string | null
           file_url?: string | null
           id?: string
+          import_key?: string | null
           imported_by?: string
           opening_balance?: number
           period_end?: string
@@ -2364,10 +2367,13 @@ export type Database = {
           decided_by: string | null
           decision_reason: string | null
           department_slug: string
+          finance_approved_at: string | null
+          finance_approved_by: string | null
           id: string
           reason: string
           requested_amount: number
           requested_by: string
+          review_amount: number | null
           status: string
           updated_at: string
         }
@@ -2379,10 +2385,13 @@ export type Database = {
           decided_by?: string | null
           decision_reason?: string | null
           department_slug: string
+          finance_approved_at?: string | null
+          finance_approved_by?: string | null
           id?: string
           reason: string
           requested_amount?: number
           requested_by?: string
+          review_amount?: number | null
           status?: string
           updated_at?: string
         }
@@ -2394,10 +2403,13 @@ export type Database = {
           decided_by?: string | null
           decision_reason?: string | null
           department_slug?: string
+          finance_approved_at?: string | null
+          finance_approved_by?: string | null
           id?: string
           reason?: string
           requested_amount?: number
           requested_by?: string
+          review_amount?: number | null
           status?: string
           updated_at?: string
         }
@@ -2511,6 +2523,8 @@ export type Database = {
           created_at: string
           created_by: string | null
           department_slug: string | null
+          finance_approved_at: string | null
+          finance_approved_by: string | null
           fiscal_year: number
           id: string
           locked_at: string | null
@@ -2527,6 +2541,7 @@ export type Database = {
           rejection_reason: string | null
           requested_amount: number
           responsible_user_id: string | null
+          review_amount: number | null
           status: string
           submitted_at: string | null
           submitted_by: string | null
@@ -2545,6 +2560,8 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           department_slug?: string | null
+          finance_approved_at?: string | null
+          finance_approved_by?: string | null
           fiscal_year: number
           id?: string
           locked_at?: string | null
@@ -2561,6 +2578,7 @@ export type Database = {
           rejection_reason?: string | null
           requested_amount?: number
           responsible_user_id?: string | null
+          review_amount?: number | null
           status?: string
           submitted_at?: string | null
           submitted_by?: string | null
@@ -2579,6 +2597,8 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           department_slug?: string | null
+          finance_approved_at?: string | null
+          finance_approved_by?: string | null
           fiscal_year?: number
           id?: string
           locked_at?: string | null
@@ -2595,6 +2615,7 @@ export type Database = {
           rejection_reason?: string | null
           requested_amount?: number
           responsible_user_id?: string | null
+          review_amount?: number | null
           status?: string
           submitted_at?: string | null
           submitted_by?: string | null
@@ -4264,6 +4285,7 @@ export type Database = {
           department_slug: string
           description: string
           id: string
+          ledger_entry_id: string | null
           ministry: string | null
           paid_at: string | null
           receipt_url: string | null
@@ -4283,6 +4305,7 @@ export type Database = {
           department_slug: string
           description: string
           id?: string
+          ledger_entry_id?: string | null
           ministry?: string | null
           paid_at?: string | null
           receipt_url?: string | null
@@ -4302,6 +4325,7 @@ export type Database = {
           department_slug?: string
           description?: string
           id?: string
+          ledger_entry_id?: string | null
           ministry?: string | null
           paid_at?: string | null
           receipt_url?: string | null
@@ -4314,6 +4338,7 @@ export type Database = {
       fin_month_lines: {
         Row: {
           actual: number
+          archived_at: string | null
           category: string
           created_at: string
           id: string
@@ -4326,6 +4351,7 @@ export type Database = {
         }
         Insert: {
           actual?: number
+          archived_at?: string | null
           category: string
           created_at?: string
           id?: string
@@ -4338,6 +4364,7 @@ export type Database = {
         }
         Update: {
           actual?: number
+          archived_at?: string | null
           category?: string
           created_at?: string
           id?: string
@@ -9633,6 +9660,7 @@ export type Database = {
           department_slug: string | null
           gross_amount: number
           id: string
+          ledger_entry_id: string | null
           member_id: string | null
           net_amount: number | null
           notes: string | null
@@ -9649,6 +9677,7 @@ export type Database = {
           department_slug?: string | null
           gross_amount?: number
           id?: string
+          ledger_entry_id?: string | null
           member_id?: string | null
           net_amount?: number | null
           notes?: string | null
@@ -9665,6 +9694,7 @@ export type Database = {
           department_slug?: string | null
           gross_amount?: number
           id?: string
+          ledger_entry_id?: string | null
           member_id?: string | null
           net_amount?: number | null
           notes?: string | null
@@ -15396,6 +15426,18 @@ export type Database = {
         }
         Relationships: []
       }
+      finance_movements: {
+        Row: {
+          amount: number | null
+          branch: Database["public"]["Enums"]["branch"] | null
+          category: string | null
+          department_slug: string | null
+          id: string | null
+          kind: string | null
+          movement_date: string | null
+        }
+        Relationships: []
+      }
       kpi_status: {
         Row: {
           actual: number | null
@@ -15546,6 +15588,19 @@ export type Database = {
         Returns: boolean
       }
       can_view_rsvp_reasons: { Args: { _user_id: string }; Returns: boolean }
+      finance_command: {
+        Args: {
+          _account_id?: string
+          _action: string
+          _amount?: number
+          _id: string
+          _note?: string
+          _table: string
+        }
+        Returns: Json
+      }
+      finance_is_leader: { Args: { _uid: string }; Returns: boolean }
+      finance_is_reviewer: { Args: { _uid: string }; Returns: boolean }
       flag_overdue_asset_movements: { Args: never; Returns: number }
       generate_upcoming_recurring_events: { Args: never; Returns: undefined }
       get_all_uploads: {
@@ -15792,6 +15847,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      import_finance_statement: {
+        Args: { _import_key: string; _statement: Json; _transactions: Json }
+        Returns: string
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
       is_apostolic_office: { Args: { _user_id: string }; Returns: boolean }

@@ -1,3 +1,5 @@
+import { POSTED_STATUSES } from "@/lib/financeRules";
+import { fetchAllRows } from "@/lib/financeData";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -69,16 +71,15 @@ export default function GivingModule({
         .from("finance_entries")
         .select("id, transaction_no, kind, amount, entry_date, branch, member_id, reference_number, notes, status")
         .in("kind", KIND_OPTIONS)
+        .in("status", POSTED_STATUSES)
         .is("archived_at", null)
         .gte("entry_date", from)
         .lte("entry_date", to)
         .order("entry_date", { ascending: false })
-        .limit(2000);
+        .order("id");
       if (kind !== "all") q = q.eq("kind", kind);
       if (branch !== "all") q = q.eq("branch", branch);
-      const { data, error } = await q;
-      if (error) throw error;
-      return (data ?? []) as Entry[];
+      return fetchAllRows<Entry>(() => q);
     },
   });
 
@@ -217,7 +218,7 @@ export default function GivingModule({
               )
             }
           >
-            <Download className="mr-2 h-4 w-4" /> Excel (CSV)
+            <Download className="mr-2 h-4 w-4" /> Excel (.xlsx)
           </Button>
           {canManage && (
             <Button size="sm" onClick={() => setOpenForm(true)}>
@@ -440,7 +441,7 @@ function MemberStatement({
               )
             }
           >
-            <Download className="mr-2 h-4 w-4" /> Excel (CSV)
+            <Download className="mr-2 h-4 w-4" /> Excel (.xlsx)
           </Button>
           <Button size="sm" onClick={() => window.print()}>
             <Printer className="mr-2 h-4 w-4" /> Print / PDF

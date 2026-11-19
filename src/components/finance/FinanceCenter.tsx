@@ -1,3 +1,4 @@
+import { fetchAllRows } from "@/lib/financeData";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,6 +18,7 @@ import PayrollModule from "@/components/finance/PayrollModule";
 import ReconciliationModule from "@/components/finance/ReconciliationModule";
 import MonthlyWorkbook from "@/components/finance/MonthlyWorkbook";
 import { useCurrentRole } from "@/lib/useCurrentRole";
+import { useIdentity } from "@/lib/identity";
 import { exportRows, fmtDate, titleCase } from "@/lib/finance";
 
 const sb = supabase as any;
@@ -29,6 +31,7 @@ const FINANCE_LEADERS = ["senior_apostle", "chairperson", "secretary", "lead_pas
  */
 export default function FinanceCenter({ currentUserId }: { departmentSlug?: string; currentUserId: string }) {
   const role = useCurrentRole();
+  const identity = useIdentity();
   const [primaryDept, setPrimaryDept] = useState<string | null>(null);
 
   useEffect(() => {
@@ -42,7 +45,8 @@ export default function FinanceCenter({ currentUserId }: { departmentSlug?: stri
 
   const canManage =
     (role.data?.roles ?? []).some((r) => FINANCE_LEADERS.includes(r)) ||
-    ["finance", "finance-administration"].includes(primaryDept ?? "");
+    ["finance", "finance-administration"].includes(primaryDept ?? "") ||
+    (identity.data?.roleRows ?? []).some(r => ["finance", "finance-administration"].includes(r.department_slug ?? ""));
 
   return (
     <div className="space-y-6">
@@ -109,14 +113,12 @@ function FinanceAudit() {
   const audit = useQuery({
     queryKey: ["finance-audit"],
     queryFn: async () => {
-      const { data, error } = await sb
+      return fetchAllRows(() => sb
         .from("audit_log")
-        .select("id, action, entity, entity_id, created_at, actor:profiles!audit_log_actor_id_fkey(full_name)")
-        .in("entity", ["finance_entries", "expense_claims", "budgets"])
+        .select("id, action, entity, entity_id, details, created_at, actor:profiles!audit_log_actor_id_fkey(full_name)")
+        .in("entity", ["finance_entries", "expense_claims", "budgets", "budget_lines", "budget_adjustments", "budget_revisions", "purchase_requests", "finance_approval_decisions", "payroll_runs", "payroll_lines", "bank_accounts", "bank_statements", "bank_transactions", "fin_month_periods", "fin_month_lines"])
         .order("created_at", { ascending: false })
-        .limit(200);
-      if (error) throw error;
-      return (data ?? []) as any[];
+        .order("id", { ascending: false }));
     },
   });
 
@@ -138,7 +140,7 @@ function FinanceAudit() {
             )
           }
         >
-          <Download className="mr-2 h-4 w-4" /> Excel (CSV)
+          <Download className="mr-2 h-4 w-4" /> Excel (.xlsx)
         </Button>
       </div>
       {rows.length === 0 ? (
@@ -160,7 +162,7 @@ function FinanceAudit() {
                   <td className="p-3 whitespace-nowrap">{fmtDate(r.created_at)}</td>
                   <td className="p-3">{r.actor?.full_name ?? "System"}</td>
                   <td className="p-3">{titleCase(r.action)}</td>
-                  <td className="p-3">{titleCase(r.entity)}</td>
+                  <td className="p-3">{titleCase(r.entity)}<p className="text-xs text-muted-foreground">{r.entity_id}</p><details><summary>Changes</summary><pre className="max-w-xl whitespace-pre-wrap text-xs">{JSON.stringify(r.details, null, 2)}</pre></details></td>
                 </tr>
               ))}
             </tbody>

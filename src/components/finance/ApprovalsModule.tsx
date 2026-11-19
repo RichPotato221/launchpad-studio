@@ -1,3 +1,4 @@
+import FinanceAttachment from "@/components/finance/FinanceAttachment";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -99,11 +100,11 @@ export default function ApprovalsModule({
 
   const removeClaim = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await sb.from("expense_claims").delete().eq("id", id);
+      const { error } = await sb.from("expense_claims").update({ archived_at: new Date().toISOString() }).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("Claim deleted");
+      toast.success("Claim archived");
       qc.invalidateQueries({ queryKey: ["finance-approvals"] });
       qc.invalidateQueries({ queryKey: ["finance-summary"] });
     },
@@ -156,7 +157,7 @@ export default function ApprovalsModule({
             )
           }
         >
-          <Download className="mr-2 h-4 w-4" /> Excel (CSV)
+          <Download className="mr-2 h-4 w-4" /> Excel (.xlsx)
         </Button>
         <Button size="sm" variant="outline" onClick={() => window.print()}>Print / PDF</Button>
       </div>
@@ -185,9 +186,7 @@ export default function ApprovalsModule({
                   <div className="flex flex-wrap items-center gap-2">
                     <Badge variant="outline" className={STATUS_CLASS[r.status] ?? ""}>{titleCase(r.status)}</Badge>
                     {r.receipt_url && (
-                      <a className="text-xs underline" href={r.receipt_url} target="_blank" rel="noreferrer">
-                        Supporting document
-                      </a>
+                      <FinanceAttachment value={r.receipt_url} />
                     )}
                   </div>
                 </div>
@@ -208,10 +207,10 @@ export default function ApprovalsModule({
                         size="sm"
                         variant="destructive"
                         onClick={() => {
-                          if (window.confirm("Delete this claim permanently?")) removeClaim.mutate(r.id);
+                          if (window.confirm("Archive this claim?")) removeClaim.mutate(r.id);
                         }}
                       >
-                        Delete
+                        Archive
                       </Button>
                     )}
                   </div>

@@ -1,3 +1,4 @@
+import { PROTECTED_FINANCE_TABLES } from "@/lib/financeRules";
 /**
  * Shared agentic core for department AI assistants.
  *
@@ -99,7 +100,7 @@ export function buildTools(specs: TableSpec[]): ToolFunctionDef[] {
   const tools: ToolFunctionDef[] = [];
 
   for (const spec of specs) {
-    if (spec.readOnly) continue;
+    if (spec.readOnly || PROTECTED_FINANCE_TABLES.includes(spec.table)) continue;
     const pk = spec.pk ?? "id";
     const props: Record<string, unknown> = {};
     const required: string[] = [];
@@ -179,7 +180,7 @@ export async function executeTool(
   ctx: ExecCtx,
 ): Promise<{ result: string; action?: AgentAction }> {
   const match = specs
-    .filter((s) => !s.readOnly)
+    .filter((s) => !s.readOnly && !PROTECTED_FINANCE_TABLES.includes(s.table))
     .map((spec) => {
       const pk = spec.pk ?? "id";
       if (toolName === `create_${spec.entity}`) return { spec, kind: "create" as const, pk };

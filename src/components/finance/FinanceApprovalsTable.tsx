@@ -1,3 +1,7 @@
+import { financeAction } from "@/lib/financeData";
+import { canApprovePurchase, canMarkPurchasePaid, isFinanceReviewer } from "@/lib/financeRules";
+import { notifyPurchaseRequest } from "@/lib/activity.functions";
+import { useBranchScope, filterByBranch } from "@/lib/useBranchScope";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
@@ -70,6 +74,10 @@ type Props = {
 export default function FinanceApprovalsTable({ financeView = true, title = "Purchase request approvals" }: Props) {
   const role = useCurrentRole();
   const myRoles = role.data?.roles ?? [];
+  const { data: scope } = useBranchScope();
+  const [memberships, setMemberships] = useState<string[]>([]);
+  const [accounts, setAccounts] = useState<any[]>([]);
+  const [paymentAccounts, setPaymentAccounts] = useState<Record<string, string>>({});
   const userId = role.data?.userId ?? null;
 
   const [rows, setRows] = useState<any[]>([]);
@@ -85,13 +93,15 @@ export default function FinanceApprovalsTable({ financeView = true, title = "Pur
 
   const isFinanceAdmin =
     financeView &&
-    (myRoles.some((r) => FINANCE_ROLES.includes(r)) ||
+    (myRoles.includes("finance_officer") || memberships.some(d => ["finance", "finance-administration"].includes(d)) ||
       ["finance", "finance-administration"].includes(primaryDept ?? ""));
   const isLeadership = myRoles.some((r) => LEADERSHIP_ROLES.includes(r));
   const myRoleLabel = myRoles[0] ? titleCase(myRoles[0]) : "Member";
 
   useEffect(() => {
     if (!userId) return;
+    sb.from("user_roles").select("department_slug").eq("user_id", userId).then(({ data }: any) => setMemberships((data ?? []).map((r: any) => r.department_slug).filter(Boolean)));
+    sb.from("bank_accounts").select("id, name").eq("is_active", true).is("archived_at", null).then(({ data }: any) => setAccounts(data ?? []));
     sb.from("profiles")
       .select("full_name, primary_department")
       .eq("id", userId)
@@ -157,140 +167,31 @@ export default function FinanceApprovalsTable({ financeView = true, title = "Pur
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const notify = async (userIds: string[], heading: string, message: string, link: string, branch: string | null) => {
-    const unique = Array.from(new Set(userIds.filter(Boolean)));
-    if (!unique.length) return;
-    await sb.from("notifications").insert(
-      unique.map((id) => ({
-        user_id: id,
-        title: heading,
-        message,
-        link,
-        type: "procurement",
-        branch: branch ?? null,
-      })),
-    );
+  const actor = { userId: userId ?? "", roles: myRoles, departments: [...memberships, primaryDept ?? ""] };
+  const runDecision = async (row: any, decision: "approved" | "rejected" | "returned") => {
+    if (!canApprovePurchase(actor, row)) return toast.error("This approval requires a different authorised person.");
+    const reason = decision === "approved" ? (window.prompt("Approval note (optional)") ?? "") : (window.prompt("Reason (required)") ?? "");
+    if (decision !== "approved" && !reason.trim()) return toast.error("A reason is required.");
+    try {
+      await financeAction("purchase_requests", row.id, decision === "approved" ? "approve" : decision === "returned" ? "return" : "reject", undefined, reason);
+      try { await notifyPurchaseRequest({ data: { requestId: row.id, stage: decision === "rejected" ? "rejected" : row.status === "finance_approved" ? "approved" : "department_approved", comment: reason } }); }
+      catch { toast.warning("Decision saved; email notification could not be sent. The in-portal notice remains recorded."); }
+      toast.success("Decision recorded"); load();
+    } catch (e: any) { toast.error(e.message ?? "Decision failed"); }
   };
-
-  const recordDecision = async (row: any, stage: string, decision: string, reason: string | null, comment: string | null) => {
-    await sb.from("finance_approval_decisions").insert({
-      request_type: "purchase_request",
-      request_id: row.id,
-      request_ref: row.pr_number ?? null,
-      stage,
-      decision,
-      reason,
-      comment,
-      decided_by: userId,
-      decider_role: myRoleLabel,
-      decider_name: profileName || null,
-    });
-    await sb.rpc("log_audit", {
-      _action: `finance_${decision}`,
-      _entity: "purchase_requests",
-      _entity_id: String(row.id),
-      _details: { stage, reason, comment, role: myRoleLabel, pr_number: row.pr_number ?? null },
-    });
-  };
-
-  /** Finance Administrator — step 1. */
-  const financeDecision = async (row: any, decision: "approved" | "rejected" | "returned") => {
-    let reason: string | null = null;
-    if (decision !== "approved") {
-      reason = window.prompt(decision === "rejected" ? "Reason for rejection (required)" : "What must be revised? (required)");
-      if (!reason || !reason.trim()) return toast.error("A reason is required.");
-      reason = reason.trim();
-    }
-    const patch: any =
-      decision === "approved"
-        ? {
-            status: "finance_approved",
-            payment_status: "waiting_leadership_approval",
-            finance_approved_by: userId,
-            finance_approved_at: new Date().toISOString(),
-          }
-        : decision === "rejected"
-          ? { status: "rejected", payment_status: "not_paid", rejection_reason: reason }
-          : { status: "returned", payment_status: "waiting_finance_review", finance_comment: reason };
-
-    const { error } = await sb.from("purchase_requests").update(patch).eq("id", row.id);
-    if (error) return toast.error(error.message);
-    await recordDecision(row, "finance", decision, reason, null);
-
-    if (decision === "approved") {
-      const { data: leaders } = await sb.from("user_roles").select("user_id").in("role", LEADERSHIP_ROLES);
-      await notify(
-        ((leaders ?? []) as any[]).map((l) => l.user_id),
-        `Approval required — ${row.pr_number ?? "purchase request"}`,
-        `${row.title} · ${money(row.amount_estimated)}`,
-        "/senior-pastor-cockpit",
-        row.branch ?? null,
-      );
-    }
-    await notify(
-      [row.requester_id],
-      `Purchase request ${row.pr_number ?? ""} — Finance ${decision}`,
-      reason ?? row.title,
-      "/departments/finance",
-      row.branch ?? null,
-    );
-    toast.success(`Finance decision recorded: ${titleCase(decision)}`);
-    load();
-  };
-
-  /** Assistant / Senior Pastor or Chairperson — step 2. */
-  const leadershipDecision = async (row: any, decision: "approved" | "rejected") => {
-    let reason: string | null = null;
-    if (decision === "rejected") {
-      reason = window.prompt("Reason for rejection (required)");
-      if (!reason || !reason.trim()) return toast.error("A reason is required.");
-      reason = reason.trim();
-    }
-    const comment = decision === "approved" ? window.prompt("Approval comment (optional)") : null;
-
-    const patch: any =
-      decision === "approved"
-        ? {
-            status: "senior_pastor_approved",
-            payment_status: "approved",
-            approved_by_senior: userId,
-            senior_approved_at: new Date().toISOString(),
-            senior_comment: comment || null,
-          }
-        : { status: "rejected", payment_status: "not_paid", rejection_reason: reason };
-
-    const { error } = await sb.from("purchase_requests").update(patch).eq("id", row.id);
-    if (error) return toast.error(error.message);
-    await recordDecision(row, "leadership", decision, reason, comment || null);
-    await notify(
-      [row.requester_id, row.finance_approved_by],
-      `Purchase request ${row.pr_number ?? ""} — ${titleCase(decision)}`,
-      reason ?? row.title,
-      "/departments/finance",
-      row.branch ?? null,
-    );
-    toast.success(`Decision recorded: ${titleCase(decision)}`);
-    load();
-  };
-
+  const financeDecision = runDecision;
+  const leadershipDecision = runDecision;
   const setPaymentStatus = async (row: any, value: string) => {
-    const patch: any = { payment_status: value };
-    if (value === "paid") patch.paid_at = new Date().toISOString();
-    const { error } = await sb.from("purchase_requests").update(patch).eq("id", row.id);
-    if (error) return toast.error(error.message);
-    await sb.rpc("log_audit", {
-      _action: "finance_payment_status",
-      _entity: "purchase_requests",
-      _entity_id: String(row.id),
-      _details: { payment_status: value, role: myRoleLabel },
-    });
-    toast.success(`Payment status set to ${paymentLabel(value)}`);
-    load();
+    if (value !== "paid" || !canMarkPurchasePaid(row)) return toast.error("Payment cannot be reset or bypass approval.");
+    const account = paymentAccounts[row.id] ?? row.bank_account_id;
+    if (!account) return toast.error("Choose the bank or cash account first.");
+    try { await financeAction("purchase_requests", row.id, "pay", undefined, undefined, account); toast.success("Payment posted once"); load(); }
+    catch (e: any) { toast.error(e.message ?? "Payment failed"); }
   };
 
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
-    return rows.filter((r) => {
+    return filterByBranch(rows, scope).filter((r) => {
       // Requests raised before the two-step workflow used "chair_approved".
       if (filter === "open" && !["submitted", "finance_approved", "returned"].includes(r.status)) return false;
       if (filter === "finance" && r.status !== "submitted") return false;
@@ -303,7 +204,7 @@ export default function FinanceApprovalsTable({ financeView = true, title = "Pur
         .toLowerCase()
         .includes(term);
     });
-  }, [rows, filter, search]);
+  }, [rows, filter, search, scope]);
 
   return (
     <Card className="p-5">
@@ -358,7 +259,7 @@ export default function FinanceApprovalsTable({ financeView = true, title = "Pur
               )
             }
           >
-            <Download className="mr-2 h-4 w-4" /> Excel (CSV)
+            <Download className="mr-2 h-4 w-4" /> Excel (.xlsx)
           </Button>
         </div>
       </div>
@@ -406,27 +307,26 @@ export default function FinanceApprovalsTable({ financeView = true, title = "Pur
                       <Badge variant="outline" className={statusTone(r.status)}>{approvalLabel(r.status)}</Badge>
                     </td>
                     <td className="py-3 pr-3">
-                      {isFinanceAdmin ? (
-                        <Select value={r.payment_status ?? "waiting_finance_review"} onValueChange={(v) => setPaymentStatus(r, v)}>
-                          <SelectTrigger className="h-8 w-[215px] text-xs"><SelectValue /></SelectTrigger>
-                          <SelectContent>
-                            {PAYMENT_STATUSES.map((p) => <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>)}
-                          </SelectContent>
-                        </Select>
-                      ) : (
-                        <span className="text-xs">{paymentLabel(r.payment_status ?? "waiting_finance_review")}</span>
-                      )}
+                      {isFinanceAdmin && canMarkPurchasePaid(r) ? (
+                        <div className="space-y-2">
+                          <Select value={paymentAccounts[r.id] ?? r.bank_account_id ?? ""} onValueChange={v => setPaymentAccounts(prev => ({ ...prev, [r.id]: v }))}>
+                            <SelectTrigger className="w-[215px]"><SelectValue placeholder="Payment account" /></SelectTrigger>
+                            <SelectContent>{accounts.map(a => <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>)}</SelectContent>
+                          </Select>
+                          <Button size="sm" onClick={() => setPaymentStatus(r, "paid")}>Mark paid</Button>
+                        </div>
+                      ) : <span className="text-xs">{paymentLabel(r.payment_status ?? "waiting_finance_review")}</span>}
                     </td>
                     <td className="py-3 pr-0 text-right">
                       <div className="flex flex-wrap justify-end gap-1 print:hidden">
-                        {isFinanceAdmin && ["submitted", "returned"].includes(r.status) && (
+                        {isFinanceAdmin && canApprovePurchase(actor, r) && ["submitted", "returned"].includes(r.status) && (
                           <>
                             <Button size="sm" className="h-7 px-2 text-xs" onClick={() => financeDecision(r, "approved")}>Approve</Button>
                             <Button size="sm" variant="outline" className="h-7 px-2 text-xs" onClick={() => financeDecision(r, "rejected")}>Reject</Button>
                             <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" onClick={() => financeDecision(r, "returned")}>Return</Button>
                           </>
                         )}
-                        {isLeadership && r.status === "finance_approved" && (
+                        {isLeadership && canApprovePurchase(actor, r) && r.status === "finance_approved" && (
                           <>
                             <Button size="sm" className="h-7 px-2 text-xs" onClick={() => leadershipDecision(r, "approved")}>Approve</Button>
                             <Button size="sm" variant="outline" className="h-7 px-2 text-xs" onClick={() => leadershipDecision(r, "rejected")}>Reject</Button>

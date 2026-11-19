@@ -116,7 +116,7 @@ export default function BudgetsModule({ canManage, currentUserId }: { canManage:
 
           }
         >
-          <Download className="mr-2 h-4 w-4" /> Excel (CSV)
+          <Download className="mr-2 h-4 w-4" /> Excel (.xlsx)
         </Button>
         <Button variant="outline" size="sm" onClick={() => window.print()}>Print / PDF</Button>
         {canManage && (
@@ -435,7 +435,7 @@ function BudgetForm({
           <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v })}>
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
-              {["draft", "submitted", "approved"].map((s) => <SelectItem key={s} value={s}>{titleCase(s)}</SelectItem>)}
+              {["draft", "submitted"].map((s) => <SelectItem key={s} value={s}>{titleCase(s)}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>

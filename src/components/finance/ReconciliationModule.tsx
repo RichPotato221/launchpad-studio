@@ -175,19 +175,10 @@ export default function ReconciliationModule({
 
   const importStatement = useMutation({
     mutationFn: async (payload: any) => {
-      const { data, error } = await sb
-        .from("bank_statements")
-        .insert({ ...payload, imported_by: currentUserId, file_name: fileName })
-        .select("id")
-        .single();
+      if (!pending.length) throw new Error("Choose a statement containing transactions first.");
+      const { data, error } = await sb.rpc("import_finance_statement", { _statement: { ...payload, file_name: fileName }, _transactions: pending, _import_key: `${fileName}:${payload.period_start}:${payload.period_end}:${JSON.stringify(pending)}` });
       if (error) throw error;
-      if (pending.length > 0) {
-        const { error: tErr } = await sb
-          .from("bank_transactions")
-          .insert(pending.map((t) => ({ ...t, statement_id: data.id })));
-        if (tErr) throw tErr;
-      }
-      return data.id as string;
+      return data as string;
     },
     onSuccess: (id) => {
       toast.success(`Statement imported with ${pending.length} transactions`);

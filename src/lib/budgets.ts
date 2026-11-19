@@ -128,6 +128,7 @@ export const BUDGET_STATUS_LABEL: Record<string, string> = {
   draft: "Draft",
   submitted: "Submitted",
   under_review: "Under review",
+  finance_approved: "Awaiting leadership approval",
   approved: "Approved",
   partially_approved: "Partially approved",
   rejected: "Rejected",

@@ -1,3 +1,4 @@
+import { FUNDED_BUDGET_STATUSES } from "@/lib/financeRules";
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -62,16 +63,16 @@ export default function DepartmentBudgetCommand({
   );
 
   const removeBudget = async (id: string, name: string) => {
-    if (!window.confirm(`Delete the budget "" permanently?`)) return;
-    const { error } = await sb.from("budgets").delete().eq("id", id);
+    if (!window.confirm(`Delete the budget ""?`)) return;
+    const { error } = await sb.from("budgets").update({ archived_at: new Date().toISOString() }).eq("id", id);
     if (error) return toast.error(error.message);
-    toast.success("Budget deleted");
+    toast.success("Budget archived");
     qc.invalidateQueries({ queryKey: ["budget-positions"] });
     qc.invalidateQueries({ queryKey: ["church-finance-position"] });
   };
 
   const rows = positions.data ?? [];
-  const totals = useMemo(() => sumPositions(rows.filter((r) => ["approved", "active", "locked"].includes(r.status))), [rows]);
+  const totals = useMemo(() => sumPositions(rows.filter((r) => FUNDED_BUDGET_STATUSES.includes(r.status))), [rows]);
   const band = utilisationBand(totals.utilisation);
 
   const activity = useQuery({
@@ -186,14 +187,14 @@ export default function DepartmentBudgetCommand({
                   </td>
                   <td className="p-3">
                     <div className="flex flex-wrap gap-2">
-                      {["approved", "active", "locked"].includes(b.status) && (
+                      {FUNDED_BUDGET_STATUSES.includes(b.status) && (
                         <Button size="sm" variant="outline" onClick={() => setIncreaseFor(b)}>
                           <TrendingUp className="mr-1 h-3.5 w-3.5" /> Increase
                         </Button>
                       )}
                       {canDelete && (
                         <Button size="sm" variant="destructive" onClick={() => removeBudget(b.budget_id, b.name)}>
-                          Delete
+                          Archive
                         </Button>
                       )}
                     </div>

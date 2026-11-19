@@ -1,3 +1,7 @@
+import { financeAction } from "@/lib/financeData";
+import { canApprovePurchase } from "@/lib/financeRules";
+import FinanceAttachment from "@/components/finance/FinanceAttachment";
+import { useIdentity } from "@/lib/identity";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
@@ -51,6 +55,9 @@ const APPROVER_ROLES = new Set([
 export default function ProcurementModule({ canManage, currentUserId, departmentSlug = "finance", scoped = false }: Props) {
   const role = useCurrentRole();
   const myRoles = role.data?.roles ?? [];
+  const { data: identity } = useIdentity();
+  const [memberships, setMemberships] = useState<string[]>([]);
+  const actor = { userId: currentUserId, roles: myRoles, departments: [...memberships, identity?.primaryDepartment ?? ""] };
   const isApprover = myRoles.some((r) => APPROVER_ROLES.has(r));
 
   const [rows, setRows] = useState<any[]>([]);
@@ -109,6 +116,7 @@ export default function ProcurementModule({ canManage, currentUserId, department
 
   useEffect(() => {
     load();
+    sb.from("user_roles").select("department_slug").eq("user_id", currentUserId).then(({ data }: any) => setMemberships((data ?? []).map((r: any) => r.department_slug).filter(Boolean)));
   }, []);
 
   const onQuote = async (file: File | null) => {
@@ -118,11 +126,7 @@ export default function ProcurementModule({ canManage, currentUserId, department
       const path = `${departmentSlug}/procurement/${Date.now()}-${file.name.replace(/[^\w.\-]+/g, "_")}`;
       const up = await supabase.storage.from("department-reports").upload(path, file);
       if (up.error) throw up.error;
-      const signed = await supabase.storage
-        .from("department-reports")
-        .createSignedUrl(path, 60 * 60 * 24 * 365);
-      if (signed.error) throw signed.error;
-      setForm((f) => ({ ...f, quote_url: signed.data.signedUrl, quote_name: file.name }));
+      setForm((f) => ({ ...f, quote_url: `storage://department-reports/${path}`, quote_name: file.name }));
       toast.success("Quotation attached");
     } catch (e: any) {
       toast.error(e.message ?? "Upload failed");
@@ -172,50 +176,12 @@ export default function ProcurementModule({ canManage, currentUserId, department
 
 
   const advance = async (row: any, status: string) => {
-    const patch: any = { status };
-    const now = new Date().toISOString();
-    if (status === "finance_approved") {
-      patch.approved_by_chair = currentUserId;
-      patch.chair_approved_at = now;
-      patch.finance_approved_by = currentUserId;
-      patch.finance_approved_at = now;
-      patch.payment_status = "waiting_leadership_approval";
-    }
-    if (status === "senior_pastor_approved") {
-      const firstApprover = row.finance_approved_by ?? row.approved_by_chair;
-      if (firstApprover && firstApprover === currentUserId) {
-        return toast.error("Two different authorities must approve a purchase request.");
-      }
-      patch.approved_by_senior = currentUserId;
-      patch.senior_approved_at = now;
-      patch.payment_status = "approved";
-    }
-    if (status === "ordered") {
-      patch.ordered_at = now;
-      patch.po_number = row.po_number ?? (row.pr_number ?? "PR").replace("PR-", "PO-");
-    }
-    if (status === "received") patch.received_at = now;
-    if (status === "rejected") {
-      patch.payment_status = "not_paid";
-      const reason = window.prompt("Reason for rejection?") ?? "";
-      patch.rejection_reason = reason || null;
-    }
-    const { error } = await sb.from("purchase_requests").update(patch).eq("id", row.id);
-    if (error) return toast.error(error.message);
-
+    const note = status === "rejected" ? (window.prompt("Reason for rejection") ?? "") : "";
     try {
-      const stage =
-        status === "rejected"
-          ? "rejected"
-          : status === "finance_approved"
-            ? "department_approved"
-            : status === "senior_pastor_approved"
-              ? "approved"
-              : null;
-      if (stage) await notifyPurchaseRequest({ data: { requestId: row.id, stage, comment: patch.rejection_reason ?? null } });
-    } catch (err) {
-      console.error("purchase request notification failed", err);
-    }
+      await financeAction("purchase_requests", row.id, ["finance_approved", "senior_pastor_approved"].includes(status) ? "approve" : status === "rejected" ? "reject" : status === "ordered" ? "order" : "receive", undefined, note);
+      const stage = status === "rejected" ? "rejected" : status === "finance_approved" ? "department_approved" : status === "senior_pastor_approved" ? "approved" : null;
+      if (stage) { try { await notifyPurchaseRequest({ data: { requestId: row.id, stage, comment: note } }); } catch { toast.warning("Saved; email delivery unavailable. The in-portal notice remains recorded."); } }
+    } catch (e: any) { return toast.error(e.message ?? "Update failed"); }
     toast.success(`Marked ${titleCase(status)}`);
     load();
   };
@@ -234,10 +200,10 @@ export default function ProcurementModule({ canManage, currentUserId, department
   const canDelete = myRoles.some((r) => ["chairperson", "senior_apostle", "lead_pastor"].includes(r));
 
   const removeRequest = async (row: any) => {
-    if (!window.confirm("Delete this purchase request permanently?")) return;
-    const { error } = await sb.from("purchase_requests").delete().eq("id", row.id);
+    if (!window.confirm("Archive this purchase request?")) return;
+    const { error } = await sb.from("purchase_requests").update({ archived_at: new Date().toISOString() }).eq("id", row.id);
     if (error) return toast.error(error.message);
-    toast.success("Purchase request deleted");
+    toast.success("Purchase request archived");
     load();
   };
 
@@ -400,7 +366,7 @@ export default function ProcurementModule({ canManage, currentUserId, department
             </SelectContent>
           </Select>
         </div>
-        <Button variant="outline" onClick={exportCsv}><Download className="mr-2 h-4 w-4" />Export CSV</Button>
+        <Button variant="outline" onClick={exportCsv}><Download className="mr-2 h-4 w-4" />Export Excel</Button>
         <Button variant="outline" onClick={() => window.print()}><Printer className="mr-2 h-4 w-4" />Print / PDF</Button>
       </Card>
 
@@ -431,9 +397,7 @@ export default function ProcurementModule({ canManage, currentUserId, department
                 {r.description && <p className="mt-2 whitespace-pre-wrap text-sm">{r.description}</p>}
                 {r.rejection_reason && <p className="mt-2 text-xs text-red-700">Rejected: {r.rejection_reason}</p>}
                 {r.quote_url && (
-                  <a href={r.quote_url} target="_blank" rel="noreferrer" className="mt-2 inline-block text-xs underline">
-                    📎 {r.quote_name ?? "Quotation"}
-                  </a>
+                  <FinanceAttachment value={r.quote_url} label={r.quote_name ?? "Quotation"} />
                 )}
               </div>
 
@@ -447,10 +411,10 @@ export default function ProcurementModule({ canManage, currentUserId, department
                 </span>
                 {canManage && (
                   <div className="flex flex-wrap justify-end gap-2 print:hidden">
-                    {(r.status === "submitted" || r.status === "returned") && isApprover && (
+                    {(r.status === "submitted" || r.status === "returned") && canApprovePurchase(actor, r) && (
                       <Button size="sm" onClick={() => advance(r, "finance_approved")}>Approve (1 of 2)</Button>
                     )}
-                    {(r.status === "chair_approved" || r.status === "finance_approved") && isApprover && (
+                    {(r.status === "chair_approved" || r.status === "finance_approved") && canApprovePurchase(actor, r) && (
                       <Button
                         size="sm"
                         disabled={(r.finance_approved_by ?? r.approved_by_chair) === currentUserId}
@@ -473,7 +437,7 @@ export default function ProcurementModule({ canManage, currentUserId, department
                       <Button size="sm" variant="ghost" onClick={() => archive(r)}>Archive</Button>
                     )}
                     {canDelete && (
-                      <Button size="sm" variant="destructive" onClick={() => removeRequest(r)}>Delete</Button>
+                      <Button size="sm" variant="destructive" onClick={() => removeRequest(r)}>Archive</Button>
 
                     )}
                   </div>

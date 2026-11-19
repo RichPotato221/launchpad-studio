@@ -1,3 +1,4 @@
+import { financeAction, invalidateFinance } from "@/lib/financeData";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -61,14 +62,14 @@ export default function BudgetApprovalsModule({
     qc.invalidateQueries({ queryKey: ["budget-adjustment-queue"] });
     qc.invalidateQueries({ queryKey: ["budget-positions"] });
     qc.invalidateQueries({ queryKey: ["church-finance-position"] });
-    qc.invalidateQueries({ queryKey: ["budgets"] });
+    invalidateFinance(qc);
   };
 
   const all = budgets.data ?? [];
-  const pending = all.filter((b) => ["submitted", "under_review"].includes(b.status));
+  const pending = all.filter((b) => ["submitted", "under_review", "finance_approved"].includes(b.status));
   const decided = all.filter((b) => ["approved", "partially_approved", "rejected", "active", "locked"].includes(b.status));
-  const adjPending = (adjustments.data ?? []).filter((a: any) => a.status === "submitted");
-  const adjDecided = (adjustments.data ?? []).filter((a: any) => a.status !== "submitted");
+  const adjPending = (adjustments.data ?? []).filter((a: any) => ["submitted", "finance_approved"].includes(a.status));
+  const adjDecided = (adjustments.data ?? []).filter((a: any) => !["submitted", "finance_approved"].includes(a.status));
 
   return (
     <div className="space-y-6">
@@ -244,53 +245,15 @@ function DecisionDialog({
 
   const submit = async () => {
     if (!decision) return;
-    const approved = Number(amount || requested);
+    const approved = Number(amount || decision.row.review_amount || requested);
     if (approving && approved <= 0) return toast.error("Enter the amount you are approving.");
     if (!approving && !reason.trim()) return toast.error("A reason is required when declining.");
     setSaving(true);
-    const now = new Date().toISOString();
-
-    if (decision.kind === "budget") {
-      const status = approving ? (approved < requested ? "partially_approved" : "approved") : "rejected";
-      const { error } = await sb
-        .from("budgets")
-        .update({
-          status,
-          approved_amount: approving ? approved : null,
-          total_amount: approving ? approved : decision.row.total_amount,
-          approved_by: approving ? currentUserId : null,
-          approved_at: approving ? now : null,
-          rejection_reason: approving ? null : reason.trim(),
-          rejected_at: approving ? null : now,
-          rejected_by: approving ? null : currentUserId,
-          ...(approving && reason.trim()
-            ? { notes: [decision.row.notes, `Approval note: ${reason.trim()}`].filter(Boolean).join("\n") }
-            : {}),
-        })
-        .eq("id", decision.row.id);
-      setSaving(false);
-      if (error) return toast.error(error.message);
-    } else {
-      const budgetId = decision.row.budget_id;
-      const { error } = await sb
-        .from("budget_adjustments")
-        .update({
-          status: approving ? "approved" : "rejected",
-          approved_amount: approving ? approved : null,
-          decision_reason: reason.trim() || null,
-          decided_by: currentUserId,
-          decided_at: now,
-        })
-        .eq("id", decision.row.id);
-      if (!error && approving) {
-        const newTotal = Number(decision.row.budget?.total_amount ?? 0) + approved;
-        await sb.from("budgets").update({ total_amount: newTotal, approved_amount: newTotal }).eq("id", budgetId);
-      }
-      setSaving(false);
-      if (error) return toast.error(error.message);
-    }
-
-    toast.success(approving ? "Approved" : "Declined");
+    try {
+      await financeAction(decision.kind === "budget" ? "budgets" : "budget_adjustments", decision.row.id, approving ? "approve" : "reject", approving ? approved : undefined, reason.trim());
+    } catch (e: any) { setSaving(false); return toast.error(e.message ?? "Decision failed"); }
+    setSaving(false);
+    toast.success(approving ? (decision.row.status === "finance_approved" ? "Final approval recorded" : "Finance review recorded — awaiting leadership") : "Declined");
     setAmount("");
     setReason("");
     onClose();

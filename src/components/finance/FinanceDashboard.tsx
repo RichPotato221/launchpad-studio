@@ -1,3 +1,4 @@
+import { useChurchPosition } from "@/lib/budgets";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
@@ -31,6 +32,7 @@ type Summary = {
 };
 
 export default function FinanceDashboard() {
+  const position = useChurchPosition();
   const summary = useQuery({
     queryKey: ["finance-summary"],
     queryFn: async () => {
@@ -74,8 +76,8 @@ export default function FinanceDashboard() {
     },
   });
 
-  const isLoading = summary.isLoading || trend.isLoading;
-  const error = summary.error || trend.error;
+  const isLoading = summary.isLoading || trend.isLoading || position.isLoading;
+  const error = summary.error || trend.error || position.error;
 
   if (isLoading) {
     return <Card className="p-10 text-center text-sm text-muted-foreground">Loading financial position…</Card>;
@@ -99,14 +101,14 @@ export default function FinanceDashboard() {
 
   const cards = [
     { label: "Total income (12m)", value: money(s?.total_income), sub: "All giving streams" },
-    { label: "Total expenditure (12m)", value: money(s?.total_expense), sub: "Paid claims" },
+    { label: "Total expenditure (12m)", value: money(s?.total_expense), sub: "Posted ledger and unlinked payments" },
     {
       label: "Cash position",
-      value: money(s?.cash_position),
+      value: money(position.data?.total_cash),
       sub: `${trendArrow(Number(curr?.income ?? 0), Number(prev?.income ?? 0))} vs last month`,
     },
-    { label: "Available funds", value: money(Number(s?.cash_position ?? 0) - Number(s?.outstanding_payments ?? 0)), sub: "Cash less commitments" },
-    { label: "Outstanding payments", value: money(s?.outstanding_payments), sub: "Claims not yet paid" },
+    { label: "Available funds", value: money(position.data?.available), sub: "Cash less commitments" },
+    { label: "Outstanding payments", value: money(s?.outstanding_payments), sub: "Approved unpaid commitments" },
     { label: "Giving today", value: money(s?.giving_today), sub: "Captured today" },
     { label: "Giving this month", value: money(s?.giving_this_month), sub: "Month to date" },
     { label: "Pending approvals", value: String(s?.pending_approvals ?? 0), sub: "Awaiting a decision" },
@@ -130,7 +132,7 @@ export default function FinanceDashboard() {
               exportRows("finance-executive-summary", ["Metric", "Value"], cards.map((c) => [c.label, c.value]))
             }
           >
-            <Download className="mr-2 h-4 w-4" /> Excel (CSV)
+            <Download className="mr-2 h-4 w-4" /> Excel (.xlsx)
           </Button>
         </div>
       </div>
