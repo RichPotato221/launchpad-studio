@@ -42,7 +42,7 @@ export default function ApprovalsModule({
     queryFn: async () => {
       let q = sb
         .from("expense_claims")
-        .select("*, claimant:profiles!expense_claims_claimant_id_fkey(id, full_name, email)")
+        .select("*")
         .is("archived_at", null)
         .order("created_at", { ascending: false })
         .limit(200);
@@ -50,7 +50,15 @@ export default function ApprovalsModule({
       else if (status !== "all") q = q.eq("status", status);
       const { data, error } = await q;
       if (error) throw error;
-      return (data ?? []) as any[];
+      const records = (data ?? []) as any[];
+      const ids = Array.from(new Set(records.map(r => r.claimant_id).filter(Boolean)));
+      const people = new Map<string, any>();
+      for (let offset = 0; offset < ids.length; offset += 100) {
+        const { data: profiles, error: profileError } = await sb.from("profiles").select("id,full_name,email").in("id", ids.slice(offset, offset + 100));
+        if (profileError) throw profileError;
+        for (const profile of profiles ?? []) people.set(profile.id, profile);
+      }
+      return records.map(row => ({ ...row, claimant: people.get(row.claimant_id) }));
     },
   });
 

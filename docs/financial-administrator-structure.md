@@ -170,6 +170,8 @@ Authenticated browser checks opened all twelve command-centre sections. A clearl
 
 Live authenticated checks confirmed reporting functions respond, Chairperson sees only own-branch/church-wide budgets, direct approval reset/deletion/archived re-approval fail, and non-Finance bank import is blocked. The Audit Trail's former invalid profile relationship was reproduced and corrected; the screen then loaded successfully.
 
+A final user-path pass opened every one of the twelve sections at both 1280 × 1800 desktop and 390 × 844 phone sizes in the portal's supported light theme. It exposed another invalid profile relationship in the expense-claim list; that relationship was replaced with a separate permission-scoped profile lookup. Both full passes then succeeded with no page overflow or browser runtime errors. The audit view displayed 44 accessible records and its first change detail opened successfully; ledger search followed by an Excel download succeeded at both sizes. All six PDF pages were rendered and visually inspected with no clipping or overlapping text found.
+
 Not exercised: an actual payment/debit from a real account; approving as a second Finance user; successful real statement import; actual email delivery; reopening a privately stored historical receipt. These need appropriately authorised sessions or suitable test fixtures. Passing source/unit and role-denial checks is not a claim that those money-moving paths were executed. Existing historic amounts and manual bookkeeping still need reconciliation; no production financial history was rewritten.
 
 The code is saved in the project and database safeguards are applied. Updating the published website requires publishing this revision; this work does not itself publish it.
