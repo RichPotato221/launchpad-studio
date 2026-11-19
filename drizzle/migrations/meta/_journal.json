@@ -71,6 +71,13 @@
       "when": 1795104577724,
       "tag": "0009_secure_finance_command_and_resource_reads",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1795105405731,
+      "tag": "0010_restrict_notify_queue_insert",
+      "breakpoints": true
     }
   ]
 }
