@@ -19,7 +19,14 @@ import RsvpPanel from "@/components/events/RsvpPanel";
 import { Copy } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/events")({
-  head: () => ({ meta: [{ title: "Events & RSVPs — TRoGKC Portal" }] }),
+  head: () => ({ meta: [
+    { title: "Events & RSVPs — TRoGKC Portal" },
+    { name: "description", content: "Church events, service schedules and attendance responses for TRoGKC." },
+    { property: "og:title", content: "Events & RSVPs — TRoGKC Portal" },
+    { property: "og:description", content: "Church events, service schedules and attendance responses for TRoGKC." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: EventsPage,
 });
 

@@ -12,12 +12,14 @@ import { Download, Search, ShieldAlert, Lock } from "lucide-react";
 import { fetchDepartments } from "@/lib/portal";
 
 export const Route = createFileRoute("/_authenticated/vault")({
-  head: () => ({
-    meta: [
-      { title: "Central Vault — TRoGKC Portal" },
-      { name: "description", content: "Leadership-only archive of every file uploaded anywhere in the portal." },
-    ],
-  }),
+  head: () => ({ meta: [
+    { title: "Central Vault — TRoGKC Portal" },
+    { name: "description", content: "Leadership-only archive of every file uploaded anywhere in the TRoGKC portal." },
+    { property: "og:title", content: "Central Vault — TRoGKC Portal" },
+    { property: "og:description", content: "Leadership-only archive of every file uploaded anywhere in the TRoGKC portal." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: VaultPage,
 });
 

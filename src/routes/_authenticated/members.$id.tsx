@@ -9,7 +9,14 @@ import { MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/members/$id")({
-  head: () => ({ meta: [{ title: "Member Profile — TRoGKC Portal" }] }),
+  head: () => ({ meta: [
+    { title: "Member Profile — TRoGKC Portal" },
+    { name: "description", content: "Member profile and serving information in the TRoGKC Leadership Portal." },
+    { property: "og:title", content: "Member Profile — TRoGKC Portal" },
+    { property: "og:description", content: "Member profile and serving information in the TRoGKC Leadership Portal." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: MemberProfilePage,
 });
 

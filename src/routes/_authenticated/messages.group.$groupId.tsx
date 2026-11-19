@@ -10,7 +10,14 @@ import { toast } from "sonner";
 import { ArrowLeft, Send, Trash2, Users } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/messages/group/$groupId")({
-  head: () => ({ meta: [{ title: "Group chat — TRoGKC Portal" }] }),
+  head: () => ({ meta: [
+    { title: "Group chat — TRoGKC Portal" },
+    { name: "description", content: "Team group conversations in the TRoGKC Leadership Portal." },
+    { property: "og:title", content: "Group chat — TRoGKC Portal" },
+    { property: "og:description", content: "Team group conversations in the TRoGKC Leadership Portal." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: GroupChatPage,
 });
 

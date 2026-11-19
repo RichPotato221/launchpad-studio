@@ -1,4 +1,5 @@
 import { financeAction } from "@/lib/financeData";
+import FinanceAttachment from "@/components/finance/FinanceAttachment";
 import { canApprovePurchase, canMarkPurchasePaid, isFinanceReviewer } from "@/lib/financeRules";
 import { notifyPurchaseRequest } from "@/lib/activity.functions";
 import { useBranchScope, filterByBranch } from "@/lib/useBranchScope";
@@ -346,9 +347,7 @@ export default function FinanceApprovalsTable({ financeView = true, title = "Pur
                             <p className="text-xs uppercase tracking-widest text-muted-foreground">Description</p>
                             <p className="mt-1 whitespace-pre-wrap text-sm">{r.description || "No motivation captured."}</p>
                             {r.quote_url && (
-                              <a href={r.quote_url} target="_blank" rel="noreferrer" className="mt-2 inline-block text-xs underline">
-                                📎 {r.quote_name ?? "Quotation"}
-                              </a>
+                              <FinanceAttachment value={r.quote_url} label={r.quote_name ?? "Quotation"} />
                             )}
                             {r.rejection_reason && <p className="mt-2 text-xs text-red-700">Reason: {r.rejection_reason}</p>}
                             {r.finance_comment && <p className="mt-2 text-xs text-amber-700">Finance note: {r.finance_comment}</p>}

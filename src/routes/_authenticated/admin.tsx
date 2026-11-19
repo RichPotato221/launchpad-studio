@@ -17,7 +17,14 @@ import { removeMember } from "@/lib/memberAdmin.functions";
 import PhotoField from "@/components/common/PhotoField";
  
 export const Route = createFileRoute("/_authenticated/admin")({
-  head: () => ({ meta: [{ title: "Admin — TRoGKC Portal" }] }),
+  head: () => ({ meta: [
+    { title: "Admin — TRoGKC Portal" },
+    { name: "description", content: "Member approval, department assignments and leadership administration for TRoGKC." },
+    { property: "og:title", content: "Admin — TRoGKC Portal" },
+    { property: "og:description", content: "Member approval, department assignments and leadership administration for TRoGKC." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: AdminPage,
 });
  

@@ -15,6 +15,7 @@ function oauthApi(): OAuthNamespace {
 }
 
 export const Route = createFileRoute("/.lovable/oauth/consent")({
+  head: () => ({ meta: [{ title: "Authorize Connection — TRoGKC Portal" }, { name: "description", content: "Review and authorize an application connection to your TRoGKC account." }, { property: "og:title", content: "Authorize Connection — TRoGKC Portal" }, { property: "og:description", content: "Review and authorize an application connection to your TRoGKC account." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
   ssr: false,
   validateSearch: (s: Record<string, unknown>) => ({
     authorization_id: typeof s.authorization_id === "string" ? s.authorization_id : "",

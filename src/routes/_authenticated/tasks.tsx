@@ -13,7 +13,14 @@ import { toast } from "sonner";
 import { notifyTaskActivity } from "@/lib/activity.functions";
 
 export const Route = createFileRoute("/_authenticated/tasks")({
-  head: () => ({ meta: [{ title: "Tasks & Approvals — TRoGKC Portal" }] }),
+  head: () => ({ meta: [
+    { title: "Tasks & Approvals — TRoGKC Portal" },
+    { name: "description", content: "Church task assignments and approval queues for TRoGKC." },
+    { property: "og:title", content: "Tasks & Approvals — TRoGKC Portal" },
+    { property: "og:description", content: "Church task assignments and approval queues for TRoGKC." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: TasksPage,
 });
 

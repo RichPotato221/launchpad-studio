@@ -35,10 +35,11 @@ export const Route = createFileRoute("/_authenticated/departments/$slug")({
   head: ({ params }) => {
     const legal = params.slug === "protocol";
     const ushering = params.slug === "ushers";
-    const title = legal ? "Legal & Compliance — TRoGKC Portal" : ushering ? "Ushering & Protocol — TRoGKC Portal" : `${params.slug} — TRoGKC Portal`;
+    const finance = ["finance", "finance-administration"].includes(params.slug);
+    const title = legal ? "Legal & Compliance — TRoGKC Portal" : ushering ? "Ushering & Protocol — TRoGKC Portal" : finance ? "Financial Administrator — TRoGKC Portal" : `${params.slug} — TRoGKC Portal`;
     const description = legal
       ? "Legal, governance, audit, property, contract, risk and compliance oversight for Throne Room of God Kingdom Center."
-      : ushering ? "Ushering, service readiness, congregation flow, leadership and guest protocol for Throne Room of God Kingdom Center." : `Department leadership, team, performance and resources for ${params.slug}.`;
+      : ushering ? "Ushering, service readiness, congregation flow, leadership and guest protocol for Throne Room of God Kingdom Center." : finance ? "Financial stewardship, treasury, giving, budgets, approval decisions, procurement, payroll, reconciliation and audit for Throne Room of God Kingdom Center." : `Department leadership, team, performance and resources for ${params.slug}.`;
     return { meta: [
       { title },
       { name: "description", content: description },
@@ -46,6 +47,10 @@ export const Route = createFileRoute("/_authenticated/departments/$slug")({
       { property: "og:description", content: description },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      ...((DEPARTMENT_HERO[params.slug]?.src ?? "").startsWith("https://") ? [
+        { property: "og:image", content: DEPARTMENT_HERO[params.slug].src },
+        { name: "twitter:image", content: DEPARTMENT_HERO[params.slug].src },
+      ] : []),
     ] };
   },
   component: DepartmentPortal,

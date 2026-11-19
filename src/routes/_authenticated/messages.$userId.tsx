@@ -12,7 +12,14 @@ import { toast } from "sonner";
 import { ArrowLeft, Send, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/messages/$userId")({
-  head: () => ({ meta: [{ title: "Chat — TRoGKC Portal" }] }),
+  head: () => ({ meta: [
+    { title: "Chat — TRoGKC Portal" },
+    { name: "description", content: "Private member conversations in the TRoGKC Leadership Portal." },
+    { property: "og:title", content: "Chat — TRoGKC Portal" },
+    { property: "og:description", content: "Private member conversations in the TRoGKC Leadership Portal." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: ChatPage,
 });
 

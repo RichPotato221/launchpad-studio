@@ -12,7 +12,14 @@ import { RiskDashboard } from "@/components/RiskDashboard";
 import { ApostolicCenter } from "@/components/apostolic/ApostolicCenter";
 
 export const Route = createFileRoute("/_authenticated/senior-pastor-cockpit")({
-  head: () => ({ meta: [{ title: "Senior Pastor Cockpit — TRoGKC Portal" }] }),
+  head: () => ({ meta: [
+    { title: "Senior Pastor Cockpit — TRoGKC Portal" },
+    { name: "description", content: "Organisation-wide leadership oversight for the TRoGKC Senior Pastor." },
+    { property: "og:title", content: "Senior Pastor Cockpit — TRoGKC Portal" },
+    { property: "og:description", content: "Organisation-wide leadership oversight for the TRoGKC Senior Pastor." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: CockpitPage,
 });
 

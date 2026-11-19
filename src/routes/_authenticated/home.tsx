@@ -6,7 +6,14 @@ import { PORTAL_IMAGES, DEPARTMENT_HERO } from "@/lib/portalImages";
  
  
 export const Route = createFileRoute("/_authenticated/home")({
-  head: () => ({ meta: [{ title: "Home — TRoGKC Portal" }] }),
+  head: () => ({ meta: [
+    { title: "Home — TRoGKC Portal" },
+    { name: "description", content: "Throne Room of God Kingdom Center leadership, church vision and departments." },
+    { property: "og:title", content: "Home — TRoGKC Portal" },
+    { property: "og:description", content: "Throne Room of God Kingdom Center leadership, church vision and departments." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: HomePage,
 });
  

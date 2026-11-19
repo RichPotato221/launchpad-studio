@@ -57,6 +57,13 @@
       "when": 1795103259721,
       "tag": "0007_finance_audit_reporting_alignment",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1795103691527,
+      "tag": "0008_finance_restrict_branch_and_posted_payments",
+      "breakpoints": true
     }
   ]
 }

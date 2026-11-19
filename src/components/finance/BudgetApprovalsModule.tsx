@@ -13,6 +13,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { toast } from "sonner";
 import { fmtDate, money, titleCase, STATUS_CLASS, branchLabel } from "@/lib/finance";
 import { BUDGET_STATUS_LABEL, waitingDays } from "@/lib/budgets";
+import { useIdentity } from "@/lib/identity";
+import { canApproveBudget } from "@/lib/financeRules";
 
 const sb = supabase as any;
 
@@ -30,6 +32,8 @@ export default function BudgetApprovalsModule({
   currentUserId: string;
 }) {
   const qc = useQueryClient();
+  const identity = useIdentity();
+  const mayDecide = (row: any) => canManage && canApproveBudget({ userId: currentUserId, roles: identity.data?.roles ?? [], departments: [identity.data?.primaryDepartment ?? "", ...(identity.data?.roleRows ?? []).map(r => r.department_slug ?? "")] }, row);
   const [decision, setDecision] = useState<Decision>(null);
 
   const budgets = useQuery({
@@ -112,7 +116,7 @@ export default function BudgetApprovalsModule({
                   <Badge variant="outline" className={STATUS_CLASS[b.status] ?? ""}>
                     {BUDGET_STATUS_LABEL[b.status] ?? titleCase(b.status)}
                   </Badge>
-                  {canManage && (
+                  {mayDecide(b) && (
                     <div className="mt-3 flex justify-end gap-2">
                       <Button size="sm" onClick={() => setDecision({ row: b, kind: "budget", mode: "approve" })}>
                         Approve
@@ -148,7 +152,7 @@ export default function BudgetApprovalsModule({
                 </div>
                 <div className="text-right">
                   <p className="font-serif text-2xl">{money(a.requested_amount)}</p>
-                  {canManage && (
+                  {mayDecide(a) && (
                     <div className="mt-3 flex justify-end gap-2">
                       <Button size="sm" onClick={() => setDecision({ row: a, kind: "adjustment", mode: "approve" })}>
                         Approve
@@ -237,7 +241,7 @@ function DecisionDialog({
   onClose: () => void;
   onDone: () => void;
 }) {
-  const requested = Number(decision?.row?.requested_amount ?? decision?.row?.total_amount ?? 0);
+  const requested = Number(decision?.row?.requested_amount || decision?.row?.total_amount || 0);
   const [amount, setAmount] = useState("");
   const [reason, setReason] = useState("");
   const [saving, setSaving] = useState(false);
@@ -275,11 +279,11 @@ function DecisionDialog({
                 type="number"
                 min="0"
                 value={amount}
-                placeholder={String(requested)}
+                placeholder={String(decision?.row.review_amount ?? requested)}
                 onChange={(e) => setAmount(e.target.value)}
               />
               <p className="mt-1 text-xs text-muted-foreground">
-                Leave blank to approve the full amount. A lower amount is recorded as a partial approval.
+                Leave blank to approve the reviewed amount, or the requested amount before Finance review.
               </p>
             </div>
           )}

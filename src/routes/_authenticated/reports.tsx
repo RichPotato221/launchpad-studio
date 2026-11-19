@@ -14,7 +14,14 @@ import { toast } from "sonner";
 import { useBranchScope, filterByBranch } from "@/lib/useBranchScope";
 
 export const Route = createFileRoute("/_authenticated/reports")({
-  head: () => ({ meta: [{ title: "Reports — TRoGKC Portal" }] }),
+  head: () => ({ meta: [
+    { title: "Reports — TRoGKC Portal" },
+    { name: "description", content: "Department reports and leadership performance records for TRoGKC." },
+    { property: "og:title", content: "Reports — TRoGKC Portal" },
+    { property: "og:description", content: "Department reports and leadership performance records for TRoGKC." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: ReportsPage,
 });
 

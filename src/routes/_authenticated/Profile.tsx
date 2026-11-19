@@ -18,7 +18,14 @@ type CalendarStatus = {
 };
  
 export const Route = createFileRoute("/_authenticated/Profile")({
-  head: () => ({ meta: [{ title: "My Profile — TRoGKC Portal" }] }),
+  head: () => ({ meta: [
+    { title: "My Profile — TRoGKC Portal" },
+    { name: "description", content: "Your TRoGKC member details, contact information and serving departments." },
+    { property: "og:title", content: "My Profile — TRoGKC Portal" },
+    { property: "og:description", content: "Your TRoGKC member details, contact information and serving departments." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: ProfilePage,
 });
  

@@ -13,7 +13,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/governance")({
-  head: () => ({ meta: [{ title: "Governance — TRoGKC Portal" }] }),
+  head: () => ({ meta: [
+    { title: "Governance — TRoGKC Portal" },
+    { name: "description", content: "Joint leadership governance and department oversight for TRoGKC." },
+    { property: "og:title", content: "Governance — TRoGKC Portal" },
+    { property: "og:description", content: "Joint leadership governance and department oversight for TRoGKC." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: GovernancePage,
 });
 

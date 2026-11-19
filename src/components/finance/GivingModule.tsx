@@ -72,7 +72,6 @@ export default function GivingModule({
         .select("id, transaction_no, kind, amount, entry_date, branch, member_id, reference_number, notes, status")
         .in("kind", KIND_OPTIONS)
         .in("status", POSTED_STATUSES)
-        .is("archived_at", null)
         .gte("entry_date", from)
         .lte("entry_date", to)
         .order("entry_date", { ascending: false })

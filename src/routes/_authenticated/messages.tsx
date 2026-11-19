@@ -10,7 +10,14 @@ import { MessageCircle, Plus, Search, Users } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/messages")({
-  head: () => ({ meta: [{ title: "Messages — TRoGKC Portal" }] }),
+  head: () => ({ meta: [
+    { title: "Messages — TRoGKC Portal" },
+    { name: "description", content: "Member and team messaging in the TRoGKC Leadership Portal." },
+    { property: "og:title", content: "Messages — TRoGKC Portal" },
+    { property: "og:description", content: "Member and team messaging in the TRoGKC Leadership Portal." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: MessagesLayout,
 });
 

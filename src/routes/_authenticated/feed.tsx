@@ -17,7 +17,14 @@ import { MemberAvatarLink } from "@/components/MemberAvatarlink";
 import { notify } from "@/lib/notifications.functions";
 
 export const Route = createFileRoute("/_authenticated/feed")({
-  head: () => ({ meta: [{ title: "Announcements Feed — TRoGKC Portal" }] }),
+  head: () => ({ meta: [
+    { title: "Announcements Feed — TRoGKC Portal" },
+    { name: "description", content: "Church announcements and branch updates in the TRoGKC Leadership Portal." },
+    { property: "og:title", content: "Announcements Feed — TRoGKC Portal" },
+    { property: "og:description", content: "Church announcements and branch updates in the TRoGKC Leadership Portal." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: FeedPage,
 });
 

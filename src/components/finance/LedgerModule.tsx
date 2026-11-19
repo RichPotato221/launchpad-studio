@@ -68,7 +68,7 @@ export default function LedgerModule({
   const rows = query.data?.rows ?? [];
   const setStatusMut = useMutation({
     mutationFn: async ({ id, next }: { id: string; next: string }) => {
-      const patch: any = { status: next, updated_by: currentUserId };
+      const patch: any = next === "archived" ? { archived_at: new Date().toISOString(), updated_by: currentUserId } : { status: next, updated_by: currentUserId };
       if (next === "approved") {
         patch.approved_by = currentUserId;
         patch.approved_at = new Date().toISOString();

@@ -7,7 +7,14 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/reset-password")({
-  head: () => ({ meta: [{ title: "Reset password — TRoGKC Portal" }] }),
+  head: () => ({ meta: [
+    { title: "Reset password — TRoGKC Portal" },
+    { name: "description", content: "Reset your TRoGKC Leadership Portal password securely." },
+    { property: "og:title", content: "Reset password — TRoGKC Portal" },
+    { property: "og:description", content: "Reset your TRoGKC Leadership Portal password securely." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: ResetPasswordPage,
 });
 

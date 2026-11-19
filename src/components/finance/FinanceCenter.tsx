@@ -113,12 +113,19 @@ function FinanceAudit() {
   const audit = useQuery({
     queryKey: ["finance-audit"],
     queryFn: async () => {
-      return fetchAllRows(() => sb
+      const records = await fetchAllRows(() => sb
         .from("audit_log")
-        .select("id, action, entity, entity_id, details, created_at, actor:profiles!audit_log_actor_id_fkey(full_name)")
+        .select("id, action, entity, entity_id, details, created_at, actor_id")
         .in("entity", ["finance_entries", "expense_claims", "budgets", "budget_lines", "budget_adjustments", "budget_revisions", "purchase_requests", "finance_approval_decisions", "payroll_runs", "payroll_lines", "bank_accounts", "bank_statements", "bank_transactions", "fin_month_periods", "fin_month_lines"])
         .order("created_at", { ascending: false })
         .order("id", { ascending: false }));
+      const ids = Array.from(new Set(records.map(r => r.actor_id).filter(Boolean)));
+      const actors = new Map<string, string>();
+      for (let offset = 0; offset < ids.length; offset += 100) {
+        const { data } = await sb.from("profiles").select("id,full_name").in("id", ids.slice(offset, offset + 100));
+        for (const actor of data ?? []) actors.set(actor.id, actor.full_name);
+      }
+      return records.map(r => ({ ...r, actor: { full_name: actors.get(r.actor_id) ?? r.actor_id ?? "System" } }));
     },
   });
 
@@ -135,8 +142,8 @@ function FinanceAudit() {
           onClick={() =>
             exportRows(
               "finance-audit-trail",
-              ["When", "Actor", "Action", "Record", "Record ID"],
-              rows.map((r) => [r.created_at, r.actor?.full_name ?? "System", r.action, r.entity, r.entity_id]),
+              ["When", "Actor", "Action", "Record", "Record ID", "Changes"],
+              rows.map((r) => [r.created_at, r.actor?.full_name ?? "System", r.action, r.entity, r.entity_id, JSON.stringify(r.details)]),
             )
           }
         >

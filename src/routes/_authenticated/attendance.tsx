@@ -14,7 +14,14 @@ import { useBranchScope, filterByBranch } from "@/lib/useBranchScope";
 
 
 export const Route = createFileRoute("/_authenticated/attendance")({
-  head: () => ({ meta: [{ title: "Attendance — TRoGKC Portal" }] }),
+  head: () => ({ meta: [
+    { title: "Attendance — TRoGKC Portal" },
+    { name: "description", content: "Service attendance and visitor records across TRoGKC branches." },
+    { property: "og:title", content: "Attendance — TRoGKC Portal" },
+    { property: "og:description", content: "Service attendance and visitor records across TRoGKC branches." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: AttendancePage,
 });
 

@@ -1,10 +1,17 @@
 import { describe, it, expect } from "vitest";
-import { canApprovePurchase, canMarkPurchasePaid, recognisedGiving, fundedAllocation, PROTECTED_FINANCE_TABLES } from "./financeRules";
+import { canApprovePurchase, canApproveBudget, canMarkPurchasePaid, recognisedGiving, fundedAllocation, PROTECTED_FINANCE_TABLES } from "./financeRules";
 import { attachmentPath } from "./financeAttachment";
 import { buildTools, executeTool } from "./aiAgent";
 const finance = { userId: "finance", roles: [], departments: ["finance"] };
 const leader = { userId: "chair", roles: ["chairperson"], departments: [] };
 describe("Finance safeguards", () => {
+ it("requires two different budget approvers and prohibits requester approval", () => {
+  expect(canApproveBudget(leader,{status:"submitted",created_by:"requester"})).toBe(false);
+  expect(canApproveBudget(finance,{status:"submitted",created_by:"requester"})).toBe(true);
+  expect(canApproveBudget(leader,{status:"finance_approved",finance_approved_by:"finance",created_by:"requester"})).toBe(true);
+  expect(canApproveBudget(leader,{status:"finance_approved",finance_approved_by:"chair"})).toBe(false);
+  expect(canApproveBudget(finance,{status:"submitted",created_by:"finance"})).toBe(false);
+ });
  it("prevents a second payment after the first is posted", () => {
   expect(canMarkPurchasePaid({status:"senior_pastor_approved",payment_status:"approved"})).toBe(true);
   expect(canMarkPurchasePaid({status:"senior_pastor_approved",payment_status:"not_paid",ledger_entry_id:"posted"})).toBe(false);
@@ -21,6 +28,9 @@ describe("Finance safeguards", () => {
  });
  it("excludes draft and rejected giving", () => {
   expect(recognisedGiving([{amount:100,status:"completed"},{amount:50,status:"approved"},{amount:700,status:"draft"},{amount:900,status:"rejected"},{amount:200,status:"cancelled"}])).toBe(150);
+ });
+ it("retains posted giving in monetary totals after administrative archiving", () => {
+  expect(recognisedGiving([{amount:100,status:"completed",archived_at:"2026-11-19"}])).toBe(100);
  });
  it("blocks generic AI finance changes and hard deletes", async () => {
   const specs = [{entity:"budget",table:"budgets",describe:"budget",columns:{status:{kind:"string" as const}}}];

@@ -1,8 +1,8 @@
 # Roadmap
 
-- [ ] Correct all 13 Financial Command Centre findings and run regression tests
-- [ ] Apply Finance database safeguards and verify signed-in flows (blocked while hosted database is paused)
-- [ ] Deliver the complete Financial Administrator dashboard structure
+- [x] Correct all 13 Financial Command Centre findings and run regression tests
+- [x] Apply Finance database safeguards and verify signed-in approval, notes, branch isolation and exports
+- [x] Deliver the complete Financial Administrator dashboard structure (PDF and Markdown; money-moving checks explicitly unverified)
 
 - [x] Inter-branch asset movement: database (tables, rules, RLS, audit, notifications)
 - [x] Inter-branch asset movement: movements module, incidents, reports, dashboard wiring
