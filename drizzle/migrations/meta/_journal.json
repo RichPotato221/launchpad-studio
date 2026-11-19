@@ -64,6 +64,13 @@
       "when": 1795103691527,
       "tag": "0008_finance_restrict_branch_and_posted_payments",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1795104577724,
+      "tag": "0009_secure_finance_command_and_resource_reads",
+      "breakpoints": true
     }
   ]
 }
